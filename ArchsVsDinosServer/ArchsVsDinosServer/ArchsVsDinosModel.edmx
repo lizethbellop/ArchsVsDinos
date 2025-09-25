@@ -1,0 +1,828 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ArchsVsDinosModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CardBody">
+          <Key>
+            <PropertyRef Name="idCardBody" />
+          </Key>
+          <Property Name="idCardBody" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="power" Type="int" />
+          <Property Name="imagePath" Type="varchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CardCharacter">
+          <Key>
+            <PropertyRef Name="idCardCharacter" />
+          </Key>
+          <Property Name="idCardCharacter" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="type" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="armyType" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="power" Type="int" />
+          <Property Name="imagePath" Type="varchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="idConfiguration" />
+          </Key>
+          <Property Name="idConfiguration" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="musicVolume" Type="int" Nullable="false" />
+          <Property Name="soundVolume" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="FriendRequest">
+          <Key>
+            <PropertyRef Name="idFriendRequest" />
+          </Key>
+          <Property Name="idFriendRequest" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="datetime" Nullable="false" />
+          <Property Name="status" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="idReceiverUser" Type="int" Nullable="false" />
+          <Property Name="idUser" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Friendship">
+          <Key>
+            <PropertyRef Name="idFriendship" />
+          </Key>
+          <Property Name="idFriendship" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="status" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="idUserFriend" Type="int" Nullable="false" />
+          <Property Name="idUser" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="GeneralMatch">
+          <Key>
+            <PropertyRef Name="idGeneralMatch" />
+          </Key>
+          <Property Name="idGeneralMatch" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="date" Type="datetime" Nullable="false" />
+          <Property Name="gameTime" Type="time" Precision="7" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MatchParticipants">
+          <Key>
+            <PropertyRef Name="idMatchParticipant" />
+          </Key>
+          <Property Name="idMatchParticipant" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idGeneralMatch" Type="int" Nullable="false" />
+          <Property Name="idPlayer" Type="int" Nullable="false" />
+          <Property Name="points" Type="int" Nullable="false" />
+          <Property Name="isWinner" Type="bit" Nullable="false" />
+          <Property Name="isDefeated" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Music">
+          <Key>
+            <PropertyRef Name="idMusic" />
+          </Key>
+          <Property Name="idMusic" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="songName" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="filePath" Type="varchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="idPlayer" />
+          </Key>
+          <Property Name="idPlayer" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="facebook" Type="varchar" MaxLength="45" />
+          <Property Name="instagram" Type="varchar" MaxLength="45" />
+          <Property Name="x" Type="varchar" MaxLength="45" />
+          <Property Name="totalWins" Type="int" Nullable="false" />
+          <Property Name="totalLosses" Type="int" Nullable="false" />
+          <Property Name="totalPoints" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Strike">
+          <Key>
+            <PropertyRef Name="idStrike" />
+          </Key>
+          <Property Name="idStrike" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="startDate" Type="date" Nullable="false" />
+          <Property Name="endDate" Type="date" Nullable="false" />
+          <Property Name="idStrikeKind" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="StrikeKind">
+          <Key>
+            <PropertyRef Name="idStrikeKind" />
+          </Key>
+          <Property Name="idStrikeKind" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="description" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="UserAccount">
+          <Key>
+            <PropertyRef Name="idUser" />
+          </Key>
+          <Property Name="idUser" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="email" Type="varchar" MaxLength="254" Nullable="false" />
+          <Property Name="password" Type="varchar" MaxLength="63" Nullable="false" />
+          <Property Name="username" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="nickname" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="idConfiguration" Type="int" Nullable="false" />
+          <Property Name="idPlayer" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserHasStrike">
+          <Key>
+            <PropertyRef Name="idStrike" />
+            <PropertyRef Name="idUser" />
+          </Key>
+          <Property Name="idStrike" Type="int" Nullable="false" />
+          <Property Name="idUser" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__FriendReq__idRec__4CA06362">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="FriendRequest" Type="Self.FriendRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="FriendRequest">
+              <PropertyRef Name="idReceiverUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FriendReq__idUse__4BAC3F29">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="FriendRequest" Type="Self.FriendRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="FriendRequest">
+              <PropertyRef Name="idUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__idUse__47DBAE45">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="idUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__idUse__48CFD27E">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="idUserFriend" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchPart__idGen__59FA5E80">
+          <End Role="GeneralMatch" Type="Self.GeneralMatch" Multiplicity="1" />
+          <End Role="MatchParticipants" Type="Self.MatchParticipants" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GeneralMatch">
+              <PropertyRef Name="idGeneralMatch" />
+            </Principal>
+            <Dependent Role="MatchParticipants">
+              <PropertyRef Name="idGeneralMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchPart__idPla__5AEE82B9">
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
+          <End Role="MatchParticipants" Type="Self.MatchParticipants" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="MatchParticipants">
+              <PropertyRef Name="idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Strike__idStrike__5165187F">
+          <End Role="StrikeKind" Type="Self.StrikeKind" Multiplicity="1" />
+          <End Role="Strike" Type="Self.Strike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StrikeKind">
+              <PropertyRef Name="idStrikeKind" />
+            </Principal>
+            <Dependent Role="Strike">
+              <PropertyRef Name="idStrikeKind" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserAccou__idCon__440B1D61">
+          <End Role="Configuration" Type="Self.Configuration" Multiplicity="1" />
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Configuration">
+              <PropertyRef Name="idConfiguration" />
+            </Principal>
+            <Dependent Role="UserAccount">
+              <PropertyRef Name="idConfiguration" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserAccou__idPla__44FF419A">
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="UserAccount">
+              <PropertyRef Name="idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserHasSt__idStr__5441852A">
+          <End Role="Strike" Type="Self.Strike" Multiplicity="1" />
+          <End Role="UserHasStrike" Type="Self.UserHasStrike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Strike">
+              <PropertyRef Name="idStrike" />
+            </Principal>
+            <Dependent Role="UserHasStrike">
+              <PropertyRef Name="idStrike" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserHasSt__idUse__5535A963">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="UserHasStrike" Type="Self.UserHasStrike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="UserHasStrike">
+              <PropertyRef Name="idUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ArchsVsDinosModelStoreContainer">
+          <EntitySet Name="CardBody" EntityType="Self.CardBody" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CardCharacter" EntityType="Self.CardCharacter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Configuration" EntityType="Self.Configuration" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FriendRequest" EntityType="Self.FriendRequest" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Friendship" EntityType="Self.Friendship" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GeneralMatch" EntityType="Self.GeneralMatch" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MatchParticipants" EntityType="Self.MatchParticipants" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Music" EntityType="Self.Music" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Player" EntityType="Self.Player" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Strike" EntityType="Self.Strike" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StrikeKind" EntityType="Self.StrikeKind" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserAccount" EntityType="Self.UserAccount" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserHasStrike" EntityType="Self.UserHasStrike" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__FriendReq__idRec__4CA06362" Association="Self.FK__FriendReq__idRec__4CA06362">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="FriendRequest" EntitySet="FriendRequest" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FriendReq__idUse__4BAC3F29" Association="Self.FK__FriendReq__idUse__4BAC3F29">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="FriendRequest" EntitySet="FriendRequest" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__idUse__47DBAE45" Association="Self.FK__Friendshi__idUse__47DBAE45">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__idUse__48CFD27E" Association="Self.FK__Friendshi__idUse__48CFD27E">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchPart__idGen__59FA5E80" Association="Self.FK__MatchPart__idGen__59FA5E80">
+            <End Role="GeneralMatch" EntitySet="GeneralMatch" />
+            <End Role="MatchParticipants" EntitySet="MatchParticipants" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchPart__idPla__5AEE82B9" Association="Self.FK__MatchPart__idPla__5AEE82B9">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="MatchParticipants" EntitySet="MatchParticipants" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Strike__idStrike__5165187F" Association="Self.FK__Strike__idStrike__5165187F">
+            <End Role="StrikeKind" EntitySet="StrikeKind" />
+            <End Role="Strike" EntitySet="Strike" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserAccou__idCon__440B1D61" Association="Self.FK__UserAccou__idCon__440B1D61">
+            <End Role="Configuration" EntitySet="Configuration" />
+            <End Role="UserAccount" EntitySet="UserAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserAccou__idPla__44FF419A" Association="Self.FK__UserAccou__idPla__44FF419A">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="UserAccount" EntitySet="UserAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserHasSt__idStr__5441852A" Association="Self.FK__UserHasSt__idStr__5441852A">
+            <End Role="Strike" EntitySet="Strike" />
+            <End Role="UserHasStrike" EntitySet="UserHasStrike" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserHasSt__idUse__5535A963" Association="Self.FK__UserHasSt__idUse__5535A963">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="UserHasStrike" EntitySet="UserHasStrike" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ArchsVsDinosModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CardBody">
+          <Key>
+            <PropertyRef Name="idCardBody" />
+          </Key>
+          <Property Name="idCardBody" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="power" Type="Int32" />
+          <Property Name="imagePath" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CardCharacter">
+          <Key>
+            <PropertyRef Name="idCardCharacter" />
+          </Key>
+          <Property Name="idCardCharacter" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="type" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="armyType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="power" Type="Int32" />
+          <Property Name="imagePath" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="idConfiguration" />
+          </Key>
+          <Property Name="idConfiguration" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="musicVolume" Type="Int32" Nullable="false" />
+          <Property Name="soundVolume" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="UserAccount" Relationship="Self.FK__UserAccou__idCon__440B1D61" FromRole="Configuration" ToRole="UserAccount" />
+        </EntityType>
+        <EntityType Name="FriendRequest">
+          <Key>
+            <PropertyRef Name="idFriendRequest" />
+          </Key>
+          <Property Name="idFriendRequest" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="status" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="idReceiverUser" Type="Int32" Nullable="false" />
+          <Property Name="idUser" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="UserAccount" Relationship="Self.FK__FriendReq__idRec__4CA06362" FromRole="FriendRequest" ToRole="UserAccount" />
+          <NavigationProperty Name="UserAccount1" Relationship="Self.FK__FriendReq__idUse__4BAC3F29" FromRole="FriendRequest" ToRole="UserAccount" />
+        </EntityType>
+        <EntityType Name="Friendship">
+          <Key>
+            <PropertyRef Name="idFriendship" />
+          </Key>
+          <Property Name="idFriendship" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="status" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="idUserFriend" Type="Int32" Nullable="false" />
+          <Property Name="idUser" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="UserAccount" Relationship="Self.FK__Friendshi__idUse__47DBAE45" FromRole="Friendship" ToRole="UserAccount" />
+          <NavigationProperty Name="UserAccount1" Relationship="Self.FK__Friendshi__idUse__48CFD27E" FromRole="Friendship" ToRole="UserAccount" />
+        </EntityType>
+        <EntityType Name="GeneralMatch">
+          <Key>
+            <PropertyRef Name="idGeneralMatch" />
+          </Key>
+          <Property Name="idGeneralMatch" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="gameTime" Type="Time" Nullable="false" Precision="7" />
+          <NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idGen__59FA5E80" FromRole="GeneralMatch" ToRole="MatchParticipants" />
+        </EntityType>
+        <EntityType Name="MatchParticipants">
+          <Key>
+            <PropertyRef Name="idMatchParticipant" />
+          </Key>
+          <Property Name="idMatchParticipant" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idGeneralMatch" Type="Int32" Nullable="false" />
+          <Property Name="idPlayer" Type="Int32" Nullable="false" />
+          <Property Name="points" Type="Int32" Nullable="false" />
+          <Property Name="isWinner" Type="Boolean" Nullable="false" />
+          <Property Name="isDefeated" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="GeneralMatch" Relationship="Self.FK__MatchPart__idGen__59FA5E80" FromRole="MatchParticipants" ToRole="GeneralMatch" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="MatchParticipants" ToRole="Player" />
+        </EntityType>
+        <EntityType Name="Music">
+          <Key>
+            <PropertyRef Name="idMusic" />
+          </Key>
+          <Property Name="idMusic" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="songName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="filePath" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="idPlayer" />
+          </Key>
+          <Property Name="idPlayer" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="facebook" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="instagram" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="x" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="totalWins" Type="Int32" Nullable="false" />
+          <Property Name="totalLosses" Type="Int32" Nullable="false" />
+          <Property Name="totalPoints" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="Player" ToRole="MatchParticipants" />
+          <NavigationProperty Name="UserAccount" Relationship="Self.FK__UserAccou__idPla__44FF419A" FromRole="Player" ToRole="UserAccount" />
+        </EntityType>
+        <EntityType Name="Strike">
+          <Key>
+            <PropertyRef Name="idStrike" />
+          </Key>
+          <Property Name="idStrike" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="startDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="endDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="idStrikeKind" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="StrikeKind" Relationship="Self.FK__Strike__idStrike__5165187F" FromRole="Strike" ToRole="StrikeKind" />
+          <NavigationProperty Name="UserAccount" Relationship="Self.UserHasStrike" FromRole="Strike" ToRole="UserAccount" />
+        </EntityType>
+        <EntityType Name="StrikeKind">
+          <Key>
+            <PropertyRef Name="idStrikeKind" />
+          </Key>
+          <Property Name="idStrikeKind" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Strike" Relationship="Self.FK__Strike__idStrike__5165187F" FromRole="StrikeKind" ToRole="Strike" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="UserAccount">
+          <Key>
+            <PropertyRef Name="idUser" />
+          </Key>
+          <Property Name="idUser" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="email" Type="String" MaxLength="254" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="password" Type="String" MaxLength="63" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="username" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="nickname" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="idConfiguration" Type="Int32" Nullable="false" />
+          <Property Name="idPlayer" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Configuration" Relationship="Self.FK__UserAccou__idCon__440B1D61" FromRole="UserAccount" ToRole="Configuration" />
+          <NavigationProperty Name="FriendRequest" Relationship="Self.FK__FriendReq__idRec__4CA06362" FromRole="UserAccount" ToRole="FriendRequest" />
+          <NavigationProperty Name="FriendRequest1" Relationship="Self.FK__FriendReq__idUse__4BAC3F29" FromRole="UserAccount" ToRole="FriendRequest" />
+          <NavigationProperty Name="Friendship" Relationship="Self.FK__Friendshi__idUse__47DBAE45" FromRole="UserAccount" ToRole="Friendship" />
+          <NavigationProperty Name="Friendship1" Relationship="Self.FK__Friendshi__idUse__48CFD27E" FromRole="UserAccount" ToRole="Friendship" />
+          <NavigationProperty Name="Player" Relationship="Self.FK__UserAccou__idPla__44FF419A" FromRole="UserAccount" ToRole="Player" />
+          <NavigationProperty Name="Strike" Relationship="Self.UserHasStrike" FromRole="UserAccount" ToRole="Strike" />
+        </EntityType>
+        <Association Name="FK__UserAccou__idCon__440B1D61">
+          <End Role="Configuration" Type="Self.Configuration" Multiplicity="1" />
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Configuration">
+              <PropertyRef Name="idConfiguration" />
+            </Principal>
+            <Dependent Role="UserAccount">
+              <PropertyRef Name="idConfiguration" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FriendReq__idRec__4CA06362">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="FriendRequest" Type="Self.FriendRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="FriendRequest">
+              <PropertyRef Name="idReceiverUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__FriendReq__idUse__4BAC3F29">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="FriendRequest" Type="Self.FriendRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="FriendRequest">
+              <PropertyRef Name="idUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__idUse__47DBAE45">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="idUser" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Friendshi__idUse__48CFD27E">
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="1" />
+          <End Role="Friendship" Type="Self.Friendship" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserAccount">
+              <PropertyRef Name="idUser" />
+            </Principal>
+            <Dependent Role="Friendship">
+              <PropertyRef Name="idUserFriend" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchPart__idGen__59FA5E80">
+          <End Role="GeneralMatch" Type="Self.GeneralMatch" Multiplicity="1" />
+          <End Role="MatchParticipants" Type="Self.MatchParticipants" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GeneralMatch">
+              <PropertyRef Name="idGeneralMatch" />
+            </Principal>
+            <Dependent Role="MatchParticipants">
+              <PropertyRef Name="idGeneralMatch" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchPart__idPla__5AEE82B9">
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
+          <End Role="MatchParticipants" Type="Self.MatchParticipants" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="MatchParticipants">
+              <PropertyRef Name="idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserAccou__idPla__44FF419A">
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="idPlayer" />
+            </Principal>
+            <Dependent Role="UserAccount">
+              <PropertyRef Name="idPlayer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Strike__idStrike__5165187F">
+          <End Role="StrikeKind" Type="Self.StrikeKind" Multiplicity="1" />
+          <End Role="Strike" Type="Self.Strike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StrikeKind">
+              <PropertyRef Name="idStrikeKind" />
+            </Principal>
+            <Dependent Role="Strike">
+              <PropertyRef Name="idStrikeKind" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserHasStrike">
+          <End Role="Strike" Type="Self.Strike" Multiplicity="*" />
+          <End Role="UserAccount" Type="Self.UserAccount" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="ArchsVsDinosConnection" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CardBody" EntityType="Self.CardBody" />
+          <EntitySet Name="CardCharacter" EntityType="Self.CardCharacter" />
+          <EntitySet Name="Configuration" EntityType="Self.Configuration" />
+          <EntitySet Name="FriendRequest" EntityType="Self.FriendRequest" />
+          <EntitySet Name="Friendship" EntityType="Self.Friendship" />
+          <EntitySet Name="GeneralMatch" EntityType="Self.GeneralMatch" />
+          <EntitySet Name="MatchParticipants" EntityType="Self.MatchParticipants" />
+          <EntitySet Name="Music" EntityType="Self.Music" />
+          <EntitySet Name="Player" EntityType="Self.Player" />
+          <EntitySet Name="Strike" EntityType="Self.Strike" />
+          <EntitySet Name="StrikeKind" EntityType="Self.StrikeKind" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="UserAccount" EntityType="Self.UserAccount" />
+          <AssociationSet Name="FK__UserAccou__idCon__440B1D61" Association="Self.FK__UserAccou__idCon__440B1D61">
+            <End Role="Configuration" EntitySet="Configuration" />
+            <End Role="UserAccount" EntitySet="UserAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FriendReq__idRec__4CA06362" Association="Self.FK__FriendReq__idRec__4CA06362">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="FriendRequest" EntitySet="FriendRequest" />
+          </AssociationSet>
+          <AssociationSet Name="FK__FriendReq__idUse__4BAC3F29" Association="Self.FK__FriendReq__idUse__4BAC3F29">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="FriendRequest" EntitySet="FriendRequest" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__idUse__47DBAE45" Association="Self.FK__Friendshi__idUse__47DBAE45">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Friendshi__idUse__48CFD27E" Association="Self.FK__Friendshi__idUse__48CFD27E">
+            <End Role="UserAccount" EntitySet="UserAccount" />
+            <End Role="Friendship" EntitySet="Friendship" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchPart__idGen__59FA5E80" Association="Self.FK__MatchPart__idGen__59FA5E80">
+            <End Role="GeneralMatch" EntitySet="GeneralMatch" />
+            <End Role="MatchParticipants" EntitySet="MatchParticipants" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchPart__idPla__5AEE82B9" Association="Self.FK__MatchPart__idPla__5AEE82B9">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="MatchParticipants" EntitySet="MatchParticipants" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserAccou__idPla__44FF419A" Association="Self.FK__UserAccou__idPla__44FF419A">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="UserAccount" EntitySet="UserAccount" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Strike__idStrike__5165187F" Association="Self.FK__Strike__idStrike__5165187F">
+            <End Role="StrikeKind" EntitySet="StrikeKind" />
+            <End Role="Strike" EntitySet="Strike" />
+          </AssociationSet>
+          <AssociationSet Name="UserHasStrike" Association="Self.UserHasStrike">
+            <End Role="Strike" EntitySet="Strike" />
+            <End Role="UserAccount" EntitySet="UserAccount" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ArchsVsDinosModelStoreContainer" CdmEntityContainer="ArchsVsDinosConnection">
+          <EntitySetMapping Name="CardBody">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.CardBody">
+              <MappingFragment StoreEntitySet="CardBody">
+                <ScalarProperty Name="idCardBody" ColumnName="idCardBody" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="power" ColumnName="power" />
+                <ScalarProperty Name="imagePath" ColumnName="imagePath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CardCharacter">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.CardCharacter">
+              <MappingFragment StoreEntitySet="CardCharacter">
+                <ScalarProperty Name="idCardCharacter" ColumnName="idCardCharacter" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="armyType" ColumnName="armyType" />
+                <ScalarProperty Name="power" ColumnName="power" />
+                <ScalarProperty Name="imagePath" ColumnName="imagePath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Configuration">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.Configuration">
+              <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="idConfiguration" ColumnName="idConfiguration" />
+                <ScalarProperty Name="musicVolume" ColumnName="musicVolume" />
+                <ScalarProperty Name="soundVolume" ColumnName="soundVolume" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FriendRequest">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.FriendRequest">
+              <MappingFragment StoreEntitySet="FriendRequest">
+                <ScalarProperty Name="idFriendRequest" ColumnName="idFriendRequest" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="idReceiverUser" ColumnName="idReceiverUser" />
+                <ScalarProperty Name="idUser" ColumnName="idUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Friendship">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.Friendship">
+              <MappingFragment StoreEntitySet="Friendship">
+                <ScalarProperty Name="idFriendship" ColumnName="idFriendship" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="idUserFriend" ColumnName="idUserFriend" />
+                <ScalarProperty Name="idUser" ColumnName="idUser" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GeneralMatch">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.GeneralMatch">
+              <MappingFragment StoreEntitySet="GeneralMatch">
+                <ScalarProperty Name="idGeneralMatch" ColumnName="idGeneralMatch" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="gameTime" ColumnName="gameTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MatchParticipants">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.MatchParticipants">
+              <MappingFragment StoreEntitySet="MatchParticipants">
+                <ScalarProperty Name="idMatchParticipant" ColumnName="idMatchParticipant" />
+                <ScalarProperty Name="idGeneralMatch" ColumnName="idGeneralMatch" />
+                <ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
+                <ScalarProperty Name="points" ColumnName="points" />
+                <ScalarProperty Name="isWinner" ColumnName="isWinner" />
+                <ScalarProperty Name="isDefeated" ColumnName="isDefeated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Music">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.Music">
+              <MappingFragment StoreEntitySet="Music">
+                <ScalarProperty Name="idMusic" ColumnName="idMusic" />
+                <ScalarProperty Name="songName" ColumnName="songName" />
+                <ScalarProperty Name="filePath" ColumnName="filePath" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Player">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.Player">
+              <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
+                <ScalarProperty Name="facebook" ColumnName="facebook" />
+                <ScalarProperty Name="instagram" ColumnName="instagram" />
+                <ScalarProperty Name="x" ColumnName="x" />
+                <ScalarProperty Name="totalWins" ColumnName="totalWins" />
+                <ScalarProperty Name="totalLosses" ColumnName="totalLosses" />
+                <ScalarProperty Name="totalPoints" ColumnName="totalPoints" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Strike">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.Strike">
+              <MappingFragment StoreEntitySet="Strike">
+                <ScalarProperty Name="idStrike" ColumnName="idStrike" />
+                <ScalarProperty Name="startDate" ColumnName="startDate" />
+                <ScalarProperty Name="endDate" ColumnName="endDate" />
+                <ScalarProperty Name="idStrikeKind" ColumnName="idStrikeKind" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StrikeKind">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.StrikeKind">
+              <MappingFragment StoreEntitySet="StrikeKind">
+                <ScalarProperty Name="idStrikeKind" ColumnName="idStrikeKind" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="description" ColumnName="description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserAccount">
+            <EntityTypeMapping TypeName="ArchsVsDinosModel.UserAccount">
+              <MappingFragment StoreEntitySet="UserAccount">
+                <ScalarProperty Name="idUser" ColumnName="idUser" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="username" ColumnName="username" />
+                <ScalarProperty Name="nickname" ColumnName="nickname" />
+                <ScalarProperty Name="idConfiguration" ColumnName="idConfiguration" />
+                <ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="UserHasStrike" TypeName="ArchsVsDinosModel.UserHasStrike" StoreEntitySet="UserHasStrike">
+            <EndProperty Name="Strike">
+              <ScalarProperty Name="idStrike" ColumnName="idStrike" />
+            </EndProperty>
+            <EndProperty Name="UserAccount">
+              <ScalarProperty Name="idUser" ColumnName="idUser" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
