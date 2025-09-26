@@ -21,12 +21,13 @@
     <Grid Margin="15,15,15,0" >
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,0,0">
-            
+        <Grid Grid.Column="0" VerticalAlignment="Top" Margin="10,0,0,0" Grid.ColumnSpan="2">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -52,7 +53,7 @@
                     <TextBox TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2"/>
                 </Border>
             </StackPanel>
-            
+
             <StackPanel Grid.Row="3" Margin="0,0" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Password}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="29">
@@ -68,7 +69,7 @@
             </StackPanel>
 
             <UniformGrid Grid.Row="5" Rows="1" Margin="0,0,0,0" HorizontalAlignment="Stretch">
-                
+
                 <Button Content="{x:Static language:Lang.Register_BtnRegister}" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="85" Width="180" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Padding="0" BorderBrush="{x:Null}" Foreground="White">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
@@ -94,7 +95,7 @@
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Button.Template>
-                </Button> 
+                </Button>
 
                 <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Height="85" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="White" BorderBrush="{x:Null}">
                     <Button.Background>
@@ -127,7 +128,7 @@
 
         </Grid>
 
-        <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0">
+        <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0">
 
             <Image Source="/Resources/Images/logo.png" Stretch="Uniform" HorizontalAlignment="Right" Height="90" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>

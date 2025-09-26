@@ -61,6 +61,51 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Agregar amigo por correo.
+        /// </summary>
+        public static string Friends_AddFriendByEmail {
+            get {
+                return ResourceManager.GetString("Friends_AddFriendByEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Invitar.
+        /// </summary>
+        public static string Friends_Invite {
+            get {
+                return ResourceManager.GetString("Friends_Invite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Mis Amigos.
+        /// </summary>
+        public static string Friends_MyFriends {
+            get {
+                return ResourceManager.GetString("Friends_MyFriends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Eliminar.
+        /// </summary>
+        public static string FriendsMainMenu_EliminateFriend {
+            get {
+                return ResourceManager.GetString("FriendsMainMenu_EliminateFriend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Lista de amigos.
+        /// </summary>
+        public static string FriendsMainMenu_FriendsTitle {
+            get {
+                return ResourceManager.GetString("FriendsMainMenu_FriendsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Aceptar.
         /// </summary>
         public static string GlobalAcceptText {
@@ -75,6 +120,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string GlobalCancelText {
             get {
                 return ResourceManager.GetString("GlobalCancelText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cerrar.
+        /// </summary>
+        public static string GlobalCloseText {
+            get {
+                return ResourceManager.GetString("GlobalCloseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ID de partida.
+        /// </summary>
+        public static string GlobalGameId {
+            get {
+                return ResourceManager.GetString("GlobalGameId", resourceCulture);
             }
         }
         

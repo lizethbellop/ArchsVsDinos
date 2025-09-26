@@ -117,11 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="FriendsMainMenu_EliminateFriend" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="FriendsMainMenu_FriendsTitle" xml:space="preserve">
+    <value>Friends List</value>
+  </data>
+  <data name="Friends_AddFriendByEmail" xml:space="preserve">
+    <value>Add friend with email</value>
+  </data>
+  <data name="Friends_Invite" xml:space="preserve">
+    <value>Invite</value>
+  </data>
+  <data name="Friends_MyFriends" xml:space="preserve">
+    <value>My Friends</value>
+  </data>
   <data name="GlobalAcceptText" xml:space="preserve">
     <value>Accept</value>
   </data>
   <data name="GlobalCancelText" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="GlobalCloseText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="GlobalGameId" xml:space="preserve">
+    <value>Game ID</value>
   </data>
   <data name="LoginDontYouHaveAccount" xml:space="preserve">
     <value>Don't you have an account?</value>

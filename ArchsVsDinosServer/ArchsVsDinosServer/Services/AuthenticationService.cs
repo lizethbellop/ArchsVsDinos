@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,8 +30,8 @@ namespace ArchsVsDinosServer.Services
                         username = username,
                         email = email,
                         password = hashedPassword,
-                        name = "Carlos Sainz",
-                        nickname = "csainz55"
+                        name = name,
+                        nickname = nickname
                     };
 
                     context.UserAccount.Add(newUser);
@@ -47,7 +48,7 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
-        /*public UserDTO LoginUser(string username, string password)
+        public UserDTO LoginUser(string username, string password)
         {
             try
             {
@@ -66,11 +67,30 @@ namespace ArchsVsDinosServer.Services
                     if (inputHash == user.password)
                     {
                         Console.WriteLine($"Login exitoso: {username}");
+
+                        return new UserDTO
+                        {
+                            idUser = user.idUser,
+                            username = user.username,
+                            name = user.name,
+                            nickname = user.nickname
+                        };
+                    }
+                    else
+                    {
+                        Console.WriteLine("Credenciales incorrectas");
+                        return null;
                     }
 
                 }
+
             }
-        }*/
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en login: {ex.Message}");
+                return null;
+            }
+        }
         private string HassPassword(string password)
         {
             using(SHA256 sha256Hash = SHA256.Create())
