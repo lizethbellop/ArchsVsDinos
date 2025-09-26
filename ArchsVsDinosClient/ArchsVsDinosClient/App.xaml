@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:ArchsVsDinosClient"
              StartupUri="Views/Login.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="Ouroboros">Resources/Fonts/#Ouroboros</FontFamily>
     </Application.Resources>
 </Application>

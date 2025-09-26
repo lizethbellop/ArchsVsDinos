@@ -70,6 +70,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Cancelar.
+        /// </summary>
+        public static string GlobalCancelText {
+            get {
+                return ResourceManager.GetString("GlobalCancelText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¿No tienes cuenta?.
+        /// </summary>
+        public static string LoginDontYouHaveAccount {
+            get {
+                return ResourceManager.GetString("LoginDontYouHaveAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Entrar.
         /// </summary>
         public static string LoginEnterText {
@@ -106,7 +124,7 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a ¿No tienes cuenta?, Regístrate Aquí.
+        ///   Busca una cadena traducida similar a Regístrate aquí.
         /// </summary>
         public static string LoginRegisterHereText {
             get {
@@ -129,6 +147,141 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string LoginUserText {
             get {
                 return ResourceManager.GetString("LoginUserText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Crear partida.
+        /// </summary>
+        public static string Main_CreateMatch {
+            get {
+                return ResourceManager.GetString("Main_CreateMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¿Cómo jugar?.
+        /// </summary>
+        public static string Main_HowToPlay {
+            get {
+                return ResourceManager.GetString("Main_HowToPlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Unirse a partida.
+        /// </summary>
+        public static string Main_JoinMatch {
+            get {
+                return ResourceManager.GetString("Main_JoinMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Registrarse ahora!.
+        /// </summary>
+        public static string Register_BtnRegister {
+            get {
+                return ResourceManager.GetString("Register_BtnRegister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Correo electrónico.
+        /// </summary>
+        public static string Register_Email {
+            get {
+                return ResourceManager.GetString("Register_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nombre.
+        /// </summary>
+        public static string Register_Name {
+            get {
+                return ResourceManager.GetString("Register_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Apodo.
+        /// </summary>
+        public static string Register_Nickname {
+            get {
+                return ResourceManager.GetString("Register_Nickname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Contraseña.
+        /// </summary>
+        public static string Register_Password {
+            get {
+                return ResourceManager.GetString("Register_Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña debe incluir:.
+        /// </summary>
+        public static string Register_PasswordFormat {
+            get {
+                return ResourceManager.GetString("Register_PasswordFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a - Al menos 8 caracteres.
+        /// </summary>
+        public static string Register_PasswordFormat2 {
+            get {
+                return ResourceManager.GetString("Register_PasswordFormat2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a - Una letra mayúscula (A-Z).
+        /// </summary>
+        public static string Register_PasswordFormat3 {
+            get {
+                return ResourceManager.GetString("Register_PasswordFormat3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a - Una letra minúscula (a-z).
+        /// </summary>
+        public static string Register_PasswordFormat4 {
+            get {
+                return ResourceManager.GetString("Register_PasswordFormat4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a - Un número (0-9).
+        /// </summary>
+        public static string Register_PasswordFormat5 {
+            get {
+                return ResourceManager.GetString("Register_PasswordFormat5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a - Un carácter especial (por ejemplo: !@#$%&amp;*).
+        /// </summary>
+        public static string Register_PasswordFormat6 {
+            get {
+                return ResourceManager.GetString("Register_PasswordFormat6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Registro.
+        /// </summary>
+        public static string Register_RegisterTitle {
+            get {
+                return ResourceManager.GetString("Register_RegisterTitle", resourceCulture);
             }
         }
         

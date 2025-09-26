@@ -1,5 +1,4 @@
-﻿using ArchsVsDinosClient.Views;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,26 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ArchsVsDinosClient
+namespace ArchsVsDinosClient.Views
 {
     /// <summary>
-    /// Lógica de interacción para Login.xaml
+    /// Lógica de interacción para Register.xaml
     /// </summary>
-    public partial class Login : Window
+    public partial class Register : Window
     {
-        public Login()
+        public Register()
         {
             InitializeComponent();
         }
 
-        private void Btn_Register(object sender, RoutedEventArgs e)
+        private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            new Register().ShowDialog();
-
-        }
-        private void Btn_PlayAsGuest(object sender, RoutedEventArgs e)
-        {
-            new MainWindow().ShowDialog();
             this.Close();
         }
 

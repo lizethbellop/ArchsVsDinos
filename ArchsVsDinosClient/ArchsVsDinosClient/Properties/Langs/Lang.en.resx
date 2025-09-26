@@ -120,6 +120,12 @@
   <data name="GlobalAcceptText" xml:space="preserve">
     <value>Accept</value>
   </data>
+  <data name="GlobalCancelText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="LoginDontYouHaveAccount" xml:space="preserve">
+    <value>Don't you have an account?</value>
+  </data>
   <data name="LoginEnterText" xml:space="preserve">
     <value>Enter</value>
   </data>
@@ -133,7 +139,7 @@
     <value>Play as Guest</value>
   </data>
   <data name="LoginRegisterHereText" xml:space="preserve">
-    <value>Don´t have an account? Register Here</value>
+    <value>Register here</value>
   </data>
   <data name="LoginUserNotFoundText" xml:space="preserve">
     <value>No account found with this data</value>
@@ -141,11 +147,56 @@
   <data name="LoginUserText" xml:space="preserve">
     <value>User</value>
   </data>
+  <data name="Main_CreateMatch" xml:space="preserve">
+    <value>Create match</value>
+  </data>
+  <data name="Main_HowToPlay" xml:space="preserve">
+    <value>How to play?</value>
+  </data>
+  <data name="Main_JoinMatch" xml:space="preserve">
+    <value>Join a match</value>
+  </data>
   <data name="RegisterEmailRequiredText" xml:space="preserve">
     <value>Email is required</value>
   </data>
   <data name="RegisterInvalidEmailText" xml:space="preserve">
     <value>Invalid Email Format</value>
+  </data>
+  <data name="Register_BtnRegister" xml:space="preserve">
+    <value>Register now!</value>
+  </data>
+  <data name="Register_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Register_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Register_Nickname" xml:space="preserve">
+    <value>Nickname</value>
+  </data>
+  <data name="Register_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Register_PasswordFormat" xml:space="preserve">
+    <value>The password must to have</value>
+  </data>
+  <data name="Register_PasswordFormat2" xml:space="preserve">
+    <value>- At least 8 characters</value>
+  </data>
+  <data name="Register_PasswordFormat3" xml:space="preserve">
+    <value>- A capital letter (A-Z)</value>
+  </data>
+  <data name="Register_PasswordFormat4" xml:space="preserve">
+    <value>- A lowercase letter (a-z)</value>
+  </data>
+  <data name="Register_PasswordFormat5" xml:space="preserve">
+    <value>- A number (0-9)</value>
+  </data>
+  <data name="Register_PasswordFormat6" xml:space="preserve">
+    <value>- A especial character (example: !@#$%&amp;*)</value>
+  </data>
+  <data name="Register_RegisterTitle" xml:space="preserve">
+    <value>Register</value>
   </data>
   <data name="UserRequiredText" xml:space="preserve">
     <value>Username is required</value>
