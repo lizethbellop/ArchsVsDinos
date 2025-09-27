@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Account_EditText" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Account_SeeStatistics" xml:space="preserve">
+    <value>Ver Estadísticas</value>
+  </data>
+  <data name="Account_SocialMediaTitle" xml:space="preserve">
+    <value>Redes Sociales</value>
+  </data>
+  <data name="Account_YourAccountTitle" xml:space="preserve">
+    <value>Tu perfil</value>
+  </data>
   <data name="FriendsMainMenu_EliminateFriend" xml:space="preserve">
     <value>Eliminar</value>
   </data>
@@ -141,8 +153,41 @@
   <data name="GlobalCloseText" xml:space="preserve">
     <value>Cerrar</value>
   </data>
+  <data name="GlobalExitText" xml:space="preserve">
+    <value>Salir</value>
+  </data>
   <data name="GlobalGameId" xml:space="preserve">
     <value>ID de partida</value>
+  </data>
+  <data name="GlobalGroupChatText" xml:space="preserve">
+    <value>Chat Grupal</value>
+  </data>
+  <data name="GlobalReturnText" xml:space="preserve">
+    <value>Regresar</value>
+  </data>
+  <data name="GlobalSaveText" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Language_English" xml:space="preserve">
+    <value>Inglés</value>
+  </data>
+  <data name="Language_Spanish" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="LobbyAddFriendText" xml:space="preserve">
+    <value>Agregar amig@</value>
+  </data>
+  <data name="LobbyBeginText" xml:space="preserve">
+    <value>¡Iniciar!</value>
+  </data>
+  <data name="LobbyExpellText" xml:space="preserve">
+    <value>Expulsar</value>
+  </data>
+  <data name="LobbyGameBeginningText" xml:space="preserve">
+    <value>Inicio de Partida</value>
+  </data>
+  <data name="Lobby_AddPlayer" xml:space="preserve">
+    <value>Agregar Jugador</value>
   </data>
   <data name="LoginDontYouHaveAccount" xml:space="preserve">
     <value>¿No tienes cuenta?</value>
@@ -168,6 +213,21 @@
   <data name="LoginUserText" xml:space="preserve">
     <value>Usuario</value>
   </data>
+  <data name="Login_ChangeLanguage" xml:space="preserve">
+    <value>Cambiar</value>
+  </data>
+  <data name="Login_ChangeLanguageTitle" xml:space="preserve">
+    <value>Cambiar Idioma</value>
+  </data>
+  <data name="Login_LanguageText" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Login_Reboot" xml:space="preserve">
+    <value>El cambio de idioma se aplicará en el próximo inicio de la aplicación</value>
+  </data>
+  <data name="Login_RebootMessage" xml:space="preserve">
+    <value>Para aplicar el cambio de idioma es necesario reiniciar la aplicación, ¿Desea reiniciar ahora?</value>
+  </data>
   <data name="Main_CreateMatch" xml:space="preserve">
     <value>Crear partida</value>
   </data>
@@ -176,6 +236,9 @@
   </data>
   <data name="Main_JoinMatch" xml:space="preserve">
     <value>Unirse a partida</value>
+  </data>
+  <data name="PlayerStatistics_Title" xml:space="preserve">
+    <value>Estadísticas del jugador</value>
   </data>
   <data name="RegisterEmailRequiredText" xml:space="preserve">
     <value>El correo electrónico es obligatorio</value>
@@ -218,6 +281,39 @@
   </data>
   <data name="Register_RegisterTitle" xml:space="preserve">
     <value>Registro</value>
+  </data>
+  <data name="Settings_MusicTitle" xml:space="preserve">
+    <value>Música</value>
+  </data>
+  <data name="Settings_SettingsTitle" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="Settings_SoundTitle" xml:space="preserve">
+    <value>Sonido</value>
+  </data>
+  <data name="Setting_VolumeTitle" xml:space="preserve">
+    <value>Volumen</value>
+  </data>
+  <data name="Statistics_1stPlace" xml:space="preserve">
+    <value>1ro</value>
+  </data>
+  <data name="Statistics_2nd" xml:space="preserve">
+    <value>2do</value>
+  </data>
+  <data name="Statistics_3rd" xml:space="preserve">
+    <value>3ro</value>
+  </data>
+  <data name="Statistics_4th" xml:space="preserve">
+    <value>4to</value>
+  </data>
+  <data name="Statistics_EliminatedArchs" xml:space="preserve">
+    <value>Arqueólogos eliminados</value>
+  </data>
+  <data name="Statistics_SupremeBoss" xml:space="preserve">
+    <value>Jefes Supremos eliminados</value>
+  </data>
+  <data name="Statistics_Title" xml:space="preserve">
+    <value>Estadísticas de la partida</value>
   </data>
   <data name="UserRequiredText" xml:space="preserve">
     <value>El usuario es obligatorio</value>

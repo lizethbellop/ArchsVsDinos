@@ -61,6 +61,42 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Editar.
+        /// </summary>
+        public static string Account_EditText {
+            get {
+                return ResourceManager.GetString("Account_EditText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ver Estadísticas.
+        /// </summary>
+        public static string Account_SeeStatistics {
+            get {
+                return ResourceManager.GetString("Account_SeeStatistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Redes Sociales.
+        /// </summary>
+        public static string Account_SocialMediaTitle {
+            get {
+                return ResourceManager.GetString("Account_SocialMediaTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tu perfil.
+        /// </summary>
+        public static string Account_YourAccountTitle {
+            get {
+                return ResourceManager.GetString("Account_YourAccountTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Agregar amigo por correo.
         /// </summary>
         public static string Friends_AddFriendByEmail {
@@ -133,11 +169,155 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Salir.
+        /// </summary>
+        public static string GlobalExitText {
+            get {
+                return ResourceManager.GetString("GlobalExitText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ID de partida.
         /// </summary>
         public static string GlobalGameId {
             get {
                 return ResourceManager.GetString("GlobalGameId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Chat Grupal.
+        /// </summary>
+        public static string GlobalGroupChatText {
+            get {
+                return ResourceManager.GetString("GlobalGroupChatText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Regresar.
+        /// </summary>
+        public static string GlobalReturnText {
+            get {
+                return ResourceManager.GetString("GlobalReturnText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Guardar.
+        /// </summary>
+        public static string GlobalSaveText {
+            get {
+                return ResourceManager.GetString("GlobalSaveText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Inglés.
+        /// </summary>
+        public static string Language_English {
+            get {
+                return ResourceManager.GetString("Language_English", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Español.
+        /// </summary>
+        public static string Language_Spanish {
+            get {
+                return ResourceManager.GetString("Language_Spanish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Agregar Jugador.
+        /// </summary>
+        public static string Lobby_AddPlayer {
+            get {
+                return ResourceManager.GetString("Lobby_AddPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Agregar amig@.
+        /// </summary>
+        public static string LobbyAddFriendText {
+            get {
+                return ResourceManager.GetString("LobbyAddFriendText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Iniciar!.
+        /// </summary>
+        public static string LobbyBeginText {
+            get {
+                return ResourceManager.GetString("LobbyBeginText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Expulsar.
+        /// </summary>
+        public static string LobbyExpellText {
+            get {
+                return ResourceManager.GetString("LobbyExpellText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Inicio de Partida.
+        /// </summary>
+        public static string LobbyGameBeginningText {
+            get {
+                return ResourceManager.GetString("LobbyGameBeginningText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cambiar.
+        /// </summary>
+        public static string Login_ChangeLanguage {
+            get {
+                return ResourceManager.GetString("Login_ChangeLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cambiar Idioma.
+        /// </summary>
+        public static string Login_ChangeLanguageTitle {
+            get {
+                return ResourceManager.GetString("Login_ChangeLanguageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Idioma.
+        /// </summary>
+        public static string Login_LanguageText {
+            get {
+                return ResourceManager.GetString("Login_LanguageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El cambio de idioma se aplicará en el próximo inicio de la aplicación.
+        /// </summary>
+        public static string Login_Reboot {
+            get {
+                return ResourceManager.GetString("Login_Reboot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Para aplicar el cambio de idioma es necesario reiniciar la aplicación, ¿Desea reiniciar ahora?.
+        /// </summary>
+        public static string Login_RebootMessage {
+            get {
+                return ResourceManager.GetString("Login_RebootMessage", resourceCulture);
             }
         }
         
@@ -237,6 +417,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Main_JoinMatch {
             get {
                 return ResourceManager.GetString("Main_JoinMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Estadísticas del jugador.
+        /// </summary>
+        public static string PlayerStatistics_Title {
+            get {
+                return ResourceManager.GetString("PlayerStatistics_Title", resourceCulture);
             }
         }
         
@@ -363,6 +552,105 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string RegisterInvalidEmailText {
             get {
                 return ResourceManager.GetString("RegisterInvalidEmailText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Volumen.
+        /// </summary>
+        public static string Setting_VolumeTitle {
+            get {
+                return ResourceManager.GetString("Setting_VolumeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Música.
+        /// </summary>
+        public static string Settings_MusicTitle {
+            get {
+                return ResourceManager.GetString("Settings_MusicTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Configuración.
+        /// </summary>
+        public static string Settings_SettingsTitle {
+            get {
+                return ResourceManager.GetString("Settings_SettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Sonido.
+        /// </summary>
+        public static string Settings_SoundTitle {
+            get {
+                return ResourceManager.GetString("Settings_SoundTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a 1ro.
+        /// </summary>
+        public static string Statistics_1stPlace {
+            get {
+                return ResourceManager.GetString("Statistics_1stPlace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a 2do.
+        /// </summary>
+        public static string Statistics_2nd {
+            get {
+                return ResourceManager.GetString("Statistics_2nd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a 3ro.
+        /// </summary>
+        public static string Statistics_3rd {
+            get {
+                return ResourceManager.GetString("Statistics_3rd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a 4to.
+        /// </summary>
+        public static string Statistics_4th {
+            get {
+                return ResourceManager.GetString("Statistics_4th", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Arqueólogos eliminados.
+        /// </summary>
+        public static string Statistics_EliminatedArchs {
+            get {
+                return ResourceManager.GetString("Statistics_EliminatedArchs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Jefes Supremos eliminados.
+        /// </summary>
+        public static string Statistics_SupremeBoss {
+            get {
+                return ResourceManager.GetString("Statistics_SupremeBoss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Estadísticas de la partida.
+        /// </summary>
+        public static string Statistics_Title {
+            get {
+                return ResourceManager.GetString("Statistics_Title", resourceCulture);
             }
         }
         

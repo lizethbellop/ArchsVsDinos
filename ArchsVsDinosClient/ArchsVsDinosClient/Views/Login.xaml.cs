@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Views;
+﻿using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,27 @@ namespace ArchsVsDinosClient
             new MainWindow().ShowDialog();
             this.Close();
         }
+
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CbLanguage.SelectedIndex == 0)
+            {
+                Properties.Settings.Default.languageCode = "es-MX";
+
+            }
+            else
+            {
+                Properties.Settings.Default.languageCode = "en-US";
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void ChangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            new MainWindow().ShowDialog();
+        }
+
 
     }
 }
