@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Utils\SoundButton.cs" />
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>
     </Compile>
@@ -194,6 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\tableWood.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Sounds\rockSound.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -28,5 +28,11 @@ namespace ArchsVsDinosClient.Views
         {
             this.Close();   
         }
+
+        private void Btn_PersonalStatistics(object sender, RoutedEventArgs e)
+        {
+            new PersonalStatistics().ShowDialog();
+        }
+
     }
 }

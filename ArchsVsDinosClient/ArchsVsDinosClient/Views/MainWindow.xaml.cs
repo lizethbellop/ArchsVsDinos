@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Media;
+using ArchsVsDinosClient.Utils;
 
 namespace ArchsVsDinosClient
 {
@@ -41,5 +43,10 @@ namespace ArchsVsDinosClient
             new Settings().ShowDialog();
         }
 
+        /*private void Btn_MouseEnter(object sender, MouseEventArgs e)
+        {
+            SoundButton sb = new SoundButton();
+            sb.playButtonSound();
+        }*/
     }
 }

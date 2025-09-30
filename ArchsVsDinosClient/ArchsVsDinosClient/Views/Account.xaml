@@ -188,7 +188,7 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
+                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Click ="Btn_PersonalStatistics" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
                 BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rock1.png"/>
