@@ -23,5 +23,11 @@ namespace ArchsVsDinosClient.Views
         {
             InitializeComponent();
         }
+
+        private void Btn_Cancel(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
     }
 }

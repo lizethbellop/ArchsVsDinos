@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="Login" Height="500" Width="500">
+        Title="Login" Height="530" Width="500">
 
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -34,7 +34,7 @@
 
         <Image Grid.Row="0" Source="/Resources/Images/logo.png" Stretch="Uniform" HorizontalAlignment="Center" Height="80"/>
         <StackPanel Grid.Row="1" Margin="0,10" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.Login_LanguageText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" HorizontalAlignment="Left"/>
+            <Label Content="{x:Static language:Lang.Login_LanguageText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
             <Grid Width="268">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10*"/>
@@ -52,7 +52,7 @@
 
                 <Button x:Name="BtnChangeLanguage" Grid.Column="2" Content="{x:Static language:Lang.Login_ChangeLanguage}" Height="30" 
                         Background="#FF6ABA2A" Foreground="White" FontWeight="Bold" 
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="12"
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14"
                         Click="ChangeButton_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">

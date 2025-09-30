@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="FriendsMainMenu" Height="450" Width="500">
+        Title="FriendsMainMenu" Height="500" Width="550">
 
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -23,10 +23,10 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="0,10,0,15" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.FriendsMainMenu_FriendsTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="32" FontWeight="Bold" Foreground="#FF196572"/>
+            <Label Content="{x:Static language:Lang.FriendsMainMenu_FriendsTitle}" FontFamily="{StaticResource Ouroboros}" FontSize="32" FontWeight="Bold" Foreground="#FF2C5122"/>
         </StackPanel>
 
-        <Border Grid.Row="1" CornerRadius="10" Background="White" BorderBrush="#FF196572" BorderThickness="2" Margin="0,0,0,15">
+        <Border Grid.Row="1" CornerRadius="10" BorderBrush="#FF196572" BorderThickness="2" Margin="0,0,0,10" Background="White">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -38,6 +38,9 @@
                 </Border>
 
                 <ListBox Grid.Row="1" x:Name="LbFriends" BorderThickness="0" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="5">
+                    <ListBox.Foreground>
+                        <ImageBrush/>
+                    </ListBox.Foreground>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border Margin="5" Padding="10" CornerRadius="8" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1">
@@ -100,19 +103,67 @@
         </Border>
 
         <StackPanel Grid.Row="2" Margin="0,0,0,15" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.Friends_AddFriendByEmail}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Foreground="#FF196572" HorizontalAlignment="Center"/>
+            <Label Content="{x:Static language:Lang.Friends_AddFriendByEmail}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" HorizontalAlignment="Center"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="300" Height="29">
                 <TextBox x:Name="TbEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" Text="example@email.com"/>
             </Border>
         </StackPanel>
 
         <UniformGrid Grid.Row="3" Columns="2" HorizontalAlignment="Center">
-            <Button Content="{x:Static language:Lang.Friends_Invite}" Margin="5" Height="35" Width="180"
-                    Background="#FF6ABA2A" Foreground="White" FontWeight="Bold"
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16"/>
-            <Button Content="{x:Static language:Lang.GlobalCloseText}" Margin="5" Height="35" Width="180" 
-                    Background="#FF4877C2" Foreground="White" FontWeight="Bold" 
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16"/>
+            <Button Content="{x:Static language:Lang.Friends_Invite}" Margin="5" Height="55" Width="100" Foreground="White" FontWeight="Bold"
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
+                </Button.Background>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="13">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Content="{x:Static language:Lang.GlobalCloseText}" Click="Btn_Close" Margin="5" Height="55" Width="100" Foreground="White" FontWeight="Bold" 
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
+                </Button.Background>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="13">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </UniformGrid>
     </Grid>
 </Window>

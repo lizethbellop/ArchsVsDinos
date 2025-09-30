@@ -10,7 +10,7 @@
 
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FFF0F0F0" Offset="0"/>
+            <GradientStop Color="#FF7FE0BD" Offset="0"/>
             <GradientStop Color="#FFE0E0E0" Offset="1"/>
         </LinearGradientBrush>
     </Window.Background>
@@ -23,120 +23,157 @@
             <RowDefinition Height="Auto" MinHeight="55"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="{x:Static language:Lang.Account_YourAccountTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="32" FontWeight="Bold" Foreground="Black" Margin="0,10,0,20"/>
+        <Label Grid.Row="0" Content="{x:Static language:Lang.Account_YourAccountTitle}" FontFamily="{StaticResource Ouroboros}" FontSize="48" FontWeight="Bold" Foreground="#FF096519" Margin="0,0,0,10"/>
 
         <Grid Grid.Row="1">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" VerticalAlignment="Top">
-                <Label Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" Margin="0,0,0,5"/>
-                <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
+            <Grid Grid.Column="0">
+
+                <StackPanel VerticalAlignment="Top">
+                    <Label Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
+                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
 
 
-                <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" Margin="0,0,0,5"/>
-                <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
+                    <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
+                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
 
-                <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" Margin="0,0,0,5"/>
-                <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
+                    <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
+                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
 
-                <Label Content="{x:Static language:Lang.Account_SocialMediaTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" Margin="0,0,0,5"/>
+                    <Label Content="{x:Static language:Lang.Account_SocialMediaTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="f" Width="40" Height="40" FontSize="20" FontWeight="Bold" Margin="0,0,10,0"
-                            Background="#FF3B5998" Foreground="White" BorderBrush="Transparent"
-                            FontFamily="Arial" ToolTip="Facebook">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="f" Width="40" Height="40" FontSize="20" FontWeight="Bold" Margin="0,0,10,0"
+                                Background="#FF3B5998" Foreground="White" BorderBrush="Transparent"
+                                FontFamily="Arial" ToolTip="Facebook">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}"
+                                            CornerRadius="20" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Content="📷" Width="40" Height="40" FontSize="18" Margin="0,0,10,0"
+                                Background="#FFC13584" Foreground="White" BorderBrush="Transparent" 
+                                ToolTip="Instagram">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                            CornerRadius="20" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Content="𝕏" Width="40" Height="40" FontSize="18" FontWeight="Bold" Margin="0,0,10,0"
+                                Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
+                                FontFamily="Arial" ToolTip="X (Twitter)">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                            CornerRadius="20" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Content="♪" Width="40" Height="40" FontSize="18" Margin="0,0,10,0"
+                                Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
+                                ToolTip="TikTok">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                            CornerRadius="20" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            
+            <Grid Grid.Column="1">
+                <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20,0,0,0">
+                    <Border Width="200" Height="200" CornerRadius="150" BorderBrush="#FF196572" BorderThickness="3" Background="White">
+                        <Ellipse Width="180" Height="180">
+                            <Ellipse.Fill>
+                                <SolidColorBrush Color="#FFE0E0E0"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </Border>
+
+                    <Button Content="{x:Static language:Lang.Account_EditText}" Margin="0,10,0,0" Height="50" Width="100"
+                      Foreground="White" FontWeight="Bold"
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18">
+                        <Button.Background>
+                            <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                        </Button.Background>
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" Background="{TemplateBinding Background}"
-                                        CornerRadius="20" BorderThickness="0">
+                                <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                    CornerRadius="5" BorderThickness="0">
                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
-
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter TargetName="border" Property="Opacity" Value="0.8"/>
                                     </Trigger>
-                                </ControlTemplate.Triggers>
-
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                    <Button Content="📷" Width="40" Height="40" FontSize="18" Margin="0,0,10,0"
-                            Background="#FFC13584" Foreground="White" BorderBrush="Transparent" 
-                            ToolTip="Instagram">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                        CornerRadius="20" BorderThickness="0">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                    <Button Content="𝕏" Width="40" Height="40" FontSize="18" FontWeight="Bold" Margin="0,0,10,0"
-                            Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
-                            FontFamily="Arial" ToolTip="X (Twitter)">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                        CornerRadius="20" BorderThickness="0">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                    <Button Content="♪" Width="40" Height="40" FontSize="18" Margin="0,0,10,0"
-                            Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
-                            ToolTip="TikTok">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                        CornerRadius="20" BorderThickness="0">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="Opacity" Value="0.6"/>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
                 </StackPanel>
-            </StackPanel>
+            </Grid>
+            
+        </Grid>
 
-            <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="20,0,0,0">
-                <Border Width="150" Height="150" CornerRadius="75" BorderBrush="#FF196572" BorderThickness="3" Background="White">
-                    <Ellipse Width="144" Height="144">
-                        <Ellipse.Fill>
-                            <SolidColorBrush Color="#FFE0E0E0"/>
-                        </Ellipse.Fill>
-                    </Ellipse>
-                </Border>
-
-                <Button Content="{x:Static language:Lang.Account_EditText}" Margin="0,10,0,0" Height="30" Width="100"
-                        Background="#FF196572" Foreground="White" FontWeight="Bold"
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14">
+        <Grid Grid.Row="2">
+            <UniformGrid Columns="3" HorizontalAlignment="Right" Width="400">
+                <Button Content="{x:Static language:Lang.GlobalSaveText}" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
+                    </Button.Background>
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                    CornerRadius="5" BorderThickness="0">
+                                CornerRadius="5" BorderThickness="0">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
@@ -150,74 +187,55 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-            </StackPanel>
-        </Grid>
 
-        <UniformGrid Grid.Row="2" Columns="3" HorizontalAlignment="Left" Margin="341,5,0,5" Width="419">
-            <Button Content="Guardar" Margin="5" Height="32" Width="120" 
-                    Background="#FF196572" Foreground="White" FontWeight="Bold" 
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                CornerRadius="5" BorderThickness="0">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
-            <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Margin="5" Height="32" Width="120" 
-                Background="#FF6ABA2A" Foreground="White" FontWeight="Bold" 
-                BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
+                BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rock1.png"/>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" 
                     CornerRadius="5" BorderThickness="0">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
 
-            <Button Content="Cancelar" Margin="5" Height="32" Width="120" 
-                    Background="#FF4877C2" Foreground="White" FontWeight="Bold" 
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" 
                                 CornerRadius="5" BorderThickness="0">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-
-        </UniformGrid>
-
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </UniformGrid>
+        </Grid>
+        
     </Grid>
+
 </Window>

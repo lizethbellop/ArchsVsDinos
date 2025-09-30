@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArchsVsDinosClient.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,21 @@ namespace ArchsVsDinosClient
         {
             InitializeComponent();
         }
-        
+
+        private void Btn_Account(object sender, RoutedEventArgs e)
+        {
+            new Account().ShowDialog();
+        }
+
+        private void Btn_Friends(object sender, RoutedEventArgs e)
+        {
+            new FriendsMainMenu().ShowDialog();
+        }
+
+        private void Btn_Settings(object sender, RoutedEventArgs e)
+        {
+            new Settings().ShowDialog();
+        }
 
     }
 }
