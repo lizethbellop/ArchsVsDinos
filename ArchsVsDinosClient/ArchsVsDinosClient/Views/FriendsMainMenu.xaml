@@ -102,42 +102,48 @@
             </Grid>
         </Border>
 
-        <StackPanel Grid.Row="2" Margin="0,0,0,15" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.Friends_AddFriendByEmail}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" HorizontalAlignment="Center"/>
-            <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="300" Height="29">
-                <TextBox x:Name="TbEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" Text="example@email.com"/>
-            </Border>
+        <StackPanel Grid.Row="2"  Margin="0,0,0,-30" HorizontalAlignment="Center">
+            <UniformGrid>
+                <Label Content="{x:Static language:Lang.Friends_AddFriend}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" HorizontalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Margin="20,0,20,0" HorizontalAlignment="Center">
+                <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="200" Height="29">
+                    <TextBox x:Name="TbEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" Text="example@email.com"/>
+                </Border>
+                <Button Content="{x:Static language:Lang.Friends_Add}" Height="45" Width="80" Foreground="White" FontWeight="Bold"
+                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="13">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </UniformGrid>
+
         </StackPanel>
 
-        <UniformGrid Grid.Row="3" Columns="2" HorizontalAlignment="Center">
-            <Button Content="{x:Static language:Lang.Friends_Invite}" Margin="5" Height="55" Width="100" Foreground="White" FontWeight="Bold"
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
-                <Button.Background>
-                    <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
-                </Button.Background>
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="13">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
-            <Button Content="{x:Static language:Lang.GlobalCloseText}" Click="Btn_Close" Margin="5" Height="55" Width="100" Foreground="White" FontWeight="Bold" 
+        <UniformGrid Grid.Row="3" HorizontalAlignment="Center">
+
+            <Button Content="{x:Static language:Lang.GlobalCloseText}" Click="Btn_Close" Margin="5" Height="60" Width="120" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
                 <Button.Background>
                     <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>

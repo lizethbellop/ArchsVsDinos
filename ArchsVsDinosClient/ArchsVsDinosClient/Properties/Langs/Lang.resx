@@ -135,11 +135,8 @@
   <data name="FriendsMainMenu_FriendsTitle" xml:space="preserve">
     <value>Lista de amigos</value>
   </data>
-  <data name="Friends_AddFriendByEmail" xml:space="preserve">
-    <value>Agregar amigo por correo</value>
-  </data>
-  <data name="Friends_Invite" xml:space="preserve">
-    <value>Invitar</value>
+  <data name="Friends_AddFriend" xml:space="preserve">
+    <value>Agregar amigo </value>
   </data>
   <data name="Friends_MyFriends" xml:space="preserve">
     <value>Mis Amigos</value>
@@ -188,6 +185,9 @@
   </data>
   <data name="Lobby_AddPlayer" xml:space="preserve">
     <value>Agregar Jugador</value>
+  </data>
+  <data name="Lobby_InviteByEmail" xml:space="preserve">
+    <value>Invitar jugador por correo</value>
   </data>
   <data name="LoginDontYouHaveAccount" xml:space="preserve">
     <value>¿No tienes cuenta?</value>
@@ -317,5 +317,11 @@
   </data>
   <data name="UserRequiredText" xml:space="preserve">
     <value>El usuario es obligatorio</value>
+  </data>
+  <data name="Friends_Invite" xml:space="preserve">
+    <value>Invitar</value>
+  </data>
+  <data name="Friends_Add" xml:space="preserve">
+    <value>Agregar</value>
   </data>
 </root>

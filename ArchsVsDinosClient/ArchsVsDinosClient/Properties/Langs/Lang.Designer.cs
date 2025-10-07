@@ -97,11 +97,20 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Agregar amigo por correo.
+        ///   Busca una cadena traducida similar a Agregar.
         /// </summary>
-        public static string Friends_AddFriendByEmail {
+        public static string Friends_Add {
             get {
-                return ResourceManager.GetString("Friends_AddFriendByEmail", resourceCulture);
+                return ResourceManager.GetString("Friends_Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Agregar amigo .
+        /// </summary>
+        public static string Friends_AddFriend {
+            get {
+                return ResourceManager.GetString("Friends_AddFriend", resourceCulture);
             }
         }
         
@@ -237,6 +246,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_AddPlayer {
             get {
                 return ResourceManager.GetString("Lobby_AddPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Invitar jugador por correo.
+        /// </summary>
+        public static string Lobby_InviteByEmail {
+            get {
+                return ResourceManager.GetString("Lobby_InviteByEmail", resourceCulture);
             }
         }
         
