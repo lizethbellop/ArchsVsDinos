@@ -56,3 +56,14 @@ Desktop.ini
 $RECYCLE.BIN/
 
 ConnectionStrings.config
+
+# Generated Logs
+logs/
+*.log
+
+
+# Archivos de usuario de Visual Studio
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
