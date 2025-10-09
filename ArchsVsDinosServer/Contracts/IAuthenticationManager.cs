@@ -13,4 +13,5 @@ namespace Contracts
         [OperationContract]
         bool Login(string username, string password);
     }
+
 }
