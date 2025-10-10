@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="Account" Height="520" Width="800">
+        Title="Account" Height="550" Width="800">
 
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -23,7 +23,7 @@
             <RowDefinition Height="Auto" MinHeight="55"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="{x:Static language:Lang.Account_YourAccountTitle}" FontFamily="{StaticResource Ouroboros}" FontSize="48" FontWeight="Bold" Foreground="#FF096519" Margin="0,0,0,10"/>
+        <Label Grid.Row="0" Content="{x:Static language:Lang.Account_YourAccountTitle}" FontFamily="{StaticResource Ouroboros}" FontSize="36" FontWeight="Bold" Foreground="#FF096519" Margin="0,0,0,10"/>
 
         <Grid Grid.Row="1">
 
@@ -35,12 +35,15 @@
             <Grid Grid.Column="0">
 
                 <StackPanel VerticalAlignment="Top">
+                    <Label Content="{x:Static language:Lang.Register_Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
+                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,0"/>
+
                     <Label Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
-                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
+                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,0"/>
 
 
                     <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
-                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
+                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,0"/>
 
                     <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
                     <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>

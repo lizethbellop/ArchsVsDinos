@@ -556,6 +556,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Nombre de usuario.
+        /// </summary>
+        public static string Register_Username {
+            get {
+                return ResourceManager.GetString("Register_Username", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a El correo electrónico es obligatorio.
         /// </summary>
         public static string RegisterEmailRequiredText {

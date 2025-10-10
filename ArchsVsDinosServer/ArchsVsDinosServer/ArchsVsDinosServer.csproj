@@ -137,6 +137,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="BusinessLogic\Authentication.cs" />
+    <Compile Include="BusinessLogic\Register.cs" />
     <Compile Include="CardBody.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
@@ -146,6 +148,7 @@
     <Compile Include="Configuration.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Default\InitialConfig.cs" />
     <Compile Include="FriendRequest.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
@@ -168,6 +171,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthenticationManager.cs" />
+    <Compile Include="Services\RegisterManager.cs" />
     <Compile Include="Strike.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>

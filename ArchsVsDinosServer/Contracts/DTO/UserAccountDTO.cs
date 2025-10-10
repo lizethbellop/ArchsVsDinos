@@ -8,16 +8,22 @@ using System.Threading.Tasks;
 namespace Contracts.DTO
 {
     [DataContract]
-    public class UserAccount
+    public class UserAccountDTO
     {
+
         [DataMember]
-        public int idUser { get; set; }
         public string name { get; set; }
+        [DataMember]
         public string email { get; set; }
+        [DataMember]
         public string password { get; set; }
+        [DataMember]
         public string username { get; set; }
+        [DataMember]
         public string nickname { get; set; }
+        [DataMember]
         public int idConfiguration { get; set; }
+        [DataMember]
         public int idPlayer { get; set; }
 
     }

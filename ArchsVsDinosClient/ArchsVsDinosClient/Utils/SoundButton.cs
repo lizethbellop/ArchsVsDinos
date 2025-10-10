@@ -9,13 +9,18 @@ using System.IO;
 
 namespace ArchsVsDinosClient.Utils
 {
-    internal class SoundButton
+    public static class SoundButton
     {
+        private static string soundPatch;
 
-        public void playButtonSound()
+        static SoundButton()
         {
-            SoundPlayer rockSound = new SoundPlayer("ArchsVsDinosClient\\Resources\\Sounds\\rockSound.wav");
-            rockSound.Play(); 
+            soundPatch = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Sounds", "rockSound.wav");
+        }
+        public static void playButtonSound()
+        {
+            SoundPlayer player = new SoundPlayer(soundPatch);
+            player.Play();
         }
     }
 }

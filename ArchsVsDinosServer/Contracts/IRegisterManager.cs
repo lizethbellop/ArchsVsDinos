@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -7,21 +8,12 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    internal class IRegisterManager
-    {
         [ServiceContract]
         public interface IRegisterManager
         {
             [OperationContract]
-            bool Register(UserAccount userAccount);
-
-            [OperationContract]
-            bool SendEmailRegister(string email);
-
-            [OperationContract]
-            bool checkCode(string code);
-
+            bool Register(UserAccountDTO userAccount);
 
         }
-    }
+
 }

@@ -15,7 +15,7 @@ namespace ArchsVsDinosServer.Services
         public bool Login(string username, string password)
         {
             Authentication autentication = new Authentication();
-            bool confirmation = autentication.Login(username, password);
+            return autentication.Login(username, password);
         }
     }
 }

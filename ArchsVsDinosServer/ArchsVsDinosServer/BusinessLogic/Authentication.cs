@@ -8,7 +8,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 {
     public class Authentication
     {
-        public static bool Login(string username, string password)
+        public bool Login(string username, string password)
         {
             try
             {

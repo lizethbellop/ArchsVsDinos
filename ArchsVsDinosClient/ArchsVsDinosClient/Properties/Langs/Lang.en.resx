@@ -324,4 +324,7 @@
   <data name="Friends_Add" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="Register_Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
 </root>
