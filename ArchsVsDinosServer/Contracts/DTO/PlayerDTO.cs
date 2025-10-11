@@ -17,11 +17,17 @@ namespace Contracts.DTO
         public string instagram { get; set; }
         [DataMember]
         public string x { get; set; }
+
+        [DataMember]
+        public string tiktok { get; set; }
         [DataMember]
         public int totalWins { get; set; }
         [DataMember]
         public int totalLosses { get; set; }
         [DataMember]
         public int totalPoints { get; set; }
+
+        [DataMember]
+        public string profilePicture { get; set; }
     }
 }

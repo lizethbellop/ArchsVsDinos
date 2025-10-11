@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="ArchsVsDinosModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="ArchsVsDinosModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="CardBody">
           <Key>
             <PropertyRef Name="idCardBody" />
@@ -90,6 +90,8 @@
           <Property Name="totalWins" Type="int" Nullable="false" />
           <Property Name="totalLosses" Type="int" Nullable="false" />
           <Property Name="totalPoints" Type="int" Nullable="false" />
+          <Property Name="tiktok" Type="varchar" MaxLength="45" />
+          <Property Name="profilePicture" Type="varchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="Strike">
           <Key>
@@ -331,8 +333,7 @@
             <End Role="UserHasStrike" EntitySet="UserHasStrike" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ArchsVsDinosModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -431,6 +432,8 @@
           <Property Name="totalPoints" Type="Int32" Nullable="false" />
           <NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="Player" ToRole="MatchParticipants" />
           <NavigationProperty Name="UserAccount" Relationship="Self.FK__UserAccou__idPla__44FF419A" FromRole="Player" ToRole="UserAccount" />
+          <Property Name="tiktok" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="profilePicture" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Strike">
           <Key>
@@ -740,6 +743,8 @@
           <EntitySetMapping Name="Player">
             <EntityTypeMapping TypeName="ArchsVsDinosModel.Player">
               <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="profilePicture" ColumnName="profilePicture" />
+                <ScalarProperty Name="tiktok" ColumnName="tiktok" />
                 <ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
                 <ScalarProperty Name="facebook" ColumnName="facebook" />
                 <ScalarProperty Name="instagram" ColumnName="instagram" />

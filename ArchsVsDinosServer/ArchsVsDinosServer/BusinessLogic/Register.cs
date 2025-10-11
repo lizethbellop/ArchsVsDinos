@@ -13,7 +13,7 @@ namespace ArchsVsDinosServer.BusinessLogic
     internal class Register
     {
 
-        private static List<VerificationCode> verificationCode = new List<VerificationCode>();
+        /*private static List<VerificationCode> verificationCode = new List<VerificationCode>();
         /*
         public bool Register(UserAccountDTO userAccountDTO)
         {

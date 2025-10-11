@@ -44,9 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\ConfigurationDTO.cs" />
+    <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
+    <Compile Include="DTO\Response\UpdateResponse.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
+    <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="IAuthenticationManager.cs" />
+    <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

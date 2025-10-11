@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0FD2061C-56EF-4467-B454-3EAC075A1EAB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>ArchsVsDinosServer</RootNamespace>
     <AssemblyName>ArchsVsDinosServer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -34,6 +34,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BCrypt.Net-Next, Version=4.0.3.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
@@ -138,6 +141,7 @@
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="BusinessLogic\Authentication.cs" />
+    <Compile Include="BusinessLogic\ProfileManagement.cs" />
     <Compile Include="BusinessLogic\Register.cs" />
     <Compile Include="CardBody.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
@@ -158,10 +162,13 @@
     <Compile Include="GeneralMatch.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IDbContext.cs" />
+    <Compile Include="Interfaces\ILoggerHelper.cs" />
+    <Compile Include="Interfaces\ISecurityHelper.cs" />
+    <Compile Include="Interfaces\IValidationHelper.cs" />
     <Compile Include="MatchParticipants.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\UserDTO.cs" />
     <Compile Include="Music.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
@@ -184,7 +191,13 @@
     <Compile Include="UserAccount.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
+    <Compile Include="Utils\ValidationHelper.cs" />
+    <Compile Include="Wrappers\DbContextWrapper.cs" />
+    <Compile Include="Wrappers\LoggerHelperWrapper.cs" />
+    <Compile Include="Wrappers\SecurityHelperWrapper.cs" />
+    <Compile Include="Wrappers\ValidationHelperWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -198,6 +211,7 @@
     <None Include="ConnectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="log4net.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -215,7 +229,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\Response\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj">
       <Project>{1f499930-12a6-4c79-9820-5cc501643d2d}</Project>
