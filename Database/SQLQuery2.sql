@@ -126,5 +126,10 @@ CREATE TABLE MatchParticipants (
 );
 GO
 
+ALTER TABLE Player
+ADD tiktok VARCHAR(45) NULL;
+
+ALTER TABLE Player
+ADD profilePicture VARCHAR(255) NULL;
 
 
