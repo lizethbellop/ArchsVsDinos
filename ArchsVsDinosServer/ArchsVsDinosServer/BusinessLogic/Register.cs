@@ -7,18 +7,29 @@ using System.Net.Mail;
 using Contracts.DTO;
 using System.Net;
 using System.Data.Entity.Core;
+using ArchsVsDinosServer.Default;
+using System.Transactions;
+using ArchsVsDinosServer.Utils;
+using System.ServiceModel.Security.Tokens;
+
 
 namespace ArchsVsDinosServer.BusinessLogic
 {
     internal class Register
     {
 
-        /*private static List<VerificationCode> verificationCode = new List<VerificationCode>();
-        /*
-        public bool Register(UserAccountDTO userAccountDTO)
+        private static List<VerificationCode> verificationCodes = new List<VerificationCode>();
+        
+        public bool RegisterUser(UserAccountDTO userAccountDTO, string code)
         {
             try
             {
+
+                if (!CheckCode(userAccountDTO.email, code))
+                { 
+                    return false;
+                }
+
                 using (var scope = new TransactionScope())
                 using (var context = new ArchsVsDinosConnection())
                 {
@@ -33,19 +44,18 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     var userAccount = new UserAccount
                     {
-                        email = userAccountDTO.Email,
-                        password = SecurityHelper.HashPassword(userAccountDTO.Password),
-                        name = userAccountDTO.Name,
-                        username = userAccountDTO.Username,
-                        nickname = userAccountDTO.Nickname,
-                        idConfiguration = configuration.IdConfiguration,
-                        idPlayer = player.IdPlayer
+                        email = userAccountDTO.email,
+                        password = SecurityHelper.HashPassword(userAccountDTO.password),
+                        name = userAccountDTO.name,
+                        username = userAccountDTO.username,
+                        nickname = userAccountDTO.nickname,
+                        idConfiguration = configuration.idConfiguration,
+                        idPlayer = player.idPlayer
                     };
-
-                    context.UserAccount.Add(userAccount);
-                    context.SaveChanges();
-
-                    scope.Complete();
+                    
+                     context.UserAccount.Add(userAccount);
+                     context.SaveChanges();
+                     scope.Complete();
 
                     return true;
                 }
@@ -62,58 +72,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        public bool SendEmailRegister(string email)
-        {
-            try
-            {
-                string verificationCode = GenerateVerificationCode();
-                
-                var fromAddress = new MailAddress("archvsdinos@outlook.com", "ArchVsDinos");
-                const string fromPassword = "tecnolizabraham2005*";
-                const string subject = "Account Verification Arch vs Dinos";
-                var toAddress = new MailAddress(email);
-
-                string body = $"Verification code\n\nYour verification code is: {verificationCode}\n\n" +
-                      "Enter this code into the game to confirm your account.\n\n" +
-                      "If you did not request this, please ignore this message.";
-
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.office365.com",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-                };
-
-                using (var message = new MailMessage(fromAddress, toAddress)
-                {
-                    Subject = subject,
-                    Body = body
-                })
-                {
-                    smtp.Send(message);
-                }
-
-                verificationCode.Add(new VerificationCode
-                {
-                    Email = email,
-                    Code = verificationCode,
-                    Expiration = DateTime.Now.AddMinutes(10)
-                });
-
-                return true;
-
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-        }
-
-        private string GenerateVerificationCode()
+        public string GenerateVerificationCode()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
@@ -128,20 +87,58 @@ namespace ArchsVsDinosServer.BusinessLogic
             return sb.ToString();
         }
 
+        public bool SendEmailRegister(string email)
+        {
+            try
+            {
+                string verificationCode = GenerateVerificationCode();
+                
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress("archvsdinos@outlook.com");
+                mail.To.Add(email);
+                mail.Subject = "Verification code - Arch vs Dinos";
+                mail.Body = $"Your verification code is: {verificationCode}";
+                mail.IsBodyHtml = false;
+
+                SmtpClient smtp = new SmtpClient("smtp.office365.com", 587);
+                smtp.Credentials = new NetworkCredential("archvsdinos@outlook.com", "wipgpinapgzvunos");
+                smtp.EnableSsl = true;
+                smtp.Send(mail);
+
+               
+
+                verificationCodes.Add(new VerificationCode
+                {
+                    Email = email,
+                    Code = verificationCode,
+                    Expiration = DateTime.Now.AddMinutes(10)
+                });
+
+                return true;
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error sending email : {ex.Message}");
+                return false;
+            }
+        }
+
+
         public bool CheckCode(string email, string code)
         {
-            var dataCheck = verificationCode.Find(x => x.Email == email && x.Code == code);
+            var dataCheck = verificationCodes.Find(x => x.Email == email && x.Code == code);
         
-            if(dataCheck != null && dataCheck.Expiration > DateTime.Now)
+            if (dataCheck != null && dataCheck.Expiration > DateTime.Now)
             {
-                verificationCode.Remove(dataCheck);
+                verificationCodes.Remove(dataCheck);
                 return true;
             }
             else
             {
                 return false;
             }
-        }*/
+        }
 
     }
 

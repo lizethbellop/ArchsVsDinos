@@ -8,14 +8,14 @@ using Contracts;
 using Contracts.DTO;
 
 namespace ArchsVsDinosServer.Services
-{/*
+{
     public class RegisterManager : IRegisterManager
     {
-        public bool Register(UserAccount userAccount)
+        public bool RegisterUser(UserAccountDTO userAccountDto, string code)
         {
             Register register = new Register();
-            return register.Register(userAccount);
+            return register.RegisterUser(userAccountDto, code);
         }
 
-    }*/
+    }
 }

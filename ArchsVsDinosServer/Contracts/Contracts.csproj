@@ -49,6 +49,7 @@
     <Compile Include="DTO\Response\UpdateResponse.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
+    <Compile Include="DTO\VerificationCode.cs" />
     <Compile Include="IAuthenticationManager.cs" />
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />

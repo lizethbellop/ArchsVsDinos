@@ -12,7 +12,7 @@ namespace Contracts
         public interface IRegisterManager
         {
             [OperationContract]
-            bool Register(UserAccountDTO userAccount);
+            bool RegisterUser(UserAccountDTO userAccountDTO, string code);
 
         }
 
