@@ -15,10 +15,10 @@ using System.ServiceModel.Security.Tokens;
 
 namespace ArchsVsDinosServer.BusinessLogic
 {
-    internal class Register
+    public class Register
     {
 
-        private static List<VerificationCode> verificationCodes = new List<VerificationCode>();
+        public static List<VerificationCode> verificationCodes = new List<VerificationCode>();
         
         public bool RegisterUser(UserAccountDTO userAccountDTO, string code)
         {
@@ -94,18 +94,16 @@ namespace ArchsVsDinosServer.BusinessLogic
                 string verificationCode = GenerateVerificationCode();
                 
                 MailMessage mail = new MailMessage();
-                mail.From = new MailAddress("archvsdinos@outlook.com");
+                mail.From = new MailAddress("archvsdinos@gmail.com");
                 mail.To.Add(email);
                 mail.Subject = "Verification code - Arch vs Dinos";
                 mail.Body = $"Your verification code is: {verificationCode}";
                 mail.IsBodyHtml = false;
 
-                SmtpClient smtp = new SmtpClient("smtp.office365.com", 587);
-                smtp.Credentials = new NetworkCredential("archvsdinos@outlook.com", "wipgpinapgzvunos");
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+                smtp.Credentials = new NetworkCredential("archvsdinos@gmail.com", "gysm nupz tsei cyvn");
                 smtp.EnableSsl = true;
                 smtp.Send(mail);
-
-               
 
                 verificationCodes.Add(new VerificationCode
                 {

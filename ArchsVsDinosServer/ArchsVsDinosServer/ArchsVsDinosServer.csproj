@@ -209,11 +209,9 @@
     <None Include="ArchsVsDinosModel.edmx.diagram">
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
     </None>
-    <None Include="ConnectionStrings.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="log4net.config" />
     <None Include="packages.config" />
+    <None Include="Wrappers\ConnectionStrings.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ArchsVsDinosModel.Context.tt">

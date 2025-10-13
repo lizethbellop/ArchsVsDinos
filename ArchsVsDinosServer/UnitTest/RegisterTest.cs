@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ArchsVsDinosServer.BusinessLogic;
+using ArchsVsDinosServer.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Data.Entity;
+using Contracts.DTO;
 
 namespace UnitTest
 {
@@ -10,13 +15,10 @@ namespace UnitTest
     public class RegisterTest
     {
 
-        private Mock<ISentEmail> mockSentEmailContext;
-
         [TestInitialize]
         public void Setup()
         {
             Register.verificationCodes.Clear();
-            mockSentEmailContext = new Mock<ISentEmail>();
         }
 
 
@@ -25,7 +27,7 @@ namespace UnitTest
         {
             //Arrange
             Register register = new Register();
-            string email = "canoabraham172@gmail.com";
+            string email = "alynet.gm15@gmail.com";
 
             //Act
             bool result = register.SendEmailRegister(email);
