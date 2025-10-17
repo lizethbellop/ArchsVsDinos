@@ -9,5 +9,8 @@ namespace ArchsVsDinosServer.Interfaces
     public interface IDbContext : IDisposable
     {
         IQueryable<UserAccount> UserAccount { get; }
+        IQueryable<Player> Player { get; }
+
+        int SaveChanges();
     }
 }

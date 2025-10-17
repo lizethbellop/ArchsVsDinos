@@ -19,24 +19,24 @@ namespace Contracts
         UpdateResponse UpdateUsername(string currentUsername, string newUsername);
 
         [OperationContract]
-        bool UpdateNickname(string username, string newNickname);
+        UpdateResponse UpdateNickname(string username, string newNickname);
 
         [OperationContract]
-        bool UpdateFacebook(string username, string newFacebook);
+        UpdateResponse UpdateFacebook(string username, string newFacebook);
 
         [OperationContract]
-        bool UpdateX(string username, string newX);
+        UpdateResponse UpdateX(string username, string newX);
 
         [OperationContract]
-        bool UpdateInstagram(string username, string newInstagram);
+        UpdateResponse UpdateInstagram(string username, string newInstagram);
 
         [OperationContract] 
-        bool UpdateTikTok(string username, string newTikTok);
+        UpdateResponse UpdateTikTok(string username, string newTikTok);
 
         [OperationContract]
         bool ChangeProfilePicture(string username);
 
         [OperationContract]
-        bool ChangePassword(string username, string currentPassword, string newPassword);
+        UpdateResponse ChangePassword(string username, string currentPassword, string newPassword);
     }
 }
