@@ -27,7 +27,7 @@ namespace UnitTest
         {
             //Arrange
             Register register = new Register();
-            string email = "alynet.gm15@gmail.com";
+            string email = "canoabraham172@gmail.com";
 
             //Act
             bool result = register.SendEmailRegister(email);
