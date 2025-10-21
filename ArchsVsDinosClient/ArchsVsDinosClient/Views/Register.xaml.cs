@@ -49,7 +49,7 @@ namespace ArchsVsDinosClient.Views
             try
             {
                 RegisterService.RegisterManagerClient registerClient = new RegisterService.RegisterManagerClient();
-                //RegisterService.RegisterUser = registerClient.RegisterUser(UserAccountDTO, VerificationCode));
+                //RegisterService.= registerClient.RegisterUser(UserAccountDTO, VerificationCode));
 
                 MessageBox.Show(Lang.Register_CorrectRegister);
             }
