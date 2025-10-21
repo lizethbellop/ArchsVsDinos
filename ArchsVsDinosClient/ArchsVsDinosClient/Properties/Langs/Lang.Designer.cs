@@ -151,6 +151,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Campos vacíos, por favor, verifique.
+        /// </summary>
+        public static string Global_EmptyField {
+            get {
+                return ResourceManager.GetString("Global_EmptyField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Aceptar.
         /// </summary>
         public static string GlobalAcceptText {
@@ -457,11 +466,38 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Registro realizado con éxito, ¡Bienvenido!.
+        /// </summary>
+        public static string Register_CorrectRegister {
+            get {
+                return ResourceManager.GetString("Register_CorrectRegister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Correo electrónico.
         /// </summary>
         public static string Register_Email {
             get {
                 return ResourceManager.GetString("Register_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La dirección de correo electrónico no es válida, por favor, verifique.
+        /// </summary>
+        public static string Register_InvalidEmail {
+            get {
+                return ResourceManager.GetString("Register_InvalidEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña no cumple con el formato requerido, por favor, verifique.
+        /// </summary>
+        public static string Register_InvalidPassword {
+            get {
+                return ResourceManager.GetString("Register_InvalidPassword", resourceCulture);
             }
         }
         

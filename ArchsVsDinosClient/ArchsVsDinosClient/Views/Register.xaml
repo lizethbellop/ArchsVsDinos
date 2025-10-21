@@ -44,41 +44,41 @@
             <StackPanel Grid.Row="1" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2"/>
+                    <TextBox Name="txtBoxFullName" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="2" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="24">
-                    <TextBox TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2"/>
+                    <TextBox Name="txtBoxUsername" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="3" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="24">
-                    <TextBox TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2"/>
+                    <TextBox Name="txtBoxEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="4" Margin="0,0" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Password}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2"/>
+                    <TextBox Name="txtBoxPassword" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="5" Margin="0,0,0,15" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2"/>
+                    <TextBox Name="txtBoxNickname" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
             
             <UniformGrid Grid.Row="6" Rows="1" Margin="0,0,0,0" HorizontalAlignment="Stretch">
 
-                <Button Content="{x:Static language:Lang.Register_BtnRegister}" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="60" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Padding="0" BorderBrush="{x:Null}" Foreground="White">
+                <Button Content="{x:Static language:Lang.Register_BtnRegister}" Click="Btn_RegisterNow" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="60" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Padding="0" BorderBrush="{x:Null}" Foreground="White">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
                     </Button.Background>

@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
@@ -31,12 +32,30 @@ namespace ArchsVsDinosClient
             new Register().ShowDialog();
 
         }
+
+        private void Btn_Login(object sender, RoutedEventArgs e)
+        {
+
+            string username = txtBoxUsername.Text;
+            string password = passBox.Password;
+
+            if (ValidateInputs(username, password)) 
+            {
+                new MainWindow().ShowDialog();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show(Lang.Global_EmptyField);
+            }
+                
+        }
+
         private void Btn_PlayAsGuest(object sender, RoutedEventArgs e)
         {
             new MainWindow().ShowDialog();
             this.Close();
         }
-
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -57,6 +76,16 @@ namespace ArchsVsDinosClient
             new MainWindow().ShowDialog();
         }
 
+
+        private bool ValidateInputs(string username, string password)
+        {
+            if (ValidationHelper.isEmpty(username) || ValidationHelper.isWhiteSpace(username) || (ValidationHelper.isEmpty(password) || ValidationHelper.isWhiteSpace(password)))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
     }
 }

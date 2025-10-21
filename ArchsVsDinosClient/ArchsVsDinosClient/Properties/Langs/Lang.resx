@@ -327,4 +327,16 @@
   <data name="Register_Username" xml:space="preserve">
     <value>Nombre de usuario</value>
   </data>
+  <data name="Global_EmptyField" xml:space="preserve">
+    <value>Campos vacíos, por favor, verifique</value>
+  </data>
+  <data name="Register_InvalidEmail" xml:space="preserve">
+    <value>La dirección de correo electrónico no es válida, por favor, verifique</value>
+  </data>
+  <data name="Register_InvalidPassword" xml:space="preserve">
+    <value>La contraseña no cumple con el formato requerido, por favor, verifique</value>
+  </data>
+  <data name="Register_CorrectRegister" xml:space="preserve">
+    <value>Registro realizado con éxito, ¡Bienvenido!</value>
+  </data>
 </root>
