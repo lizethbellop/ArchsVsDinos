@@ -160,6 +160,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error al conectar con el servidor, intente en otro momento.
+        /// </summary>
+        public static string Global_ServerError {
+            get {
+                return ResourceManager.GetString("Global_ServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Aceptar.
         /// </summary>
         public static string GlobalAcceptText {
@@ -318,6 +327,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Login_ChangeLanguageTitle {
             get {
                 return ResourceManager.GetString("Login_ChangeLanguageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Credenciales incorrectas, intente de nuevo.
+        /// </summary>
+        public static string Login_IncorrectCredentials {
+            get {
+                return ResourceManager.GetString("Login_IncorrectCredentials", resourceCulture);
             }
         }
         

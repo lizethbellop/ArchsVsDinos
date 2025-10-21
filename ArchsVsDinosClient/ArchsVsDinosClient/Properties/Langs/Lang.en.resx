@@ -339,4 +339,10 @@
   <data name="Register_CorrectRegister" xml:space="preserve">
     <value>Registration successfully completed, ¡Welcome!</value>
   </data>
+  <data name="Login_IncorrectCredentials" xml:space="preserve">
+    <value>Incorrect credentials, try again</value>
+  </data>
+  <data name="Global_ServerError" xml:space="preserve">
+    <value>Error connecting to the server, please try again later.</value>
+  </data>
 </root>

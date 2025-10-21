@@ -39,16 +39,33 @@ namespace ArchsVsDinosClient
             string username = txtBoxUsername.Text;
             string password = passBox.Password;
 
-            if (ValidateInputs(username, password)) 
-            {
-                new MainWindow().ShowDialog();
-                this.Close();
-            }
-            else
+
+            if (!ValidateInputs(username, password)) 
             {
                 MessageBox.Show(Lang.Global_EmptyField);
-            }
+                return;
+            } 
                 
+            try
+            {
+                AuthenticationService.AuthenticationManagerClient authenticationClient = new AuthenticationService.AuthenticationManagerClient();
+                AuthenticationService.LoginResponse response = authenticationClient.Login(username, password);
+            
+                if (response.Success)
+                {
+                    new MainWindow().ShowDialog();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show(Lang.Login_IncorrectCredentials);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(Lang.Global_ServerError);
+            }
+
         }
 
         private void Btn_PlayAsGuest(object sender, RoutedEventArgs e)
