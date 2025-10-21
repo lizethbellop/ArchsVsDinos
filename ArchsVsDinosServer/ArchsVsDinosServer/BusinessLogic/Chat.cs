@@ -13,7 +13,7 @@ namespace ArchsVsDinosServer.BusinessLogic
     public class Chat : IChatManager
     {
         private static readonly ConcurrentDictionary<string, IChatManagerCallback> ConnectedUsers = new ConcurrentDictionary<string, IChatManagerCallback>();
-        private static readonly ConcurrentDictionary<string, IChatManagerCallback> RoomMembers = new ConcurrentDictionary<string, IChatManagerCallback>();
+        
         public void Connect(string username)
         {
 
@@ -61,115 +61,43 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        public void SendMessageToRoom(string roomId, string message)
+        public void SendMessageToRoom(string message, string username)
         {
-            string senderUsername = null;
-
-            try
-            {
-                senderUsername = GetUsernameFromCallback();
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Error identifying the user: {ex.Message}");
-                throw new FaultException("No se pudo identificar al remitente");
-            }
-
-            if (string.IsNullOrEmpty(senderUsername))
-            {
-                Console.WriteLine("Sender couldn't be identified");
-                throw new FaultException("Usuario no atenticado");
-            }
-
-            BroadcastMessageToAll(senderUsername, message);
+            Console.WriteLine($"[Lobby] {username}: {message}");
+            BroadcastMessageToAll(username, message); ;
         }
 
-        public void SendMessageToUser(string targetUser, string message)
+        public void SendMessageToUser(string username, string targetUser, string message)
         {
-            string senderUsername = null;
-            IChatManagerCallback senderCallback = null;
-
-            try
+            if (!ConnectedUsers.TryGetValue(targetUser, out var targetCallback))
             {
-                senderUsername = GetUsernameFromCallback();
-                senderCallback = OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Error identifying the user: {ex.Message}");
-                throw new FaultException("No se pudo identificar al remitente");
-            }
-
-            if (string.IsNullOrEmpty(senderUsername))
-            {
-                Console.WriteLine("Sender couldn't be identified");
-                throw new FaultException("Usuario no atenticado");
-            }
-
-            if(!ConnectedUsers.TryGetValue(targetUser, out var targetCallback))
-            {
-                try
+                if(ConnectedUsers.TryGetValue(username, out var senderCallback))
                 {
-                    senderCallback.ReceiveSystemNotification($"El usuario '{targetUser}' no está conectado");
-                }
-                catch (CommunicationException ex)
-                {
-                    Console.WriteLine($"Communication error with sender: {ex.Message}");
-                }
-                catch (TimeoutException ex)
-                {
-                    Console.WriteLine($"Timeout while notyfing sender: {ex.Message}");
-
+                    NotifySender(username, $"El usuario '{targetUser}' no está conectado");
                 }
                 return;
             }
 
-            Console.WriteLine($"[Privado] {senderUsername} -> {targetUser}: {message}");
-
             try
             {
-                targetCallback.ReceiveMessage("PRIVADO", senderUsername, message);
+                targetCallback.ReceiveMessage("PRIVATE", username, message);
             }
             catch (CommunicationObjectAbortedException ex)
             {
-                Console.WriteLine($"Aborted connection con {targetUser}: {ex.Message}");
+                Console.WriteLine($"Aborted connection with {targetUser}: {ex.Message}");
                 ConnectedUsers.TryRemove(targetUser, out _);
-
-                try
-                {
-                    senderCallback.ReceiveSystemNotification($"El usuario '{targetUser}' se desconectó inesperadamente");
-                }
-                catch (CommunicationException)
-                {
-                    
-                }
+                NotifySender(username, $"El usuario '{targetUser}' se desconectó inesperadamente");
             }
             catch (CommunicationException ex)
             {
-                Console.WriteLine($"Communication error with {targetUser}: {ex.Message}");
+                Console.WriteLine($"Communication error {targetUser}: {ex.Message}");
                 ConnectedUsers.TryRemove(targetUser, out _);
-
-                try
-                {
-                    senderCallback.ReceiveSystemNotification($"Message couldn't be sent");
-                }
-                catch (CommunicationException)
-                {
-
-                }
+                NotifySender(username, $"No se pudo enviar el mensaje a '{targetUser}'");
             }
             catch (TimeoutException ex)
             {
-                Console.WriteLine($"Timeout while trying to send the message {targetUser}: {ex.Message}");
-
-                try
-                {
-                    senderCallback.ReceiveSystemNotification($"Timeout al enviar mensaje a '{targetUser}'");
-                }
-                catch (CommunicationException)
-                {
-                    
-                }
+                Console.WriteLine($"Timeout while sending the message {targetUser}: {ex.Message}");
+                NotifySender(username, $"Timeout al enviar mensaje a '{targetUser}'");
             }
             catch (ObjectDisposedException ex)
             {
@@ -241,30 +169,23 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private string GetUsernameFromCallback()
+        private void NotifySender(string username, string notification)
         {
-            if (OperationContext.Current == null)
+            if(ConnectedUsers.TryGetValue(username, out var senderCallback))
             {
-                throw new InvalidOperationException("There is no operation context available");
-            }
-
-            IChatManagerCallback currentCallback = OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
-
-            if (currentCallback == null)
-            {
-                throw new InvalidOperationException("Thecallback channel couldn't be obtained");
-            }
-
-            List<KeyValuePair<string, IChatManagerCallback>> usersList = new List<KeyValuePair<string, IChatManagerCallback>>(ConnectedUsers);
-            foreach (var user in usersList)
-            {
-                if (ReferenceEquals(user.Value, currentCallback))
+                try
                 {
-                    return user.Key;
+                    senderCallback.ReceiveSystemNotification(notification);
+                }
+                catch (CommunicationException ex)
+                {
+                    Console.WriteLine($"Couldn't notify {username}: {ex.Message}");
+                }
+                catch (TimeoutException ex)
+                {
+                    Console.WriteLine($"Timeout while notifying {username}: {ex.Message}");
                 }
             }
-
-            return null;
         }
     }
 }

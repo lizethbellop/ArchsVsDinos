@@ -15,10 +15,10 @@ namespace Contracts
         [OperationContract]
         void Disconnect(string username);
         [OperationContract]
-        void SendMessageToRoom(string roomId, string message);
+        void SendMessageToRoom(string message, string username);
 
         [OperationContract]
-        void SendMessageToUser(string targetUser, string message);
+        void SendMessageToUser(string username, string targetUser, string message);
 
     }
 }
