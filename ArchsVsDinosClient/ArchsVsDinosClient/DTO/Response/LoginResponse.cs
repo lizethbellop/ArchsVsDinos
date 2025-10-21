@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.DTO.Response
 {
-    internal class LoginResponse
+    public class LoginResponse
     {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public UserDTO UserSession { get; set; }
+        public PlayerDTO AssociatedPlayer { get; set; }
     }
 }

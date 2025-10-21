@@ -1,4 +1,6 @@
-﻿using ArchsVsDinosClient.Properties.Langs;
+﻿using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.RegisterService;
 using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
@@ -39,10 +41,23 @@ namespace ArchsVsDinosClient.Views
             string password = txtBoxPassword.Text;
             string nickname = txtBoxNickname.Text;
 
-            if (ValidateInputs(name, username, email, password, nickname))
+            if (!ValidateInputs(name, username, email, password, nickname))
             {
+                return;
+            }
+
+            try
+            {
+                RegisterService.RegisterManagerClient registerClient = new RegisterService.RegisterManagerClient();
+                //RegisterService.RegisterUser = registerClient.RegisterUser(UserAccountDTO, VerificationCode));
+
                 MessageBox.Show(Lang.Register_CorrectRegister);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(Lang.Global_ServerError);
+            }
+
         }
 
         private bool ValidateInputs(string name, string username, string email, string password, string nickname)

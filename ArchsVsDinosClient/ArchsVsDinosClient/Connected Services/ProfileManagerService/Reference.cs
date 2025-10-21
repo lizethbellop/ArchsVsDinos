@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ArchsVsDinosClient.ProfileService {
+namespace ArchsVsDinosClient.ProfileManagerService {
     using System.Runtime.Serialization;
     using System;
     
@@ -248,50 +248,50 @@ namespace ArchsVsDinosClient.ProfileService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ProfileService.IProfileManager")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ProfileManagerService.IProfileManager")]
     public interface IProfileManager {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfile", ReplyAction="http://tempuri.org/IProfileManager/GetProfileResponse")]
-        ArchsVsDinosClient.ProfileService.PlayerDTO GetProfile(string username);
+        ArchsVsDinosClient.ProfileManagerService.PlayerDTO GetProfile(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfile", ReplyAction="http://tempuri.org/IProfileManager/GetProfileResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.PlayerDTO> GetProfileAsync(string username);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.PlayerDTO> GetProfileAsync(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateUsername", ReplyAction="http://tempuri.org/IProfileManager/UpdateUsernameResponse")]
-        ArchsVsDinosClient.ProfileService.UpdateResponse UpdateUsername(string currentUsername, string newUsername);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateUsername(string currentUsername, string newUsername);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateUsername", ReplyAction="http://tempuri.org/IProfileManager/UpdateUsernameResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateNickname", ReplyAction="http://tempuri.org/IProfileManager/UpdateNicknameResponse")]
-        ArchsVsDinosClient.ProfileService.UpdateResponse UpdateNickname(string username, string newNickname);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateNickname(string username, string newNickname);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateNickname", ReplyAction="http://tempuri.org/IProfileManager/UpdateNicknameResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateNicknameAsync(string username, string newNickname);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateNicknameAsync(string username, string newNickname);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateFacebook", ReplyAction="http://tempuri.org/IProfileManager/UpdateFacebookResponse")]
-        ArchsVsDinosClient.ProfileService.UpdateResponse UpdateFacebook(string username, string newFacebook);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateFacebook(string username, string newFacebook);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateFacebook", ReplyAction="http://tempuri.org/IProfileManager/UpdateFacebookResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateFacebookAsync(string username, string newFacebook);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateFacebookAsync(string username, string newFacebook);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateX", ReplyAction="http://tempuri.org/IProfileManager/UpdateXResponse")]
-        ArchsVsDinosClient.ProfileService.UpdateResponse UpdateX(string username, string newX);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateX(string username, string newX);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateX", ReplyAction="http://tempuri.org/IProfileManager/UpdateXResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateXAsync(string username, string newX);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateXAsync(string username, string newX);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateInstagram", ReplyAction="http://tempuri.org/IProfileManager/UpdateInstagramResponse")]
-        ArchsVsDinosClient.ProfileService.UpdateResponse UpdateInstagram(string username, string newInstagram);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateInstagram(string username, string newInstagram);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateInstagram", ReplyAction="http://tempuri.org/IProfileManager/UpdateInstagramResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateInstagramAsync(string username, string newInstagram);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateInstagramAsync(string username, string newInstagram);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateTikTok", ReplyAction="http://tempuri.org/IProfileManager/UpdateTikTokResponse")]
-        ArchsVsDinosClient.ProfileService.UpdateResponse UpdateTikTok(string username, string newTikTok);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateTikTok(string username, string newTikTok);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateTikTok", ReplyAction="http://tempuri.org/IProfileManager/UpdateTikTokResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateTikTokAsync(string username, string newTikTok);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateTikTokAsync(string username, string newTikTok);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangeProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/ChangeProfilePictureResponse")]
         bool ChangeProfilePicture(string username);
@@ -300,19 +300,19 @@ namespace ArchsVsDinosClient.ProfileService {
         System.Threading.Tasks.Task<bool> ChangeProfilePictureAsync(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangePassword", ReplyAction="http://tempuri.org/IProfileManager/ChangePasswordResponse")]
-        ArchsVsDinosClient.ProfileService.UpdateResponse ChangePassword(string username, string currentPassword, string newPassword);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangePassword(string username, string currentPassword, string newPassword);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangePassword", ReplyAction="http://tempuri.org/IProfileManager/ChangePasswordResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> ChangePasswordAsync(string username, string currentPassword, string newPassword);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangePasswordAsync(string username, string currentPassword, string newPassword);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IProfileManagerChannel : ArchsVsDinosClient.ProfileService.IProfileManager, System.ServiceModel.IClientChannel {
+    public interface IProfileManagerChannel : ArchsVsDinosClient.ProfileManagerService.IProfileManager, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class ProfileManagerClient : System.ServiceModel.ClientBase<ArchsVsDinosClient.ProfileService.IProfileManager>, ArchsVsDinosClient.ProfileService.IProfileManager {
+    public partial class ProfileManagerClient : System.ServiceModel.ClientBase<ArchsVsDinosClient.ProfileManagerService.IProfileManager>, ArchsVsDinosClient.ProfileManagerService.IProfileManager {
         
         public ProfileManagerClient() {
         }
@@ -333,59 +333,59 @@ namespace ArchsVsDinosClient.ProfileService {
                 base(binding, remoteAddress) {
         }
         
-        public ArchsVsDinosClient.ProfileService.PlayerDTO GetProfile(string username) {
+        public ArchsVsDinosClient.ProfileManagerService.PlayerDTO GetProfile(string username) {
             return base.Channel.GetProfile(username);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.PlayerDTO> GetProfileAsync(string username) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.PlayerDTO> GetProfileAsync(string username) {
             return base.Channel.GetProfileAsync(username);
         }
         
-        public ArchsVsDinosClient.ProfileService.UpdateResponse UpdateUsername(string currentUsername, string newUsername) {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateUsername(string currentUsername, string newUsername) {
             return base.Channel.UpdateUsername(currentUsername, newUsername);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername) {
             return base.Channel.UpdateUsernameAsync(currentUsername, newUsername);
         }
         
-        public ArchsVsDinosClient.ProfileService.UpdateResponse UpdateNickname(string username, string newNickname) {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateNickname(string username, string newNickname) {
             return base.Channel.UpdateNickname(username, newNickname);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateNicknameAsync(string username, string newNickname) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateNicknameAsync(string username, string newNickname) {
             return base.Channel.UpdateNicknameAsync(username, newNickname);
         }
         
-        public ArchsVsDinosClient.ProfileService.UpdateResponse UpdateFacebook(string username, string newFacebook) {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateFacebook(string username, string newFacebook) {
             return base.Channel.UpdateFacebook(username, newFacebook);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateFacebookAsync(string username, string newFacebook) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateFacebookAsync(string username, string newFacebook) {
             return base.Channel.UpdateFacebookAsync(username, newFacebook);
         }
         
-        public ArchsVsDinosClient.ProfileService.UpdateResponse UpdateX(string username, string newX) {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateX(string username, string newX) {
             return base.Channel.UpdateX(username, newX);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateXAsync(string username, string newX) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateXAsync(string username, string newX) {
             return base.Channel.UpdateXAsync(username, newX);
         }
         
-        public ArchsVsDinosClient.ProfileService.UpdateResponse UpdateInstagram(string username, string newInstagram) {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateInstagram(string username, string newInstagram) {
             return base.Channel.UpdateInstagram(username, newInstagram);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateInstagramAsync(string username, string newInstagram) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateInstagramAsync(string username, string newInstagram) {
             return base.Channel.UpdateInstagramAsync(username, newInstagram);
         }
         
-        public ArchsVsDinosClient.ProfileService.UpdateResponse UpdateTikTok(string username, string newTikTok) {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateTikTok(string username, string newTikTok) {
             return base.Channel.UpdateTikTok(username, newTikTok);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> UpdateTikTokAsync(string username, string newTikTok) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateTikTokAsync(string username, string newTikTok) {
             return base.Channel.UpdateTikTokAsync(username, newTikTok);
         }
         
@@ -397,11 +397,11 @@ namespace ArchsVsDinosClient.ProfileService {
             return base.Channel.ChangeProfilePictureAsync(username);
         }
         
-        public ArchsVsDinosClient.ProfileService.UpdateResponse ChangePassword(string username, string currentPassword, string newPassword) {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangePassword(string username, string currentPassword, string newPassword) {
             return base.Channel.ChangePassword(username, currentPassword, newPassword);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileService.UpdateResponse> ChangePasswordAsync(string username, string currentPassword, string newPassword) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangePasswordAsync(string username, string currentPassword, string newPassword) {
             return base.Channel.ChangePasswordAsync(username, currentPassword, newPassword);
         }
     }
