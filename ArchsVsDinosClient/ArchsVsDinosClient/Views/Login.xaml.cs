@@ -64,6 +64,7 @@ namespace ArchsVsDinosClient
             catch (Exception ex)
             {
                 MessageBox.Show(Lang.Global_ServerError);
+                MessageBox.Show($"{Lang.Global_ServerError}\n\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
         }
