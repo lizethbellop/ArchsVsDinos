@@ -44,6 +44,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                     response.Message = "Campos requeridos";
                     return response;
                 }
+                
                 using (var context = contextFactory())
                 {
                     string passwordHash = securityHelper.HashPassword(password);
@@ -88,17 +89,29 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (EntityException ex)
             {
                 LoggerHelper.LogError($"Database connection error at Login for user: {username}", ex);
-                return null;
+                return new LoginResponse
+                {
+                    Success = false,
+                    Message = "Error de conexión con la base de datos"
+                };
             }
             catch (ArgumentException ex)
             {
                 LoggerHelper.LogWarn($"Error while hashing the password: {ex.Message}");
-                return null;
+                return new LoginResponse
+                {
+                    Success = false,
+                    Message = "Error al procesar la contraseña"
+                };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error en Login: {ex.Message}");
-                return null;
+                return new LoginResponse
+                {
+                    Success = false,
+                    Message = "Error inesperado en el servidor"
+                };
             }
         }
 
