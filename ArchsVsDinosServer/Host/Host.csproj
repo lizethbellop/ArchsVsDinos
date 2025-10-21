@@ -55,6 +55,10 @@
       <Project>{0fd2061c-56ef-4467-b454-3eac075a1eab}</Project>
       <Name>ArchsVsDinosServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Contracts\Contracts.csproj">
+      <Project>{1f499930-12a6-4c79-9820-5cc501643d2d}</Project>
+      <Name>Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -28,6 +28,7 @@ namespace Host
                 catch (CommunicationException ce)
                 {
                     Console.WriteLine("Error starting services: ", ce.Message);
+                    Console.WriteLine(ce.ToString());
 
                     registerHost.Abort();
                     authenticationHost.Abort();
