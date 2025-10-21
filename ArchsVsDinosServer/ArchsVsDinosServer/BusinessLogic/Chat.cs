@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ArchsVsDinosServer.BusinessLogic
 {
     
-    public class Chat : IChatManager
+    public class Chat
     {
         private static readonly ConcurrentDictionary<string, IChatManagerCallback> ConnectedUsers = new ConcurrentDictionary<string, IChatManagerCallback>();
         
