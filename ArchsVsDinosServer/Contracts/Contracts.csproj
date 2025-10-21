@@ -51,6 +51,8 @@
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\VerificationCode.cs" />
     <Compile Include="IAuthenticationManager.cs" />
+    <Compile Include="IChatManager.cs" />
+    <Compile Include="IChatManagerCallback.cs" />
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

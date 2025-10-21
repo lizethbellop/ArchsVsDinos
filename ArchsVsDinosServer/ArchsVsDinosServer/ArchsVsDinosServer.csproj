@@ -142,6 +142,7 @@
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="BusinessLogic\Authentication.cs" />
+    <Compile Include="BusinessLogic\Chat.cs" />
     <Compile Include="BusinessLogic\ProfileManagement.cs" />
     <Compile Include="BusinessLogic\Register.cs" />
     <Compile Include="CardBody.cs">
