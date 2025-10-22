@@ -11,4 +11,5 @@ namespace ArchsVsDinosServer.Interfaces
         string HashPassword(string password);
         bool VerifyPassword(string plainPassword, string hashedPasswordFromDB);
     }
-}
+
+    }
