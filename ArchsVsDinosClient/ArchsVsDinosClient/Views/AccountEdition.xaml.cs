@@ -15,27 +15,18 @@ using System.Windows.Shapes;
 namespace ArchsVsDinosClient.Views
 {
     /// <summary>
-    /// Lógica de interacción para Account.xaml
+    /// Lógica de interacción para AccountEdition.xaml
     /// </summary>
-    public partial class Account : Window
+    public partial class AccountEdition : Window
     {
-        public Account()
+        public AccountEdition()
         {
             InitializeComponent();
         }
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            this.Close();   
-        }
-
-        private void Btn_PersonalStatistics(object sender, RoutedEventArgs e)
-        {
-            new PersonalStatistics().ShowDialog();
-        }
-        private void Btn_EditAccount(object sender, RoutedEventArgs e)
-        {
-            new AccountEdition().ShowDialog();
+            this.Close();
         }
 
     }

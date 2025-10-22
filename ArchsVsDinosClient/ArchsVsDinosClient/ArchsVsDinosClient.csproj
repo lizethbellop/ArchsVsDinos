@@ -82,6 +82,9 @@
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AccountEdition.xaml.cs">
+      <DependentUpon>AccountEdition.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FriendsAtLobby.xaml.cs">
       <DependentUpon>FriendsAtLobby.xaml</DependentUpon>
     </Compile>
@@ -107,6 +110,10 @@
       <DependentUpon>ConfirmCode.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\Account.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AccountEdition.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

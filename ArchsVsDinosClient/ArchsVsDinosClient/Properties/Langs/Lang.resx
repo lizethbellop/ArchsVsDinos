@@ -366,4 +366,16 @@
   <data name="Register_UsernameAndNicknameExists" xml:space="preserve">
     <value>El apodo y  nombre de usuario ya existen, intente de nuevo</value>
   </data>
+  <data name="Account_EditProfileData" xml:space="preserve">
+    <value>Editar datos perfil</value>
+  </data>
+  <data name="AccountEdit_NewUsername" xml:space="preserve">
+    <value>Nuevo nombre de usuario</value>
+  </data>
+  <data name="AccountEdit_NewNickname" xml:space="preserve">
+    <value>Nuevo apodo</value>
+  </data>
+  <data name="AccountEdit_NewPassword" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
 </root>

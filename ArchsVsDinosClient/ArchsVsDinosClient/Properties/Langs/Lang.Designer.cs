@@ -61,6 +61,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Editar datos perfil.
+        /// </summary>
+        public static string Account_EditProfileData {
+            get {
+                return ResourceManager.GetString("Account_EditProfileData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Editar.
         /// </summary>
         public static string Account_EditText {
@@ -93,6 +102,33 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Account_YourAccountTitle {
             get {
                 return ResourceManager.GetString("Account_YourAccountTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nuevo apodo.
+        /// </summary>
+        public static string AccountEdit_NewNickname {
+            get {
+                return ResourceManager.GetString("AccountEdit_NewNickname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nueva contraseña.
+        /// </summary>
+        public static string AccountEdit_NewPassword {
+            get {
+                return ResourceManager.GetString("AccountEdit_NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nuevo nombre de usuario.
+        /// </summary>
+        public static string AccountEdit_NewUsername {
+            get {
+                return ResourceManager.GetString("AccountEdit_NewUsername", resourceCulture);
             }
         }
         

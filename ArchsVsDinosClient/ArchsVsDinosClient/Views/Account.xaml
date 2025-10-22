@@ -168,8 +168,8 @@
 
         <Grid Grid.Row="2">
             <UniformGrid Columns="3" HorizontalAlignment="Right" Width="400">
-                <Button Content="{x:Static language:Lang.GlobalSaveText}" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18">
+                <Button Content="{x:Static language:Lang.Account_EditProfileData}" Click="Btn_EditAccount" Margin="5" Height="55" Width="130" Foreground="White" FontWeight="Bold" 
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
                     </Button.Background>
@@ -191,8 +191,8 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Click ="Btn_PersonalStatistics" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
-                BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Click ="Btn_PersonalStatistics" Margin="5" Height="55" Width="110" Foreground="White" FontWeight="Bold" 
+                BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rock1.png"/>
                     </Button.Background>
@@ -214,7 +214,7 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="55" Width="120" Foreground="White" FontWeight="Bold" 
+                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="55" Width="110" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
