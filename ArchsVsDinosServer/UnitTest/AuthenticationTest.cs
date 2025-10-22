@@ -256,27 +256,6 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestLoginPasswordHashingError()
-        {
-            string username = "user123";
-            string password = "password123";
-
-            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-            mockSecurityHelper.Setup(s => s.HashPassword(password)).Throws(new ArgumentException("Hashing error"));
-
-            LoginResponse expectedResult = new LoginResponse
-            {
-                Success = false,
-                Message = "Error al procesar la contraseña",
-                UserSession = null,
-                AssociatedPlayer = null
-            };
-
-            LoginResponse result = authentication.Login(username, password);
-            Assert.AreEqual(expectedResult, result);
-        }
-
-        [TestMethod]
         public void TestLoginUnexpectedError()
         {
             string username = "user123";

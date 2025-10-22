@@ -7,6 +7,8 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +41,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestProfileChangePasswordEmptyFields()
+        public void TestChangePasswordEmptyFields()
         {
             string username = "";
             string currentPassword = "";
@@ -58,7 +60,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestProfileChangePasswordSameAsCurrent()
+        public void TestChangePasswordSameAsCurrent()
         {
             string username = "user123";
             string currentPassword = "password123";
@@ -77,7 +79,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestProfileChangePasswordTooShort()
+        public void TestChangePasswordTooShort()
         {
             string username = "user123";
             string currentPassword = "password123";
@@ -96,7 +98,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestProfileChangePasswordUserNotFound()
+        public void TestChangePasswordUserNotFound()
         {
             string username = "nonExistentUser";
             string currentPassword = "password123";
@@ -116,7 +118,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestProfileChangePasswordIncorrectCurrentPassword()
+        public void TestChangePasswordIncorrectCurrentPassword()
         {
             string username = "user123";
             string currentPassword = "wrongPassword";
@@ -146,7 +148,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void TestProfileChangePasswordSuccess()
+        public void TestChangePasswordSuccess()
         {
             string username = "user123";
             string currentPassword = "password123";
@@ -176,6 +178,189 @@ namespace UnitTest
             UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
 
+        }
+
+        [TestMethod]
+        public void TestChangePasswordDatabaseValidationException()
+        {
+            string username = "user123";
+            string currentPassword = "password123";
+            string newPassword = "newPassword123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockDbContext.Setup(c => c.UserAccount).Throws(new DbEntityValidationException("Validation error"));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Error en la base de datos"
+            };
+
+            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestChangePasswordUnexpectedError()
+        {
+            string username = "user123";
+            string currentPassword = "password123";
+            string newPassword = "newPassword123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Error: Unexpected error"
+            };
+
+            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            Assert.AreEqual(expectedResult, result);
+            
+        }
+
+        [TestMethod]
+        public void TestUpdateUsernameEmptyFields()
+        {
+            string currentUsername = "";
+            string newUsername = "";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(true);
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Los campos son obligatorios"
+            };
+
+            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateUsernameSameAsCurrentUsername()
+        {
+            string currentUsername = "user123";
+            string newUsername = "user123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "El nuevo username debe ser diferente al actual"
+            };
+
+            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateUserAlreadyExists()
+        {
+            string currentUsername = "user123";
+            string newUsername = "existingUser";
+
+            UserAccount existingUser = new UserAccount
+            {
+                idUser = 2,
+                username = newUsername
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { existingUser });
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "El username ya está en uso"
+            };
+            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateUsernameUserNotFound()
+        {
+            string currentUsername = "nonExistentUser";
+            string newUsername = "newUser123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount>());
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Usuario no encontrado"
+            };
+
+            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateUsernameSuccess()
+        {
+            string currentUsername = "user123";
+            string newUsername = "newUser123";
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = currentUsername
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = true,
+                Message = "Username actualizado"
+            };
+
+            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateUsernameDatabaseError()
+        {
+            string currentUsername = "user123";
+            string newUsername = "newUser123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database error"));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Error: Database error"
+            };
+
+            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameEmptyFields()
+        {
+            string username = "";
+            string newNickname = "";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(true);
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Los campos son obligatorios"
+            };
+
+            UpdateResponse result = profileManagement.UpdateNickname(username, newNickname);
+            Assert.AreEqual(expectedResult, result);
         }
 
 
