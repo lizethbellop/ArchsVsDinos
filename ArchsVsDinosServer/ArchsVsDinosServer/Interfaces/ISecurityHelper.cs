@@ -10,4 +10,5 @@ namespace ArchsVsDinosServer.Interfaces
     {
         string HashPassword(string password);
     }
-}
+
+    }
