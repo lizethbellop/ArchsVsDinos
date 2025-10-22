@@ -1,11 +1,13 @@
 ﻿using ArchsVsDinosServer;
 using ArchsVsDinosServer.BusinessLogic;
 using ArchsVsDinosServer.Interfaces;
+using Contracts.DTO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,15 +48,20 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(username)).Returns(true);
             mockValidationHelper.Setup(v => v.IsEmpty(password)).Returns(true);
 
-            //Act
-            var result = authentication.Login(username, password);
+            
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Campos requeridos",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
 
-            //Assert
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual("Campos requeridos", result.Message);
+            
+            LoginResponse result = authentication.Login(username, password);
 
-            mockValidationHelper.Verify(v => v.IsEmpty(It.IsAny<string>()), Times.AtLeastOnce());
+            
+            Assert.AreEqual(expectedResult, result);
         }
 
         [TestMethod]
@@ -66,13 +73,18 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(username)).Returns(true);
             mockValidationHelper.Setup(v => v.IsEmpty(password)).Returns(false);
 
-            var result = authentication.Login(username, password);
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Campos requeridos",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual("Campos requeridos", result.Message);
 
-            mockValidationHelper.Verify(v => v.IsEmpty(It.IsAny<string>()), Times.AtLeastOnce());
+            LoginResponse result = authentication.Login(username, password);
+
+            Assert.AreEqual(expectedResult, result);
         }
 
         [TestMethod]
@@ -83,12 +95,18 @@ namespace UnitTest
 
             mockValidationHelper.Setup(v => v.IsEmpty(username)).Returns(false);
             mockValidationHelper.Setup(v => v.IsEmpty(password)).Returns(true);
+            
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Campos requeridos",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
 
-            var result = authentication.Login(username, password);
+            LoginResponse result = authentication.Login(username, password);
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual("Campos requeridos", result.Message);
+            Assert.AreEqual(expectedResult, result);
         }
 
         [TestMethod]
@@ -103,15 +121,17 @@ namespace UnitTest
 
             SetupMockUserSet(new List<UserAccount>());
 
-            var result = authentication.Login(username, password);
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Credenciales incorrectas",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
 
-            Assert.IsNotNull(result);
-            Assert.IsFalse(result.Success);
-            Assert.AreEqual("Credenciales incorrectas", result.Message);
-            Assert.IsNull(result.UserSession);
-            Assert.IsNull(result.AssociatedPlayer);
+            LoginResponse result = authentication.Login(username, password);
 
-
+            Assert.AreEqual(expectedResult, result);
         }
 
         [TestMethod]
@@ -121,7 +141,7 @@ namespace UnitTest
             string password = "password 123";
             string passwordHash = "hashedPassword123";
 
-            var expectedPlayer = new Player
+            Player expectedPlayer = new Player
             {
                 idPlayer = 1,
                 facebook = "facebook.com/csainz",
@@ -134,7 +154,7 @@ namespace UnitTest
                 profilePicture = "yourpfp.com"
             };
 
-            var expectedUser = new UserAccount
+            UserAccount expectedUser = new UserAccount
             {
                 idUser = 1,
                 username = username,
@@ -152,18 +172,100 @@ namespace UnitTest
 
             SetupMockUserSet(new List<UserAccount> { expectedUser });
 
-            var result = authentication.Login(username, password);
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = true,
+                Message = "Login exitoso",
+                UserSession = new UserDTO
+                {
+                    idUser = 1,
+                    username = "user123",
+                    name = "Carlos Sainz",
+                    nickname = "chilli55"
+                },
+                AssociatedPlayer = new PlayerDTO
+                {
+                    idPlayer = 1,
+                    facebook = "facebook.com/csainz",
+                    instagram = "instagram.com/csainz",
+                    x = "x.com/csainz",
+                    tiktok = "tiktok.com/@csainz",
+                    totalWins = 10,
+                    totalLosses = 5,
+                    totalPoints = 100,
+                    profilePicture = "yourpfp.com"
+                }
+            };
 
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Success);
-            Assert.AreEqual("Login exitoso", result.Message);
-            Assert.IsNotNull(result.UserSession);
-            Assert.IsNotNull(result.AssociatedPlayer);
-            Assert.AreEqual(expectedUser.idUser, result.UserSession.idUser);
-            Assert.AreEqual(expectedUser.name, result.UserSession.name);
-            Assert.AreEqual(expectedUser.nickname, result.UserSession.nickname);
-            Assert.AreEqual(expectedUser.username, result.UserSession.username);
+            LoginResponse result = authentication.Login(username, password);
+
+            Assert.AreEqual(expectedResult, result);
         }
+
+        [TestMethod]
+        public void TestLoginDatabaseConnectionError()
+        {
+            string username = "user123";
+            string password = "password123";
+           
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database connection failed"));
+
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Error de conexión con la base de datos",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
+
+            LoginResponse result = authentication.Login(username, password);
+            Assert.AreEqual(expectedResult, result);
+
+        }
+
+        [TestMethod]
+        public void TestLoginPasswordHashingError()
+        {
+            string username = "user123";
+            string password = "password123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.HashPassword(password)).Throws(new ArgumentException("Hashing error"));
+
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Error al procesar la contraseña",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
+
+            LoginResponse result = authentication.Login(username, password);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestLoginUnexpectedError()
+        {
+            string username = "user123";
+            string password = "password123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.HashPassword(password)).Throws(new Exception("Unexpected error"));
+
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Error inesperado en el servidor",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
+
+            LoginResponse result = authentication.Login(username, password);
+            Assert.AreEqual(expectedResult, result);
+        }
+
 
         private void SetupMockUserSet(List<UserAccount> users)
         {
