@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using UserAccountDTO = ArchsVsDinosClient.DTO.UserAccountDTO;
 
 namespace ArchsVsDinosClient.Views
 {
@@ -23,6 +24,7 @@ namespace ArchsVsDinosClient.Views
     /// </summary>
     public partial class Register : Window
     {
+
         public Register()
         {
             InitializeComponent();
@@ -35,23 +37,74 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_RegisterNow(object sender, RoutedEventArgs e)
         {
-            string name = txtBoxFullName.Text;
-            string username = txtBoxUsername.Text;
-            string email = txtBoxEmail.Text;
-            string password = txtBoxPassword.Text;
-            string nickname = txtBoxNickname.Text;
+            string nameTxt = txtBoxFullName.Text;
+            string usernameTxt = txtBoxUsername.Text;
+            string emailTxt = txtBoxEmail.Text;
+            string passwordTxt = txtBoxPassword.Text;
+            string nicknameTxt = txtBoxNickname.Text;
 
-            if (!ValidateInputs(name, username, email, password, nickname))
+            if (!ValidateInputs(nameTxt, usernameTxt, emailTxt, passwordTxt, nicknameTxt))
             {
+                MessageBox.Show(Lang.Global_EmptyField);
                 return;
             }
 
             try
             {
-                RegisterService.RegisterManagerClient registerClient = new RegisterService.RegisterManagerClient();
-                //RegisterService.RegisterUser = registerClient.RegisterUser(UserAccountDTO, VerificationCode));
+                RegisterManagerClient registerClient = new RegisterManagerClient();
 
-                MessageBox.Show(Lang.Register_CorrectRegister);
+                bool sent = registerClient.SendEmailRegister(emailTxt);
+                if(!sent)
+                {
+                    MessageBox.Show(Lang.Register_SentCodeError);
+                    return;
+                }
+
+                ConfirmCode codeWindow = new ConfirmCode
+                {
+                    Owner = this
+                };
+                codeWindow.ShowDialog();
+
+                if (codeWindow.IsCancelled)
+                {
+                    MessageBox.Show(Lang.Register_CancelledRegistration);
+                    return;
+                }
+
+                string code = codeWindow.EnteredCode;
+
+                UserAccountDTO UserAccountDTO = new UserAccountDTO
+                {
+                    name = nameTxt,
+                    username = usernameTxt,
+                    email = emailTxt,
+                    password = passwordTxt,
+                    nickname = nicknameTxt
+                };
+
+                var serviceUserAccount = new RegisterService.UserAccountDTO
+                {
+                    name = UserAccountDTO.name,
+                    username = UserAccountDTO.username,
+                    email = UserAccountDTO.email,
+                    password = UserAccountDTO.password,
+                    nickname = UserAccountDTO.nickname
+                };
+
+                bool registered = registerClient.RegisterUser(serviceUserAccount, code);
+                
+                if(registered)
+                {
+                    MessageBox.Show(Lang.Register_CorrectRegister);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show(Lang.Register_IncorrectCode);
+                }
+
+              
             }
             catch (Exception ex)
             {

@@ -484,6 +484,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Registro cancelado.
+        /// </summary>
+        public static string Register_CancelledRegistration {
+            get {
+                return ResourceManager.GetString("Register_CancelledRegistration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Registro realizado con éxito, ¡Bienvenido!.
         /// </summary>
         public static string Register_CorrectRegister {
@@ -498,6 +507,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Register_Email {
             get {
                 return ResourceManager.GetString("Register_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Código incorrecto o expirado. Intente nuevamente.
+        /// </summary>
+        public static string Register_IncorrectCode {
+            get {
+                return ResourceManager.GetString("Register_IncorrectCode", resourceCulture);
             }
         }
         
@@ -606,6 +624,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Register_RegisterTitle {
             get {
                 return ResourceManager.GetString("Register_RegisterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error al enviar el correo. Intente nuevamente..
+        /// </summary>
+        public static string Register_SentCodeError {
+            get {
+                return ResourceManager.GetString("Register_SentCodeError", resourceCulture);
             }
         }
         
@@ -741,6 +768,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string UserRequiredText {
             get {
                 return ResourceManager.GetString("UserRequiredText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese el código de verificación enviado a su correo.
+        /// </summary>
+        public static string VerificationC_VerificationCode {
+            get {
+                return ResourceManager.GetString("VerificationC_VerificationCode", resourceCulture);
             }
         }
     }

@@ -17,5 +17,10 @@ namespace ArchsVsDinosServer.Services
             return register.RegisterUser(userAccountDto, code);
         }
 
+        public bool SendEmailRegister(string email)
+        {
+            return new Register().SendEmailRegister(email);
+        }
+
     }
 }

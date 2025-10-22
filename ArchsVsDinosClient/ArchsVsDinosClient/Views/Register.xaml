@@ -75,7 +75,7 @@
                     <TextBox Name="txtBoxNickname" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
-            
+
             <UniformGrid Grid.Row="6" Rows="1" Margin="0,0,0,0" HorizontalAlignment="Stretch">
 
                 <Button Content="{x:Static language:Lang.Register_BtnRegister}" Click="Btn_RegisterNow" HorizontalAlignment="Center"  VerticalAlignment="Center" Height="60" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Padding="0" BorderBrush="{x:Null}" Foreground="White">
@@ -105,7 +105,7 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" HorizontalAlignment="Center" VerticalAlignment="Center" Height="60" Width="120" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Foreground="White" BorderBrush="{x:Null}">
+                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" HorizontalAlignment="Right" VerticalAlignment="Center" Height="60" Width="120" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Foreground="White" BorderBrush="{x:Null}" Margin="0,0,33,0">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
                     </Button.Background>

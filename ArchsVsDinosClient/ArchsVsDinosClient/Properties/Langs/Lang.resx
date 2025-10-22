@@ -345,4 +345,16 @@
   <data name="Global_ServerError" xml:space="preserve">
     <value>Error al conectar con el servidor, intente en otro momento</value>
   </data>
+  <data name="VerificationC_VerificationCode" xml:space="preserve">
+    <value>Ingrese el código de verificación enviado a su correo</value>
+  </data>
+  <data name="Register_SentCodeError" xml:space="preserve">
+    <value>Error al enviar el correo. Intente nuevamente.</value>
+  </data>
+  <data name="Register_CancelledRegistration" xml:space="preserve">
+    <value>Registro cancelado</value>
+  </data>
+  <data name="Register_IncorrectCode" xml:space="preserve">
+    <value>Código incorrecto o expirado. Intente nuevamente</value>
+  </data>
 </root>

@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-        [ServiceContract]
-        public interface IRegisterManager
-        {
-            [OperationContract]
-            bool RegisterUser(UserAccountDTO userAccountDTO, string code);
+    [ServiceContract]
+    public interface IRegisterManager
+    {
+        [OperationContract]
+        bool RegisterUser(UserAccountDTO userAccountDTO, string code);
 
-        }
+        [OperationContract]
+        bool SendEmailRegister(string email);
+    }
 
 }
