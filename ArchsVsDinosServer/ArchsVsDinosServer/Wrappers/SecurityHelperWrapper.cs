@@ -15,5 +15,10 @@ namespace ArchsVsDinosServer.Wrappers
         {
             return SecurityHelper.HashPassword(password);
         }
+
+        public bool VerifyPassword(string plainPassword, string hashedPasswordFromDB)
+        {
+            return SecurityHelper.VerifyPassword(plainPassword, hashedPasswordFromDB);
+        }
     }
 }

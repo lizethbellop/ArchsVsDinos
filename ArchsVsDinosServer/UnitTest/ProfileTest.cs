@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosServer;
 using ArchsVsDinosServer.BusinessLogic;
 using ArchsVsDinosServer.Interfaces;
+using Contracts.DTO;
 using Contracts.DTO.Response;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -360,6 +361,298 @@ namespace UnitTest
             };
 
             UpdateResponse result = profileManagement.UpdateNickname(username, newNickname);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameUserNotFound()
+        {
+            string username = "nonExistentUser";
+            string newNickname = "newNick";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount>());
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Usuario no encontrado"
+            };
+
+            UpdateResponse result = profileManagement.UpdateNickname(username, newNickname);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameSuccess()
+        {
+            string username = "user123";
+            string newNickname = "coolNickname";
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                nickname = "oldNickname"
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = true,
+                Message = "Nickname actualizado exitosamente"
+            };
+
+            UpdateResponse result = profileManagement.UpdateNickname(username, newNickname);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameDatabaseValidationError()
+        {
+            string username = "user123";
+            string newNickname = "newNick";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockDbContext.Setup(c => c.UserAccount).Throws(new DbEntityValidationException("Validation error"));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Error: Validation error"
+            };
+
+            UpdateResponse result = profileManagement.UpdateNickname(username, newNickname);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameUnexpectedError()
+        {
+            string username = "user123";
+            string newNickname = "newNick";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Error: Unexpected error"
+            };
+
+            UpdateResponse result = profileManagement.UpdateNickname(username, newNickname);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestGetProfileUserNotFound()
+        {
+            string username = "nonExistentUser";
+
+            SetupMockUserSet(new List<UserAccount>());
+
+            PlayerDTO result = profileManagement.GetProfile(username);
+
+             Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void TestGetProfilePlayerNotFound()
+        {
+            string username = "user123";
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player>());
+
+            PlayerDTO result = profileManagement.GetProfile(username);
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void TestGetProfileSuccess()
+        {
+            string username = "user123";
+
+            var player = new Player
+            {
+                idPlayer = 1,
+                facebook = "facebook.com/user",
+                instagram = "instagram.com/user",
+                x = "x.com/user",
+                tiktok = "tiktok.com/@user",
+                totalWins = 10,
+                totalLosses = 5,
+                totalPoints = 100,
+                profilePicture = "picture.jpg"
+            };
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+
+            PlayerDTO expectedResult = new PlayerDTO
+            {
+                idPlayer = 1,
+                facebook = "facebook.com/user",
+                instagram = "instagram.com/user",
+                x = "x.com/user",
+                tiktok = "tiktok.com/@user",
+                totalWins = 10,
+                totalLosses = 5,
+                totalPoints = 100,
+                profilePicture = "picture.jpg"
+            };
+
+            PlayerDTO result = profileManagement.GetProfile(username);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestGetProfileDatabaseError()
+        {
+            string username = "user123";
+
+            mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database error"));
+
+            PlayerDTO result = profileManagement.GetProfile(username);
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void TestGetProfileUnexpectedError()
+        {
+            string username = "user123";
+
+            mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
+
+            PlayerDTO result = profileManagement.GetProfile(username);
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void TestUpdateFacebookEmptyFields()
+        {
+            string username = "";
+            string newFacebook = "";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(true);
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Los campos son requeridos"
+            };
+
+            UpdateResponse result = profileManagement.UpdateFacebook(username, newFacebook);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateFacebookUserNotFound()
+        {
+            string username = "nonExistentUser";
+            string newFacebook = "facebook.com/user";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount>());
+
+            var expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Usuario no encontrado"
+            };
+
+            UpdateResponse result = profileManagement.UpdateFacebook(username, newFacebook);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateFacebookPlayerNotFound()
+        {
+            string username = "user123";
+            string newFacebook = "facebook.com/user";
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player>());
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                Message = "Perfil de jugador no encontrado"
+            };
+
+            UpdateResponse result = profileManagement.UpdateFacebook(username, newFacebook);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateFacebookSuccess()
+        {
+            string username = "user123";
+            string newFacebook = "facebook.com/newuser";
+
+            var player = new Player
+            {
+                idPlayer = 1,
+                facebook = "facebook.com/olduser"
+            };
+
+            var userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            var expectedResult = new UpdateResponse
+            {
+                Success = true,
+                Message = "Facebook actualizado exitosamente"
+            };
+
+            UpdateResponse result = profileManagement.UpdateFacebook(username, newFacebook);
+
             Assert.AreEqual(expectedResult, result);
         }
 

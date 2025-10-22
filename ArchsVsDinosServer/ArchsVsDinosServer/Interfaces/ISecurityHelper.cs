@@ -9,6 +9,7 @@ namespace ArchsVsDinosServer.Interfaces
     public interface ISecurityHelper
     {
         string HashPassword(string password);
+        bool VerifyPassword(string plainPassword, string hashedPasswordFromDB);
     }
 
     }
