@@ -165,13 +165,14 @@ namespace ArchsVsDinosServer.BusinessLogic
                     return new ValiUserNickResultDTO { isValid = true, ReturnCont = ReturnContent.Success};
 
                 }
-
-                
-
             }
             catch (EntityException ex) 
             {
-                Console.WriteLine($"Error sending email : {ex.Message}");
+                Console.WriteLine($"Error validating username and nickname : {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"DETALLE DEL ERROR (InnerException): {ex.InnerException.Message}");
+                }
                 return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.DatabaseError };
             }
 
