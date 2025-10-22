@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
         mc:Ignorable="d"
-        Title="AccountEdition" Height="450" Width="500">
+        Title="AccountEdition" Height="450" Width="500"
+        WindowStartupLocation="CenterScreen">
+    
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF303168"/>
