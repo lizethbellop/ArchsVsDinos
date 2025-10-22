@@ -23,8 +23,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="{x:Static language:Lang.PlayerStatistics_Title}" FontFamily="{StaticResource Ouroboros}"
-               FontSize="32" FontWeight="Bold" Foreground="Black" Margin="0,10,0,20"/>
+        <Label Grid.Row="0" Content="{x:Static language:Lang.PlayerStatistics_Title}" FontFamily="{StaticResource Volcanic Dungeon}"
+               FontSize="20" FontWeight="Bold" Foreground="Black" Margin="0,10,0,20"/>
 
         <Border Grid.Row="1" Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="20">
             <Label Content="Próximamente..." FontFamily="Trebuchet MS" FontSize="18" 

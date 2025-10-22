@@ -39,7 +39,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Margin="0,15,0,-5" HorizontalAlignment="Center">
-                <Label Content="{x:Static language:Lang.Register_RegisterTitle}"  FontFamily="{StaticResource Ouroboros}" FontSize="40" FontWeight="Bold" Foreground="#FF196572"/>
+                <Label Content="{x:Static language:Lang.Register_RegisterTitle}"  FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="#FF684607"/>
             </StackPanel>
 
             <StackPanel Grid.Row="1" HorizontalAlignment="Center">

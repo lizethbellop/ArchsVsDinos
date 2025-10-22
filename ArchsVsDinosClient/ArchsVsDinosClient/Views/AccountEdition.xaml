@@ -34,7 +34,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20">
-            <Label Content="{x:Static language:Lang.Account_EditProfileData}"  FontFamily="{StaticResource Ouroboros}" FontSize="30" FontWeight="Bold" Foreground="#FFE3F2FF"/>
+            <Label Content="{x:Static language:Lang.Account_EditProfileData}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="15" FontWeight="Bold" Foreground="#FFF6C6AC"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" HorizontalAlignment="Center">

@@ -6,56 +6,63 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="Lobby" Height="550" Width="900"
+        Title="Lobby" Height="780" Width="1420"
         WindowStartupLocation="CenterScreen">
 
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FFF0F0F0" Offset="0"/>
-            <GradientStop Color="#FFE0E0E0" Offset="1"/>
+            <GradientStop Color="#FF5B64F3" Offset="0"/>
+            <GradientStop Color="#FFBFFFB9" Offset="1"/>
+            <GradientStop Color="#FFAD6CC4" Offset="0.097"/>
+            <GradientStop Color="#FFFFDCB7" Offset="0.389"/>
         </LinearGradientBrush>
     </Window.Background>
     
-    <Grid>
+    <Grid Margin="15,15,15,15">
+        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width=".45*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width=".4*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="White" BorderBrush="Gray" BorderThickness="0,0,1,0" Padding="10">
-            <StackPanel>
-                <Button Content="{x:Static language:Lang.GlobalReturnText}" Height="40" Margin="0,10,0,20" 
+        <Grid Grid.Column="0">
+
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <Button Content="{x:Static language:Lang.GlobalReturnText}" Height="60" Width="100" Margin="0,10,0,20" 
                         Background="#FF4877C2" Foreground="White" FontWeight="Bold" 
                         BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="{TemplateBinding Background}" 
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border" Background="{TemplateBinding Background}" 
                                     CornerRadius="5" BorderThickness="0">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
 
-                <Label Content="{x:Static language:Lang.GlobalGroupChatText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="Black"/>
-                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Height="350" CornerRadius="5">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <TextBlock x:Name="TxtChat" TextWrapping="Wrap" Padding="5" FontFamily="Trebuchet MS" FontSize="12"/>
-                    </ScrollViewer>
-                </Border>
+                <StackPanel VerticalAlignment="Bottom">
+                    <Label Content="{x:Static language:Lang.GlobalGroupChatText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" Foreground="Black"/>
+                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" Height="350" CornerRadius="5">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="TxtChat" TextWrapping="Wrap" Padding="5" FontFamily="Trebuchet MS" FontSize="12" Background="#80FFFFFF"/>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
 
+            <StackPanel VerticalAlignment="Bottom">
                 <TextBox x:Name="TbMessage" Height="30" Margin="0,5,0,0" FontFamily="Trebuchet MS"
-                         BorderBrush="Gray" BorderThickness="1" Padding="5"/>
-
+                             BorderBrush="Gray" BorderThickness="1" Padding="5"/>
             </StackPanel>
-            
-        </Border>
+
+        </Grid>
 
         <Grid Grid.Column="1" Margin="20">
             <Grid.RowDefinitions>
@@ -65,10 +72,9 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Content="ARCHS vs Dinos" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="40" FontWeight="Bold" 
-                   Foreground="Black" HorizontalAlignment="Center" Margin="0,10,0,10"/>
+            <Image Grid.Row="0" Source="/Resources/Images/logo.png" Stretch="Uniform" HorizontalAlignment="Center" Height="120"/>
 
-            <Label Grid.Row="1" Content="{x:Static language:Lang.LobbyGameBeginningText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="24" 
+            <Label Grid.Row="1" Content="{x:Static language:Lang.LobbyGameBeginningText}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" 
                    Foreground="Black" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
             <UniformGrid Grid.Row="2" Columns="2" Rows="2" Margin="10">
@@ -248,7 +254,7 @@
             </UniformGrid>
         </Grid>
 
-        <Border Grid.Column="2" Background="White" BorderBrush="Gray" BorderThickness="1,0,0,0" Padding="15">
+        <Grid Grid.Column="2" Background="White">
             <StackPanel>
                 <Label Content="{x:Static language:Lang.GlobalGameId}" FontFamily="Trebuchet MS" FontSize="16" FontWeight="Bold" 
                        Foreground="Black" HorizontalAlignment="Right" Margin="0,10,0,20"/>
@@ -270,7 +276,9 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
+            </StackPanel>
+            
+            <StackPanel>
                 <Button Content="¡INICIAR!" Height="60" Margin="0,290,0,0" 
                         Background="#FF196572" Foreground="White" FontWeight="Bold" 
                         BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="24">
@@ -288,8 +296,8 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
             </StackPanel>
-        </Border>
+        </Grid>
+        
     </Grid>
 </Window>

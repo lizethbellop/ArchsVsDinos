@@ -5,5 +5,6 @@
              StartupUri="Views/Login.xaml">
     <Application.Resources>
         <FontFamily x:Key="Ouroboros">Resources/Fonts/#Ouroboros</FontFamily>
+        <FontFamily x:Key="Volcanic Dungeon">Resources/Fonts/#Volcanic Dungeon</FontFamily>
     </Application.Resources>
 </Application>

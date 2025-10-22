@@ -247,6 +247,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Fonts\Volcanic Dungeon.ttf" />
     <Resource Include="Resources\Fonts\Ouroboros.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -300,6 +301,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Images\garra.png" />
     <Content Include="Resources\Sounds\rockSound.wav" />
   </ItemGroup>
   <ItemGroup>
