@@ -47,10 +47,17 @@ namespace ArchsVsDinosServer.BusinessLogic
                 
                 using (var context = contextFactory())
                 {
-                    string passwordHash = securityHelper.HashPassword(password);
-                    var user = context.UserAccount.FirstOrDefault(u => u.username == username && u.password == passwordHash);
+                    
+                    var user = context.UserAccount.FirstOrDefault(u => u.username == username);
                     
                     if (user == null)
+                    {
+                        response.Success = false;
+                        response.Message = "Credenciales incorrectas";
+                        return response;
+                    }
+
+                    if(!securityHelper.VerifyPassword(password, user.password))
                     {
                         response.Success = false;
                         response.Message = "Credenciales incorrectas";
@@ -67,7 +74,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                         username = user.username
                     };
 
-                    if(user.Player != null)
+                    if (user.Player != null)
                     {
                         response.AssociatedPlayer = new PlayerDTO
                         {
@@ -93,15 +100,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     Success = false,
                     Message = "Error de conexión con la base de datos"
-                };
-            }
-            catch (ArgumentException ex)
-            {
-                LoggerHelper.LogWarn($"Error while hashing the password: {ex.Message}");
-                return new LoginResponse
-                {
-                    Success = false,
-                    Message = "Error al procesar la contraseña"
                 };
             }
             catch (Exception ex)

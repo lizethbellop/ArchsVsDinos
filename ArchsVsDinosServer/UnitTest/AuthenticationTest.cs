@@ -114,10 +114,8 @@ namespace UnitTest
         {
             string username = "nonExistentUser";
             string password = "incorrectPassword";
-            string passwordHash = "hashedPassword123";
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-            mockSecurityHelper.Setup(s => s.HashPassword(password)).Returns(passwordHash);
 
             SetupMockUserSet(new List<UserAccount>());
 
@@ -168,7 +166,7 @@ namespace UnitTest
 
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-            mockSecurityHelper.Setup(s => s.HashPassword(password)).Returns(passwordHash);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(true);
 
             SetupMockUserSet(new List<UserAccount> { expectedUser });
 
@@ -199,6 +197,39 @@ namespace UnitTest
 
             LoginResponse result = authentication.Login(username, password);
 
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestLoginIncorrectPassword()
+        {
+            string username = "user123";
+            string password = "wrongPassword";
+            string passwordHash = "hashedPassword123";
+
+            UserAccount existingUser = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = passwordHash,
+                name = "Carlos Sainz",
+                nickname = "chilli55"
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(false);
+
+            SetupMockUserSet(new List<UserAccount> { existingUser });
+
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                Message = "Credenciales incorrectas",
+                UserSession = null,
+                AssociatedPlayer = null
+            };
+
+            LoginResponse result = authentication.Login(username, password);
             Assert.AreEqual(expectedResult, result);
         }
 
