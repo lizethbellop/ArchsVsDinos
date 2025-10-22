@@ -77,7 +77,6 @@
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
-    <Compile Include="DTO\VerificationCode.cs" />
     <Compile Include="Models\UserSession.cs" />
     <Compile Include="Utils\SoundButton.cs" />
     <Compile Include="Views\Account.xaml.cs">
@@ -104,8 +103,8 @@
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\VerificationCode.xaml.cs">
-      <DependentUpon>VerificationCode.xaml</DependentUpon>
+    <Compile Include="Views\ConfirmCode.xaml.cs">
+      <DependentUpon>ConfirmCode.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\Account.xaml">
       <SubType>Designer</SubType>
@@ -159,7 +158,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\VerificationCode.xaml">
+    <Page Include="Views\ConfirmCode.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -224,6 +223,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\ProfileManagerService\ProfileManager.wsdl" />
+    <None Include="Connected Services\RegisterService\ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\RegisterService\item.xsd">
       <SubType>Designer</SubType>
     </None>

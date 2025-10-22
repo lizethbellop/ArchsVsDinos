@@ -154,6 +154,87 @@ namespace ArchsVsDinosClient.RegisterService {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ValiUserNickResultDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.SerializableAttribute()]
+    public partial class ValiUserNickResultDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ArchsVsDinosClient.RegisterService.ReturnContent ReturnContField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool isValidField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ArchsVsDinosClient.RegisterService.ReturnContent ReturnCont {
+            get {
+                return this.ReturnContField;
+            }
+            set {
+                if ((this.ReturnContField.Equals(value) != true)) {
+                    this.ReturnContField = value;
+                    this.RaisePropertyChanged("ReturnCont");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool isValid {
+            get {
+                return this.isValidField;
+            }
+            set {
+                if ((this.isValidField.Equals(value) != true)) {
+                    this.isValidField = value;
+                    this.RaisePropertyChanged("isValid");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ReturnContent", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    public enum ReturnContent : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        UsernameExists = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        NicknameExists = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        BothExists = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DatabaseError = 4,
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="RegisterService.IRegisterManager")]
     public interface IRegisterManager {
@@ -169,6 +250,12 @@ namespace ArchsVsDinosClient.RegisterService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/SendEmailRegister", ReplyAction="http://tempuri.org/IRegisterManager/SendEmailRegisterResponse")]
         System.Threading.Tasks.Task<bool> SendEmailRegisterAsync(string email);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/ValidateUsernameAndNickname", ReplyAction="http://tempuri.org/IRegisterManager/ValidateUsernameAndNicknameResponse")]
+        ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/ValidateUsernameAndNickname", ReplyAction="http://tempuri.org/IRegisterManager/ValidateUsernameAndNicknameResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO> ValidateUsernameAndNicknameAsync(string username, string nickname);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -212,6 +299,14 @@ namespace ArchsVsDinosClient.RegisterService {
         
         public System.Threading.Tasks.Task<bool> SendEmailRegisterAsync(string email) {
             return base.Channel.SendEmailRegisterAsync(email);
+        }
+        
+        public ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname) {
+            return base.Channel.ValidateUsernameAndNickname(username, nickname);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO> ValidateUsernameAndNicknameAsync(string username, string nickname) {
+            return base.Channel.ValidateUsernameAndNicknameAsync(username, nickname);
         }
     }
 }

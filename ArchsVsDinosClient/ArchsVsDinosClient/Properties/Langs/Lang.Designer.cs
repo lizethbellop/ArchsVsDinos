@@ -556,6 +556,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El apodo ya existe, intente de nuevo.
+        /// </summary>
+        public static string Register_NicknameAlreadyExists {
+            get {
+                return ResourceManager.GetString("Register_NicknameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Contraseña.
         /// </summary>
         public static string Register_Password {
@@ -642,6 +651,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Register_Username {
             get {
                 return ResourceManager.GetString("Register_Username", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El nombre de usuario ya existe, intente de nuevo.
+        /// </summary>
+        public static string Register_UsernameAlreadyExists {
+            get {
+                return ResourceManager.GetString("Register_UsernameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El apodo y  nombre de usuario ya existen, intente de nuevo.
+        /// </summary>
+        public static string Register_UsernameAndNicknameExists {
+            get {
+                return ResourceManager.GetString("Register_UsernameAndNicknameExists", resourceCulture);
             }
         }
         

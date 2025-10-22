@@ -48,6 +48,12 @@
   <wsdl:message name="IRegisterManager_SendEmailRegister_OutputMessage">
     <wsdl:part name="parameters" element="tns:SendEmailRegisterResponse" />
   </wsdl:message>
+  <wsdl:message name="IRegisterManager_ValidateUsernameAndNickname_InputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateUsernameAndNickname" />
+  </wsdl:message>
+  <wsdl:message name="IRegisterManager_ValidateUsernameAndNickname_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateUsernameAndNicknameResponse" />
+  </wsdl:message>
   <wsdl:portType name="IRegisterManager">
     <wsdl:operation name="RegisterUser">
       <wsdl:input wsaw:Action="http://tempuri.org/IRegisterManager/RegisterUser" message="tns:IRegisterManager_RegisterUser_InputMessage" />
@@ -56,6 +62,10 @@
     <wsdl:operation name="SendEmailRegister">
       <wsdl:input wsaw:Action="http://tempuri.org/IRegisterManager/SendEmailRegister" message="tns:IRegisterManager_SendEmailRegister_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IRegisterManager/SendEmailRegisterResponse" message="tns:IRegisterManager_SendEmailRegister_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateUsernameAndNickname">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRegisterManager/ValidateUsernameAndNickname" message="tns:IRegisterManager_ValidateUsernameAndNickname_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRegisterManager/ValidateUsernameAndNicknameResponse" message="tns:IRegisterManager_ValidateUsernameAndNickname_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetTcpBinding_IRegisterManager" type="tns:IRegisterManager">
@@ -72,6 +82,15 @@
     </wsdl:operation>
     <wsdl:operation name="SendEmailRegister">
       <soap12:operation soapAction="http://tempuri.org/IRegisterManager/SendEmailRegister" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateUsernameAndNickname">
+      <soap12:operation soapAction="http://tempuri.org/IRegisterManager/ValidateUsernameAndNickname" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

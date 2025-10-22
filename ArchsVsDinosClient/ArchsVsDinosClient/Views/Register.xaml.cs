@@ -56,7 +56,7 @@ namespace ArchsVsDinosClient.Views
                 bool sent = registerClient.SendEmailRegister(emailTxt);
                 if(!sent)
                 {
-                    MessageBox.Show(Lang.Register_SentCodeError);
+                    MessageBox.Show(Lang.Register_SentErrorCode);
                     return;
                 }
 
@@ -91,6 +91,28 @@ namespace ArchsVsDinosClient.Views
                     password = UserAccountDTO.password,
                     nickname = UserAccountDTO.nickname
                 };
+
+                var validationUsernameNickname = registerClient.ValidateUsernameAndNickname(usernameTxt, nicknameTxt);
+
+                if(!validationUsernameNickname.isValid)
+                {
+                    switch (validationUsernameNickname.ReturnCont)
+                    {
+                        case ReturnContent.BothExists:
+                            MessageBox.Show(Lang.Register_UsernameAndNicknameExists);
+                            break;
+                        case ReturnContent.UsernameExists:
+                            MessageBox.Show(Lang.Register_UsernameAlreadyExists);
+                            break;
+                        case ReturnContent.NicknameExists:
+                            MessageBox.Show(Lang.Register_NicknameAlreadyExists);
+                            break;
+                        case ReturnContent.DatabaseError:
+                            MessageBox.Show(Lang.Global_ServerError);
+                            break;
+                    }
+                    return;
+                }
 
                 bool registered = registerClient.RegisterUser(serviceUserAccount, code);
                 

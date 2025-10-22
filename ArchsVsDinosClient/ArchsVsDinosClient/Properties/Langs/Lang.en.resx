@@ -357,4 +357,13 @@
   <data name="Register_IncorrectCode" xml:space="preserve">
     <value>Incorrect o expired code. Try again</value>
   </data>
+  <data name="Register_UsernameAlreadyExists" xml:space="preserve">
+    <value>The username already exists, try again</value>
+  </data>
+  <data name="Register_NicknameAlreadyExists" xml:space="preserve">
+    <value>The nickname already exists, try again</value>
+  </data>
+  <data name="Register_UsernameAndNicknameExists" xml:space="preserve">
+    <value>The nickname and username already exists, try again</value>
+  </data>
 </root>
