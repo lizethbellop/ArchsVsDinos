@@ -16,6 +16,9 @@ namespace Contracts
 
         [OperationContract]
         bool SendEmailRegister(string email);
+
+        [OperationContract]
+        ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname);
     }
 
 }

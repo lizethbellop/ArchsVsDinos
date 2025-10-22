@@ -52,7 +52,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                         idConfiguration = configuration.idConfiguration,
                         idPlayer = player.idPlayer
                     };
-                    
+
                      context.UserAccount.Add(userAccount);
                      context.SaveChanges();
                      scope.Complete();
@@ -136,6 +136,45 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 return false;
             }
+        }
+
+        public ValiUserNickResultDTO ValidateUserameAndNicknameResult(string newUsername, string newNickname)
+        {
+            try
+            {
+
+                using (var context = new ArchsVsDinosConnection())
+                {
+                   bool usernameExists = context.UserAccount.Any(u => u.username == newUsername);
+                   bool nicknameExists = context.UserAccount.Any(u => u.nickname == newNickname);
+
+                    if (usernameExists && nicknameExists)
+                    {
+                        return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.BothExists};
+                    }
+
+                    if (usernameExists)
+                    {
+                        return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.UsernameExists};
+                    }
+                    if (nicknameExists)
+                    {
+                        return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.NicknameExists};
+                    }
+
+                    return new ValiUserNickResultDTO { isValid = true, ReturnCont = ReturnContent.Success};
+
+                }
+
+                
+
+            }
+            catch (EntityException ex) 
+            {
+                Console.WriteLine($"Error sending email : {ex.Message}");
+                return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.DatabaseError };
+            }
+
         }
 
     }

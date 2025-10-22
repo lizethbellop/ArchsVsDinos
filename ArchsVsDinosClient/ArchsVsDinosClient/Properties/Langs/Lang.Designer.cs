@@ -630,9 +630,9 @@ namespace ArchsVsDinosClient.Properties.Langs {
         /// <summary>
         ///   Busca una cadena traducida similar a Error al enviar el correo. Intente nuevamente..
         /// </summary>
-        public static string Register_SentCodeError {
+        public static string Register_SentErrorCode {
             get {
-                return ResourceManager.GetString("Register_SentCodeError", resourceCulture);
+                return ResourceManager.GetString("Register_SentErrorCode", resourceCulture);
             }
         }
         

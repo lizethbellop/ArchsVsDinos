@@ -348,7 +348,7 @@
   <data name="VerificationC_VerificationCode" xml:space="preserve">
     <value>Ingrese el código de verificación enviado a su correo</value>
   </data>
-  <data name="Register_SentCodeError" xml:space="preserve">
+  <data name="Register_SentErrorCode" xml:space="preserve">
     <value>Error al enviar el correo. Intente nuevamente.</value>
   </data>
   <data name="Register_CancelledRegistration" xml:space="preserve">

@@ -22,5 +22,11 @@ namespace ArchsVsDinosServer.Services
             return new Register().SendEmailRegister(email);
         }
 
+        public ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname)
+        {
+            return new Register().ValidateUserameAndNicknameResult(username, nickname);
+        }
     }
+
+}
 }
