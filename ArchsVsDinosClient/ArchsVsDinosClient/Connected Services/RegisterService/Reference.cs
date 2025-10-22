@@ -163,6 +163,12 @@ namespace ArchsVsDinosClient.RegisterService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/RegisterUser", ReplyAction="http://tempuri.org/IRegisterManager/RegisterUserResponse")]
         System.Threading.Tasks.Task<bool> RegisterUserAsync(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/SendEmailRegister", ReplyAction="http://tempuri.org/IRegisterManager/SendEmailRegisterResponse")]
+        bool SendEmailRegister(string email);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/SendEmailRegister", ReplyAction="http://tempuri.org/IRegisterManager/SendEmailRegisterResponse")]
+        System.Threading.Tasks.Task<bool> SendEmailRegisterAsync(string email);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -198,6 +204,14 @@ namespace ArchsVsDinosClient.RegisterService {
         
         public System.Threading.Tasks.Task<bool> RegisterUserAsync(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code) {
             return base.Channel.RegisterUserAsync(userAccountDTO, code);
+        }
+        
+        public bool SendEmailRegister(string email) {
+            return base.Channel.SendEmailRegister(email);
+        }
+        
+        public System.Threading.Tasks.Task<bool> SendEmailRegisterAsync(string email) {
+            return base.Channel.SendEmailRegisterAsync(email);
         }
     }
 }

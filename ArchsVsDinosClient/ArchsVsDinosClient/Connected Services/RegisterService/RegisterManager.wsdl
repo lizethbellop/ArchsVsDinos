@@ -42,10 +42,20 @@
   <wsdl:message name="IRegisterManager_RegisterUser_OutputMessage">
     <wsdl:part name="parameters" element="tns:RegisterUserResponse" />
   </wsdl:message>
+  <wsdl:message name="IRegisterManager_SendEmailRegister_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendEmailRegister" />
+  </wsdl:message>
+  <wsdl:message name="IRegisterManager_SendEmailRegister_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SendEmailRegisterResponse" />
+  </wsdl:message>
   <wsdl:portType name="IRegisterManager">
     <wsdl:operation name="RegisterUser">
       <wsdl:input wsaw:Action="http://tempuri.org/IRegisterManager/RegisterUser" message="tns:IRegisterManager_RegisterUser_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IRegisterManager/RegisterUserResponse" message="tns:IRegisterManager_RegisterUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailRegister">
+      <wsdl:input wsaw:Action="http://tempuri.org/IRegisterManager/SendEmailRegister" message="tns:IRegisterManager_SendEmailRegister_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IRegisterManager/SendEmailRegisterResponse" message="tns:IRegisterManager_SendEmailRegister_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetTcpBinding_IRegisterManager" type="tns:IRegisterManager">
@@ -53,6 +63,15 @@
     <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
     <wsdl:operation name="RegisterUser">
       <soap12:operation soapAction="http://tempuri.org/IRegisterManager/RegisterUser" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailRegister">
+      <soap12:operation soapAction="http://tempuri.org/IRegisterManager/SendEmailRegister" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
