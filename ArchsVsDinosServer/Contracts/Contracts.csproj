@@ -47,6 +47,9 @@
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\Response\UpdateResponse.cs" />
+    <Compile Include="DTO\Result Codes\LoginResultCode.cs" />
+    <Compile Include="DTO\Result Codes\RegisterResultCode.cs" />
+    <Compile Include="DTO\Result Codes\UpdateResultCode.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\ValiUserNickResultDTO.cs" />
@@ -57,6 +60,9 @@
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTO\}\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

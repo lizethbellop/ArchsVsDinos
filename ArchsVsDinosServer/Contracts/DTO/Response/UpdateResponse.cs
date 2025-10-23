@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.DTO.Result_Codes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -11,19 +12,20 @@ namespace Contracts.DTO.Response
     public class UpdateResponse
     {
         [DataMember]
-        public bool Success { get; set; }
+        public bool success { get; set; }
+        [DataMember]
+        public string message { get; set; }
 
         [DataMember]
-        public string Message { get; set; }
+        public UpdateResultCode resultCode { get; set; }
 
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
                 return false;
-
             var other = (UpdateResponse)obj;
-            return Success == other.Success &&
-                   Message == other.Message;
+            return success == other.success &&
+                   message == other.message;
         }
 
         public override int GetHashCode()
@@ -31,8 +33,8 @@ namespace Contracts.DTO.Response
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + Success.GetHashCode();
-                hash = hash * 23 + (Message?.GetHashCode() ?? 0);
+                hash = hash * 23 + success.GetHashCode();
+                hash = hash * 23 + (message?.GetHashCode() ?? 0);
                 return hash;
             }
         }

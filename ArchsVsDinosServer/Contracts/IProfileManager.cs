@@ -12,8 +12,6 @@ namespace Contracts
     [ServiceContract]
     public interface IProfileManager
     {
-        [OperationContract]
-        PlayerDTO GetProfile(string username);
 
         [OperationContract]
         UpdateResponse UpdateUsername(string currentUsername, string newUsername);
@@ -34,7 +32,7 @@ namespace Contracts
         UpdateResponse UpdateTikTok(string username, string newTikTok);
 
         [OperationContract]
-        bool ChangeProfilePicture(string username);
+        UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto);
 
         [OperationContract]
         UpdateResponse ChangePassword(string username, string currentPassword, string newPassword);

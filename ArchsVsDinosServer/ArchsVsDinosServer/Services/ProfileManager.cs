@@ -6,54 +6,69 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Configuration;
+using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
 
 namespace ArchsVsDinosServer.Services
 {
     public class ProfileManager : IProfileManager
     {
+        private ProfileInformation profileInformation;
+        private SocialMediaManager socialMediaManager;
+
+        public ProfileManager()
+        {
+            profileInformation = new ProfileInformation();
+            socialMediaManager = new SocialMediaManager();
+        }
+
         public UpdateResponse ChangePassword(string username, string currentPassword, string newPassword)
         {
-            throw new NotImplementedException();
+            PasswordManager passwordManager = new PasswordManager();
+            UpdateResponse passwordUpdateResponse = passwordManager.ChangePassword(username, currentPassword, newPassword);
+            return passwordUpdateResponse;
         }
 
-        public bool ChangeProfilePicture(string username)
+        public UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto)
         {
-            throw new NotImplementedException();
-        }
-
-        public PlayerDTO GetProfile(string username)
-        {
-            throw new NotImplementedException();
+            UpdateResponse profilePictureResponse = profileInformation.ChangeProfilePicture(username, profilePhoto);
+            return profilePictureResponse;
         }
 
         public UpdateResponse UpdateFacebook(string username, string newFacebook)
         {
-            throw new NotImplementedException();
+            UpdateResponse facebookUpdateResponse = socialMediaManager.UpdateFacebook(username, newFacebook);
+            return facebookUpdateResponse;
         }
 
         public UpdateResponse UpdateInstagram(string username, string newInstagram)
         {
-            throw new NotImplementedException();
+            UpdateResponse instagramUpdateResponse = socialMediaManager.UpdateInstagram(username, newInstagram);
+            return instagramUpdateResponse;
         }
 
         public UpdateResponse UpdateNickname(string username, string newNickname)
         {
-            throw new NotImplementedException();
+            UpdateResponse nicknameUpdateResponse = profileInformation.UpdateNickname(username, newNickname);
+            return nicknameUpdateResponse;
         }
 
         public UpdateResponse UpdateTikTok(string username, string newTikTok)
         {
-            throw new NotImplementedException();
+            UpdateResponse tiktokUpdateResponse = socialMediaManager.UpdateTikTok(username, newTikTok);
+            return tiktokUpdateResponse;
         }
 
         public UpdateResponse UpdateUsername(string currentUsername, string newUsername)
         {
-            throw new NotImplementedException();
+            UpdateResponse usernameUpdateResponse = profileInformation.UpdateUsername(currentUsername, newUsername);
+            return usernameUpdateResponse;
         }
 
         public UpdateResponse UpdateX(string username, string newX)
         {
-            throw new NotImplementedException();
+            UpdateResponse xUpdateResponse = socialMediaManager.UpdateX(username, newX);
+            return xUpdateResponse;
         }
     }
 }
