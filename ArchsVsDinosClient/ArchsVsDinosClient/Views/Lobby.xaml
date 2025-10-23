@@ -136,7 +136,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Background="#FFD0D0D0" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="140" MaxHeight="140">
+                <Border Background="#FFD0D0D0" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="140" MaxHeight="200">
                     <StackPanel VerticalAlignment="Center" Margin="3">
                         <Label Content="Player 2" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" 
                                HorizontalAlignment="Center" FontWeight="Bold" Margin="0,2,0,5" Padding="2"/>
@@ -190,7 +190,7 @@
                         </Grid>
                     </StackPanel>
                 </Border>
-                <Border Background="#FFE8E8E8" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="140" MaxHeight="140">
+                <Border Background="#FFE8E8E8" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="140" MaxHeight="200">
                     <StackPanel VerticalAlignment="Center" Margin="3">
                         <Border Width="70" Height="70" Background="White" BorderBrush="Gray" BorderThickness="1" 
                                 CornerRadius="4" Margin="3" HorizontalAlignment="Center">
@@ -222,7 +222,7 @@
                         </Grid>
                     </StackPanel>
                 </Border>
-                <Border Background="#FFE8E8E8" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="140" MaxHeight="140">
+                <Border Background="#FFE8E8E8" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="140" MaxHeight="200">
                     <StackPanel VerticalAlignment="Center" Margin="3">
                         <Border Width="70" Height="70" Background="White" BorderBrush="Gray" BorderThickness="1" 
                                 CornerRadius="4" Margin="3" HorizontalAlignment="Center">

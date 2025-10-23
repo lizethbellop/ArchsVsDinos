@@ -378,4 +378,28 @@
   <data name="AccountEdit_NewPassword" xml:space="preserve">
     <value>Nueva contraseña</value>
   </data>
+  <data name="Account_EditPassword" xml:space="preserve">
+    <value>Editar contraseña</value>
+  </data>
+  <data name="EditPassword_NewPassword" xml:space="preserve">
+    <value>Nueva contraseña</value>
+  </data>
+  <data name="EditPassword_OldPassword" xml:space="preserve">
+    <value>Contraseña actual</value>
+  </data>
+  <data name="EditPassword_MessageNewPassword" xml:space="preserve">
+    <value>*Por favor, ingrese su contraseña actual para validar*</value>
+  </data>
+  <data name="EditUsername_Title" xml:space="preserve">
+    <value>Editar nombre de usuario</value>
+  </data>
+  <data name="EditUsername_NewUsername" xml:space="preserve">
+    <value>Nuevo nombre de usuario</value>
+  </data>
+  <data name="EditNickname_Title" xml:space="preserve">
+    <value>Editar apodo</value>
+  </data>
+  <data name="EditNickname_NewNickname" xml:space="preserve">
+    <value>Nuevo apodo</value>
+  </data>
 </root>

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="Account" Height="550" Width="800"
+        Title="Account" Height="670" Width="1024"
         WindowStartupLocation="CenterScreen">
 
     <Window.Background>
@@ -24,7 +24,7 @@
             <RowDefinition Height="Auto" MinHeight="55"/>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Content="{x:Static language:Lang.Account_YourAccountTitle}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="25" FontWeight="Bold" Foreground="#FF6A490B" Margin="0,0,0,10"/>
+        <Label Grid.Row="0" Content="{x:Static language:Lang.Account_YourAccountTitle}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="30" FontWeight="Bold" Foreground="#FF6A490B" Margin="0,0,0,10"/>
 
         <Grid Grid.Row="1">
 
@@ -36,29 +36,89 @@
             <Grid Grid.Column="0">
 
                 <StackPanel VerticalAlignment="Top">
-                    <Label Content="{x:Static language:Lang.Register_Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
-                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,0"/>
+                    <StackPanel>
+                        <UniformGrid Margin="0,0,0,-50">
+                            <Label Content="{x:Static language:Lang.Register_Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572"/>
+                            <Button HorizontalAlignment="Left" Click="Btn_EditUsername" Content="{x:Static language:Lang.Account_EditText}" Margin="5" Height="40" Width="90" Foreground="White" FontWeight="Bold" 
+                                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                                </Button.Background>
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                    CornerRadius="5" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </UniformGrid>
+                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
+                    </StackPanel>
 
-                    <Label Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
-                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,0"/>
+                    <StackPanel>
+                        <UniformGrid Margin="0,0,0,-50">
+                            <Label HorizontalAlignment="Left" Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
+                            <Button HorizontalAlignment="Left" Click="Btn_EditNickname" Content="{x:Static language:Lang.Account_EditText}" Margin="5" Height="40" Width="90" Foreground="White" FontWeight="Bold" 
+                                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
+                                <Button.Background>
+                                    <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                                </Button.Background>
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                            CornerRadius="5" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </UniformGrid>
+                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
+                    </StackPanel>
 
+                    <StackPanel>
+                        <UniformGrid>
+                            <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
+                        
+                        </UniformGrid>
+                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
+                    </StackPanel>
 
-                    <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
-                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,0"/>
+                    <StackPanel>
+                        <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
+                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,15"/>
+                    </StackPanel>
 
-                    <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
-                    <TextBlock FontFamily="Trebuchet MS" FontSize="16" Foreground="Black" Margin="0,0,0,15"/>
-
-                    <Label Content="{x:Static language:Lang.Account_SocialMediaTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FF196572" Margin="0,0,0,5"/>
+                    <StackPanel>
+                        <Label Content="{x:Static language:Lang.Account_SocialMediaTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
+                    </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="f" Width="40" Height="40" FontSize="20" FontWeight="Bold" Margin="0,0,10,0"
+                        <Button Content="f" Width="50" Height="50" FontSize="20" FontWeight="Bold" Margin="0,0,10,0"
                                 Background="#FF3B5998" Foreground="White" BorderBrush="Transparent"
                                 FontFamily="Arial" ToolTip="Facebook">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border" Background="{TemplateBinding Background}"
-                                            CornerRadius="20" BorderThickness="0">
+                                            CornerRadius="30" BorderThickness="0">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
@@ -72,13 +132,13 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Content="📷" Width="40" Height="40" FontSize="18" Margin="0,0,10,0"
+                        <Button Content="📷" Width="50" Height="50" FontSize="18" Margin="0,0,10,0"
                                 Background="#FFC13584" Foreground="White" BorderBrush="Transparent" 
                                 ToolTip="Instagram">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                            CornerRadius="20" BorderThickness="0">
+                                            CornerRadius="30" BorderThickness="0">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -90,13 +150,13 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Content="𝕏" Width="40" Height="40" FontSize="18" FontWeight="Bold" Margin="0,0,10,0"
+                        <Button Content="𝕏" Width="50" Height="50" FontSize="18" FontWeight="Bold" Margin="0,0,10,0"
                                 Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
                                 FontFamily="Arial" ToolTip="X (Twitter)">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                            CornerRadius="20" BorderThickness="0">
+                                            CornerRadius="30" BorderThickness="0">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -108,13 +168,13 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Content="♪" Width="40" Height="40" FontSize="18" Margin="0,0,10,0"
+                        <Button Content="♪" Width="50" Height="50" FontSize="18" Margin="0,0,10,0"
                                 Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
                                 ToolTip="TikTok">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                            CornerRadius="20" BorderThickness="0">
+                                            CornerRadius="30" BorderThickness="0">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -132,18 +192,18 @@
             <Grid Grid.Column="1">
                 <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20,0,0,0">
                     <Grid>
-                        <Border Width="200" Height="200" CornerRadius="150" BorderBrush="#FF196572" BorderThickness="3" Background="White">
-                            <Ellipse Width="180" Height="180">
+                        <Border Width="250" Height="250" CornerRadius="150" BorderBrush="#FF196572" BorderThickness="3" Background="White">
+                            <Ellipse Width="230" Height="230">
                                 <Ellipse.Fill>
                                     <SolidColorBrush Color="#FFE0E0E0"/>
                                 </Ellipse.Fill>
                             </Ellipse>
                         </Border>
-                        <Image Source="/Resources/Images/garra.png" Margin="1,-50,0,0" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Top" Height="200" Width="220" RenderTransformOrigin="0.5,0.5"/>
+                        <Image Source="/Resources/Images/garra.png" Margin="5,-60,0,0" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Top" Height="200" Width="260" RenderTransformOrigin="0.5,0.5"/>
                     </Grid>
-                    <Button Content="{x:Static language:Lang.Account_EditText}" Margin="0,10,0,0" Height="50" Width="100"
+                    <Button Content="{x:Static language:Lang.Account_EditText}" Margin="0,10,0,0" Height="60" Width="110"
                       Foreground="White" FontWeight="Bold"
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18">
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
                         </Button.Background>
@@ -170,11 +230,11 @@
         </Grid>
 
         <Grid Grid.Row="2">
-            <UniformGrid Columns="3" HorizontalAlignment="Right" Width="400">
-                <Button Content="{x:Static language:Lang.Account_EditProfileData}" Click="Btn_EditAccount" Margin="5" Height="55" Width="130" Foreground="White" FontWeight="Bold" 
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15">
+            <UniformGrid Columns="3" HorizontalAlignment="Right" Width="500">
+                <Button HorizontalAlignment="Left" Content="{x:Static language:Lang.Account_EditPassword}" Click="Btn_EditPassword" Margin="5" Height="70" Width="155" Foreground="White" FontWeight="Bold" 
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                     <Button.Background>
-                        <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
+                        <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
                     </Button.Background>
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
@@ -194,8 +254,8 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Click ="Btn_PersonalStatistics" Margin="5" Height="55" Width="110" Foreground="White" FontWeight="Bold" 
-                BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15">
+                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Click ="Btn_PersonalStatistics" Margin="5" Height="70" Width="155" Foreground="White" FontWeight="Bold" 
+                BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rock1.png"/>
                     </Button.Background>
@@ -217,8 +277,8 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="55" Width="110" Foreground="White" FontWeight="Bold" 
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18">
+                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="70" Width="120" Foreground="White" FontWeight="Bold" 
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
                     </Button.Background>

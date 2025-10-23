@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArchsVsDinosClient.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,9 +34,20 @@ namespace ArchsVsDinosClient.Views
         {
             new PersonalStatistics().ShowDialog();
         }
-        private void Btn_EditAccount(object sender, RoutedEventArgs e)
+
+        private void Btn_EditPassword(object sender, RoutedEventArgs e)
         {
-            new AccountEdition().ShowDialog();
+            new EditPassword().ShowDialog();
+        }
+
+        private void Btn_EditUsername(object sender, RoutedEventArgs e)
+        {
+            new EditUsername().ShowDialog();
+        }
+
+        private void Btn_EditNickname(object sender, RoutedEventArgs e)
+        {
+            new EditAccountViews.EditNickname().ShowDialog();
         }
 
     }

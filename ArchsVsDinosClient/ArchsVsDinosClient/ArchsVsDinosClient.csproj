@@ -82,8 +82,14 @@
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\AccountEdition.xaml.cs">
-      <DependentUpon>AccountEdition.xaml</DependentUpon>
+    <Compile Include="Views\EditAccountViews\EditNickname.xaml.cs">
+      <DependentUpon>EditNickname.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAccountViews\EditPassword.xaml.cs">
+      <DependentUpon>EditPassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAccountViews\EditUsername.xaml.cs">
+      <DependentUpon>EditUsername.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FriendsAtLobby.xaml.cs">
       <DependentUpon>FriendsAtLobby.xaml</DependentUpon>
@@ -113,9 +119,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AccountEdition.xaml">
+    <Page Include="Views\EditAccountViews\EditNickname.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditAccountViews\EditPassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\EditAccountViews\EditUsername.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\FriendsAtLobby.xaml">
       <SubType>Designer</SubType>
