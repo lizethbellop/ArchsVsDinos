@@ -143,7 +143,10 @@
     </Compile>
     <Compile Include="BusinessLogic\Authentication.cs" />
     <Compile Include="BusinessLogic\Chat.cs" />
-    <Compile Include="BusinessLogic\ProfileManagement.cs" />
+    <Compile Include="BusinessLogic\ProfileManagement\BaseProfileService.cs" />
+    <Compile Include="BusinessLogic\ProfileManagement\PasswordManager.cs" />
+    <Compile Include="BusinessLogic\ProfileManagement\ProfileInformation.cs" />
+    <Compile Include="BusinessLogic\ProfileManagement\SocialMediaManager.cs" />
     <Compile Include="BusinessLogic\Register.cs" />
     <Compile Include="CardBody.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
