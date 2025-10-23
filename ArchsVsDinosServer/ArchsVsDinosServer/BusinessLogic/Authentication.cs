@@ -37,7 +37,7 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             try
             {
-                var response = new LoginResponse();
+                LoginResponse response = new LoginResponse();
                 if(IsEmpty(username, password))
                 {
                     response.Success = false;
@@ -48,7 +48,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 using (var context = contextFactory())
                 {
                     
-                    var user = context.UserAccount.FirstOrDefault(u => u.username == username);
+                    UserAccount user = context.UserAccount.FirstOrDefault(u => u.username == username);
                     
                     if (user == null)
                     {
