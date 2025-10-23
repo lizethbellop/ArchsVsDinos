@@ -33,6 +33,7 @@ namespace ArchsVsDinosClient.Views
         private void Btn_Accept(object sender, RoutedEventArgs e)
         {
 
+            SoundMovingRock.PlayClick();
             EnteredCode = txtBoxCode.Text;
 
             if(ValidationHelper.isEmpty(EnteredCode))
@@ -48,6 +49,7 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
+            SoundButton.PlayClick();
             IsCancelled = true;
             this.Close();
         }

@@ -402,4 +402,7 @@
   <data name="EditNickname_NewNickname" xml:space="preserve">
     <value>Nuevo apodo</value>
   </data>
+  <data name="GlobalSoundNotFound" xml:space="preserve">
+    <value>Pista de audio no encontrada</value>
+  </data>
 </root>

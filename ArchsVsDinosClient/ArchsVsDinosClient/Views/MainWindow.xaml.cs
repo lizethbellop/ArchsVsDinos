@@ -35,16 +35,19 @@ namespace ArchsVsDinosClient
 
         private void Btn_Account(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new Account().ShowDialog();
         }
 
         private void Btn_Friends(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new FriendsMainMenu().ShowDialog();
         }
 
         private void Btn_Settings(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new Settings().ShowDialog();
         }
 

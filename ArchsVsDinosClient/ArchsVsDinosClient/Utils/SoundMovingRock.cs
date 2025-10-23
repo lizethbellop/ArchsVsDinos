@@ -1,20 +1,18 @@
-﻿using System;
+﻿using ArchsVsDinosClient.Properties.Langs;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
-using System.IO;
-using System.ServiceModel.Channels;
-using ArchsVsDinosClient.Properties.Langs;
 using System.Windows;
 
 namespace ArchsVsDinosClient.Utils
 {
-    public class SoundButton
+    public class SoundMovingRock
     {
-        private static readonly SoundPlayer _player = new SoundPlayer("Resources/Sounds/rockSound.wav");
+        private static readonly SoundPlayer _player = new SoundPlayer("Resources/Sounds/movingRock.wav");
 
         public static void PlayClick()
         {
@@ -29,5 +27,4 @@ namespace ArchsVsDinosClient.Utils
             }
         }
     }
-
 }

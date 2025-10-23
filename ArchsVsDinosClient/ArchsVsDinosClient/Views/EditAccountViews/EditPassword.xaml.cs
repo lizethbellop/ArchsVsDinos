@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArchsVsDinosClient.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,7 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
+            SoundButton.PlayClick();
             this.Close();
         }
     }

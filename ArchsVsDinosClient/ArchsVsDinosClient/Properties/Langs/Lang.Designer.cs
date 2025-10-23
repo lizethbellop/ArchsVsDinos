@@ -349,6 +349,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Pista de audio no encontrada.
+        /// </summary>
+        public static string GlobalSoundNotFound {
+            get {
+                return ResourceManager.GetString("GlobalSoundNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Inglés.
         /// </summary>
         public static string Language_English {

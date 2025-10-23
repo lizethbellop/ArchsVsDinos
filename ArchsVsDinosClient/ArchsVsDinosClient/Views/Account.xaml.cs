@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Views;
+﻿using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,26 +28,31 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
+            SoundButton.PlayClick();
             this.Close();   
         }
 
         private void Btn_PersonalStatistics(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new PersonalStatistics().ShowDialog();
         }
 
         private void Btn_EditPassword(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new EditPassword().ShowDialog();
         }
 
         private void Btn_EditUsername(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new EditUsername().ShowDialog();
         }
 
         private void Btn_EditNickname(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new EditAccountViews.EditNickname().ShowDialog();
         }
 

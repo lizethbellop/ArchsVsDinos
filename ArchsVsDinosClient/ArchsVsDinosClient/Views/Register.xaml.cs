@@ -32,11 +32,13 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
+            SoundButton.PlayClick();
             this.Close();
         }
 
         private void Btn_RegisterNow(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             string nameTxt = txtBoxFullName.Text;
             string usernameTxt = txtBoxUsername.Text;
             string emailTxt = txtBoxEmail.Text;
