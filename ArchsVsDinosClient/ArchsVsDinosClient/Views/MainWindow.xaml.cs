@@ -28,6 +28,11 @@ namespace ArchsVsDinosClient
             InitializeComponent();
         }
 
+        /*private void Btn_CreateMatch(object sender, RoutedEventArgs e)
+        {
+            new Lobby().ShowDialog();
+        }*/
+
         private void Btn_Account(object sender, RoutedEventArgs e)
         {
             new Account().ShowDialog();
@@ -42,6 +47,7 @@ namespace ArchsVsDinosClient
         {
             new Settings().ShowDialog();
         }
+
 
         /*private void Btn_MouseEnter(object sender, MouseEventArgs e)
         {

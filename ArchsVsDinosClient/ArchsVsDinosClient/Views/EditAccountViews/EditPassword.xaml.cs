@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace ArchsVsDinosClient.Views
 {
     /// <summary>
-    /// Lógica de interacción para AccountEdition.xaml
+    /// Lógica de interacción para EditPassword.xaml
     /// </summary>
-    public partial class AccountEdition : Window
+    public partial class EditPassword : Window
     {
-        public AccountEdition()
+        public EditPassword()
         {
             InitializeComponent();
         }
@@ -28,6 +28,5 @@ namespace ArchsVsDinosClient.Views
         {
             this.Close();
         }
-
     }
 }

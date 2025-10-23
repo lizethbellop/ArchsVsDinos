@@ -61,6 +61,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Editar contraseña.
+        /// </summary>
+        public static string Account_EditPassword {
+            get {
+                return ResourceManager.GetString("Account_EditPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Editar datos perfil.
         /// </summary>
         public static string Account_EditProfileData {
@@ -129,6 +138,69 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string AccountEdit_NewUsername {
             get {
                 return ResourceManager.GetString("AccountEdit_NewUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nuevo apodo.
+        /// </summary>
+        public static string EditNickname_NewNickname {
+            get {
+                return ResourceManager.GetString("EditNickname_NewNickname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Editar apodo.
+        /// </summary>
+        public static string EditNickname_Title {
+            get {
+                return ResourceManager.GetString("EditNickname_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a *Por favor, ingrese su contraseña actual para validar*.
+        /// </summary>
+        public static string EditPassword_MessageNewPassword {
+            get {
+                return ResourceManager.GetString("EditPassword_MessageNewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nueva contraseña.
+        /// </summary>
+        public static string EditPassword_NewPassword {
+            get {
+                return ResourceManager.GetString("EditPassword_NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Contraseña actual.
+        /// </summary>
+        public static string EditPassword_OldPassword {
+            get {
+                return ResourceManager.GetString("EditPassword_OldPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nuevo nombre de usuario.
+        /// </summary>
+        public static string EditUsername_NewUsername {
+            get {
+                return ResourceManager.GetString("EditUsername_NewUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Editar nombre de usuario.
+        /// </summary>
+        public static string EditUsername_Title {
+            get {
+                return ResourceManager.GetString("EditUsername_Title", resourceCulture);
             }
         }
         
