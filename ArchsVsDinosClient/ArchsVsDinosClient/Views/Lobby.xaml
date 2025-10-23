@@ -12,50 +12,53 @@
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF5B64F3" Offset="0"/>
-            <GradientStop Color="#FFBFFFB9" Offset="1"/>
+            <GradientStop Color="#FF52C57A" Offset="1"/>
             <GradientStop Color="#FFAD6CC4" Offset="0.097"/>
-            <GradientStop Color="#FFFFDCB7" Offset="0.389"/>
+            <GradientStop Color="#FFE8F6B7" Offset="0.243"/>
         </LinearGradientBrush>
     </Window.Background>
-    
+
     <Grid Margin="15,15,15,15">
-        
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".45*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width=".4*"/>
+            <ColumnDefinition Width="309*"/>
+            <ColumnDefinition Width="296*"/>
+            <ColumnDefinition Width="476*"/>
+            <ColumnDefinition Width="309*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,296,0">
 
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                    <Button Content="{x:Static language:Lang.GlobalReturnText}" Height="60" Width="100" Margin="0,10,0,20" 
-                        Background="#FF4877C2" Foreground="White" FontWeight="Bold" 
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" Background="{TemplateBinding Background}" 
+                <Button Content="{x:Static language:Lang.GlobalReturnText}" Height="60" Width="100" Margin="0,10,0,20" Foreground="White" FontWeight="Bold" 
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="23">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" 
                                     CornerRadius="5" BorderThickness="0">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
 
-                <StackPanel VerticalAlignment="Bottom">
-                    <Label Content="{x:Static language:Lang.GlobalGroupChatText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" Foreground="Black"/>
-                    <Border Background="White" BorderBrush="Gray" BorderThickness="1" Height="350" CornerRadius="5">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel VerticalAlignment="Bottom">
+                <Label Content="{x:Static language:Lang.GlobalGroupChatText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" Foreground="Black"/>
+                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Height="350" CornerRadius="5">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <TextBlock x:Name="TxtChat" TextWrapping="Wrap" Padding="5" FontFamily="Trebuchet MS" FontSize="12" Background="#80FFFFFF"/>
-                        </ScrollViewer>
-                    </Border>
-                </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom">
                 <TextBox x:Name="TbMessage" Height="30" Margin="0,5,0,0" FontFamily="Trebuchet MS"
@@ -64,7 +67,7 @@
 
         </Grid>
 
-        <Grid Grid.Column="1" Margin="20">
+        <Grid Grid.Column="1" Margin="20,20,20,20" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -78,7 +81,7 @@
                    Foreground="Black" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
             <UniformGrid Grid.Row="2" Columns="2" Rows="2" Margin="10">
-                <Border Background="#FFD0D0D0" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="140" MaxHeight="140">
+                <Border Background="#FFD0D0D0" BorderBrush="Gray" BorderThickness="2" Margin="3" CornerRadius="8" MinHeight="120" MaxHeight="200">
                     <StackPanel VerticalAlignment="Center" Margin="3">
                         <Label Content="Player 1" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" 
                                HorizontalAlignment="Center" FontWeight="Bold" Margin="0,2,0,5" Padding="2"/>
@@ -254,34 +257,39 @@
             </UniformGrid>
         </Grid>
 
-        <Grid Grid.Column="2" Background="White">
-            <StackPanel>
-                <Label Content="{x:Static language:Lang.GlobalGameId}" FontFamily="Trebuchet MS" FontSize="16" FontWeight="Bold" 
+        <Grid Grid.Column="2" Grid.ColumnSpan="2" Margin="476,0,0,0">
+
+            <StackPanel VerticalAlignment="Top">
+                <Label Content="{x:Static language:Lang.GlobalGameId}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="25" FontWeight="Bold" 
                        Foreground="Black" HorizontalAlignment="Right" Margin="0,10,0,20"/>
 
-                <Button Content="{x:Static language:Lang.Friends_MyFriends}" Height="40" Margin="0,30,0,20" 
-                        Background="#FF4877C2" Foreground="White" FontWeight="Bold" 
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                    CornerRadius="5" BorderThickness="0">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                <StackPanel Margin="20,0,0,20" VerticalAlignment="Bottom">
+                    <Button Content="{x:Static language:Lang.Friends_MyFriends}" Height="65" Margin="0,30,0,20" Background="#FF4877C2" Foreground="White" FontWeight="Bold" 
+                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="0">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+
             </StackPanel>
-            
-            <StackPanel>
-                <Button Content="¡INICIAR!" Height="60" Margin="0,290,0,0" 
-                        Background="#FF196572" Foreground="White" FontWeight="Bold" 
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="24">
+
+            <StackPanel VerticalAlignment="Bottom" Margin="5,5,5,5">
+
+                <Button Content="¡INICIAR!" Height="200" Foreground="White" FontWeight="Bold" 
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/Begin.png"/>
+                    </Button.Background>
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="border" Background="{TemplateBinding Background}" 
@@ -298,6 +306,6 @@
                 </Button>
             </StackPanel>
         </Grid>
-        
+
     </Grid>
 </Window>

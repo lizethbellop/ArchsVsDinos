@@ -302,6 +302,7 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Resource Include="Resources\Images\garra.png" />
+    <Resource Include="Resources\Images\Begin.png" />
     <Content Include="Resources\Sounds\rockSound.wav" />
   </ItemGroup>
   <ItemGroup>

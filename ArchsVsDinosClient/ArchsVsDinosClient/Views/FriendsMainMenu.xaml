@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="FriendsMainMenu" Height="500" Width="550"
+        Title="FriendsMainMenu" Height="600" Width="550"
         WindowStartupLocation="CenterScreen">
 
     <Window.Background>
@@ -109,7 +109,7 @@
             </UniformGrid>
             <UniformGrid Margin="20,0,20,0" HorizontalAlignment="Center">
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="200" Height="29">
-                    <TextBox x:Name="TbEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" Text="example@email.com" VerticalAlignment="Center"/>
+                    <TextBox x:Name="TbEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
                 <Button Content="{x:Static language:Lang.Friends_Add}" Height="45" Width="80" Foreground="White" FontWeight="Bold"
                      BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
