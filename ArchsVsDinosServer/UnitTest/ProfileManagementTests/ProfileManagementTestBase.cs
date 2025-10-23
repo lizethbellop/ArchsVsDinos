@@ -20,7 +20,7 @@ namespace UnitTest.ProfileManagementTests
         protected Mock<IDbContext> mockDbContext;
         protected Mock<DbSet<UserAccount>> mockUserSet;
         protected Mock<DbSet<Player>> mockPlayerSet;
-        protected ProfileManagement profileManagement;
+        protected ProfileManagementB profileManagement;
 
         [TestInitialize]
         public void BaseSetup()
@@ -32,7 +32,7 @@ namespace UnitTest.ProfileManagementTests
             mockUserSet = new Mock<DbSet<UserAccount>>();
             mockPlayerSet = new Mock<DbSet<Player>>();
 
-            profileManagement = new ProfileManagement(
+            profileManagement = new ProfileManagementB(
                 () => mockDbContext.Object,
                 mockValidationHelper.Object,
                 mockLoggerHelper.Object,

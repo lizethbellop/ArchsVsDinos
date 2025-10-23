@@ -8,6 +8,7 @@ using System.Data.Entity.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Contracts.DTO.Result_Codes;
 
 namespace ArchsVsDinosServer.BusinessLogic
 {
@@ -33,50 +34,51 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
 
         }
-        public LoginResponse Login(string username, string password) 
+        public LoginResponse Login(string username, string password)
         {
             try
             {
                 LoginResponse response = new LoginResponse();
-                if(IsEmpty(username, password))
+                if (IsEmpty(username, password))
                 {
-                    response.Success = false;
-                    response.Message = "Campos requeridos";
+                    response.success = false;
+                    response.message = "Campos requeridos";
+                    response.resultCode = LoginResultCode.Authentication_EmptyFields;
                     return response;
                 }
-                
+
                 using (var context = contextFactory())
                 {
-                    
+
                     UserAccount user = context.UserAccount.FirstOrDefault(u => u.username == username);
-                    
+
                     if (user == null)
                     {
-                        response.Success = false;
-                        response.Message = "Credenciales incorrectas";
+                        response.success = false;
+                        response.message = "Credenciales incorrectas";
+                        response.resultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
-
-                    if(!securityHelper.VerifyPassword(password, user.password))
+                    if (!securityHelper.VerifyPassword(password, user.password))
                     {
-                        response.Success = false;
-                        response.Message = "Credenciales incorrectas";
+                        response.success = false;
+                        response.message = "Credenciales incorrectas";
+                        response.resultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
-
-                    response.Success = true;
-                    response.Message = "Login exitoso";
-                    response.UserSession = new UserDTO
+                    response.success = true;
+                    response.message = "Login exitoso";
+                    response.resultCode = LoginResultCode.Authentication_Success;
+                    response.userSession = new UserDTO
                     {
                         idUser = user.idUser,
                         name = user.name,
                         nickname = user.nickname,
                         username = user.username
                     };
-
                     if (user.Player != null)
                     {
-                        response.AssociatedPlayer = new PlayerDTO
+                        response.associatedPlayer = new PlayerDTO
                         {
                             idPlayer = user.Player.idPlayer,
                             facebook = user.Player.facebook,
@@ -89,7 +91,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                             totalPoints = user.Player.totalPoints
                         };
                     }
-
                     return response;
                 }
             }
@@ -98,8 +99,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                 LoggerHelper.LogError($"Database connection error at Login for user: {username}", ex);
                 return new LoginResponse
                 {
-                    Success = false,
-                    Message = "Error de conexión con la base de datos"
+                    success = false,
+                    message = "Error de conexión con la base de datos",
+                    resultCode = LoginResultCode.Authentication_DatabaseError
                 };
             }
             catch (Exception ex)
@@ -107,8 +109,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                 Console.WriteLine($"Error en Login: {ex.Message}");
                 return new LoginResponse
                 {
-                    Success = false,
-                    Message = "Error inesperado en el servidor"
+                    success = false,
+                    message = "Error inesperado en el servidor",
+                    resultCode = LoginResultCode.Authentication_UnexpectedError
                 };
             }
         }
