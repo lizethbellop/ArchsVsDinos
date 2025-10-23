@@ -45,7 +45,7 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             try
             {
-                var response = new UpdateResponse();
+                UpdateResponse response = new UpdateResponse();
 
                 if(ChangePasswordIsEmpty(username, currentPassword, newPassword))
                 { 
