@@ -36,7 +36,7 @@
         <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,0,25">
             <Label Content="{x:Static language:Lang.EditUsername_NewUsername}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" HorizontalAlignment="Left" Foreground="White"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <TextBox Name = "txtBoxNewUsername" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                <TextBox Name = "TxtB_NewUsername" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
             </Border>
         </StackPanel>
 

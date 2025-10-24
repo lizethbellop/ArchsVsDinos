@@ -34,7 +34,7 @@ namespace ArchsVsDinosClient.Views
         {
 
             SoundMovingRock.PlayClick();
-            EnteredCode = txtBoxCode.Text;
+            EnteredCode = TxtBCode.Text;
 
             if(ValidationHelper.isEmpty(EnteredCode))
             {

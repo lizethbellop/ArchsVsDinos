@@ -36,8 +36,8 @@ namespace ArchsVsDinosClient
         private void Btn_Login(object sender, RoutedEventArgs e)
         {
 
-            string username = txtBoxUsername.Text;
-            string password = passBox.Password;
+            string username = TxtB_Username.Text;
+            string password = Pb_Password.Password;
 
 
             if (!ValidateInputs(username, password)) 
@@ -76,7 +76,7 @@ namespace ArchsVsDinosClient
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CbLanguage.SelectedIndex == 0)
+            if (Cb_Language.SelectedIndex == 0)
             {
                 Properties.Settings.Default.languageCode = "es-MX";
 

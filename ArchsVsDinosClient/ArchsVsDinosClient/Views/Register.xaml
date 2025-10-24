@@ -45,35 +45,35 @@
             <StackPanel Grid.Row="1" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox Name="txtBoxFullName" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                    <TextBox Name="TxtB_Name" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="2" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="24">
-                    <TextBox Name="txtBoxUsername" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                    <TextBox Name="TxtB_Username" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="3" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="24">
-                    <TextBox Name="txtBoxEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                    <TextBox Name="TxtB_Email" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="4" Margin="0,0" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Password}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox Name="txtBoxPassword" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                    <TextBox Name="TxtB_Password" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <StackPanel Grid.Row="5" Margin="0,0,0,15" HorizontalAlignment="Center">
                 <Label Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" Foreground="Black"/>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox Name="txtBoxNickname" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                    <TextBox Name="TxtB_Nickname" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 

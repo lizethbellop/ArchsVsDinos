@@ -39,11 +39,11 @@ namespace ArchsVsDinosClient.Views
         private void Btn_RegisterNow(object sender, RoutedEventArgs e)
         {
             SoundMovingRock.PlayClick();
-            string nameTxt = txtBoxFullName.Text;
-            string usernameTxt = txtBoxUsername.Text;
-            string emailTxt = txtBoxEmail.Text;
-            string passwordTxt = txtBoxPassword.Text;
-            string nicknameTxt = txtBoxNickname.Text;
+            string nameTxt = TxtB_Name.Text;
+            string usernameTxt = TxtB_Username.Text;
+            string emailTxt = TxtB_Email.Text;
+            string passwordTxt = TxtB_Password.Text;
+            string nicknameTxt = TxtB_Nickname.Text;
 
             if (!ValidateInputs(nameTxt, usernameTxt, emailTxt, passwordTxt, nicknameTxt))
             {
@@ -66,6 +66,7 @@ namespace ArchsVsDinosClient.Views
                 {
                     Owner = this
                 };
+
                 codeWindow.ShowDialog();
 
                 if (codeWindow.IsCancelled)
