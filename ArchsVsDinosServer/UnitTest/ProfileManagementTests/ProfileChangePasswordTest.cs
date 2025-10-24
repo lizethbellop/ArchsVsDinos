@@ -11,13 +11,26 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnitTest.Util;
+using Contracts.DTO.Result_Codes;
+using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
 
 namespace UnitTest.ProfileManagementTests
 {
     [TestClass]
     public class ProfileChangePasswordTest : ProfileManagementTestBase
     {
+        private PasswordManager passwordManager;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            passwordManager = new PasswordManager(
+                () => mockDbContext.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object,
+                mockSecurityHelper.Object
+            );
+        }
 
         [TestMethod]
         public void TestChangePasswordEmptyFields()
@@ -30,11 +43,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Todos los campos son obligatorios"
+                success = false,
+                message = "Todos los campos son obligatorios",
+                resultCode =UpdateResultCode.Profile_EmptyFields
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -49,11 +63,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "La nueva contraseña debe ser diferente a la actual"
+                success = false,
+                message = "La nueva contraseña debe ser diferente a la actual",
+                resultCode = UpdateResultCode.Profile_SamePasswordValue
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -68,11 +83,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "La nueva contraseña debe tener al menos 8 caracteres"
+                success = false,
+                message = "La nueva contraseña debe tener al menos 8 caracteres",
+                resultCode = UpdateResultCode.Profile_PasswordTooShort
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -88,11 +104,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Usuario no encontrado"
+                success = false,
+                message = "Usuario no encontrado",
+                resultCode = UpdateResultCode.Profile_UserNotFound
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -118,11 +135,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "La contraseña actual es incorrecta"
+                success = false,
+                message = "La contraseña actual es incorrecta",
+                resultCode = UpdateResultCode.Profile_SamePasswordValue
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -150,11 +168,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = true,
-                Message = "Contraseña actualizada exitosamente"
+                success = true,
+                message = "Contraseña actualizada exitosamente",
+                resultCode =UpdateResultCode.Profile_Success
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
 
         }
@@ -171,11 +190,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Error en la base de datos"
+                success = false,
+                message = "Error en la base de datos",
+                resultCode = UpdateResultCode.Profile_DatabaseError
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -191,11 +211,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Error: Unexpected error"
+                success = false,
+                message = "Error: Unexpected error",
+                resultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
-            UpdateResponse result = profileManagement.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
 
         }

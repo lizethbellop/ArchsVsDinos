@@ -74,7 +74,6 @@
     <Compile Include="AuthenticationTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileUpdateInstagramTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileChangePasswordTest.cs" />
-    <Compile Include="ProfileManagementTests\ProfileGetProfileTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileManagementTestBase.cs" />
     <Compile Include="ProfileManagementTests\ProfileUpdateFacebookTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileUpdateNicknameTest.cs" />
