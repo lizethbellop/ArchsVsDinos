@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosServer;
 using ArchsVsDinosServer.BusinessLogic;
+using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
 using ArchsVsDinosServer.Interfaces;
 using Contracts.DTO.Response;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,13 +12,26 @@ using System.Data.Entity.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnitTest.Util;
+using Contracts.DTO.Result_Codes;
 
 namespace UnitTest.ProfileManagementTests
 {
     [TestClass]
     public class ProfileUpdateUsernameTest : ProfileManagementTestBase
     {
+        private ProfileInformation profileInformation;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            profileInformation = new ProfileInformation(
+                () => mockDbContext.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object,
+                mockSecurityHelper.Object
+            );
+        }
+
         [TestMethod]
         public void TestUpdateUsernameEmptyFields()
         {
@@ -28,11 +42,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Los campos son obligatorios"
+                success = false,
+                message = "Los campos son obligatorios",
+                resultCode = UpdateResultCode.Profile_EmptyFields
             };
 
-            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -46,11 +61,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "El nuevo username debe ser diferente al actual"
+                success = false,
+                message = "El nuevo username debe ser diferente al actual",
+                resultCode = UpdateResultCode.Profile_SameUsernameValue
             };
 
-            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -71,10 +87,11 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "El username ya está en uso"
+                success = false,
+                message = "El username ya está en uso",
+                resultCode = UpdateResultCode.Profile_UsernameExists
             };
-            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -89,11 +106,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Usuario no encontrado"
+                success = false,
+                message = "Usuario no encontrado",
+                resultCode = UpdateResultCode.Profile_UserNotFound
             };
 
-            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -115,11 +133,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = true,
-                Message = "Username actualizado"
+                success = true,
+                message = "Username actualizado",
+                resultCode = UpdateResultCode.Profile_Success
             };
 
-            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -134,11 +153,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Error: Database error"
+                success = false,
+                message = "Error: Database error",
+                resultCode = UpdateResultCode.Profile_DatabaseError
             };
 
-            UpdateResponse result = profileManagement.UpdateUsername(currentUsername, newUsername);
+            UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
         }
     }

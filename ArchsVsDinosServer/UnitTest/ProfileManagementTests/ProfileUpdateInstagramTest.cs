@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosServer;
+using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
 using Contracts.DTO.Response;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -8,12 +9,27 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Contracts.DTO.Result_Codes;
 
 namespace UnitTest.ProfileManagementTests
 {
     [TestClass]
     public class ProfileUpdateInstagramTest : ProfileManagementTestBase
     {
+
+        private SocialMediaManager socialMediaManager;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            socialMediaManager = new SocialMediaManager(
+                () => mockDbContext.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object,
+                mockSecurityHelper.Object
+            );
+        }
+
         [TestMethod]
         public void TestUpdateInstagramEmptyFields()
         {
@@ -24,11 +40,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Los campos son requeridos"
+                success = false,
+                message = "Los campos son requeridos",
+                resultCode = UpdateResultCode.Profile_EmptyFields
             };
 
-            UpdateResponse result = profileManagement.UpdateInstagram(username, newInstagram);
+            UpdateResponse result = socialMediaManager.UpdateInstagram(username, newInstagram);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -44,11 +61,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Usuario no encontrado"
+                success = false,
+                message = "Usuario no encontrado",
+                resultCode = UpdateResultCode.Profile_UserNotFound
             };
 
-            UpdateResponse result = profileManagement.UpdateInstagram(username, newInstagram);
+            UpdateResponse result = socialMediaManager.UpdateInstagram(username, newInstagram);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -72,11 +90,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Perfil de jugador no encontrado"
+                success = false,
+                message = "Perfil de jugador no encontrado",
+                resultCode = UpdateResultCode.Profile_PlayerNotFound
             };
 
-            UpdateResponse result = profileManagement.UpdateInstagram(username, newInstagram);
+            UpdateResponse result = socialMediaManager.UpdateInstagram(username, newInstagram);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -106,11 +125,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = true,
-                Message = "Instagram actualizado exitosamente"
+                success = true,
+                message = "Instagram actualizado exitosamente",
+                resultCode = UpdateResultCode.Profile_Success
             };
 
-            UpdateResponse result = profileManagement.UpdateInstagram(username, newInstagram);
+            UpdateResponse result = socialMediaManager.UpdateInstagram(username, newInstagram);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -126,11 +146,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Error en la base de datos"
+                success = false,
+                message = "Error en la base de datos",
+                resultCode = UpdateResultCode.Profile_DatabaseError
             };
 
-            UpdateResponse result = profileManagement.UpdateInstagram(username, newInstagram);
+            UpdateResponse result = socialMediaManager.UpdateInstagram(username, newInstagram);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -146,11 +167,12 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                Success = false,
-                Message = "Unexpected error"
+                success = false,
+                message = "Unexpected error",
+                resultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
-            UpdateResponse result = profileManagement.UpdateInstagram(username, newInstagram);
+            UpdateResponse result = socialMediaManager.UpdateInstagram(username, newInstagram);
 
             Assert.AreEqual(expectedResult, result);
         }

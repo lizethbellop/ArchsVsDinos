@@ -65,6 +65,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         response.success = false;
                         response.message = "El nuevo nickname debe ser diferente al actual";
                         response.resultCode = UpdateResultCode.Profile_SameNicknameValue;
+                        return response;
                     }
 
                     if (context.UserAccount.Any(u => u.nickname == newNickname))
@@ -136,6 +137,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         response.success = false;
                         response.message = "El nuevo nickname debe ser diferente al actual";
                         response.resultCode = UpdateResultCode.Profile_SameUsernameValue;
+                        return response;
                     }
 
                     userAccount.username = newUsername;
