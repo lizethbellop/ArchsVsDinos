@@ -55,10 +55,10 @@ namespace ArchsVsDinosClient
                 AuthenticationService.LoginResponse response = authenticationClient.Login(username, password);
                 
             
-                if (response.Success)
+                if (response.success)
                 {
-                    UserDTO user = response.UserSession.ToUserDTO();
-                    PlayerDTO player = response.AssociatedPlayer.ToPlayerDTO();
+                    UserDTO user = response.userSession.ToUserDTO();
+                    PlayerDTO player = response.associatedPlayer.ToPlayerDTO();
 
                     UserSession.Instance.Login(user, player);
                     
@@ -72,7 +72,10 @@ namespace ArchsVsDinosClient
             }
             catch (Exception ex)
             {
-                MessageBox.Show(Lang.Global_ServerError);
+                //MessageBox.Show(Lang.Global_ServerError);
+                MessageBox.Show($"ERROR COMPLETO:\n\n{ex.Message}\n\n" +
+                       $"INNER: {ex.InnerException?.Message}\n\n" +
+                       $"STACK: {ex.StackTrace}");
             }
 
         }

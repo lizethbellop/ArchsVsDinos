@@ -23,16 +23,16 @@ namespace ArchsVsDinosClient.AuthenticationService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.AuthenticationService.PlayerDTO AssociatedPlayerField;
+        private ArchsVsDinosClient.AuthenticationService.PlayerDTO associatedPlayerField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string MessageField;
+        private ArchsVsDinosClient.AuthenticationService.LoginResultCode resultCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool SuccessField;
+        private bool successField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.AuthenticationService.UserDTO UserSessionField;
+        private ArchsVsDinosClient.AuthenticationService.UserDTO userSessionField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -45,53 +45,53 @@ namespace ArchsVsDinosClient.AuthenticationService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.AuthenticationService.PlayerDTO AssociatedPlayer {
+        public ArchsVsDinosClient.AuthenticationService.PlayerDTO associatedPlayer {
             get {
-                return this.AssociatedPlayerField;
+                return this.associatedPlayerField;
             }
             set {
-                if ((object.ReferenceEquals(this.AssociatedPlayerField, value) != true)) {
-                    this.AssociatedPlayerField = value;
-                    this.RaisePropertyChanged("AssociatedPlayer");
+                if ((object.ReferenceEquals(this.associatedPlayerField, value) != true)) {
+                    this.associatedPlayerField = value;
+                    this.RaisePropertyChanged("associatedPlayer");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Message {
+        public ArchsVsDinosClient.AuthenticationService.LoginResultCode resultCode {
             get {
-                return this.MessageField;
+                return this.resultCodeField;
             }
             set {
-                if ((object.ReferenceEquals(this.MessageField, value) != true)) {
-                    this.MessageField = value;
-                    this.RaisePropertyChanged("Message");
+                if ((this.resultCodeField.Equals(value) != true)) {
+                    this.resultCodeField = value;
+                    this.RaisePropertyChanged("resultCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success {
+        public bool success {
             get {
-                return this.SuccessField;
+                return this.successField;
             }
             set {
-                if ((this.SuccessField.Equals(value) != true)) {
-                    this.SuccessField = value;
-                    this.RaisePropertyChanged("Success");
+                if ((this.successField.Equals(value) != true)) {
+                    this.successField = value;
+                    this.RaisePropertyChanged("success");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.AuthenticationService.UserDTO UserSession {
+        public ArchsVsDinosClient.AuthenticationService.UserDTO userSession {
             get {
-                return this.UserSessionField;
+                return this.userSessionField;
             }
             set {
-                if ((object.ReferenceEquals(this.UserSessionField, value) != true)) {
-                    this.UserSessionField = value;
-                    this.RaisePropertyChanged("UserSession");
+                if ((object.ReferenceEquals(this.userSessionField, value) != true)) {
+                    this.userSessionField = value;
+                    this.RaisePropertyChanged("userSession");
                 }
             }
         }
@@ -370,6 +370,26 @@ namespace ArchsVsDinosClient.AuthenticationService {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LoginResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum LoginResultCode : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Authentication_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Authentication_EmptyFields = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Authentication_InvalidCredentials = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Authentication_DatabaseError = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Authentication_UnexpectedError = 4,
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
