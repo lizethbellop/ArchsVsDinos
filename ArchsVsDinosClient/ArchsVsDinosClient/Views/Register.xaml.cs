@@ -33,6 +33,7 @@ namespace ArchsVsDinosClient.Views
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayClick();
+            MessageBox.Show(Lang.Register_CancelledRegistration);
             this.Close();
         }
 
@@ -47,7 +48,7 @@ namespace ArchsVsDinosClient.Views
 
             if (!ValidateInputs(nameTxt, usernameTxt, emailTxt, passwordTxt, nicknameTxt))
             {
-                MessageBox.Show(Lang.Global_EmptyField);
+                MessageBox.Show(Lang.GlobalEmptyField);
                 return;
             }
 
@@ -119,7 +120,7 @@ namespace ArchsVsDinosClient.Views
                             MessageBox.Show(Lang.Register_NicknameAlreadyExists);
                             break;
                         case RegisterResultCode.Register_UnexpectedError:
-                            MessageBox.Show(Lang.Global_ServerError);
+                            MessageBox.Show(Lang.GlobalServerError);
                             break;
                     }
                        
@@ -127,7 +128,7 @@ namespace ArchsVsDinosClient.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show(Lang.Global_ServerError);
+                MessageBox.Show(Lang.GlobalServerError);
             }
 
         }
@@ -136,7 +137,7 @@ namespace ArchsVsDinosClient.Views
         {
             if(ValidationHelper.isEmpty(name) || ValidationHelper.isEmpty(username) || ValidationHelper.isEmpty(email) || ValidationHelper.isEmpty(password) || ValidationHelper.isEmpty(nickname))
             {
-                MessageBox.Show(Lang.Global_EmptyField);
+                MessageBox.Show(Lang.GlobalEmptyField);
                 return false;
             }
 

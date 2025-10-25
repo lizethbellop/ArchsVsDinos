@@ -38,7 +38,7 @@ namespace ArchsVsDinosClient.Views
 
             if(ValidationHelper.isEmpty(EnteredCode))
             {
-                MessageBox.Show(Lang.Global_EmptyField);
+                MessageBox.Show(Lang.GlobalEmptyField);
                 return;
             }
 

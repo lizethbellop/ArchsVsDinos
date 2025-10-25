@@ -259,24 +259,6 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Campos vacíos, por favor, verifique.
-        /// </summary>
-        public static string Global_EmptyField {
-            get {
-                return ResourceManager.GetString("Global_EmptyField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Error al conectar con el servidor, intente en otro momento.
-        /// </summary>
-        public static string Global_ServerError {
-            get {
-                return ResourceManager.GetString("Global_ServerError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Aceptar.
         /// </summary>
         public static string GlobalAcceptText {
@@ -300,6 +282,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string GlobalCloseText {
             get {
                 return ResourceManager.GetString("GlobalCloseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Campos vacíos, por favor, verifique.
+        /// </summary>
+        public static string GlobalEmptyField {
+            get {
+                return ResourceManager.GetString("GlobalEmptyField", resourceCulture);
             }
         }
         
@@ -349,6 +340,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error al conectar con el servidor, intente en otro momento.
+        /// </summary>
+        public static string GlobalServerError {
+            get {
+                return ResourceManager.GetString("GlobalServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Pista de audio no encontrada.
         /// </summary>
         public static string GlobalSoundNotFound {
@@ -376,11 +376,47 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Agregar amigo.
+        /// </summary>
+        public static string Lobby_AddFriend {
+            get {
+                return ResourceManager.GetString("Lobby_AddFriend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Agregar Jugador.
         /// </summary>
         public static string Lobby_AddPlayer {
             get {
                 return ResourceManager.GetString("Lobby_AddPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Iniciar!.
+        /// </summary>
+        public static string Lobby_BeginText {
+            get {
+                return ResourceManager.GetString("Lobby_BeginText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Expulsar.
+        /// </summary>
+        public static string Lobby_ExpellText {
+            get {
+                return ResourceManager.GetString("Lobby_ExpellText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Inicio de Partida.
+        /// </summary>
+        public static string Lobby_GameBeginningText {
+            get {
+                return ResourceManager.GetString("Lobby_GameBeginningText", resourceCulture);
             }
         }
         
@@ -394,38 +430,11 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Agregar amig@.
+        ///   Busca una cadena traducida similar a Invitar amigos.
         /// </summary>
-        public static string LobbyAddFriendText {
+        public static string Lobby_InviteFriends {
             get {
-                return ResourceManager.GetString("LobbyAddFriendText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a ¡Iniciar!.
-        /// </summary>
-        public static string LobbyBeginText {
-            get {
-                return ResourceManager.GetString("LobbyBeginText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Expulsar.
-        /// </summary>
-        public static string LobbyExpellText {
-            get {
-                return ResourceManager.GetString("LobbyExpellText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Inicio de Partida.
-        /// </summary>
-        public static string LobbyGameBeginningText {
-            get {
-                return ResourceManager.GetString("LobbyGameBeginningText", resourceCulture);
+                return ResourceManager.GetString("Lobby_InviteFriends", resourceCulture);
             }
         }
         
@@ -448,6 +457,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¿No tienes cuenta?.
+        /// </summary>
+        public static string Login_DontYouHaveAccount {
+            get {
+                return ResourceManager.GetString("Login_DontYouHaveAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Entrar.
+        /// </summary>
+        public static string Login_EnterText {
+            get {
+                return ResourceManager.GetString("Login_EnterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Credenciales incorrectas, intente de nuevo.
         /// </summary>
         public static string Login_IncorrectCredentials {
@@ -462,6 +489,33 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Login_LanguageText {
             get {
                 return ResourceManager.GetString("Login_LanguageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña es obligatoria.
+        /// </summary>
+        public static string Login_PasswordRequiredText {
+            get {
+                return ResourceManager.GetString("Login_PasswordRequiredText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Contraseña.
+        /// </summary>
+        public static string Login_PasswordText {
+            get {
+                return ResourceManager.GetString("Login_PasswordText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Jugar como Invitado.
+        /// </summary>
+        public static string Login_PlayAsGuest {
+            get {
+                return ResourceManager.GetString("Login_PlayAsGuest", resourceCulture);
             }
         }
         
@@ -484,74 +538,29 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a ¿No tienes cuenta?.
-        /// </summary>
-        public static string LoginDontYouHaveAccount {
-            get {
-                return ResourceManager.GetString("LoginDontYouHaveAccount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Entrar.
-        /// </summary>
-        public static string LoginEnterText {
-            get {
-                return ResourceManager.GetString("LoginEnterText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a La contraseña es obligatoria.
-        /// </summary>
-        public static string LoginPasswordRequiredText {
-            get {
-                return ResourceManager.GetString("LoginPasswordRequiredText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Contraseña.
-        /// </summary>
-        public static string LoginPasswordText {
-            get {
-                return ResourceManager.GetString("LoginPasswordText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Jugar como Invitado.
-        /// </summary>
-        public static string LoginPlayAsGuest {
-            get {
-                return ResourceManager.GetString("LoginPlayAsGuest", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Regístrate aquí.
         /// </summary>
-        public static string LoginRegisterHereText {
+        public static string Login_RegisterHereText {
             get {
-                return ResourceManager.GetString("LoginRegisterHereText", resourceCulture);
+                return ResourceManager.GetString("Login_RegisterHereText", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Busca una cadena traducida similar a No existe una cuenta con esos datos.
         /// </summary>
-        public static string LoginUserNotFoundText {
+        public static string Login_UserNotFoundText {
             get {
-                return ResourceManager.GetString("LoginUserNotFoundText", resourceCulture);
+                return ResourceManager.GetString("Login_UserNotFoundText", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Busca una cadena traducida similar a Usuario.
         /// </summary>
-        public static string LoginUserText {
+        public static string Login_UserText {
             get {
-                return ResourceManager.GetString("LoginUserText", resourceCulture);
+                return ResourceManager.GetString("Login_UserText", resourceCulture);
             }
         }
         
@@ -628,6 +637,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El correo electrónico es obligatorio.
+        /// </summary>
+        public static string Register_EmailRequiredText {
+            get {
+                return ResourceManager.GetString("Register_EmailRequiredText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Código incorrecto o expirado. Intente nuevamente.
         /// </summary>
         public static string Register_IncorrectCode {
@@ -642,6 +660,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Register_InvalidEmail {
             get {
                 return ResourceManager.GetString("Register_InvalidEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Formato de correo inválido.
+        /// </summary>
+        public static string Register_InvalidEmailText {
+            get {
+                return ResourceManager.GetString("Register_InvalidEmailText", resourceCulture);
             }
         }
         
@@ -790,24 +817,6 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a El correo electrónico es obligatorio.
-        /// </summary>
-        public static string RegisterEmailRequiredText {
-            get {
-                return ResourceManager.GetString("RegisterEmailRequiredText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Formato de correo inválido.
-        /// </summary>
-        public static string RegisterInvalidEmailText {
-            get {
-                return ResourceManager.GetString("RegisterInvalidEmailText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Volumen.
         /// </summary>
         public static string Setting_VolumeTitle {
@@ -903,15 +912,6 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Statistics_Title {
             get {
                 return ResourceManager.GetString("Statistics_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a El usuario es obligatorio.
-        /// </summary>
-        public static string UserRequiredText {
-            get {
-                return ResourceManager.GetString("UserRequiredText", resourceCulture);
             }
         }
         

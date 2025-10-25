@@ -171,16 +171,13 @@
   <data name="Language_Spanish" xml:space="preserve">
     <value>Español</value>
   </data>
-  <data name="LobbyAddFriendText" xml:space="preserve">
-    <value>Agregar amig@</value>
-  </data>
-  <data name="LobbyBeginText" xml:space="preserve">
+  <data name="Lobby_BeginText" xml:space="preserve">
     <value>¡Iniciar!</value>
   </data>
-  <data name="LobbyExpellText" xml:space="preserve">
+  <data name="Lobby_ExpellText" xml:space="preserve">
     <value>Expulsar</value>
   </data>
-  <data name="LobbyGameBeginningText" xml:space="preserve">
+  <data name="Lobby_GameBeginningText" xml:space="preserve">
     <value>Inicio de Partida</value>
   </data>
   <data name="Lobby_AddPlayer" xml:space="preserve">
@@ -189,28 +186,28 @@
   <data name="Lobby_InviteByEmail" xml:space="preserve">
     <value>Invitar jugador por correo</value>
   </data>
-  <data name="LoginDontYouHaveAccount" xml:space="preserve">
+  <data name="Login_DontYouHaveAccount" xml:space="preserve">
     <value>¿No tienes cuenta?</value>
   </data>
-  <data name="LoginEnterText" xml:space="preserve">
+  <data name="Login_EnterText" xml:space="preserve">
     <value>Entrar</value>
   </data>
-  <data name="LoginPasswordRequiredText" xml:space="preserve">
+  <data name="Login_PasswordRequiredText" xml:space="preserve">
     <value>La contraseña es obligatoria</value>
   </data>
-  <data name="LoginPasswordText" xml:space="preserve">
+  <data name="Login_PasswordText" xml:space="preserve">
     <value>Contraseña</value>
   </data>
-  <data name="LoginPlayAsGuest" xml:space="preserve">
+  <data name="Login_PlayAsGuest" xml:space="preserve">
     <value>Jugar como Invitado</value>
   </data>
-  <data name="LoginRegisterHereText" xml:space="preserve">
+  <data name="Login_RegisterHereText" xml:space="preserve">
     <value>Regístrate aquí</value>
   </data>
-  <data name="LoginUserNotFoundText" xml:space="preserve">
+  <data name="Login_UserNotFoundText" xml:space="preserve">
     <value>No existe una cuenta con esos datos</value>
   </data>
-  <data name="LoginUserText" xml:space="preserve">
+  <data name="Login_UserText" xml:space="preserve">
     <value>Usuario</value>
   </data>
   <data name="Login_ChangeLanguage" xml:space="preserve">
@@ -240,10 +237,10 @@
   <data name="PlayerStatistics_Title" xml:space="preserve">
     <value>Estadísticas del jugador</value>
   </data>
-  <data name="RegisterEmailRequiredText" xml:space="preserve">
+  <data name="Register_EmailRequiredText" xml:space="preserve">
     <value>El correo electrónico es obligatorio</value>
   </data>
-  <data name="RegisterInvalidEmailText" xml:space="preserve">
+  <data name="Register_InvalidEmailText" xml:space="preserve">
     <value>Formato de correo inválido</value>
   </data>
   <data name="Register_BtnRegister" xml:space="preserve">
@@ -315,9 +312,6 @@
   <data name="Statistics_Title" xml:space="preserve">
     <value>Estadísticas de la partida</value>
   </data>
-  <data name="UserRequiredText" xml:space="preserve">
-    <value>El usuario es obligatorio</value>
-  </data>
   <data name="Friends_Invite" xml:space="preserve">
     <value>Invitar</value>
   </data>
@@ -327,7 +321,7 @@
   <data name="Register_Username" xml:space="preserve">
     <value>Nombre de usuario</value>
   </data>
-  <data name="Global_EmptyField" xml:space="preserve">
+  <data name="GlobalEmptyField" xml:space="preserve">
     <value>Campos vacíos, por favor, verifique</value>
   </data>
   <data name="Register_InvalidEmail" xml:space="preserve">
@@ -342,7 +336,7 @@
   <data name="Login_IncorrectCredentials" xml:space="preserve">
     <value>Credenciales incorrectas, intente de nuevo</value>
   </data>
-  <data name="Global_ServerError" xml:space="preserve">
+  <data name="GlobalServerError" xml:space="preserve">
     <value>Error al conectar con el servidor, intente en otro momento</value>
   </data>
   <data name="VerificationC_VerificationCode" xml:space="preserve">
@@ -404,5 +398,11 @@
   </data>
   <data name="GlobalSoundNotFound" xml:space="preserve">
     <value>Pista de audio no encontrada</value>
+  </data>
+  <data name="Lobby_InviteFriends" xml:space="preserve">
+    <value>Invitar amigos</value>
+  </data>
+  <data name="Lobby_AddFriend" xml:space="preserve">
+    <value>Agregar amigo</value>
   </data>
 </root>

@@ -45,7 +45,7 @@ namespace ArchsVsDinosClient
 
             if (!ValidateInputs(username, password)) 
             {
-                MessageBox.Show(Lang.Global_EmptyField);
+                MessageBox.Show(Lang.GlobalEmptyField);
                 return;
             }
 
@@ -70,7 +70,7 @@ namespace ArchsVsDinosClient
             }
             catch (Exception ex)
             {
-                MessageBox.Show(Lang.Global_ServerError);
+                MessageBox.Show(Lang.GlobalServerError);
             }
 
         }

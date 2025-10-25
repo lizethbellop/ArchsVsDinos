@@ -44,7 +44,7 @@ namespace ArchsVsDinosClient.Views
 
             if (!ValidateInputs(newUsername))
             {
-                MessageBox.Show(Lang.Global_EmptyField);
+                MessageBox.Show(Lang.GlobalEmptyField);
                 return;
             }
 

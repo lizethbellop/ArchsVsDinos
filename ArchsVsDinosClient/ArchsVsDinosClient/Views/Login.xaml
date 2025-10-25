@@ -73,24 +73,24 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="0,15" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.LoginUserText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
+            <Label Content="{x:Static language:Lang.Login_UserText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
                 <TextBox Name = "TxtB_Username" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
             </Border>
         </StackPanel>
         <StackPanel Grid.Row="3" Margin="0,15" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.LoginPasswordText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
+            <Label Content="{x:Static language:Lang.Login_PasswordText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
                 <PasswordBox Name ="Pb_Password" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
             </Border>
         </StackPanel>
         <UniformGrid Grid.Row="4" Margin="0,10,0,-20" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.LoginDontYouHaveAccount}" FontFamily="Trebuchet MS" FontWeight="Bold"/>
-            <Button Content="{x:Static language:Lang.LoginRegisterHereText}" Click="Btn_Register" Background="{x:Null}" Foreground="#FF0A46B5" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" RenderTransformOrigin="0.531,0.268"/>
+            <Label Content="{x:Static language:Lang.Login_DontYouHaveAccount}" FontFamily="Trebuchet MS" FontWeight="Bold"/>
+            <Button Content="{x:Static language:Lang.Login_RegisterHereText}" Click="Btn_Register" Background="{x:Null}" Foreground="#FF0A46B5" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" RenderTransformOrigin="0.531,0.268"/>
         </UniformGrid>
         <StackPanel Grid.Row="5" Margin="0,5" HorizontalAlignment="Center" >
-            <Button Content="{x:Static language:Lang.LoginEnterText}" Click="Btn_Login" Margin="0,0,0,10" HorizontalAlignment="Center" Height="31" VerticalAlignment="Top" Width="202" Background="#FF6ABA2A" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold"  FontSize="18"/>
-            <Button Content="{x:Static language:Lang.LoginPlayAsGuest}" Click="Btn_PlayAsGuest" HorizontalAlignment="Center" Height="32"  VerticalAlignment="Top" Width="200" Background="#FF4877C2" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18"/>
+            <Button Content="{x:Static language:Lang.Login_EnterText}" Click="Btn_Login" Margin="0,0,0,10" HorizontalAlignment="Center" Height="31" VerticalAlignment="Top" Width="202" Background="#FF6ABA2A" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold"  FontSize="18"/>
+            <Button Content="{x:Static language:Lang.Login_PlayAsGuest}" Click="Btn_PlayAsGuest" HorizontalAlignment="Center" Height="32"  VerticalAlignment="Top" Width="200" Background="#FF4877C2" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18"/>
         </StackPanel>
 
     </Grid>
