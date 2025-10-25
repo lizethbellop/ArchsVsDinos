@@ -1,7 +1,10 @@
 ﻿using ArchsVsDinosServer;
 using ArchsVsDinosServer.BusinessLogic;
+using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Utils;
 using Contracts.DTO;
+using Contracts.DTO.Result_Codes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -11,7 +14,6 @@ using System.Data.Entity.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Result_Codes;
 
 namespace UnitTest
 {
@@ -34,8 +36,14 @@ namespace UnitTest
             mockDbContext = new Mock<IDbContext>();
             mockUserSet = new Mock<DbSet<UserAccount>>();
 
-            authentication = new Authentication(mockSecurityHelper.Object, mockValidationHelper.Object,
-                mockLoggerHelper.Object, () => mockDbContext.Object);
+            var dependencies = new ServiceDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object,
+                () => mockDbContext.Object
+            );
+
+            authentication = new Authentication(dependencies);
         }
 
 
@@ -53,7 +61,6 @@ namespace UnitTest
             LoginResponse expectedResult = new LoginResponse
             {
                 success = false,
-                message = "Campos requeridos",
                 userSession = null,
                 associatedPlayer = null,
                 resultCode = LoginResultCode.Authentication_EmptyFields
@@ -78,7 +85,6 @@ namespace UnitTest
             LoginResponse expectedResult = new LoginResponse
             {
                 success = false,
-                message = "Campos requeridos",
                 userSession = null,
                 associatedPlayer = null,
                 resultCode = LoginResultCode.Authentication_EmptyFields
@@ -102,7 +108,6 @@ namespace UnitTest
             LoginResponse expectedResult = new LoginResponse
             {
                 success = false,
-                message = "Campos requeridos",
                 userSession = null,
                 associatedPlayer = null,
                 resultCode = LoginResultCode.Authentication_EmptyFields
@@ -126,7 +131,6 @@ namespace UnitTest
             LoginResponse expectedResult = new LoginResponse
             {
                 success = false,
-                message = "Credenciales incorrectas",
                 userSession = null,
                 associatedPlayer = null,
                 resultCode = LoginResultCode.Authentication_InvalidCredentials
@@ -178,7 +182,6 @@ namespace UnitTest
             LoginResponse expectedResult = new LoginResponse
             {
                 success = true,
-                message = "Login exitoso",
                 userSession = new UserDTO
                 {
                     idUser = 1,
@@ -230,7 +233,6 @@ namespace UnitTest
             LoginResponse expectedResult = new LoginResponse
             {
                 success = false,
-                message = "Credenciales incorrectas",
                 userSession = null,
                 associatedPlayer = null,
                 resultCode = LoginResultCode.Authentication_InvalidCredentials
@@ -249,17 +251,24 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database connection failed"));
 
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    mockSecurityHelper.Object,
+                    mockValidationHelper.Object,
+                    mockLoggerHelper.Object,
+                    () => mockDbContext.Object
+             );
+
+            Authentication authenticationException = new Authentication(dependencies);
+
             LoginResponse expectedResult = new LoginResponse
             {
                 success = false,
-                message = "Error de conexión con la base de datos",
                 userSession = null,
                 associatedPlayer = null,
                 resultCode = LoginResultCode.Authentication_DatabaseError
             };
 
-            LoginResponse result = authentication.Login(username, password);
-            Console.WriteLine(result.message);
+            LoginResponse result = authenticationException.Login(username, password);
             Assert.AreEqual(expectedResult, result);
 
         }
@@ -273,16 +282,24 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockSecurityHelper.Setup(s => s.HashPassword(password)).Throws(new Exception("Unexpected error"));
 
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    mockSecurityHelper.Object,
+                    mockValidationHelper.Object,
+                    mockLoggerHelper.Object,
+                    () => mockDbContext.Object
+             );
+
+            Authentication authenticationException = new Authentication(dependencies);
+
             LoginResponse expectedResult = new LoginResponse
             {
                 success = false,
-                message = "Error inesperado en el servidor",
                 userSession = null,
                 associatedPlayer = null,
                 resultCode = LoginResultCode.Authentication_UnexpectedError
             };
 
-            LoginResponse result = authentication.Login(username, password);
+            LoginResponse result = authenticationException.Login(username, password);
             Assert.AreEqual(expectedResult, result);
         }
 

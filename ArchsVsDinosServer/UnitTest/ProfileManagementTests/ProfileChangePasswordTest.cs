@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Contracts.DTO.Result_Codes;
 using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
+using ArchsVsDinosServer.Utils;
 
 namespace UnitTest.ProfileManagementTests
 {
@@ -24,12 +25,20 @@ namespace UnitTest.ProfileManagementTests
         [TestInitialize]
         public void Setup()
         {
-            passwordManager = new PasswordManager(
-                () => mockDbContext.Object,
+            mockSecurityHelper = new Mock<ISecurityHelper>();
+            mockValidationHelper = new Mock<IValidationHelper>();
+            mockLoggerHelper = new Mock<ILoggerHelper>();
+            mockDbContext = new Mock<IDbContext>();
+            mockUserSet = new Mock<DbSet<UserAccount>>();
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                mockSecurityHelper.Object,
                 mockValidationHelper.Object,
                 mockLoggerHelper.Object,
-                mockSecurityHelper.Object
+                () => mockDbContext.Object
             );
+
+            passwordManager = new PasswordManager(dependencies);
         }
 
         [TestMethod]
@@ -44,7 +53,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Todos los campos son obligatorios",
                 resultCode =UpdateResultCode.Profile_EmptyFields
             };
 
@@ -64,7 +72,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "La nueva contraseña debe ser diferente a la actual",
                 resultCode = UpdateResultCode.Profile_SamePasswordValue
             };
 
@@ -84,7 +91,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "La nueva contraseña debe tener al menos 8 caracteres",
                 resultCode = UpdateResultCode.Profile_PasswordTooShort
             };
 
@@ -105,7 +111,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Usuario no encontrado",
                 resultCode = UpdateResultCode.Profile_UserNotFound
             };
 
@@ -136,7 +141,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "La contraseña actual es incorrecta",
                 resultCode = UpdateResultCode.Profile_SamePasswordValue
             };
 
@@ -169,7 +173,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = true,
-                message = "Contraseña actualizada exitosamente",
                 resultCode =UpdateResultCode.Profile_Success
             };
 
@@ -188,14 +191,22 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new DbEntityValidationException("Validation error"));
 
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    mockSecurityHelper.Object,
+                    mockValidationHelper.Object,
+                    mockLoggerHelper.Object,
+                    () => mockDbContext.Object
+             );
+
+            PasswordManager passwordManagerException = new PasswordManager(dependencies);
+
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Error en la base de datos",
                 resultCode = UpdateResultCode.Profile_DatabaseError
             };
 
-            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManagerException.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
         }
 
@@ -209,14 +220,22 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
 
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    mockSecurityHelper.Object,
+                    mockValidationHelper.Object,
+                    mockLoggerHelper.Object,
+                    () => mockDbContext.Object
+             );
+
+            PasswordManager passwordManagerException = new PasswordManager(dependencies);
+
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Error: Unexpected error",
                 resultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
-            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
+            UpdateResponse result = passwordManagerException.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
 
         }

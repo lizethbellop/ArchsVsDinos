@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ArchsVsDinosServer.Utils;
 
 namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 {
@@ -15,18 +16,16 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
         protected readonly ILoggerHelper loggerHelper;
         protected readonly ISecurityHelper securityHelper;
 
-        public BaseProfileService(Func<IDbContext> _contextFactory, IValidationHelper _validationHelper, ILoggerHelper _loggerHelper, ISecurityHelper _securityHelper)
+        public BaseProfileService(ServiceDependencies dependencies)
         {
-            validationHelper = _validationHelper;
-            contextFactory = _contextFactory;
-            loggerHelper = _loggerHelper;
-            securityHelper = _securityHelper;
+            validationHelper = dependencies.validationHelper;
+            contextFactory = dependencies.contextFactory;
+            loggerHelper = dependencies.loggerHelper;
+            securityHelper = dependencies.securityHelper;
         }
 
-        public BaseProfileService() : this(() => new DbContextWrapper(),
-            new Wrappers.ValidationHelperWrapper(), new Wrappers.LoggerHelperWrapper(), new Wrappers.SecurityHelperWrapper())
+        public BaseProfileService() : this(new ServiceDependencies())
         {
-
         }
 
 

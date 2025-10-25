@@ -200,6 +200,7 @@
     </Compile>
     <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
+    <Compile Include="Utils\ServiceDependencies.cs" />
     <Compile Include="Utils\ValidationHelper.cs" />
     <Compile Include="Wrappers\DbContextWrapper.cs" />
     <Compile Include="Wrappers\LoggerHelperWrapper.cs" />

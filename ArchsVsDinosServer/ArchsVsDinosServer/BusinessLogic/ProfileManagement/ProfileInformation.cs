@@ -16,21 +16,13 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 {
     public class ProfileInformation : BaseProfileService
     {
-        public ProfileInformation(
-        Func<IDbContext> contextFactory,
-        IValidationHelper validationHelper,
-        ILoggerHelper loggerHelper,
-        ISecurityHelper securityHelper)
-        : base(contextFactory, validationHelper, loggerHelper, securityHelper)
+        public ProfileInformation(ServiceDependencies dependencies)
+        : base(dependencies)
         {
         }
 
         public ProfileInformation()
-        : base(
-            () => new DbContextWrapper(),
-            new ValidationHelperWrapper(),
-            new LoggerHelperWrapper(),
-            new SecurityHelperWrapper())
+            : base(new ServiceDependencies())
         {
         }
 

@@ -20,19 +20,16 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly ILoggerHelper loggerHelper;
         private readonly Func<IDbContext> contextFactory;
 
-        public Authentication(ISecurityHelper _securityHelper, IValidationHelper _validationHelper,ILoggerHelper _loggerHelper, Func<IDbContext> _contextFactory)
+        public Authentication(ServiceDependencies dependencies)
         {
-            securityHelper = _securityHelper;
-            validationHelper = _validationHelper;
-            loggerHelper = _loggerHelper;
-            contextFactory = _contextFactory;
+            securityHelper = dependencies.securityHelper;
+            validationHelper = dependencies.validationHelper;
+            loggerHelper = dependencies.loggerHelper;
+            contextFactory = dependencies.contextFactory;
         }
 
-        public Authentication() : this(new Wrappers.SecurityHelperWrapper(),
-            new Wrappers.ValidationHelperWrapper(), new Wrappers.LoggerHelperWrapper(), 
-            () => (IDbContext)new Wrappers.DbContextWrapper())
+        public Authentication() : this(new ServiceDependencies())
         {
-
         }
         public LoginResponse Login(string username, string password)
         {
@@ -92,7 +89,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (EntityException ex)
             {
-                LoggerHelper.LogError($"Database connection error at Login for user: {username}", ex);
+                loggerHelper.LogError($"Database connection error at Login for user: {username}", ex);
                 return new LoginResponse
                 {
                     success = false,

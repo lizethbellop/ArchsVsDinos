@@ -1,33 +1,26 @@
 ﻿using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Utils;
 using ArchsVsDinosServer.Wrappers;
 using Contracts.DTO.Response;
+using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Result_Codes;
 
 namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 {
     public class PasswordManager : BaseProfileService
     {
-        public PasswordManager(
-        Func<IDbContext> contextFactory,
-        IValidationHelper validationHelper,
-        ILoggerHelper loggerHelper,
-        ISecurityHelper securityHelper)
-        : base(contextFactory, validationHelper, loggerHelper, securityHelper)
+        public PasswordManager(ServiceDependencies dependencies)
+        : base(dependencies)
         {
         }
 
         public PasswordManager()
-        : base(
-            () => new DbContextWrapper(),
-            new ValidationHelperWrapper(),
-            new LoggerHelperWrapper(),
-            new SecurityHelperWrapper())
+            : base(new ServiceDependencies())
         {
         }
 
