@@ -15,8 +15,6 @@ namespace Contracts.DTO
         public bool success { get; set; }
 
         [DataMember]
-        public string message { get; set; }
-        [DataMember]
         public UserDTO userSession { get; set; }
 
         [DataMember]
@@ -31,7 +29,6 @@ namespace Contracts.DTO
                 return false;
             var other = (LoginResponse)obj;
             return success == other.success &&
-                   message == other.message &&
                    Equals(userSession, other.userSession) &&
                    Equals(associatedPlayer, other.associatedPlayer);
         }
@@ -42,7 +39,6 @@ namespace Contracts.DTO
             {
                 int hash = 17;
                 hash = hash * 23 + success.GetHashCode();
-                hash = hash * 23 + (message?.GetHashCode() ?? 0);
                 hash = hash * 23 + (userSession?.GetHashCode() ?? 0);
                 hash = hash * 23 + (associatedPlayer?.GetHashCode() ?? 0);
                 return hash;

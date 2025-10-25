@@ -43,7 +43,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                 if (UpdateIsEmpty(username, newNickname))
                 {
                     response.success = false;
-                    response.message = "Los campos son obligatorios";
                     response.resultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
@@ -55,7 +54,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (userAccount == null)
                     {
                         response.success = false;
-                        response.message = "Usuario no encontrado";
                         response.resultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
@@ -63,7 +61,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (userAccount.nickname == newNickname)
                     {
                         response.success = false;
-                        response.message = "El nuevo nickname debe ser diferente al actual";
                         response.resultCode = UpdateResultCode.Profile_SameNicknameValue;
                         return response;
                     }
@@ -71,7 +68,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (context.UserAccount.Any(u => u.nickname == newNickname))
                     {
                         response.success = false;
-                        response.message = "El nickname ya está en uso";
                         response.resultCode = UpdateResultCode.Profile_NicknameExists;
                         return response;
                     }
@@ -80,7 +76,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     context.SaveChanges();
 
                     response.success = true;
-                    response.message = "Nickname actualizado exitosamente";
                     response.resultCode = UpdateResultCode.Profile_Success;
                     return response;
                 }
@@ -88,12 +83,12 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             catch (DbEntityValidationException ex)
             {
                 loggerHelper.LogError("Error de validacion de base de datos del UpdateNickname", ex);
-                return new UpdateResponse { success = false, message = $"Error: {ex.Message}", resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
                 loggerHelper.LogError($"Error al actualizar el nickname: {ex.Message}", ex);
-                return new UpdateResponse { success = false, message = $"Error: {ex.Message}", resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 
@@ -106,7 +101,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                 if (UpdateIsEmpty(currentUsername, newUsername))
                 {
                     response.success = false;
-                    response.message = "Los campos son obligatorios";
                     response.resultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
@@ -117,7 +111,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (context.UserAccount.Any(u => u.username == newUsername))
                     {
                         response.success = false;
-                        response.message = "El username ya está en uso";
                         response.resultCode = UpdateResultCode.Profile_UsernameExists;
                         return response;
                     }
@@ -127,7 +120,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (userAccount == null)
                     {
                         response.success = false;
-                        response.message = "Usuario no encontrado";
                         response.resultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
@@ -135,7 +127,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (userAccount.username == newUsername)
                     {
                         response.success = false;
-                        response.message = "El nuevo nickname debe ser diferente al actual";
                         response.resultCode = UpdateResultCode.Profile_SameUsernameValue;
                         return response;
                     }
@@ -144,7 +135,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     context.SaveChanges();
 
                     response.success = true;
-                    response.message = "Username actualizado";
                     response.resultCode = UpdateResultCode.Profile_Success;
 
                     return response;
@@ -153,12 +143,12 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             catch (EntityException ex)
             {
                 LoggerHelper.LogError($"Database connection error at Update Username", ex);
-                return new UpdateResponse { success = false, message = $"Error: {ex.Message}", resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener el perfil: {ex.Message}");
-                return new UpdateResponse { success = false, message = $"Error: {ex.Message}", resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 
