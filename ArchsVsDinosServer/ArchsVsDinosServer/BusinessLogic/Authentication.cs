@@ -20,19 +20,16 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly ILoggerHelper loggerHelper;
         private readonly Func<IDbContext> contextFactory;
 
-        public Authentication(ISecurityHelper _securityHelper, IValidationHelper _validationHelper,ILoggerHelper _loggerHelper, Func<IDbContext> _contextFactory)
+        public Authentication(ServiceDependencies dependencies)
         {
-            securityHelper = _securityHelper;
-            validationHelper = _validationHelper;
-            loggerHelper = _loggerHelper;
-            contextFactory = _contextFactory;
+            securityHelper = dependencies.securityHelper;
+            validationHelper = dependencies.validationHelper;
+            loggerHelper = dependencies.loggerHelper;
+            contextFactory = dependencies.contextFactory;
         }
 
-        public Authentication() : this(new Wrappers.SecurityHelperWrapper(),
-            new Wrappers.ValidationHelperWrapper(), new Wrappers.LoggerHelperWrapper(), 
-            () => (IDbContext)new Wrappers.DbContextWrapper())
+        public Authentication() : this(new ServiceDependencies())
         {
-
         }
         public LoginResponse Login(string username, string password)
         {
@@ -42,7 +39,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 if (IsEmpty(username, password))
                 {
                     response.success = false;
-                    response.message = "Campos requeridos";
                     response.resultCode = LoginResultCode.Authentication_EmptyFields;
                     return response;
                 }
@@ -55,19 +51,16 @@ namespace ArchsVsDinosServer.BusinessLogic
                     if (user == null)
                     {
                         response.success = false;
-                        response.message = "Credenciales incorrectas";
                         response.resultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
                     if (!securityHelper.VerifyPassword(password, user.password))
                     {
                         response.success = false;
-                        response.message = "Credenciales incorrectas";
                         response.resultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
                     response.success = true;
-                    response.message = "Login exitoso";
                     response.resultCode = LoginResultCode.Authentication_Success;
                     response.userSession = new UserDTO
                     {
@@ -96,11 +89,10 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (EntityException ex)
             {
-                LoggerHelper.LogError($"Database connection error at Login for user: {username}", ex);
+                loggerHelper.LogError($"Database connection error at Login for user: {username}", ex);
                 return new LoginResponse
                 {
                     success = false,
-                    message = "Error de conexión con la base de datos",
                     resultCode = LoginResultCode.Authentication_DatabaseError
                 };
             }
@@ -110,7 +102,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return new LoginResponse
                 {
                     success = false,
-                    message = "Error inesperado en el servidor",
                     resultCode = LoginResultCode.Authentication_UnexpectedError
                 };
             }

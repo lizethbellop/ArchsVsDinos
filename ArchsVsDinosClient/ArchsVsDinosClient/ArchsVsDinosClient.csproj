@@ -78,6 +78,7 @@
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="Models\UserSession.cs" />
+    <Compile Include="Utils\MappingHelper.cs" />
     <Compile Include="Utils\SoundButton.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>

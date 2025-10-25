@@ -1,33 +1,26 @@
 ﻿using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Utils;
 using ArchsVsDinosServer.Wrappers;
 using Contracts.DTO.Response;
+using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Result_Codes;
 
 namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 {
     public class PasswordManager : BaseProfileService
     {
-        public PasswordManager(
-        Func<IDbContext> contextFactory,
-        IValidationHelper validationHelper,
-        ILoggerHelper loggerHelper,
-        ISecurityHelper securityHelper)
-        : base(contextFactory, validationHelper, loggerHelper, securityHelper)
+        public PasswordManager(ServiceDependencies dependencies)
+        : base(dependencies)
         {
         }
 
         public PasswordManager()
-        : base(
-            () => new DbContextWrapper(),
-            new ValidationHelperWrapper(),
-            new LoggerHelperWrapper(),
-            new SecurityHelperWrapper())
+            : base(new ServiceDependencies())
         {
         }
 
@@ -40,7 +33,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                 if (ChangePasswordIsEmpty(username, currentPassword, newPassword))
                 {
                     response.success = false;
-                    response.message = "Todos los campos son obligatorios";
                     response.resultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
@@ -48,7 +40,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                 if (currentPassword == newPassword)
                 {
                     response.success = false;
-                    response.message = "La nueva contraseña debe ser diferente a la actual";
                     response.resultCode = UpdateResultCode.Profile_SamePasswordValue;
                     return response;
                 }
@@ -56,7 +47,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                 if (newPassword.Length < 8)
                 {
                     response.success = false;
-                    response.message = "La nueva contraseña debe tener al menos 8 caracteres";
                     response.resultCode = UpdateResultCode.Profile_PasswordTooShort;
                     return response;
                 }
@@ -68,7 +58,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (userAccount == null)
                     {
                         response.success = false;
-                        response.message = "Usuario no encontrado";
                         response.resultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
@@ -76,7 +65,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     if (!VerifyPassword(currentPassword, userAccount.password))
                     {
                         response.success = false;
-                        response.message = "La contraseña actual es incorrecta";
                         response.resultCode = UpdateResultCode.Profile_InvalidPassword;
                         return response;
                     }
@@ -85,7 +73,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     context.SaveChanges();
 
                     response.success = true;
-                    response.message = "Contraseña actualizada exitosamente";
                     response.resultCode = UpdateResultCode.Profile_Success;
                     return response;
 
@@ -95,11 +82,11 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             catch (DbEntityValidationException e)
             {
                 loggerHelper.LogError("Error de validacion en el metodo ChangePassword", e);
-                return new UpdateResponse { success = false, message = "Error en la base de datos", resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception e)
             {
-                return new UpdateResponse { success = false, message = $"Error: {e.Message}", resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 

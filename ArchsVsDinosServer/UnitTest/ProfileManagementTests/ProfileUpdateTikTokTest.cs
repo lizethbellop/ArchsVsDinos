@@ -1,6 +1,8 @@
 ﻿using ArchsVsDinosServer;
 using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
+using ArchsVsDinosServer.Utils;
 using Contracts.DTO.Response;
+using Contracts.DTO.Result_Codes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -9,7 +11,6 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Result_Codes;
 
 namespace UnitTest.ProfileManagementTests
 {
@@ -20,12 +21,14 @@ namespace UnitTest.ProfileManagementTests
         [TestInitialize]
         public void Setup()
         {
-            socialMediaManager = new SocialMediaManager(
-                () => mockDbContext.Object,
+            ServiceDependencies dependencies = new ServiceDependencies(
+                mockSecurityHelper.Object,
                 mockValidationHelper.Object,
                 mockLoggerHelper.Object,
-                mockSecurityHelper.Object
+                () => mockDbContext.Object
             );
+
+            socialMediaManager = new SocialMediaManager(dependencies);
         }
 
         [TestMethod]
@@ -39,7 +42,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Los campos son requeridos",
                 resultCode = UpdateResultCode.Profile_EmptyFields
             };
 
@@ -60,7 +62,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Usuario no encontrado",
                 resultCode = UpdateResultCode.Profile_UserNotFound
             };
 
@@ -89,7 +90,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Perfil de jugador no encontrado",
                 resultCode = UpdateResultCode.Profile_PlayerNotFound
             };
 
@@ -125,7 +125,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = true,
-                message = "TikTok actualizado exitosamente",
                 resultCode = UpdateResultCode.Profile_Success
             };
 
@@ -143,14 +142,22 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new DbEntityValidationException("Validation error"));
 
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    mockSecurityHelper.Object,
+                    mockValidationHelper.Object,
+                    mockLoggerHelper.Object,
+                    () => mockDbContext.Object
+             );
+
+            SocialMediaManager socialMediaManagerException = new SocialMediaManager(dependencies);
+
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Error en la base de datos",
                 resultCode = UpdateResultCode.Profile_DatabaseError
             };
 
-            UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);
+            UpdateResponse result = socialMediaManagerException.UpdateTikTok(username, newTikTok);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -164,14 +171,22 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
 
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    mockSecurityHelper.Object,
+                    mockValidationHelper.Object,
+                    mockLoggerHelper.Object,
+                    () => mockDbContext.Object
+             );
+
+            SocialMediaManager socialMediaManagerException = new SocialMediaManager(dependencies);
+
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Unexpected error",
                 resultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
-            UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);
+            UpdateResponse result = socialMediaManagerException.UpdateTikTok(username, newTikTok);
 
             Assert.AreEqual(expectedResult, result);
         }

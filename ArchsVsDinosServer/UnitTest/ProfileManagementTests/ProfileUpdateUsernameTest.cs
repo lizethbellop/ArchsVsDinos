@@ -2,7 +2,9 @@
 using ArchsVsDinosServer.BusinessLogic;
 using ArchsVsDinosServer.BusinessLogic.ProfileManagement;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Utils;
 using Contracts.DTO.Response;
+using Contracts.DTO.Result_Codes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -12,7 +14,6 @@ using System.Data.Entity.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Result_Codes;
 
 namespace UnitTest.ProfileManagementTests
 {
@@ -24,12 +25,14 @@ namespace UnitTest.ProfileManagementTests
         [TestInitialize]
         public void Setup()
         {
-            profileInformation = new ProfileInformation(
-                () => mockDbContext.Object,
+            ServiceDependencies dependencies = new ServiceDependencies(
+                mockSecurityHelper.Object,
                 mockValidationHelper.Object,
                 mockLoggerHelper.Object,
-                mockSecurityHelper.Object
+                () => mockDbContext.Object
             );
+
+            profileInformation = new ProfileInformation(dependencies);
         }
 
         [TestMethod]
@@ -43,7 +46,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Los campos son obligatorios",
                 resultCode = UpdateResultCode.Profile_EmptyFields
             };
 
@@ -62,7 +64,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "El nuevo username debe ser diferente al actual",
                 resultCode = UpdateResultCode.Profile_SameUsernameValue
             };
 
@@ -88,7 +89,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "El username ya está en uso",
                 resultCode = UpdateResultCode.Profile_UsernameExists
             };
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
@@ -107,7 +107,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Usuario no encontrado",
                 resultCode = UpdateResultCode.Profile_UserNotFound
             };
 
@@ -134,7 +133,6 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = true,
-                message = "Username actualizado",
                 resultCode = UpdateResultCode.Profile_Success
             };
 
@@ -151,14 +149,22 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database error"));
 
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    mockSecurityHelper.Object,
+                    mockValidationHelper.Object,
+                    mockLoggerHelper.Object,
+                    () => mockDbContext.Object
+                );
+
+            ProfileInformation profileInfo = new ProfileInformation(dependencies);
+
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = false,
-                message = "Error: Database error",
                 resultCode = UpdateResultCode.Profile_DatabaseError
             };
 
-            UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
+            UpdateResponse result = profileInfo.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
         }
     }
