@@ -43,7 +43,7 @@
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
 
-                <ComboBox x:Name="CbLanguage" Grid.Column="0" Height="30" FontFamily="Trebuchet MS" FontSize="14"
+                <ComboBox x:Name="Cb_Language" Grid.Column="0" Height="30" FontFamily="Trebuchet MS" FontSize="14"
                     Background="White" BorderBrush="Gray" BorderThickness="1" Margin="0,0,5,0" Grid.ColumnSpan="2"
                     SelectionChanged="ComboBox_SelectionChanged">
                     <ComboBoxItem Content="{x:Static language:Lang.Language_Spanish}"/>
@@ -75,13 +75,13 @@
         <StackPanel Grid.Row="2" Margin="0,15" HorizontalAlignment="Center">
             <Label Content="{x:Static language:Lang.LoginUserText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <TextBox Name = "txtBoxUsername" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                <TextBox Name = "TxtB_Username" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
             </Border>
         </StackPanel>
         <StackPanel Grid.Row="3" Margin="0,15" HorizontalAlignment="Center">
             <Label Content="{x:Static language:Lang.LoginPasswordText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <PasswordBox Name ="PbPassword" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                <PasswordBox Name ="Pb_Password" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
             </Border>
         </StackPanel>
         <UniformGrid Grid.Row="4" Margin="0,10,0,-20" HorizontalAlignment="Center">

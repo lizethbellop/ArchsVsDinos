@@ -110,7 +110,7 @@
         <StackPanel Grid.Row="3" Margin="0,0,0,5" HorizontalAlignment="Center">
             <Label Content="{x:Static language:Lang.Lobby_InviteByEmail}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Foreground="#FF196572" HorizontalAlignment="Center"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="300" Height="29">
-                <TextBox x:Name="EmailTextBox" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" Text="example@correo.com" VerticalAlignment="Center"/>
+                <TextBox x:Name="TxtB_Email" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" Text="example@correo.com" VerticalAlignment="Center"/>
             </Border>
         </StackPanel>
 
