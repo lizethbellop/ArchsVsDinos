@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:8081/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
-  <xs:import schemaLocation="http://localhost:8081/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" />
-  <xs:element name="GetProfile">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetProfileResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="GetProfileResult" nillable="true" type="q1:PlayerDTO" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+  <xs:import schemaLocation="http://localhost:8081/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" />
   <xs:element name="UpdateUsername">
     <xs:complexType>
       <xs:sequence>
@@ -27,7 +12,7 @@
   <xs:element name="UpdateUsernameResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateUsernameResult" nillable="true" type="q2:UpdateResponse" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateUsernameResult" nillable="true" type="q1:UpdateResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -42,7 +27,7 @@
   <xs:element name="UpdateNicknameResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateNicknameResult" nillable="true" type="q3:UpdateResponse" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateNicknameResult" nillable="true" type="q2:UpdateResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -57,7 +42,7 @@
   <xs:element name="UpdateFacebookResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateFacebookResult" nillable="true" type="q4:UpdateResponse" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateFacebookResult" nillable="true" type="q3:UpdateResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -72,7 +57,7 @@
   <xs:element name="UpdateXResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateXResult" nillable="true" type="q5:UpdateResponse" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateXResult" nillable="true" type="q4:UpdateResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -87,7 +72,7 @@
   <xs:element name="UpdateInstagramResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateInstagramResult" nillable="true" type="q6:UpdateResponse" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateInstagramResult" nillable="true" type="q5:UpdateResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -102,7 +87,7 @@
   <xs:element name="UpdateTikTokResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateTikTokResult" nillable="true" type="q7:UpdateResponse" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="UpdateTikTokResult" nillable="true" type="q6:UpdateResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -110,13 +95,29 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="profilePhoto" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="fileExtension" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="ChangeProfilePictureResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="ChangeProfilePictureResult" type="xs:boolean" />
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="ChangeProfilePictureResult" nillable="true" type="q7:UpdateResponse" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProfilePicture">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetProfilePictureResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="GetProfilePictureResult" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

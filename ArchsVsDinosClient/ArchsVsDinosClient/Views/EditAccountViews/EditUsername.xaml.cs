@@ -1,4 +1,8 @@
-﻿using ArchsVsDinosClient.Utils;
+﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.ProfileManagerService;
+using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +33,53 @@ namespace ArchsVsDinosClient.Views
         {
             SoundButton.PlayClick();
             this.Close();
+        }
+
+        private void Btn_Save(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayClick();
+
+            string currentUsername = UserSession.Instance.CurrentUser.username;
+            string newUsername = TxtB_NewUsername.Text;
+
+            if (!ValidateInputs(newUsername))
+            {
+                MessageBox.Show(Lang.Global_EmptyField);
+                return;
+            }
+
+            try
+            {
+                ProfileManagerClient profileManagerClient = new ProfileManagerClient();
+                UpdateResponse response = profileManagerClient.UpdateUsername(currentUsername, newUsername);
+
+                if (response.success)
+                {
+                    UserSession.Instance.CurrentUser.username = newUsername;
+                    MessageBox.Show("Usuario actualizado correctamente");
+                    this.Close();
+                }
+                else
+                {
+                    // Mensaje temporal, después cambio a resultCode
+                    MessageBox.Show($"Error: {response.resultCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error de conexión con el servidor");
+            }
+
+        }
+
+        private bool ValidateInputs(string username)
+        {
+            if (ValidationHelper.isEmpty(username) || ValidationHelper.isWhiteSpace(username))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
