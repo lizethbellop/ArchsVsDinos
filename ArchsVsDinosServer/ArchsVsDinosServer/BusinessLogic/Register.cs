@@ -25,6 +25,7 @@ namespace ArchsVsDinosServer.BusinessLogic
         
         public RegisterResponse RegisterUser(UserAccountDTO userAccountDTO, string code)
         {
+
             try
             {
 
