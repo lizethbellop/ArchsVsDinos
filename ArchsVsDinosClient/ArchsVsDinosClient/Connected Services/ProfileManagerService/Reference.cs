@@ -15,179 +15,6 @@ namespace ArchsVsDinosClient.ProfileManagerService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PlayerDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
-    [System.SerializableAttribute()]
-    public partial class PlayerDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string facebookField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int idPlayerField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string instagramField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string profilePictureField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string tiktokField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int totalLossesField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int totalPointsField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int totalWinsField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string xField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string facebook {
-            get {
-                return this.facebookField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.facebookField, value) != true)) {
-                    this.facebookField = value;
-                    this.RaisePropertyChanged("facebook");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int idPlayer {
-            get {
-                return this.idPlayerField;
-            }
-            set {
-                if ((this.idPlayerField.Equals(value) != true)) {
-                    this.idPlayerField = value;
-                    this.RaisePropertyChanged("idPlayer");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string instagram {
-            get {
-                return this.instagramField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.instagramField, value) != true)) {
-                    this.instagramField = value;
-                    this.RaisePropertyChanged("instagram");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string profilePicture {
-            get {
-                return this.profilePictureField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.profilePictureField, value) != true)) {
-                    this.profilePictureField = value;
-                    this.RaisePropertyChanged("profilePicture");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string tiktok {
-            get {
-                return this.tiktokField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.tiktokField, value) != true)) {
-                    this.tiktokField = value;
-                    this.RaisePropertyChanged("tiktok");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int totalLosses {
-            get {
-                return this.totalLossesField;
-            }
-            set {
-                if ((this.totalLossesField.Equals(value) != true)) {
-                    this.totalLossesField = value;
-                    this.RaisePropertyChanged("totalLosses");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int totalPoints {
-            get {
-                return this.totalPointsField;
-            }
-            set {
-                if ((this.totalPointsField.Equals(value) != true)) {
-                    this.totalPointsField = value;
-                    this.RaisePropertyChanged("totalPoints");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int totalWins {
-            get {
-                return this.totalWinsField;
-            }
-            set {
-                if ((this.totalWinsField.Equals(value) != true)) {
-                    this.totalWinsField = value;
-                    this.RaisePropertyChanged("totalWins");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string x {
-            get {
-                return this.xField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.xField, value) != true)) {
-                    this.xField = value;
-                    this.RaisePropertyChanged("x");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="UpdateResponse", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response")]
     [System.SerializableAttribute()]
     public partial class UpdateResponse : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -196,10 +23,10 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string MessageField;
+        private ArchsVsDinosClient.ProfileManagerService.UpdateResultCode resultCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool SuccessField;
+        private bool successField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -212,27 +39,27 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Message {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResultCode resultCode {
             get {
-                return this.MessageField;
+                return this.resultCodeField;
             }
             set {
-                if ((object.ReferenceEquals(this.MessageField, value) != true)) {
-                    this.MessageField = value;
-                    this.RaisePropertyChanged("Message");
+                if ((this.resultCodeField.Equals(value) != true)) {
+                    this.resultCodeField = value;
+                    this.RaisePropertyChanged("resultCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool Success {
+        public bool success {
             get {
-                return this.SuccessField;
+                return this.successField;
             }
             set {
-                if ((this.SuccessField.Equals(value) != true)) {
-                    this.SuccessField = value;
-                    this.RaisePropertyChanged("Success");
+                if ((this.successField.Equals(value) != true)) {
+                    this.successField = value;
+                    this.RaisePropertyChanged("success");
                 }
             }
         }
@@ -247,15 +74,74 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         }
     }
     
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="UpdateResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum UpdateResultCode : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_ChangeNicknameSuccess = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_ChangeUsernameSuccess = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_ChangePasswordSuccess = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_UpdateFacebookSuccess = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_UpdateInstagramSuccess = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_UpdateXSuccess = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_UpdateTikTokSuccess = 7,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_EmptyFields = 8,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_UserNotFound = 9,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_PlayerNotFound = 10,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_NicknameExists = 11,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_UsernameExists = 12,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_PasswordTooShort = 13,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_InvalidPassword = 14,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_SamePasswordValue = 15,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_SameNicknameValue = 16,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_SameUsernameValue = 17,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_DatabaseError = 18,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Profile_UnexpectedError = 19,
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ProfileManagerService.IProfileManager")]
     public interface IProfileManager {
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfile", ReplyAction="http://tempuri.org/IProfileManager/GetProfileResponse")]
-        ArchsVsDinosClient.ProfileManagerService.PlayerDTO GetProfile(string username);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfile", ReplyAction="http://tempuri.org/IProfileManager/GetProfileResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.PlayerDTO> GetProfileAsync(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/UpdateUsername", ReplyAction="http://tempuri.org/IProfileManager/UpdateUsernameResponse")]
         ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateUsername(string currentUsername, string newUsername);
@@ -294,10 +180,16 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateTikTokAsync(string username, string newTikTok);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangeProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/ChangeProfilePictureResponse")]
-        bool ChangeProfilePicture(string username);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto, string fileExtension);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangeProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/ChangeProfilePictureResponse")]
-        System.Threading.Tasks.Task<bool> ChangeProfilePictureAsync(string username);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangeProfilePictureAsync(string username, byte[] profilePhoto, string fileExtension);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/GetProfilePictureResponse")]
+        byte[] GetProfilePicture(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/GetProfilePictureResponse")]
+        System.Threading.Tasks.Task<byte[]> GetProfilePictureAsync(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangePassword", ReplyAction="http://tempuri.org/IProfileManager/ChangePasswordResponse")]
         ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangePassword(string username, string currentPassword, string newPassword);
@@ -331,14 +223,6 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         
         public ProfileManagerClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
-        }
-        
-        public ArchsVsDinosClient.ProfileManagerService.PlayerDTO GetProfile(string username) {
-            return base.Channel.GetProfile(username);
-        }
-        
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.PlayerDTO> GetProfileAsync(string username) {
-            return base.Channel.GetProfileAsync(username);
         }
         
         public ArchsVsDinosClient.ProfileManagerService.UpdateResponse UpdateUsername(string currentUsername, string newUsername) {
@@ -389,12 +273,20 @@ namespace ArchsVsDinosClient.ProfileManagerService {
             return base.Channel.UpdateTikTokAsync(username, newTikTok);
         }
         
-        public bool ChangeProfilePicture(string username) {
-            return base.Channel.ChangeProfilePicture(username);
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto, string fileExtension) {
+            return base.Channel.ChangeProfilePicture(username, profilePhoto, fileExtension);
         }
         
-        public System.Threading.Tasks.Task<bool> ChangeProfilePictureAsync(string username) {
-            return base.Channel.ChangeProfilePictureAsync(username);
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangeProfilePictureAsync(string username, byte[] profilePhoto, string fileExtension) {
+            return base.Channel.ChangeProfilePictureAsync(username, profilePhoto, fileExtension);
+        }
+        
+        public byte[] GetProfilePicture(string username) {
+            return base.Channel.GetProfilePicture(username);
+        }
+        
+        public System.Threading.Tasks.Task<byte[]> GetProfilePictureAsync(string username) {
+            return base.Channel.GetProfilePictureAsync(username);
         }
         
         public ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangePassword(string username, string currentPassword, string newPassword) {

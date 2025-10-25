@@ -127,7 +127,7 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = true,
-                resultCode = UpdateResultCode.Profile_Success
+                resultCode = UpdateResultCode.Profile_UpdateXSuccess
             };
 
             UpdateResponse result = socialMediaManager.UpdateX(username, newX);

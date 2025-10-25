@@ -73,18 +73,18 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     context.SaveChanges();
 
                     response.success = true;
-                    response.resultCode = UpdateResultCode.Profile_Success;
+                    response.resultCode = UpdateResultCode.Profile_ChangePasswordSuccess;
                     return response;
 
 
                 }
             }
-            catch (DbEntityValidationException e)
+            catch (DbEntityValidationException ex)
             {
-                loggerHelper.LogError("Error de validacion en el metodo ChangePassword", e);
+                loggerHelper.LogError("Error de validacion en el metodo ChangePassword", ex);
                 return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
             }

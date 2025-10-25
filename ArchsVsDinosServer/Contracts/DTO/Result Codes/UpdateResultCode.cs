@@ -11,6 +11,13 @@ namespace Contracts.DTO.Result_Codes
     public enum UpdateResultCode
     {
         [EnumMember] Profile_Success,
+        [EnumMember] Profile_ChangeNicknameSuccess,
+        [EnumMember] Profile_ChangeUsernameSuccess,
+        [EnumMember] Profile_ChangePasswordSuccess,
+        [EnumMember] Profile_UpdateFacebookSuccess,
+        [EnumMember] Profile_UpdateInstagramSuccess,
+        [EnumMember] Profile_UpdateXSuccess,
+        [EnumMember] Profile_UpdateTikTokSuccess,
         [EnumMember] Profile_EmptyFields,
         [EnumMember] Profile_UserNotFound,
         [EnumMember] Profile_PlayerNotFound,

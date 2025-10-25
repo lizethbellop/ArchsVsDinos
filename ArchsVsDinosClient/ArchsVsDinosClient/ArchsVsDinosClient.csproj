@@ -229,9 +229,6 @@
     <None Include="Connected Services\AuthenticationService\item2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ProfileManagerService\ArchsVsDinosClient.ProfileManagerService.PlayerDTO.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Connected Services\ProfileManagerService\ArchsVsDinosClient.ProfileManagerService.UpdateResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -311,13 +308,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Connected Services\ProfileManagerService\item.disco" />
-    <None Include="Connected Services\ProfileManagerService\configuration91.svcinfo" />
-    <None Include="Connected Services\ProfileManagerService\configuration.svcinfo" />
-    <None Include="Connected Services\ProfileManagerService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Connected Services\RegisterService\item.disco" />
     <None Include="Connected Services\RegisterService\configuration91.svcinfo" />
     <None Include="Connected Services\RegisterService\configuration.svcinfo" />
@@ -337,6 +327,13 @@
     <WCFMetadataStorage Include="Connected Services\RegisterService\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Connected Services\ProfileManagerService\item.disco" />
+    <None Include="Connected Services\ProfileManagerService\configuration91.svcinfo" />
+    <None Include="Connected Services\ProfileManagerService\configuration.svcinfo" />
+    <None Include="Connected Services\ProfileManagerService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

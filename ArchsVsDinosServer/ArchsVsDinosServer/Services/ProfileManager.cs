@@ -29,10 +29,15 @@ namespace ArchsVsDinosServer.Services
             return passwordUpdateResponse;
         }
 
-        public UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto)
+        public UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto, string fileExtension)
         {
-            UpdateResponse profilePictureResponse = profileInformation.ChangeProfilePicture(username, profilePhoto);
+            UpdateResponse profilePictureResponse = profileInformation.ChangeProfilePicture(username, profilePhoto, fileExtension);
             return profilePictureResponse;
+        }
+
+        public byte[] GetProfilePicture(string username)
+        {
+            return profileInformation.GetProfilePicture(username);
         }
 
         public UpdateResponse UpdateFacebook(string username, string newFacebook)

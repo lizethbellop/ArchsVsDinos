@@ -24,7 +24,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
         {
         }
 
-        private UpdateResponse UpdateSocialMedia(string username, string link, string platform)
+        private UpdateResponse UpdateSocialMedia(string username, string link, string platform, UpdateResultCode successCode)
         {
             try
             {
@@ -74,9 +74,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     }
 
                     context.SaveChanges();
-
                     response.success = true;
-                    response.resultCode = UpdateResultCode.Profile_Success;
+                    response.resultCode = successCode;
                     return response;
                 }
             }
@@ -93,26 +92,27 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
         public UpdateResponse UpdateFacebook(string username, string newFacebook)
         {
-            return UpdateSocialMedia(username, newFacebook, "Facebook");
+            return UpdateSocialMedia(username, newFacebook, "Facebook", UpdateResultCode.Profile_UpdateFacebookSuccess);
+
         }
 
         public UpdateResponse UpdateInstagram(string username, string newInstagram)
         {
-            return UpdateSocialMedia(username, newInstagram, "Instagram");
+            return UpdateSocialMedia(username, newInstagram, "Instagram", UpdateResultCode.Profile_UpdateInstagramSuccess);
         }
 
 
 
         public UpdateResponse UpdateTikTok(string username, string newTikTok)
         {
-            return UpdateSocialMedia(username, newTikTok, "TikTok");
+            return UpdateSocialMedia(username, newTikTok,"TikTok", UpdateResultCode.Profile_UpdateTikTokSuccess);
         }
 
 
 
         public UpdateResponse UpdateX(string username, string newX)
         {
-            return UpdateSocialMedia(username, newX, "X");
+            return UpdateSocialMedia(username, newX, "X", UpdateResultCode.Profile_UpdateXSuccess);
         }
 
 
