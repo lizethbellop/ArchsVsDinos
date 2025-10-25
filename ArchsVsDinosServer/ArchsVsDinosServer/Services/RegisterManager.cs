@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ArchsVsDinosServer.BusinessLogic;
 using Contracts;
+using Contracts.DTO.Result_Codes;
 using Contracts.DTO;
 
 namespace ArchsVsDinosServer.Services
@@ -22,7 +23,7 @@ namespace ArchsVsDinosServer.Services
             return new Register().SendEmailRegister(email);
         }
 
-        public ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname)
+        public RegisterResultCode ValidateUsernameAndNickname(string username, string nickname)
         {
             return new Register().ValidateUserameAndNicknameResult(username, nickname);
         }

@@ -9,23 +9,20 @@ using System.Threading.Tasks;
 namespace Contracts.DTO.Response
 {
     [DataContract]
-    public class UpdateResponse
+    public class RegisterResponse
     {
         [DataMember]
         public bool success { get; set; }
-        [DataMember]
-        public string message { get; set; }
 
         [DataMember]
-        public UpdateResultCode resultCode { get; set; }
+        public RegisterResultCode resultCode { get; set; }
 
-        public override bool Equals(object objectEquals)
+        public override bool Equals(object objectResponse)
         {
-            if (objectEquals == null || GetType() != objectEquals.GetType())
+            if (objectResponse == null || GetType() != objectResponse.GetType())
                 return false;
-            var other = (UpdateResponse)objectEquals;
-            return success == other.success &&
-                   message == other.message;
+            var other = (RegisterResponse)objectResponse;
+            return success == other.success;
         }
 
         public override int GetHashCode()
@@ -34,9 +31,12 @@ namespace Contracts.DTO.Response
             {
                 int hash = 17;
                 hash = hash * 23 + success.GetHashCode();
-                hash = hash * 23 + (message?.GetHashCode() ?? 0);
                 return hash;
             }
+
         }
+
     }
+
 }
+

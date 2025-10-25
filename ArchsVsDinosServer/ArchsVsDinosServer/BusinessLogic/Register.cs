@@ -1,16 +1,19 @@
-﻿using System;
+﻿using ArchsVsDinosServer.Default;
+using ArchsVsDinosServer.Utils;
+using Contracts.DTO;
+using Contracts.DTO.Response;
+using Contracts.DTO.Result_Codes;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.ServiceModel.Security.Tokens;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Mail;
-using Contracts.DTO;
-using System.Net;
-using System.Data.Entity.Core;
-using ArchsVsDinosServer.Default;
 using System.Transactions;
-using ArchsVsDinosServer.Utils;
-using System.ServiceModel.Security.Tokens;
+using System.Web.Management;
 
 
 namespace ArchsVsDinosServer.BusinessLogic
@@ -20,55 +23,81 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public static List<VerificationCode> verificationCodes = new List<VerificationCode>();
         
-        public bool RegisterUser(UserAccountDTO userAccountDTO, string code)
+        public RegisterResponse RegisterUser(UserAccountDTO userAccountDTO, string code)
         {
             try
             {
 
-                if (!CheckCode(userAccountDTO.email, code))
-                { 
-                    return false;
-                }
+                RegisterResponse response = new RegisterResponse();
 
-                using (var scope = new TransactionScope())
-                using (var context = new ArchsVsDinosConnection())
+                if (CheckCode(userAccountDTO.email, code))
                 {
 
-                    var player = InitialConfig.InitialPlayer;
-                    context.Player.Add(player);
-                    context.SaveChanges();
+                    var validationUsernameAndNickname = ValidateUsernameAndNicknameResult(userAccountDTO.username, userAccountDTO.nickname);
+                    if (!validationUsernameAndNickname.success)
+                        return validationUsernameAndNickname;
 
-                    var configuration = InitialConfig.InitialConfiguration;
-                    context.Configuration.Add(configuration);
-                    context.SaveChanges();
-
-                    var userAccount = new UserAccount
+                    using (var scope = new TransactionScope())
+                    using (var context = new ArchsVsDinosConnection())
                     {
-                        email = userAccountDTO.email,
-                        password = SecurityHelper.HashPassword(userAccountDTO.password),
-                        name = userAccountDTO.name,
-                        username = userAccountDTO.username,
-                        nickname = userAccountDTO.nickname,
-                        idConfiguration = configuration.idConfiguration,
-                        idPlayer = player.idPlayer
-                    };
 
-                     context.UserAccount.Add(userAccount);
-                     context.SaveChanges();
-                     scope.Complete();
+                        var player = InitialConfig.InitialPlayer;
+                        context.Player.Add(player);
+                        context.SaveChanges();
 
-                    return true;
+                        var configuration = InitialConfig.InitialConfiguration;
+                        context.Configuration.Add(configuration);
+                        context.SaveChanges();
+
+                        var userAccount = new UserAccount
+                        {
+                            email = userAccountDTO.email,
+                            password = SecurityHelper.HashPassword(userAccountDTO.password),
+                            name = userAccountDTO.name,
+                            username = userAccountDTO.username,
+                            nickname = userAccountDTO.nickname,
+                            idConfiguration = configuration.idConfiguration,
+                            idPlayer = player.idPlayer
+                        };
+
+                        context.UserAccount.Add(userAccount);
+                        context.SaveChanges();
+                        scope.Complete();
+
+                        return new RegisterResponse
+                        {
+                            success = true,
+                            resultCode = RegisterResultCode.Register_Success
+                        };
+                    }
                 }
+                else
+                {
+                    return new RegisterResponse
+                    {
+                        success = false,
+                        resultCode = RegisterResultCode.Register_InvalidCode
+                    };
+                }
+
             }
             catch (EntityException ex)
             {
                 LoggerHelper.LogError($"Database connection error at Register", ex);
-                return false;
+                return new RegisterResponse
+                {
+                    success = false,
+                    resultCode = RegisterResultCode.Register_DatabaseError
+                };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in Register: {ex.Message}");
-                return false;
+                return new RegisterResponse
+                {
+                    success = false,
+                    resultCode = RegisterResultCode.Register_UnexpectedError
+                };
             }
         }
 
@@ -76,15 +105,15 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
-            var sb = new StringBuilder();
-            int length = 6;
+            var stringBuilder = new StringBuilder();
+            int codeLength = 6;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < codeLength; i++)
             {
-                sb.Append(chars[random.Next(chars.Length)]);
+                stringBuilder.Append(chars[random.Next(chars.Length)]);
             }
 
-            return sb.ToString();
+            return stringBuilder.ToString();
         }
 
         public bool SendEmailRegister(string email)
@@ -138,42 +167,60 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        public ValiUserNickResultDTO ValidateUserameAndNicknameResult(string newUsername, string newNickname)
+        public RegisterResponse ValidateUsernameAndNicknameResult(string newUsername, string newNickname)
         {
             try
             {
+                RegisterResponse response = new RegisterResponse();
 
                 using (var context = new ArchsVsDinosConnection())
                 {
-                   bool usernameExists = context.UserAccount.Any(u => u.username == newUsername);
-                   bool nicknameExists = context.UserAccount.Any(u => u.nickname == newNickname);
+                    bool usernameExists = context.UserAccount.Any(u => u.username == newUsername);
+                    bool nicknameExists = context.UserAccount.Any(u => u.nickname == newNickname);
 
                     if (usernameExists && nicknameExists)
                     {
-                        return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.BothExists};
+                        response.success = false;
+                        response.resultCode = RegisterResultCode.Register_BothExists;
+                        return response;
                     }
 
                     if (usernameExists)
                     {
-                        return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.UsernameExists};
+                        response.success = false;
+                        response.resultCode = RegisterResultCode.Register_UsernameExists;
+                        return response;
                     }
                     if (nicknameExists)
                     {
-                        return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.NicknameExists};
+                        response.success = false;
+                        response.resultCode = RegisterResultCode.Register_NicknameExists;
+                        return response;
                     }
 
-                    return new ValiUserNickResultDTO { isValid = true, ReturnCont = ReturnContent.Success};
+                    response.success = true;
+                    return response;
 
                 }
             }
-            catch (EntityException ex) 
+            catch (EntityException ex)
             {
                 Console.WriteLine($"Error validating username and nickname : {ex.Message}");
-                if (ex.InnerException != null)
+                return new RegisterResponse
                 {
-                    Console.WriteLine($"DETALLE DEL ERROR (InnerException): {ex.InnerException.Message}");
-                }
-                return new ValiUserNickResultDTO { isValid = false, ReturnCont = ReturnContent.DatabaseError };
+                    success = false,
+                    resultCode = RegisterResultCode.Register_DatabaseError
+                };
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in Register: {ex.Message}");
+                return new RegisterResponse
+                {
+                    success = false,
+                    resultCode = RegisterResultCode.Register_UnexpectedError
+                };
             }
 
         }

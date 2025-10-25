@@ -14,6 +14,7 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] UsernameExists,
         [EnumMember] NicknameExists,
         [EnumMember] BothExists,
-        [EnumMember] DatabaseError
+        [EnumMember] DatabaseError,
+        [EnumMember] Profile_UnexpectedError
     }
 }

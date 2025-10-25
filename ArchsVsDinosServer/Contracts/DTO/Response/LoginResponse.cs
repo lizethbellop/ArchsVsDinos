@@ -25,11 +25,11 @@ namespace Contracts.DTO
         [DataMember]
         public LoginResultCode resultCode { get; set; }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object objectLogin)
         {
-            if (obj == null || GetType() != obj.GetType())
+            if (objectLogin == null || GetType() != objectLogin.GetType())
                 return false;
-            var other = (LoginResponse)obj;
+            var other = (LoginResponse)objectLogin;
             return success == other.success &&
                    message == other.message &&
                    Equals(userSession, other.userSession) &&
