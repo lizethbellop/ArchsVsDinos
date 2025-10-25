@@ -1,4 +1,5 @@
 ﻿using Contracts.DTO;
+using Contracts.DTO.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,11 @@ namespace Contracts
     public interface IRegisterManager
     {
         [OperationContract]
-        bool RegisterUser(UserAccountDTO userAccountDTO, string code);
+        RegisterResponse RegisterUser(UserAccountDTO userAccountDTO, string code);
 
         [OperationContract]
         bool SendEmailRegister(string email);
 
-        [OperationContract]
-        ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname);
     }
 
 }

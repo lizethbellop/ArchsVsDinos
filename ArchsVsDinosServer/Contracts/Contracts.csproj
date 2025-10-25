@@ -46,6 +46,7 @@
     <Compile Include="DTO\ConfigurationDTO.cs" />
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
+    <Compile Include="DTO\Response\RegisterResponse.cs" />
     <Compile Include="DTO\Response\UpdateResponse.cs" />
     <Compile Include="DTO\Result Codes\LoginResultCode.cs" />
     <Compile Include="DTO\Result Codes\RegisterResultCode.cs" />

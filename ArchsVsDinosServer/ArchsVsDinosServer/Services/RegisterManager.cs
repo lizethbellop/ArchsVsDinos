@@ -7,15 +7,17 @@ using ArchsVsDinosServer.BusinessLogic;
 using Contracts;
 using Contracts.DTO.Result_Codes;
 using Contracts.DTO;
+using Contracts.DTO.Response;
 
 namespace ArchsVsDinosServer.Services
 {
     public class RegisterManager : IRegisterManager
     {
-        public bool RegisterUser(UserAccountDTO userAccountDto, string code)
+        public RegisterResponse RegisterUser(UserAccountDTO userAccountDto, string code)
         {
             Register register = new Register();
-            return register.RegisterUser(userAccountDto, code);
+            RegisterResponse response = register.RegisterUser(userAccountDto, code);
+            return response;
         }
 
         public bool SendEmailRegister(string email)
@@ -23,10 +25,6 @@ namespace ArchsVsDinosServer.Services
             return new Register().SendEmailRegister(email);
         }
 
-        public RegisterResultCode ValidateUsernameAndNickname(string username, string nickname)
-        {
-            return new Register().ValidateUserameAndNicknameResult(username, nickname);
-        }
     }
 
 }

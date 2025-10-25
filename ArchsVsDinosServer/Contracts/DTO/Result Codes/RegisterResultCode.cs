@@ -10,11 +10,12 @@ namespace Contracts.DTO.Result_Codes
     [DataContract]
     public enum RegisterResultCode
     {
-        [EnumMember] Success,
-        [EnumMember] UsernameExists,
-        [EnumMember] NicknameExists,
-        [EnumMember] BothExists,
-        [EnumMember] DatabaseError,
-        [EnumMember] Profile_UnexpectedError
+        [EnumMember] Register_Success,
+        [EnumMember] Register_UsernameExists,
+        [EnumMember] Register_NicknameExists,
+        [EnumMember] Register_BothExists,
+        [EnumMember] Register_DatabaseError,
+        [EnumMember] Register_InvalidCode,
+        [EnumMember] Register_UnexpectedError
     }
 }
