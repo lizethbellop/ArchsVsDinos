@@ -244,7 +244,7 @@ namespace UnitTest
         public void TestLoginDatabaseConnectionError()
         {
             string username = "user123";
-            string password = "password123";
+            string password = "1234";
            
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database connection failed"));
@@ -259,6 +259,7 @@ namespace UnitTest
             };
 
             LoginResponse result = authentication.Login(username, password);
+            Console.WriteLine(result.message);
             Assert.AreEqual(expectedResult, result);
 
         }

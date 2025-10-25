@@ -1,5 +1,5 @@
-﻿using ArchsVsDinosClient.Properties.Langs;
-using ArchsVsDinosClient.Utils;
+﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.Utils;
+using AuthenticationService = ArchsVsDinosClient.AuthenticationService;
 
 namespace ArchsVsDinosClient
 {
@@ -50,9 +53,15 @@ namespace ArchsVsDinosClient
             {
                 AuthenticationService.AuthenticationManagerClient authenticationClient = new AuthenticationService.AuthenticationManagerClient();
                 AuthenticationService.LoginResponse response = authenticationClient.Login(username, password);
+                
             
                 if (response.Success)
                 {
+                    UserDTO user = response.UserSession.ToUserDTO();
+                    PlayerDTO player = response.AssociatedPlayer.ToPlayerDTO();
+
+                    UserSession.Instance.Login(user, player);
+                    
                     new MainWindow().ShowDialog();
                     this.Close();
                 }
