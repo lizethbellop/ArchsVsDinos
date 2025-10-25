@@ -95,41 +95,35 @@ namespace ArchsVsDinosClient.Views
                     nickname = UserAccountDTO.nickname
                 };
 
-                var validationUsernameNickname = registerClient.ValidateUsernameAndNickname(usernameTxt, nicknameTxt);
-
-                if(!validationUsernameNickname.isValid)
-                {
-                    switch (validationUsernameNickname.ReturnCont)
-                    {
-                        case ReturnContent.BothExists:
-                            MessageBox.Show(Lang.Register_UsernameAndNicknameExists);
-                            break;
-                        case ReturnContent.UsernameExists:
-                            MessageBox.Show(Lang.Register_UsernameAlreadyExists);
-                            break;
-                        case ReturnContent.NicknameExists:
-                            MessageBox.Show(Lang.Register_NicknameAlreadyExists);
-                            break;
-                        case ReturnContent.DatabaseError:
-                            MessageBox.Show(Lang.Global_ServerError);
-                            break;
-                    }
-                    return;
-                }
-
-                bool registered = registerClient.RegisterUser(serviceUserAccount, code);
+                RegisterResponse registered = registerClient.RegisterUser(serviceUserAccount, code);
                 
-                if(registered)
+                if(registered.success)
                 {
                     MessageBox.Show(Lang.Register_CorrectRegister);
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show(Lang.Register_IncorrectCode);
+                    switch(registered.resultCode)
+                    {
+                        case RegisterResultCode.Register_InvalidCode:
+                            MessageBox.Show(Lang.Register_IncorrectCode);
+                            break;
+                        case RegisterResultCode.Register_BothExists:
+                            MessageBox.Show(Lang.Register_UsernameAndNicknameExists);
+                            break;
+                        case RegisterResultCode.Register_UsernameExists:
+                            MessageBox.Show(Lang.Register_UsernameAlreadyExists);
+                            break;
+                        case RegisterResultCode.Register_NicknameExists:
+                            MessageBox.Show(Lang.Register_NicknameAlreadyExists);
+                            break;
+                        case RegisterResultCode.Register_UnexpectedError:
+                            MessageBox.Show(Lang.Global_ServerError);
+                            break;
+                    }
+                       
                 }
-
-              
             }
             catch (Exception ex)
             {

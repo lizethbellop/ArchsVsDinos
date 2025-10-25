@@ -12,21 +12,4 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="UserAccountDTO" nillable="true" type="tns:UserAccountDTO" />
-  <xs:complexType name="ValiUserNickResultDTO">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="ReturnCont" type="tns:ReturnContent" />
-      <xs:element minOccurs="0" name="isValid" type="xs:boolean" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ValiUserNickResultDTO" nillable="true" type="tns:ValiUserNickResultDTO" />
-  <xs:simpleType name="ReturnContent">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Success" />
-      <xs:enumeration value="UsernameExists" />
-      <xs:enumeration value="NicknameExists" />
-      <xs:enumeration value="BothExists" />
-      <xs:enumeration value="DatabaseError" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="ReturnContent" nillable="true" type="tns:ReturnContent" />
 </xs:schema>

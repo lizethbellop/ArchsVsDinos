@@ -144,7 +144,12 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return true;
 
             }
-            catch(Exception ex)
+            catch (SmtpException ex)
+            {
+                Console.WriteLine($"Error sending email : {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error sending email : {ex.Message}");
                 return false;

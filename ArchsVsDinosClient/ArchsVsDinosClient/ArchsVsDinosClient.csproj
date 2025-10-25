@@ -248,7 +248,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\ProfileManagerService\ProfileManager.wsdl" />
-    <None Include="Connected Services\RegisterService\ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO.datasource">
+    <None Include="Connected Services\RegisterService\ArchsVsDinosClient.RegisterService.RegisterResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Connected Services\RegisterService\item.xsd">
@@ -258,6 +258,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\RegisterService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\RegisterService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\RegisterService\item31.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\RegisterService\RegisterManager.wsdl" />

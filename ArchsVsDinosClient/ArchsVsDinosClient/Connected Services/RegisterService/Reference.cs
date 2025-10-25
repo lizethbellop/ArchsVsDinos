@@ -156,18 +156,18 @@ namespace ArchsVsDinosClient.RegisterService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ValiUserNickResultDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegisterResponse", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response")]
     [System.SerializableAttribute()]
-    public partial class ValiUserNickResultDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class RegisterResponse : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.RegisterService.ReturnContent ReturnContField;
+        private ArchsVsDinosClient.RegisterService.RegisterResultCode resultCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool isValidField;
+        private bool successField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -180,27 +180,27 @@ namespace ArchsVsDinosClient.RegisterService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.RegisterService.ReturnContent ReturnCont {
+        public ArchsVsDinosClient.RegisterService.RegisterResultCode resultCode {
             get {
-                return this.ReturnContField;
+                return this.resultCodeField;
             }
             set {
-                if ((this.ReturnContField.Equals(value) != true)) {
-                    this.ReturnContField = value;
-                    this.RaisePropertyChanged("ReturnCont");
+                if ((this.resultCodeField.Equals(value) != true)) {
+                    this.resultCodeField = value;
+                    this.RaisePropertyChanged("resultCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool isValid {
+        public bool success {
             get {
-                return this.isValidField;
+                return this.successField;
             }
             set {
-                if ((this.isValidField.Equals(value) != true)) {
-                    this.isValidField = value;
-                    this.RaisePropertyChanged("isValid");
+                if ((this.successField.Equals(value) != true)) {
+                    this.successField = value;
+                    this.RaisePropertyChanged("success");
                 }
             }
         }
@@ -216,23 +216,29 @@ namespace ArchsVsDinosClient.RegisterService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ReturnContent", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
-    public enum ReturnContent : int {
+    [System.Runtime.Serialization.DataContractAttribute(Name="RegisterResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum RegisterResultCode : int {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Success = 0,
+        Register_Success = 0,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        UsernameExists = 1,
+        Register_UsernameExists = 1,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        NicknameExists = 2,
+        Register_NicknameExists = 2,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        BothExists = 3,
+        Register_BothExists = 3,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        DatabaseError = 4,
+        Register_DatabaseError = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Register_InvalidCode = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Register_UnexpectedError = 6,
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -240,22 +246,16 @@ namespace ArchsVsDinosClient.RegisterService {
     public interface IRegisterManager {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/RegisterUser", ReplyAction="http://tempuri.org/IRegisterManager/RegisterUserResponse")]
-        bool RegisterUser(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code);
+        ArchsVsDinosClient.RegisterService.RegisterResponse RegisterUser(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/RegisterUser", ReplyAction="http://tempuri.org/IRegisterManager/RegisterUserResponse")]
-        System.Threading.Tasks.Task<bool> RegisterUserAsync(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.RegisterService.RegisterResponse> RegisterUserAsync(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/SendEmailRegister", ReplyAction="http://tempuri.org/IRegisterManager/SendEmailRegisterResponse")]
         bool SendEmailRegister(string email);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/SendEmailRegister", ReplyAction="http://tempuri.org/IRegisterManager/SendEmailRegisterResponse")]
         System.Threading.Tasks.Task<bool> SendEmailRegisterAsync(string email);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/ValidateUsernameAndNickname", ReplyAction="http://tempuri.org/IRegisterManager/ValidateUsernameAndNicknameResponse")]
-        ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IRegisterManager/ValidateUsernameAndNickname", ReplyAction="http://tempuri.org/IRegisterManager/ValidateUsernameAndNicknameResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO> ValidateUsernameAndNicknameAsync(string username, string nickname);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -285,11 +285,11 @@ namespace ArchsVsDinosClient.RegisterService {
                 base(binding, remoteAddress) {
         }
         
-        public bool RegisterUser(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code) {
+        public ArchsVsDinosClient.RegisterService.RegisterResponse RegisterUser(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code) {
             return base.Channel.RegisterUser(userAccountDTO, code);
         }
         
-        public System.Threading.Tasks.Task<bool> RegisterUserAsync(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.RegisterService.RegisterResponse> RegisterUserAsync(ArchsVsDinosClient.RegisterService.UserAccountDTO userAccountDTO, string code) {
             return base.Channel.RegisterUserAsync(userAccountDTO, code);
         }
         
@@ -299,14 +299,6 @@ namespace ArchsVsDinosClient.RegisterService {
         
         public System.Threading.Tasks.Task<bool> SendEmailRegisterAsync(string email) {
             return base.Channel.SendEmailRegisterAsync(email);
-        }
-        
-        public ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO ValidateUsernameAndNickname(string username, string nickname) {
-            return base.Channel.ValidateUsernameAndNickname(username, nickname);
-        }
-        
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.RegisterService.ValiUserNickResultDTO> ValidateUsernameAndNicknameAsync(string username, string nickname) {
-            return base.Channel.ValidateUsernameAndNicknameAsync(username, nickname);
         }
     }
 }

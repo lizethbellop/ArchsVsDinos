@@ -21,7 +21,7 @@ namespace Contracts.DTO.Response
         {
             if (objectEquals == null || GetType() != objectEquals.GetType())
                 return false;
-            var other = (UpdateResponse)obj;
+            var other = (UpdateResponse)objectEquals;
             return success == other.success;
         }
 
