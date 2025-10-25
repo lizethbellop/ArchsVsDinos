@@ -59,9 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="ConnectionStrings.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="ConnectionStrings.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -47,14 +47,15 @@ namespace ArchsVsDinosClient
             {
                 MessageBox.Show(Lang.Global_EmptyField);
                 return;
-            } 
-                
+            }
+
             try
             {
                 AuthenticationService.AuthenticationManagerClient authenticationClient = new AuthenticationService.AuthenticationManagerClient();
                 AuthenticationService.LoginResponse response = authenticationClient.Login(username, password);
-                
-            
+
+                MessageBox.Show($"Success: {response.Success}");
+
                 if (response.Success)
                 {
                     UserDTO user = response.UserSession.ToUserDTO();

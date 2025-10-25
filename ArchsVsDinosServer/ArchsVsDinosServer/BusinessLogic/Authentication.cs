@@ -33,6 +33,7 @@ namespace ArchsVsDinosServer.BusinessLogic
         }
         public LoginResponse Login(string username, string password)
         {
+
             try
             {
                 LoginResponse response = new LoginResponse();
