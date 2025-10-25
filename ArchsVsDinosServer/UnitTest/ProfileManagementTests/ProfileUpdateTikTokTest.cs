@@ -125,7 +125,7 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = true,
-                resultCode = UpdateResultCode.Profile_Success
+                resultCode = UpdateResultCode.Profile_UpdateTikTokSuccess
             };
 
             UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);

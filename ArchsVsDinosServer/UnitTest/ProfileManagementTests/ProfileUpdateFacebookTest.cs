@@ -128,7 +128,7 @@ namespace UnitTest.ProfileManagementTests
             var expectedResult = new UpdateResponse
             {
                 success = true,
-                resultCode = UpdateResultCode.Profile_Success
+                resultCode = UpdateResultCode.Profile_UpdateFacebookSuccess
             };
 
             UpdateResponse result = socialMediaManager.UpdateFacebook(username, newFacebook);

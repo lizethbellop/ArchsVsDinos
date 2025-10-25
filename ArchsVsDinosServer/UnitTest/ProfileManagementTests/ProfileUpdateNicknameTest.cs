@@ -122,7 +122,7 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 success = true,
-                resultCode = UpdateResultCode.Profile_Success
+                resultCode = UpdateResultCode.Profile_ChangeNicknameSuccess
             };
 
             UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
