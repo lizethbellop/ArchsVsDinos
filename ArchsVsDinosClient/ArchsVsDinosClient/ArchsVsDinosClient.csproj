@@ -95,6 +95,9 @@
     <Compile Include="Views\EditAccountViews\EditUsername.xaml.cs">
       <DependentUpon>EditUsername.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EditAccountViews\UpdateFacebook.xaml.cs">
+      <DependentUpon>UpdateFacebook.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FriendsAtLobby.xaml.cs">
       <DependentUpon>FriendsAtLobby.xaml</DependentUpon>
     </Compile>
@@ -134,6 +137,10 @@
     <Page Include="Views\EditAccountViews\EditUsername.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\EditAccountViews\UpdateFacebook.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FriendsAtLobby.xaml">
       <SubType>Designer</SubType>
@@ -330,13 +337,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Connected Services\ProfileManagerService\item.disco" />
-    <None Include="Connected Services\ProfileManagerService\configuration91.svcinfo" />
-    <None Include="Connected Services\ProfileManagerService\configuration.svcinfo" />
-    <None Include="Connected Services\ProfileManagerService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Resource Include="Resources\Images\hotIron.png" />
     <Resource Include="Resources\Images\p1Backgrond.png" />
     <Resource Include="Resources\Images\p2Backgrond.png" />
@@ -347,6 +347,13 @@
     <Resource Include="Resources\Images\boneButton.png" />
     <Resource Include="Resources\Images\boneDestroyedButton.png" />
     <Resource Include="Resources\Images\noPlayers.png" />
+    <None Include="Connected Services\ProfileManagerService\item.disco" />
+    <None Include="Connected Services\ProfileManagerService\configuration91.svcinfo" />
+    <None Include="Connected Services\ProfileManagerService\configuration.svcinfo" />
+    <None Include="Connected Services\ProfileManagerService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

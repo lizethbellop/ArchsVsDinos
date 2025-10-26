@@ -2,7 +2,6 @@
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Utils;
-using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +60,7 @@ namespace ArchsVsDinosClient.Views
                 }
                 else
                 {
-                    // Mensaje temporal, después cambio a resultCode
+                    
                     MessageBox.Show($"Error: {response.resultCode}");
                 }
             }
