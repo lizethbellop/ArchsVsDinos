@@ -83,6 +83,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Utils\SoundMovingRock.cs" />
+    <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>
     </Compile>
@@ -97,6 +98,15 @@
     </Compile>
     <Compile Include="Views\EditAccountViews\UpdateFacebook.xaml.cs">
       <DependentUpon>UpdateFacebook.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAccountViews\UpdateInstagram.xaml.cs">
+      <DependentUpon>UpdateInstagram.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAccountViews\UpdateTikTok.xaml.cs">
+      <DependentUpon>UpdateTikTok.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditAccountViews\UpdateX.xaml.cs">
+      <DependentUpon>UpdateX.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FriendsAtLobby.xaml.cs">
       <DependentUpon>FriendsAtLobby.xaml</DependentUpon>
@@ -139,6 +149,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditAccountViews\UpdateFacebook.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditAccountViews\UpdateInstagram.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditAccountViews\UpdateTikTok.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditAccountViews\UpdateX.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

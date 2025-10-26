@@ -411,4 +411,88 @@
   <data name="Lobby_Invite" xml:space="preserve">
     <value>Invitar</value>
   </data>
+  <data name="UpdateFacebook_FacebookLink" xml:space="preserve">
+    <value>Link de tu perfil de Facebook</value>
+  </data>
+  <data name="UpdateInstagram_Title" xml:space="preserve">
+    <value>Actualizar Instagram</value>
+  </data>
+  <data name="UpdateInstagram_InstagramLink" xml:space="preserve">
+    <value>Link de tu perfil de Instagram</value>
+  </data>
+  <data name="UpdateFacebook_Title" xml:space="preserve">
+    <value>Actualizar Facebook</value>
+  </data>
+  <data name="UpdateX_Title" xml:space="preserve">
+    <value>Actualizar X</value>
+  </data>
+  <data name="UpdateX_XLink" xml:space="preserve">
+    <value>Link de tu perfil de X</value>
+  </data>
+  <data name="UpdateTiktok_Title" xml:space="preserve">
+    <value>Actualizar TikTok</value>
+  </data>
+  <data name="UpdateTiktok_TiktokLink" xml:space="preserve">
+    <value>Link de tu perfil de TikTok</value>
+  </data>
+  <data name="Profile_Success" xml:space="preserve">
+    <value>Perfil actualizado correctamente</value>
+  </data>
+  <data name="Profile_ChangeNicknameSuccess" xml:space="preserve">
+    <value>Apodo cambiado exitosamente</value>
+  </data>
+  <data name="Profile_ChangeUsernameSuccess" xml:space="preserve">
+    <value>Usuario cambiado exitosamente</value>
+  </data>
+  <data name="Profile_ChangePasswordSuccess" xml:space="preserve">
+    <value>Contraseña cambiada exitosamente</value>
+  </data>
+  <data name="Profile_UpdateFacebookSuccess" xml:space="preserve">
+    <value>Facebook actualizado correctamente</value>
+  </data>
+  <data name="Profile_UpdateInstagramSuccess" xml:space="preserve">
+    <value>Instagram actualizado exitosamente</value>
+  </data>
+  <data name="Profile_UpdateXSuccess" xml:space="preserve">
+    <value>X actualizado exitosamente</value>
+  </data>
+  <data name="Profile_UpdateTikTokSuccess" xml:space="preserve">
+    <value>TikTok actualizado exitosamente</value>
+  </data>
+  <data name="Profile_EmptyFields" xml:space="preserve">
+    <value>Los campos no pueden estar vacíos</value>
+  </data>
+  <data name="Profile_UserNotFound" xml:space="preserve">
+    <value>Usuario no encontrado</value>
+  </data>
+  <data name="Profile_PlayerNotFound" xml:space="preserve">
+    <value>Jugador no encontrado</value>
+  </data>
+  <data name="Profile_NicknameExists" xml:space="preserve">
+    <value>El apodo ya existe</value>
+  </data>
+  <data name="Profile_UsernameExists" xml:space="preserve">
+    <value>El usuario ya existe</value>
+  </data>
+  <data name="Profile_PasswordTooShort" xml:space="preserve">
+    <value>La contraseña es muy corta</value>
+  </data>
+  <data name="Profile_InvalidPassword" xml:space="preserve">
+    <value>Contraseña inválida</value>
+  </data>
+  <data name="Profile_SamePasswordValue" xml:space="preserve">
+    <value>La nueva contraseña no puede ser igual a la actual</value>
+  </data>
+  <data name="Profile_SameNicknameValue" xml:space="preserve">
+    <value>El nuevo apodo no puede ser igual al actual</value>
+  </data>
+  <data name="Profile_SameUsernameValue" xml:space="preserve">
+    <value>El nuevo usuario no puede ser igual al actual</value>
+  </data>
+  <data name="Profile_DatabaseError" xml:space="preserve">
+    <value>Error en la base de datos</value>
+  </data>
+  <data name="Profile_UnexpectedError" xml:space="preserve">
+    <value>Error inesperado</value>
+  </data>
 </root>

@@ -1,4 +1,4 @@
-﻿<Window x:Class="ArchsVsDinosClient.Views.EditAccountViews.UpdateFacebook"
+﻿<Window x:Class="ArchsVsDinosClient.Views.EditAccountViews.UpdateInstagram"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views.EditAccountViews"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
         mc:Ignorable="d"
-        Title="UpdateFacebook" Height="340" Width="450"
+        Title="UpdateInstagram" Height="340" Width="450"
         WindowStartupLocation="CenterScreen">
 
     <Window.Background>
@@ -18,25 +18,24 @@
             <GradientStop Color="#FEDCB77B" Offset="0.451"/>
         </LinearGradientBrush>
     </Window.Background>
-
     <Grid Margin="15,15,15,15">
         <Grid.RowDefinitions>
             <!--Title  -->
             <RowDefinition Height="Auto"/>
-            <!-- Facebook Link -->
+            <!-- Instagram Link -->
             <RowDefinition Height="Auto"/>
             <!-- Buttons -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20">
-            <Label Content="{x:Static language:Lang.UpdateFacebook_Title}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="17" FontWeight="Bold" Foreground="#FFFF7E7E"/>
+            <Label Content="{x:Static language:Lang.UpdateInstagram_Title}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="17" FontWeight="Bold" Foreground="#FFFF7E7E"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,0,25">
-            <Label Content="{x:Static language:Lang.UpdateFacebook_FacebookLink}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" HorizontalAlignment="Left" Foreground="White"/>
+            <Label Content="{x:Static language:Lang.UpdateInstagram_InstagramLink}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" HorizontalAlignment="Left" Foreground="White"/>
             <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <TextBox Name = "TxtB_FacebookLink" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center" HorizontalAlignment="Left" Width="266"/>
+                <TextBox Name = "TxtB_InstagramLink" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
             </Border>
         </StackPanel>
 
@@ -52,7 +51,7 @@
                  BorderBrush="{TemplateBinding BorderBrush}"
                  BorderThickness="{TemplateBinding BorderThickness}"
                  CornerRadius="13">
-                          <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">

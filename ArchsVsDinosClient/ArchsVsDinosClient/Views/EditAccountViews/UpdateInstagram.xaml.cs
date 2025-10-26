@@ -19,11 +19,11 @@ using System.Windows.Shapes;
 namespace ArchsVsDinosClient.Views.EditAccountViews
 {
     /// <summary>
-    /// Lógica de interacción para UpdateFacebook.xaml
+    /// Lógica de interacción para UpdateInstagram.xaml
     /// </summary>
-    public partial class UpdateFacebook : Window
+    public partial class UpdateInstagram : Window
     {
-        public UpdateFacebook()
+        public UpdateInstagram()
         {
             InitializeComponent();
         }
@@ -39,9 +39,9 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             SoundButton.PlayClick();
 
             string currentUsername = UserSession.Instance.CurrentUser.username;
-            string newFacebookLink = TxtB_FacebookLink.Text;
+            string newInstagramLink = TxtB_InstagramLink.Text;
 
-            if (!ValidateInputs(newFacebookLink))
+            if (!ValidateInputs(newInstagramLink))
             {
                 MessageBox.Show(Lang.GlobalEmptyField);
                 return;
@@ -50,11 +50,11 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             try
             {
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
-                UpdateResponse response = profileManagerClient.UpdateFacebook(currentUsername, newFacebookLink);
+                UpdateResponse response = profileManagerClient.UpdateInstagram(currentUsername, newInstagramLink);
 
                 if (response.success)
                 {
-                    MessageBox.Show("Facebook actualizado correctamente");
+                    MessageBox.Show("Instagram actualizado correctamente");
                     this.Close();
                 }
                 else
@@ -69,15 +69,14 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             }
         }
 
-        private bool ValidateInputs(string facebookLink)
+        private bool ValidateInputs(string instagramLink)
         {
-            if (ValidationHelper.isEmpty(facebookLink) || ValidationHelper.isWhiteSpace(facebookLink))
+            if (ValidationHelper.isEmpty(instagramLink) || ValidationHelper.isWhiteSpace(instagramLink))
             {
                 return false;
             }
 
             return true;
         }
-
     }
 }

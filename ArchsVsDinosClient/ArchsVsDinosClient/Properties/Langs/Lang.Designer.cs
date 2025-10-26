@@ -619,6 +619,186 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Apodo cambiado exitosamente.
+        /// </summary>
+        public static string Profile_ChangeNicknameSuccess {
+            get {
+                return ResourceManager.GetString("Profile_ChangeNicknameSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Contraseña cambiada exitosamente.
+        /// </summary>
+        public static string Profile_ChangePasswordSuccess {
+            get {
+                return ResourceManager.GetString("Profile_ChangePasswordSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Usuario cambiado exitosamente.
+        /// </summary>
+        public static string Profile_ChangeUsernameSuccess {
+            get {
+                return ResourceManager.GetString("Profile_ChangeUsernameSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error en la base de datos.
+        /// </summary>
+        public static string Profile_DatabaseError {
+            get {
+                return ResourceManager.GetString("Profile_DatabaseError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Los campos no pueden estar vacíos.
+        /// </summary>
+        public static string Profile_EmptyFields {
+            get {
+                return ResourceManager.GetString("Profile_EmptyFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Contraseña inválida.
+        /// </summary>
+        public static string Profile_InvalidPassword {
+            get {
+                return ResourceManager.GetString("Profile_InvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El apodo ya existe.
+        /// </summary>
+        public static string Profile_NicknameExists {
+            get {
+                return ResourceManager.GetString("Profile_NicknameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña es muy corta.
+        /// </summary>
+        public static string Profile_PasswordTooShort {
+            get {
+                return ResourceManager.GetString("Profile_PasswordTooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Jugador no encontrado.
+        /// </summary>
+        public static string Profile_PlayerNotFound {
+            get {
+                return ResourceManager.GetString("Profile_PlayerNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El nuevo apodo no puede ser igual al actual.
+        /// </summary>
+        public static string Profile_SameNicknameValue {
+            get {
+                return ResourceManager.GetString("Profile_SameNicknameValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La nueva contraseña no puede ser igual a la actual.
+        /// </summary>
+        public static string Profile_SamePasswordValue {
+            get {
+                return ResourceManager.GetString("Profile_SamePasswordValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El nuevo usuario no puede ser igual al actual.
+        /// </summary>
+        public static string Profile_SameUsernameValue {
+            get {
+                return ResourceManager.GetString("Profile_SameUsernameValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Perfil actualizado correctamente.
+        /// </summary>
+        public static string Profile_Success {
+            get {
+                return ResourceManager.GetString("Profile_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error inesperado.
+        /// </summary>
+        public static string Profile_UnexpectedError {
+            get {
+                return ResourceManager.GetString("Profile_UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Facebook actualizado correctamente.
+        /// </summary>
+        public static string Profile_UpdateFacebookSuccess {
+            get {
+                return ResourceManager.GetString("Profile_UpdateFacebookSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Instagram actualizado exitosamente.
+        /// </summary>
+        public static string Profile_UpdateInstagramSuccess {
+            get {
+                return ResourceManager.GetString("Profile_UpdateInstagramSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a TikTok actualizado exitosamente.
+        /// </summary>
+        public static string Profile_UpdateTikTokSuccess {
+            get {
+                return ResourceManager.GetString("Profile_UpdateTikTokSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a X actualizado exitosamente.
+        /// </summary>
+        public static string Profile_UpdateXSuccess {
+            get {
+                return ResourceManager.GetString("Profile_UpdateXSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El usuario ya existe.
+        /// </summary>
+        public static string Profile_UsernameExists {
+            get {
+                return ResourceManager.GetString("Profile_UsernameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Usuario no encontrado.
+        /// </summary>
+        public static string Profile_UserNotFound {
+            get {
+                return ResourceManager.GetString("Profile_UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¡Registrarse ahora!.
         /// </summary>
         public static string Register_BtnRegister {
@@ -930,6 +1110,78 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Statistics_Title {
             get {
                 return ResourceManager.GetString("Statistics_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de tu perfil de Facebook.
+        /// </summary>
+        public static string UpdateFacebook_FacebookLink {
+            get {
+                return ResourceManager.GetString("UpdateFacebook_FacebookLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Actualizar Facebook.
+        /// </summary>
+        public static string UpdateFacebook_Title {
+            get {
+                return ResourceManager.GetString("UpdateFacebook_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de tu perfil de Instagram.
+        /// </summary>
+        public static string UpdateInstagram_InstagramLink {
+            get {
+                return ResourceManager.GetString("UpdateInstagram_InstagramLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Actualizar Instagram.
+        /// </summary>
+        public static string UpdateInstagram_Title {
+            get {
+                return ResourceManager.GetString("UpdateInstagram_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de tu perfil de TikTok.
+        /// </summary>
+        public static string UpdateTiktok_TiktokLink {
+            get {
+                return ResourceManager.GetString("UpdateTiktok_TiktokLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Actualizar TikTok.
+        /// </summary>
+        public static string UpdateTiktok_Title {
+            get {
+                return ResourceManager.GetString("UpdateTiktok_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Actualizar X.
+        /// </summary>
+        public static string UpdateX_Title {
+            get {
+                return ResourceManager.GetString("UpdateX_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de tu perfil de X.
+        /// </summary>
+        public static string UpdateX_XLink {
+            get {
+                return ResourceManager.GetString("UpdateX_XLink", resourceCulture);
             }
         }
         
