@@ -337,6 +337,16 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Images\hotIron.png" />
+    <Resource Include="Resources\Images\p1Backgrond.png" />
+    <Resource Include="Resources\Images\p2Backgrond.png" />
+    <Resource Include="Resources\Images\p3Backgrond.png" />
+    <Resource Include="Resources\Images\p4Backgrond.png" />
+    <Resource Include="Resources\Images\dentDown.png" />
+    <Resource Include="Resources\Images\emergentTable.png" />
+    <Resource Include="Resources\Images\boneButton.png" />
+    <Resource Include="Resources\Images\boneDestroyedButton.png" />
+    <Resource Include="Resources\Images\noPlayers.png" />
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

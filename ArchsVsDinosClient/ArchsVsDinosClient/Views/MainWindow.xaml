@@ -28,7 +28,7 @@
             <Image x:Name="image" Source="/Resources/Images/logo.png" Stretch="Uniform" Height="180" HorizontalAlignment="Center"/>
 
             <StackPanel Grid.Row="0" Margin="0,20,0,0" HorizontalAlignment="Center">
-                <Button Content="{x:Static language:Lang.Main_CreateMatch}" Name="Btn_CreateMatch" HorizontalAlignment="Center"  VerticalAlignment="Top" Height="110" Width="250" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="28" BorderBrush="{x:Null}" Foreground="White">
+                <Button Content="{x:Static language:Lang.Main_CreateMatch}" Click="Btn_CreateMatch" HorizontalAlignment="Center"  VerticalAlignment="Top" Height="110" Width="250" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="28" BorderBrush="{x:Null}" Foreground="White">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rock1.png"/>
                     </Button.Background>

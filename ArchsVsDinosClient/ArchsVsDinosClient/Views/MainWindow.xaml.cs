@@ -28,10 +28,11 @@ namespace ArchsVsDinosClient
             InitializeComponent();
         }
 
-        /*private void Btn_CreateMatch(object sender, RoutedEventArgs e)
+        private void Btn_CreateMatch(object sender, RoutedEventArgs e)
         {
+            SoundMovingRock.PlayClick();
             new Lobby().ShowDialog();
-        }*/
+        }
 
         private void Btn_Account(object sender, RoutedEventArgs e)
         {
@@ -51,11 +52,5 @@ namespace ArchsVsDinosClient
             new Settings().ShowDialog();
         }
 
-
-        /*private void Btn_MouseEnter(object sender, MouseEventArgs e)
-        {
-            SoundButton sb = new SoundButton();
-            sb.playButtonSound();
-        }*/
     }
 }

@@ -405,4 +405,10 @@
   <data name="Lobby_AddFriend" xml:space="preserve">
     <value>Add firned</value>
   </data>
+  <data name="Lobby_InviteByEmailGr" xml:space="preserve">
+    <value>Invite by email</value>
+  </data>
+  <data name="Lobby_Invite" xml:space="preserve">
+    <value>Invite</value>
+  </data>
 </root>

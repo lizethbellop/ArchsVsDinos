@@ -421,11 +421,29 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Invitar.
+        /// </summary>
+        public static string Lobby_Invite {
+            get {
+                return ResourceManager.GetString("Lobby_Invite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Invitar jugador por correo.
         /// </summary>
         public static string Lobby_InviteByEmail {
             get {
                 return ResourceManager.GetString("Lobby_InviteByEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Invitar por correo.
+        /// </summary>
+        public static string Lobby_InviteByEmailGr {
+            get {
+                return ResourceManager.GetString("Lobby_InviteByEmailGr", resourceCulture);
             }
         }
         

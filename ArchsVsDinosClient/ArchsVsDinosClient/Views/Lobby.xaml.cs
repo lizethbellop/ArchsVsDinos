@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArchsVsDinosClient.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,5 +24,38 @@ namespace ArchsVsDinosClient.Views
         {
             InitializeComponent();
         }
+
+
+        private void Btn_CancelMatch(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayClick();
+            this.Close();
+        }
+
+        private void Btn_InviteFriends(object sender, RoutedEventArgs e)
+        {
+            SoundMovingRock.PlayClick();
+            Gr_MyFriends.Visibility = Visibility.Visible;
+        }
+
+        private void Btn_CancelInviteFriend(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayClick();
+            Gr_MyFriends.Visibility = Visibility.Collapsed;
+        }
+
+        private void Btn_InvitePlayerByEmail(object sender, RoutedEventArgs e)
+        {
+            SoundMovingRock.PlayClick();
+            Gr_InviteByEmail.Visibility = Visibility.Visible;
+        }
+
+        private void Btn_CancelInviteByEmail(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayClick();
+            Gr_InviteByEmail.Visibility = Visibility.Collapsed;
+        }
+
+
     }
 }
