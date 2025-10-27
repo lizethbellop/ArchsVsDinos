@@ -30,13 +30,13 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 
         private void Btn_Save(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayMovingRockSound();
 
             string currentUsername = UserSession.Instance.CurrentUser.username;
             string currentPassword = Pb_CurrentPassword.Password;
@@ -73,8 +73,8 @@ namespace ArchsVsDinosClient.Views
 
         private bool ValidateInputs(string currentPassword, string newPassword)
         {
-            if (ValidationHelper.isEmpty(currentPassword) || ValidationHelper.isWhiteSpace(currentPassword) 
-                || ValidationHelper.isEmpty(newPassword) || ValidationHelper.isWhiteSpace(newPassword))
+            if (ValidationHelper.IsEmpty(currentPassword) || ValidationHelper.IsWhiteSpace(currentPassword) 
+                || ValidationHelper.IsEmpty(newPassword) || ValidationHelper.IsWhiteSpace(newPassword))
             {
                 return false;
             }

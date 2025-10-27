@@ -64,5 +64,6 @@ namespace Contracts.DTO
                 return hash;
             }
         }
+
     }
 }

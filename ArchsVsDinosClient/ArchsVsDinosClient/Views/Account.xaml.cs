@@ -28,31 +28,31 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             this.Close();   
         }
 
         private void Btn_PersonalStatistics(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new PersonalStatistics().ShowDialog();
         }
 
         private void Btn_EditPassword(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new EditPassword().ShowDialog();
         }
 
         private void Btn_EditUsername(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new EditUsername().ShowDialog();
         }
 
         private void Btn_EditNickname(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new EditAccountViews.EditNickname().ShowDialog();
         }
 

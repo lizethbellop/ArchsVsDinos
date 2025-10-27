@@ -30,13 +30,13 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 
         private void Btn_Save(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayMovingRockSound();
 
             string currentUsername = UserSession.Instance.CurrentUser.username;
             string newFacebookLink = TxtB_FacebookLink.Text;
@@ -71,7 +71,7 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
         private bool ValidateInputs(string facebookLink)
         {
-            if (ValidationHelper.isEmpty(facebookLink) || ValidationHelper.isWhiteSpace(facebookLink))
+            if (ValidationHelper.IsEmpty(facebookLink) || ValidationHelper.IsWhiteSpace(facebookLink))
             {
                 return false;
             }

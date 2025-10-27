@@ -33,10 +33,10 @@ namespace ArchsVsDinosClient.Views
         private void Btn_Accept(object sender, RoutedEventArgs e)
         {
 
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             EnteredCode = TxtB_Code.Text;
 
-            if(ValidationHelper.isEmpty(EnteredCode))
+            if(ValidationHelper.IsEmpty(EnteredCode))
             {
                 MessageBox.Show(Lang.GlobalEmptyField);
                 return;
@@ -49,7 +49,7 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             IsCancelled = true;
             this.Close();
         }

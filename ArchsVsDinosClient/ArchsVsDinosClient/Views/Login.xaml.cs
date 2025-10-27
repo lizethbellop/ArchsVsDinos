@@ -103,7 +103,7 @@ namespace ArchsVsDinosClient
 
         private bool ValidateInputs(string username, string password)
         {
-            if (ValidationHelper.isEmpty(username) || ValidationHelper.isWhiteSpace(username) || (ValidationHelper.isEmpty(password) || ValidationHelper.isWhiteSpace(password)))
+            if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username) || (ValidationHelper.IsEmpty(password) || ValidationHelper.IsWhiteSpace(password)))
             {
                 return false;
             }

@@ -32,14 +32,14 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             MessageBox.Show(Lang.Register_CancelledRegistration);
             this.Close();
         }
 
         private void Btn_RegisterNow(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             string nameTxt = TxtB_Name.Text;
             string usernameTxt = TxtB_Username.Text;
             string emailTxt = TxtB_Email.Text;
@@ -135,7 +135,7 @@ namespace ArchsVsDinosClient.Views
 
         private bool ValidateInputs(string name, string username, string email, string password, string nickname)
         {
-            if(ValidationHelper.isEmpty(name) || ValidationHelper.isEmpty(username) || ValidationHelper.isEmpty(email) || ValidationHelper.isEmpty(password) || ValidationHelper.isEmpty(nickname))
+            if(ValidationHelper.IsEmpty(name) || ValidationHelper.IsEmpty(username) || ValidationHelper.IsEmpty(email) || ValidationHelper.IsEmpty(password) || ValidationHelper.IsEmpty(nickname))
             {
                 MessageBox.Show(Lang.GlobalEmptyField);
                 return false;

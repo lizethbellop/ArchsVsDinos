@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\ConfigurationDTO.cs" />
+    <Compile Include="DTO\LobbyPlayerDTO.cs" />
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\Response\RegisterResponse.cs" />
@@ -58,6 +59,8 @@
     <Compile Include="IAuthenticationManager.cs" />
     <Compile Include="IChatManager.cs" />
     <Compile Include="IChatManagerCallback.cs" />
+    <Compile Include="IMatchLobbyManager.cs" />
+    <Compile Include="IMatchLobbyManagerCallback.cs" />
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

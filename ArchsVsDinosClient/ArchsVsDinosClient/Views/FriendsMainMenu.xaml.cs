@@ -27,7 +27,7 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Close(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 

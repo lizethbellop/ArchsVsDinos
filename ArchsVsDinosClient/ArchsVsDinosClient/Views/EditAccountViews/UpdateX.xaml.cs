@@ -30,13 +30,13 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 
         private void Btn_Save(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayMovingRockSound();
 
             string currentUsername = UserSession.Instance.CurrentUser.username;
             string newXLink = TxtB_XLink.Text;
@@ -71,7 +71,7 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
         private bool ValidateInputs(string xLink)
         {
-            if (ValidationHelper.isEmpty(xLink) || ValidationHelper.isWhiteSpace(xLink))
+            if (ValidationHelper.IsEmpty(xLink) || ValidationHelper.IsWhiteSpace(xLink))
             {
                 return false;
             }

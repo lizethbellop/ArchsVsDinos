@@ -30,25 +30,25 @@ namespace ArchsVsDinosClient
 
         private void Btn_CreateMatch(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new Lobby().ShowDialog();
         }
 
         private void Btn_Account(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new Account().ShowDialog();
         }
 
         private void Btn_Friends(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new FriendsMainMenu().ShowDialog();
         }
 
         private void Btn_Settings(object sender, RoutedEventArgs e)
         {
-            SoundMovingRock.PlayClick();
+            SoundButton.PlayMovingRockSound();
             new Settings().ShowDialog();
         }
 

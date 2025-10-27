@@ -11,12 +11,12 @@ namespace ArchsVsDinosClient.Utils
     public static class ValidationHelper
     {
 
-        public static bool isEmpty(string input)
+        public static bool IsEmpty(string input)
         {
             return string.IsNullOrEmpty(input);
         }
-
-        public static bool isWhiteSpace(string input)
+        
+        public static bool IsWhiteSpace(string input)
         {
             return string.IsNullOrWhiteSpace(input);
         }
@@ -24,12 +24,12 @@ namespace ArchsVsDinosClient.Utils
         public static bool MinLengthPassword(string input)
         {
             const int Minimum = 8;
-            return !isEmpty(input) && input.Length >= Minimum;
+            return !IsEmpty(input) && input.Length >= Minimum;
         }
 
         public static bool HasPasswordAllCharacters(string input)
         {
-            if (isEmpty(input) || !MinLengthPassword(input))
+            if (IsEmpty(input) || !MinLengthPassword(input))
                 return false;
 
             bool hasUpper = false;

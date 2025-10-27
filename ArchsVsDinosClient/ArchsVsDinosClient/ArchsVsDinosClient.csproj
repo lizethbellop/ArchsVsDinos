@@ -82,7 +82,6 @@
     <Compile Include="Utils\SoundButton.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="Utils\SoundMovingRock.cs" />
     <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>

@@ -30,13 +30,13 @@ namespace ArchsVsDinosClient.Views
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 
         private void Btn_Save(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayMovingRockSound();
 
             string currentUsername = UserSession.Instance.CurrentUser.username;
             string newUsername = TxtB_NewUsername.Text;
@@ -73,7 +73,7 @@ namespace ArchsVsDinosClient.Views
 
         private bool ValidateInputs(string username)
         {
-            if (ValidationHelper.isEmpty(username) || ValidationHelper.isWhiteSpace(username))
+            if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username))
             {
                 return false;
             }

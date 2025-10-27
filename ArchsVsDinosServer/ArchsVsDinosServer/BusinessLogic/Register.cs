@@ -28,7 +28,6 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             try
             {
-
                 RegisterResponse response = new RegisterResponse();
 
                 if (CheckCode(userAccountDTO.email, code))
@@ -102,32 +101,17 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        public string GenerateVerificationCode()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = new Random();
-            var stringBuilder = new StringBuilder();
-            int codeLength = 6;
-
-            for (int i = 0; i < codeLength; i++)
-            {
-                stringBuilder.Append(chars[random.Next(chars.Length)]);
-            }
-
-            return stringBuilder.ToString();
-        }
-
         public bool SendEmailRegister(string email)
         {
             try
             {
-                string verificationCode = GenerateVerificationCode();
+                string verificationCode = CodeGenerator.GenerateVerificationCode();
                 
                 MailMessage mail = new MailMessage();
                 mail.From = new MailAddress("archvsdinos@gmail.com");
                 mail.To.Add(email);
                 mail.Subject = "Verification code - Arch vs Dinos";
-                mail.Body = $"Your verification code is: {verificationCode}";
+                mail.Body = $"Hi, your verification code is: {verificationCode} \n Don't share this code with another person.";
                 mail.IsBodyHtml = false;
 
                 SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
@@ -137,9 +121,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 verificationCodes.Add(new VerificationCode
                 {
-                    Email = email,
-                    Code = verificationCode,
-                    Expiration = DateTime.Now.AddMinutes(10)
+                    email = email,
+                    code = verificationCode,
+                    expiration = DateTime.Now.AddMinutes(10)
                 });
 
                 return true;
@@ -160,9 +144,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public bool CheckCode(string email, string code)
         {
-            var dataCheck = verificationCodes.Find(x => x.Email == email && x.Code == code);
+            var dataCheck = verificationCodes.Find(x => x.email == email && x.code == code);
         
-            if (dataCheck != null && dataCheck.Expiration > DateTime.Now)
+            if (dataCheck != null && dataCheck.expiration > DateTime.Now)
             {
                 verificationCodes.Remove(dataCheck);
                 return true;

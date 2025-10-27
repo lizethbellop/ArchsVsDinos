@@ -30,13 +30,13 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 
         private void Btn_Save(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayClick();
+            SoundButton.PlayMovingRockSound();
 
             string currentUsername = UserSession.Instance.CurrentUser.username;
             string newInstagramLink = TxtB_InstagramLink.Text;
@@ -71,7 +71,7 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
         private bool ValidateInputs(string instagramLink)
         {
-            if (ValidationHelper.isEmpty(instagramLink) || ValidationHelper.isWhiteSpace(instagramLink))
+            if (ValidationHelper.IsEmpty(instagramLink) || ValidationHelper.IsWhiteSpace(instagramLink))
             {
                 return false;
             }
