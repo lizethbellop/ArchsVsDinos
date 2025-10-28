@@ -1,4 +1,5 @@
-﻿using Contracts;
+﻿using ArchsVsDinosServer.Interfaces;
+using Contracts;
 using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Concurrent;
@@ -14,6 +15,13 @@ namespace ArchsVsDinosServer.BusinessLogic
     public class Chat
     {
         private static readonly ConcurrentDictionary<string, IChatManagerCallback> ConnectedUsers = new ConcurrentDictionary<string, IChatManagerCallback>();
+        private const string DefaultRoom = "Lobby";
+        private readonly ILoggerHelper loggerHelper;
+
+        public Chat(ILoggerHelper loggerHelper)
+        {
+            this.loggerHelper = loggerHelper;
+        }
 
         public ChatResultCode Connect(string username)
         {
@@ -24,7 +32,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (InvalidOperationException ex)
             {
-                Console.WriteLine($"Error obtaining the callback: {ex.Message}");
+                loggerHelper.LogError($"Error obtaining the callback: {ex.Message}", ex);
                 return ChatResultCode.Chat_ConnectionError;
             }
 
@@ -34,13 +42,13 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     callback.ReceiveSystemNotification(ChatResultCode.Chat_UserAlreadyConnected, "User already connected");
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException)
                 {
-                    Console.WriteLine($"Communication error while notifying: {ex.Message}");
+                    loggerHelper.LogWarning($"Communication error with user {username}");
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException)
                 {
-                    Console.WriteLine($"Timeout while notifying: {ex.Message}");
+                    loggerHelper.LogWarning($"Timeout communicating with user {username}");
                 }
                 return ChatResultCode.Chat_UserAlreadyConnected;
             }
@@ -51,15 +59,14 @@ namespace ArchsVsDinosServer.BusinessLogic
             return ChatResultCode.Chat_UserConnected;
         }
 
-        public ChatResultCode Disconnect(string username)
+        public void Disconnect(string username)
         {
             if (ConnectedUsers.TryRemove(username, out _))
             {
                 BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserDisconnected, $"{username} has left the lobby");
                 UpdateUserList();
-                return ChatResultCode.Chat_UserDisconnected;
             }
-            return ChatResultCode.Chat_ConnectionError;
+            
         }
 
         public void SendMessageToRoom(string message, string username)
@@ -68,35 +75,16 @@ namespace ArchsVsDinosServer.BusinessLogic
             BroadcastMessageToAll(username, message);
         }
 
-        public List<string> GetConnectedUsers()
-        {
-            return ConnectedUsers.Keys.ToList();
-        }
+        
 
         private void BroadcastSystemNotificationWithEnum(ChatResultCode code, string message)
         {
             foreach (var user in ConnectedUsers.ToArray())
             {
-                try
+                SafeCallbackInvoke(user.Key, () =>
                 {
                     user.Value.ReceiveSystemNotification(code, message);
-                }
-                catch (CommunicationObjectAbortedException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (CommunicationException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (TimeoutException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (ObjectDisposedException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
+                });
             }
         }
 
@@ -104,26 +92,10 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             foreach (var user in ConnectedUsers.ToArray())
             {
-                try
+                SafeCallbackInvoke(user.Key, () =>
                 {
-                    user.Value.ReceiveMessage("Lobby", fromUser, message);
-                }
-                catch (CommunicationObjectAbortedException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (CommunicationException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (TimeoutException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (ObjectDisposedException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
+                    user.Value.ReceiveMessage(DefaultRoom, fromUser, message);
+                });
             }
         }
 
@@ -132,27 +104,38 @@ namespace ArchsVsDinosServer.BusinessLogic
             var users = ConnectedUsers.Keys.ToList();
             foreach (var user in ConnectedUsers.ToArray())
             {
-                try
+                SafeCallbackInvoke(user.Key, () =>
                 {
                     user.Value.UpdateUserList(users);
-                }
-                catch (CommunicationObjectAbortedException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (CommunicationException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (TimeoutException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
-                catch (ObjectDisposedException)
-                {
-                    ConnectedUsers.TryRemove(user.Key, out _);
-                }
+                });
             }
+        }
+
+        private void SafeCallbackInvoke(string username, Action callbackAction)
+        {
+            try
+            {
+                callbackAction();
+            }
+            catch (CommunicationObjectAbortedException)
+            {
+                ConnectedUsers.TryRemove(username, out _);
+            }
+            catch (CommunicationException)
+            {
+                loggerHelper.LogWarning($"Communication error with user {username}");
+                ConnectedUsers.TryRemove(username, out _);
+            }
+            catch (TimeoutException)
+            {
+                loggerHelper.LogWarning($"Timeout communicating with user {username}");
+                ConnectedUsers.TryRemove(username, out _);
+            }
+            catch (ObjectDisposedException)
+            {
+                ConnectedUsers.TryRemove(username, out _);
+            }
+
         }
     }
 }
