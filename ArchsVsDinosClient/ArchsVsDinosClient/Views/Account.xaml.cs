@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Utils;
+﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,29 @@ namespace ArchsVsDinosClient.Views
         public Account()
         {
             InitializeComponent();
+            LoadUserData();
+            UserProfileObserver.Instance.OnProfileUpdated += RefreshUserData;
+        }
+
+        private void LoadUserData()
+        {
+            var user = UserSession.Instance.CurrentUser;
+
+            TxtUsername.Text = user.username;
+            TxtNickname.Text = user.nickname;
+            TxtEmail.Text = user.email;
+            TxtName.Text = user.name;
+        }
+
+        private void RefreshUserData()
+        {
+            LoadUserData();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            UserProfileObserver.Instance.OnProfileUpdated -= RefreshUserData;
+            base.OnClosed(e);
         }
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)

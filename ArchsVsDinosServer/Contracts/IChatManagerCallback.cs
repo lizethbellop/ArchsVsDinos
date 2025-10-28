@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.DTO.Result_Codes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -13,6 +14,9 @@ namespace Contracts
         void ReceiveMessage(string roomId, string fromUser, string message);
 
         [OperationContract(IsOneWay = true)]
-        void ReceiveSystemNotification(string notification);
+        void ReceiveSystemNotification(ChatResultCode code, string notification);
+
+        [OperationContract(IsOneWay = true)]
+        void UpdateUserList(List<string> users);
     }
 }

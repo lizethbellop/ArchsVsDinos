@@ -19,7 +19,8 @@ namespace ArchsVsDinosClient.Utils
                 idUser = source.idUser,
                 username = source.username,
                 name = source.name,
-                nickname = source.nickname
+                nickname = source.nickname,
+                email = source.email
             };
         }
 

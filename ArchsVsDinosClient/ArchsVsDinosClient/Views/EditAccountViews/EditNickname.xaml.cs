@@ -51,19 +51,16 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             {
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.UpdateNickname(currentUsername, newNickname);
+                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                MessageBox.Show(message);
 
                 if (response.success)
                 {
                     UserSession.Instance.CurrentUser.nickname = newNickname;
-                    //Temporal
-                    MessageBox.Show("Apodo actualizado correctamente");
+                    UserProfileObserver.Instance.NotifyProfileUpdated();
                     this.Close();
                 }
-                else
-                {
-
-                    MessageBox.Show($"Error: {response.resultCode}");
-                }
+                
             }
             catch (Exception ex)
             {

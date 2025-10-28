@@ -495,4 +495,19 @@
   <data name="Profile_UnexpectedError" xml:space="preserve">
     <value>Error inesperado</value>
   </data>
+  <data name="Authentication_Success" xml:space="preserve">
+    <value>Inicio de sesión exitoso</value>
+  </data>
+  <data name="Authentication_EmptyFields" xml:space="preserve">
+    <value>Los campos no pueden estar vacíos</value>
+  </data>
+  <data name="Authentication_InvalidCredentials" xml:space="preserve">
+    <value>Credenciales incorrectas</value>
+  </data>
+  <data name="Authentication_DatabaseError" xml:space="preserve">
+    <value>Error en la base de datos</value>
+  </data>
+  <data name="Authentication_UnexpectedError" xml:space="preserve">
+    <value>Error inesperado</value>
+  </data>
 </root>

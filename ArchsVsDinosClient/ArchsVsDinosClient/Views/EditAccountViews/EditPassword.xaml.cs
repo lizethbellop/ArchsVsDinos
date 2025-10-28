@@ -53,16 +53,15 @@ namespace ArchsVsDinosClient.Views
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.ChangePassword(currentUsername, currentPassword, newPassword);
 
+                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                MessageBox.Show(message);
+
+
                 if (response.success)
                 {
-                    MessageBox.Show("Contraseña cambiada correctamente");
                     this.Close();
                 }
-                else
-                {
-
-                    MessageBox.Show($"Error: {response.resultCode}");
-                }
+                
             }
             catch (Exception ex)
             {

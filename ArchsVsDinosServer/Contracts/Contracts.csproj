@@ -49,6 +49,7 @@
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\Response\RegisterResponse.cs" />
     <Compile Include="DTO\Response\UpdateResponse.cs" />
+    <Compile Include="DTO\Result Codes\ChatResultCode.cs" />
     <Compile Include="DTO\Result Codes\LoginResultCode.cs" />
     <Compile Include="DTO\Result Codes\RegisterResultCode.cs" />
     <Compile Include="DTO\Result Codes\UpdateResultCode.cs" />

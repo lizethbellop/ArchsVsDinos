@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,15 +10,14 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.BusinessLogic
 {
-    
+
     public class Chat
     {
         private static readonly ConcurrentDictionary<string, IChatManagerCallback> ConnectedUsers = new ConcurrentDictionary<string, IChatManagerCallback>();
-        
-        public void Connect(string username)
-        {
 
-            IChatManagerCallback callback = null;
+        public ChatResultCode Connect(string username)
+        {
+            IChatManagerCallback callback;
             try
             {
                 callback = OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
@@ -25,14 +25,14 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (InvalidOperationException ex)
             {
                 Console.WriteLine($"Error obtaining the callback: {ex.Message}");
-                throw new FaultException("A communication channel could not be estalished");
+                return ChatResultCode.Chat_ConnectionError;
             }
 
             if (ConnectedUsers.ContainsKey(username))
             {
                 try
                 {
-                    callback.ReceiveSystemNotification("Usuario ya conectado");
+                    callback.ReceiveSystemNotification(ChatResultCode.Chat_UserAlreadyConnected, "User already connected");
                 }
                 catch (CommunicationException ex)
                 {
@@ -40,98 +40,61 @@ namespace ArchsVsDinosServer.BusinessLogic
                 }
                 catch (TimeoutException ex)
                 {
-                    Console.WriteLine($"Timeout while notyfing: {ex.Message}");
-
+                    Console.WriteLine($"Timeout while notifying: {ex.Message}");
                 }
-                return;
+                return ChatResultCode.Chat_UserAlreadyConnected;
             }
 
             ConnectedUsers[username] = callback;
-            Console.WriteLine($"{username} se ha unido al lobby");
-
-            BroadcastSystemNotification($"{username} se ha unido al lobby");
+            BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserConnected, $"{username} has joined");
+            UpdateUserList();
+            return ChatResultCode.Chat_UserConnected;
         }
 
-        public void Disconnect(string username)
+        public ChatResultCode Disconnect(string username)
         {
-            if(ConnectedUsers.TryRemove(username, out _))
+            if (ConnectedUsers.TryRemove(username, out _))
             {
-                Console.WriteLine($"{username} se ha desconectado del lobby");
-                BroadcastSystemNotification($"{username} ha salido del lobby");
+                BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserDisconnected, $"{username} has left the lobby");
+                UpdateUserList();
+                return ChatResultCode.Chat_UserDisconnected;
             }
+            return ChatResultCode.Chat_ConnectionError;
         }
 
         public void SendMessageToRoom(string message, string username)
         {
-            Console.WriteLine($"[Lobby] {username}: {message}");
-            BroadcastMessageToAll(username, message); ;
+            // TODO: agregar filtro de palabras
+            BroadcastMessageToAll(username, message);
         }
 
-        public void SendMessageToUser(string username, string targetUser, string message)
+        public List<string> GetConnectedUsers()
         {
-            if (!ConnectedUsers.TryGetValue(targetUser, out var targetCallback))
-            {
-                if(ConnectedUsers.TryGetValue(username, out var senderCallback))
-                {
-                    NotifySender(username, $"El usuario '{targetUser}' no está conectado");
-                }
-                return;
-            }
-
-            try
-            {
-                targetCallback.ReceiveMessage("PRIVATE", username, message);
-            }
-            catch (CommunicationObjectAbortedException ex)
-            {
-                Console.WriteLine($"Aborted connection with {targetUser}: {ex.Message}");
-                ConnectedUsers.TryRemove(targetUser, out _);
-                NotifySender(username, $"El usuario '{targetUser}' se desconectó inesperadamente");
-            }
-            catch (CommunicationException ex)
-            {
-                Console.WriteLine($"Communication error {targetUser}: {ex.Message}");
-                ConnectedUsers.TryRemove(targetUser, out _);
-                NotifySender(username, $"No se pudo enviar el mensaje a '{targetUser}'");
-            }
-            catch (TimeoutException ex)
-            {
-                Console.WriteLine($"Timeout while sending the message {targetUser}: {ex.Message}");
-                NotifySender(username, $"Timeout al enviar mensaje a '{targetUser}'");
-            }
-            catch (ObjectDisposedException ex)
-            {
-                Console.WriteLine($"Channel closed for {targetUser}: {ex.Message}");
-                ConnectedUsers.TryRemove(targetUser, out _);
-            }
+            return ConnectedUsers.Keys.ToList();
         }
 
-        private void BroadcastSystemNotification(string notification)
+        private void BroadcastSystemNotificationWithEnum(ChatResultCode code, string message)
         {
             foreach (var user in ConnectedUsers.ToArray())
             {
                 try
                 {
-                    user.Value.ReceiveSystemNotification(notification);
+                    user.Value.ReceiveSystemNotification(code, message);
                 }
-                catch (CommunicationObjectAbortedException ex)
+                catch (CommunicationObjectAbortedException)
                 {
-                    Console.WriteLine($"Connection aborted with {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException)
                 {
-                    Console.WriteLine($"Communication Error with {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException)
                 {
-                    Console.WriteLine($"Timeout to send notification {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
-                catch (ObjectDisposedException ex)
+                catch (ObjectDisposedException)
                 {
-                    Console.WriteLine($"Channel closed for {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
             }
@@ -139,51 +102,55 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         private void BroadcastMessageToAll(string fromUser, string message)
         {
-            List<KeyValuePair<string, IChatManagerCallback>> usersList = new List<KeyValuePair<string, IChatManagerCallback>>(ConnectedUsers);
-            foreach (var user in usersList)
+            foreach (var user in ConnectedUsers.ToArray())
             {
                 try
                 {
                     user.Value.ReceiveMessage("Lobby", fromUser, message);
                 }
-                catch (CommunicationObjectAbortedException ex)
+                catch (CommunicationObjectAbortedException)
                 {
-                    Console.WriteLine($"Aborted connection with {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException)
                 {
-                    Console.WriteLine($"Communication Error with {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException)
                 {
-                    Console.WriteLine($"Timeout to send notification {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
-                catch (ObjectDisposedException ex)
+                catch (ObjectDisposedException)
                 {
-                    Console.WriteLine($"Channel closed for {user.Key}: {ex.Message}");
                     ConnectedUsers.TryRemove(user.Key, out _);
                 }
             }
         }
 
-        private void NotifySender(string username, string notification)
+        private void UpdateUserList()
         {
-            if(ConnectedUsers.TryGetValue(username, out var senderCallback))
+            var users = ConnectedUsers.Keys.ToList();
+            foreach (var user in ConnectedUsers.ToArray())
             {
                 try
                 {
-                    senderCallback.ReceiveSystemNotification(notification);
+                    user.Value.UpdateUserList(users);
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationObjectAbortedException)
                 {
-                    Console.WriteLine($"Couldn't notify {username}: {ex.Message}");
+                    ConnectedUsers.TryRemove(user.Key, out _);
                 }
-                catch (TimeoutException ex)
+                catch (CommunicationException)
                 {
-                    Console.WriteLine($"Timeout while notifying {username}: {ex.Message}");
+                    ConnectedUsers.TryRemove(user.Key, out _);
+                }
+                catch (TimeoutException)
+                {
+                    ConnectedUsers.TryRemove(user.Key, out _);
+                }
+                catch (ObjectDisposedException)
+                {
+                    ConnectedUsers.TryRemove(user.Key, out _);
                 }
             }
         }
