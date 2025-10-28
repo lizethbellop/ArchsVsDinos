@@ -62,6 +62,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\ChatManager\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\LobbyService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\ProfileManagerService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -265,6 +275,38 @@
     <None Include="Connected Services\AuthenticationService\item31.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\ChatManager\ArchsVsDinosClient.ChatManager.ChatResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\ChatManager\ChatManager.wsdl" />
+    <None Include="Connected Services\ChatManager\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ChatManager\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ChatManager\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\ChatManager\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.MatchLobbyResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\LobbyService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\LobbyService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\LobbyService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\LobbyService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\LobbyService\MatchLobbyManager.wsdl" />
     <None Include="Connected Services\ProfileManagerService\ArchsVsDinosClient.ProfileManagerService.UpdateResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -349,6 +391,8 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\AuthenticationService\" />
+    <WCFMetadataStorage Include="Connected Services\ChatManager\" />
+    <WCFMetadataStorage Include="Connected Services\LobbyService\" />
     <WCFMetadataStorage Include="Connected Services\ProfileManagerService\" />
     <WCFMetadataStorage Include="Connected Services\RegisterService\" />
   </ItemGroup>
@@ -378,6 +422,20 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Resource Include="Resources\Images\logo.png" />
+    <None Include="Connected Services\ChatManager\item.disco" />
+    <None Include="Connected Services\ChatManager\configuration91.svcinfo" />
+    <None Include="Connected Services\ChatManager\configuration.svcinfo" />
+    <None Include="Connected Services\ChatManager\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\LobbyService\item.disco" />
+    <None Include="Connected Services\LobbyService\configuration91.svcinfo" />
+    <None Include="Connected Services\LobbyService\configuration.svcinfo" />
+    <None Include="Connected Services\LobbyService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
