@@ -62,7 +62,7 @@
                                 </Button.Template>
                             </Button>
                         </UniformGrid>
-                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
+                        <TextBlock x:Name="TxtUsername" FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -91,7 +91,7 @@
                                 </Button.Template>
                             </Button>
                         </UniformGrid>
-                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
+                        <TextBlock x:Name="TxtNickname" FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
                     </StackPanel>
 
                     <StackPanel>
@@ -99,12 +99,12 @@
                             <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
                         
                         </UniformGrid>
-                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
+                        <TextBlock x:Name="TxtEmail" FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
                     </StackPanel>
 
                     <StackPanel>
                         <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
-                        <TextBlock FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,15"/>
+                        <TextBlock x:Name="TxtName" FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,15"/>
                     </StackPanel>
 
                     <StackPanel>

@@ -158,7 +158,7 @@ namespace UnitTest
                 totalWins = 10,
                 totalLosses = 5,
                 totalPoints = 100,
-                profilePicture = "yourpfp.com"
+                profilePicture = "/profilepictures/yourpfp"
             };
 
             UserAccount expectedUser = new UserAccount
@@ -168,7 +168,8 @@ namespace UnitTest
                 password = passwordHash,
                 name = "Carlos Sainz",
                 nickname = "chilli55",
-                Player = expectedPlayer
+                Player = expectedPlayer,
+                email = "csainz@f1.com"
             };
 
             expectedPlayer.UserAccount = new List<UserAccount> { expectedUser };
@@ -187,7 +188,8 @@ namespace UnitTest
                     idUser = 1,
                     username = "user123",
                     name = "Carlos Sainz",
-                    nickname = "chilli55"
+                    nickname = "chilli55",
+                    email = "csainz@f1.com"
                 },
                 associatedPlayer = new PlayerDTO
                 {
@@ -199,7 +201,7 @@ namespace UnitTest
                     totalWins = 10,
                     totalLosses = 5,
                     totalPoints = 100,
-                    profilePicture = "yourpfp.com"
+                    profilePicture = "/profilepictures/yourpfp"
                 },
                 resultCode = LoginResultCode.Authentication_Success
             };

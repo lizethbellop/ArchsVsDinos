@@ -289,6 +289,9 @@ namespace ArchsVsDinosClient.AuthenticationService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string emailField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int idUserField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -307,6 +310,19 @@ namespace ArchsVsDinosClient.AuthenticationService {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string email {
+            get {
+                return this.emailField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.emailField, value) != true)) {
+                    this.emailField = value;
+                    this.RaisePropertyChanged("email");
+                }
             }
         }
         

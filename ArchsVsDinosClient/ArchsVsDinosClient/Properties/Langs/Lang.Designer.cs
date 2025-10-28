@@ -142,6 +142,51 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error en la base de datos.
+        /// </summary>
+        public static string Authentication_DatabaseError {
+            get {
+                return ResourceManager.GetString("Authentication_DatabaseError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Los campos no pueden estar vacíos.
+        /// </summary>
+        public static string Authentication_EmptyFields {
+            get {
+                return ResourceManager.GetString("Authentication_EmptyFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Credenciales incorrectas.
+        /// </summary>
+        public static string Authentication_InvalidCredentials {
+            get {
+                return ResourceManager.GetString("Authentication_InvalidCredentials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Inicio de sesión exitoso.
+        /// </summary>
+        public static string Authentication_Success {
+            get {
+                return ResourceManager.GetString("Authentication_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error inesperado.
+        /// </summary>
+        public static string Authentication_UnexpectedError {
+            get {
+                return ResourceManager.GetString("Authentication_UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Nuevo apodo.
         /// </summary>
         public static string EditNickname_NewNickname {

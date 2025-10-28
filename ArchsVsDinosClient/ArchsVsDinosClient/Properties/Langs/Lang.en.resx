@@ -495,4 +495,19 @@
   <data name="Profile_UnexpectedError" xml:space="preserve">
     <value>Unexpected error</value>
   </data>
+  <data name="Authentication_Success" xml:space="preserve">
+    <value>Login Successful</value>
+  </data>
+  <data name="Authentication_EmptyFields" xml:space="preserve">
+    <value>Fields cannot be empty</value>
+  </data>
+  <data name="Authentication_InvalidCredentials" xml:space="preserve">
+    <value>Incorrect credentials</value>
+  </data>
+  <data name="Authentication_DatabaseError" xml:space="preserve">
+    <value>Database error</value>
+  </data>
+  <data name="Authentication_UnexpectedError" xml:space="preserve">
+    <value>An unexpected error occurred</value>
+  </data>
 </root>

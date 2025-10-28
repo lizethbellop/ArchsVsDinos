@@ -52,16 +52,14 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.UpdateTikTok(currentUsername, newTikTokLink);
 
+                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                MessageBox.Show(message);
+
                 if (response.success)
                 {
-                    MessageBox.Show("TikTok actualizado correctamente");
                     this.Close();
                 }
-                else
-                {
-
-                    MessageBox.Show($"Error: {response.resultCode}");
-                }
+                
             }
             catch (Exception ex)
             {

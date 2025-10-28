@@ -26,6 +26,7 @@ namespace ArchsVsDinosClient.Views
         public EditUsername()
         {
             InitializeComponent();
+
         }
 
         private void Btn_Cancel(object sender, RoutedEventArgs e)
@@ -52,17 +53,16 @@ namespace ArchsVsDinosClient.Views
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.UpdateUsername(currentUsername, newUsername);
 
+                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                MessageBox.Show(message);
+
                 if (response.success)
                 {
                     UserSession.Instance.CurrentUser.username = newUsername;
-                    MessageBox.Show("Usuario actualizado correctamente");
+                    UserProfileObserver.Instance.NotifyProfileUpdated();
                     this.Close();
                 }
-                else
-                {
-                    
-                    MessageBox.Show($"Error: {response.resultCode}");
-                }
+                
             }
             catch (Exception ex)
             {

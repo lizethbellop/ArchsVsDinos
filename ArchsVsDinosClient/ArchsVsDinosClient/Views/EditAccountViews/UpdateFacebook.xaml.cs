@@ -51,17 +51,15 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             {
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.UpdateFacebook(currentUsername, newFacebookLink);
+                
+                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                MessageBox.Show(message);
 
                 if (response.success)
                 {
-                    MessageBox.Show("Facebook actualizado correctamente");
                     this.Close();
                 }
-                else
-                {
-
-                    MessageBox.Show($"Error: {response.resultCode}");
-                }
+                
             }
             catch (Exception ex)
             {

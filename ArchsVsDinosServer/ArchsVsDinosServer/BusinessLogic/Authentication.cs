@@ -68,7 +68,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                         idUser = user.idUser,
                         name = user.name,
                         nickname = user.nickname,
-                        username = user.username
+                        username = user.username,
+                        email = user.email,
                     };
                     if (user.Player != null)
                     {

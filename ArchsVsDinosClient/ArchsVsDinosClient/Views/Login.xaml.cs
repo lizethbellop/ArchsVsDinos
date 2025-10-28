@@ -54,6 +54,9 @@ namespace ArchsVsDinosClient
                 AuthenticationService.AuthenticationManagerClient authenticationClient = new AuthenticationService.AuthenticationManagerClient();
                 AuthenticationService.LoginResponse response = authenticationClient.Login(username, password);
 
+                string message = LoginResultCodeHelper.GetMessage(response.resultCode);
+                MessageBox.Show(message);
+
                 if (response.success)
                 {
                     UserDTO user = response.userSession.ToUserDTO();
@@ -63,10 +66,7 @@ namespace ArchsVsDinosClient
                     new MainWindow().ShowDialog();
                     this.Close();
                 }
-                else
-                {
-                    MessageBox.Show(Lang.Login_IncorrectCredentials);
-                }
+                
             }
             catch (Exception ex)
             {
