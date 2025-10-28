@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.DTO.Result_Codes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -11,14 +12,16 @@ namespace Contracts
     public interface IChatManager
     {
         [OperationContract]
-        void Connect(string username);
+        ChatResultCode Connect(string username);
+        
         [OperationContract]
-        void Disconnect(string username);
+        ChatResultCode Disconnect(string username);
+        
         [OperationContract]
         void SendMessageToRoom(string message, string username);
 
         [OperationContract]
-        void SendMessageToUser(string username, string targetUser, string message);
+        List<string> GetConnectedUsers();
 
     }
 }

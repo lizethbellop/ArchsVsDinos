@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using ArchsVsDinosServer.BusinessLogic;
+using Contracts.DTO.Result_Codes;
 
 namespace ArchsVsDinosServer.Services
 {
@@ -13,14 +14,25 @@ namespace ArchsVsDinosServer.Services
     public class ChatManager : IChatManager
     {
         private Chat chatBusinessLogic;
-        public void Connect(string username)
+
+        public ChatManager()
         {
-            chatBusinessLogic.Connect(username);
+            chatBusinessLogic = new Chat();
         }
 
-        public void Disconnect(string username)
+        public ChatResultCode Connect(string username)
         {
-            chatBusinessLogic.Disconnect(username);
+            throw new NotImplementedException();
+        }
+
+        public ChatResultCode Disconnect(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetConnectedUsers()
+        {
+            throw new NotImplementedException();
         }
 
         public void SendMessageToRoom(string message, string username)
@@ -28,9 +40,6 @@ namespace ArchsVsDinosServer.Services
             chatBusinessLogic.SendMessageToRoom(message, username);
         }
 
-        public void SendMessageToUser(string username, string targetUser, string message)
-        {
-            chatBusinessLogic.SendMessageToUser(username, targetUser, message);
-        }
+        
     }
 }
