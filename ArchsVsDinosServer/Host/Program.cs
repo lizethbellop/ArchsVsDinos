@@ -29,10 +29,10 @@ namespace Host
                     Console.WriteLine("Server is running");
                     Console.ReadLine();
                 }
-                catch (CommunicationException ce)
+                catch (CommunicationException ex)
                 {
-                    Console.WriteLine("Error starting services: ", ce.Message);
-                    Console.WriteLine(ce.ToString());
+                    Console.WriteLine("Error starting services: ", ex.Message);
+                    Console.WriteLine(ex.ToString());
 
                     registerHost.Abort();
                     authenticationHost.Abort();
