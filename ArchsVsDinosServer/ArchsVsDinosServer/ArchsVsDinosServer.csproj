@@ -143,6 +143,7 @@
     </Compile>
     <Compile Include="BusinessLogic\Authentication.cs" />
     <Compile Include="BusinessLogic\Chat.cs" />
+    <Compile Include="BusinessLogic\Friend.cs" />
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyConfiguration.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\BaseProfileService.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\PasswordManager.cs" />
