@@ -144,7 +144,7 @@
 
         <UniformGrid Grid.Row="3" HorizontalAlignment="Center">
 
-            <Button Content="{x:Static language:Lang.GlobalCloseText}" Click="Btn_Close" Margin="5" Height="60" Width="120" Foreground="White" FontWeight="Bold" 
+            <Button Content="{x:Static language:Lang.GlobalCloseText}" Click="Click_BtnClose" Margin="5" Height="60" Width="120" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
                 <Button.Background>
                     <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>

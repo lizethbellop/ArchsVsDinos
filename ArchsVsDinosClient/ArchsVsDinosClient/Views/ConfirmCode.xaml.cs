@@ -28,7 +28,7 @@ namespace ArchsVsDinosClient.Views
             InitializeComponent();
         }
 
-        private void Btn_Accept(object sender, RoutedEventArgs e)
+        private void Click_BtnAccept(object sender, RoutedEventArgs e)
         {
 
             SoundButton.PlayMovingRockSound();
@@ -45,7 +45,7 @@ namespace ArchsVsDinosClient.Views
 
         }
 
-        private void Btn_Cancel(object sender, RoutedEventArgs e)
+        private void Click_BtnCancel(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             IsCancelled = true;

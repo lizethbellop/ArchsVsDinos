@@ -28,17 +28,17 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             InitializeComponent();
         }
 
-        private void Btn_Cancel(object sender, RoutedEventArgs e)
+        private void Click_BtnCancel(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 
-        private void Btn_Save(object sender, RoutedEventArgs e)
+        private void Click_BtnSave(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
 
-            string currentUsername = UserSession.Instance.CurrentUser.username;
+            string currentUsername = UserSession.Instance.currentUser.username;
             string newFacebookLink = TxtB_FacebookLink.Text;
 
             if (!ValidateInputs(newFacebookLink))

@@ -27,17 +27,17 @@ namespace ArchsVsDinosClient
             InitializeComponent();
         }
 
-        private void Btn_Register(object sender, RoutedEventArgs e)
+        private void Click_BtnRegister(object sender, RoutedEventArgs e)
         {
             new Register().ShowDialog();
 
         }
 
-        private void Btn_Login(object sender, RoutedEventArgs e)
+        private void Click_BtnLogin(object sender, RoutedEventArgs e)
         {
 
             string username = TxtB_Username.Text;
-            string password = Pb_Password.Password;
+            string password = PB_Password.Password;
 
 
             if (!ValidateInputs(username, password)) 
@@ -72,15 +72,16 @@ namespace ArchsVsDinosClient
 
         }
 
-        private void Btn_PlayAsGuest(object sender, RoutedEventArgs e)
+        private void Click_BtnPlayAsGuest(object sender, RoutedEventArgs e)
         {
+            UserSession.Instance.LoginAsGuest();
             new MainWindow().ShowDialog();
             this.Close();
         }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        
+        private void SelectionChanged_CbLanguage(object sender, SelectionChangedEventArgs e)
         {
-            if (Cb_Language.SelectedIndex == 0)
+            if (CB_Language.SelectedIndex == 0)
             {
                 Properties.Settings.Default.languageCode = "es-MX";
 
@@ -92,11 +93,10 @@ namespace ArchsVsDinosClient
             Properties.Settings.Default.Save();
         }
 
-        private void ChangeButton_Click(object sender, RoutedEventArgs e)
+        private void Click_BtnChangeLanguage(object sender, RoutedEventArgs e)
         {
             new MainWindow().ShowDialog();
         }
-
 
         private bool ValidateInputs(string username, string password)
         {

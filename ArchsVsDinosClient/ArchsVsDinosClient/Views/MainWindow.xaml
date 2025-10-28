@@ -28,7 +28,7 @@
             <Image x:Name="image" Source="/Resources/Images/logo.png" Stretch="Uniform" Height="180" HorizontalAlignment="Center"/>
 
             <StackPanel Grid.Row="0" Margin="0,20,0,0" HorizontalAlignment="Center">
-                <Button Content="{x:Static language:Lang.Main_CreateMatch}" Click="Btn_CreateMatch" HorizontalAlignment="Center"  VerticalAlignment="Top" Height="110" Width="250" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="28" BorderBrush="{x:Null}" Foreground="White">
+                <Button Content="{x:Static language:Lang.Main_CreateMatch}" Click="Click_BtnCreateMatch" Name="Btn_Creatematch" Visibility="Visible" HorizontalAlignment="Center"  VerticalAlignment="Top" Height="110" Width="250" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="28" BorderBrush="{x:Null}" Foreground="White">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rock1.png"/>
                     </Button.Background>
@@ -127,7 +127,7 @@
             </Grid.RowDefinitions>
             
             <StackPanel Grid.Row="0" HorizontalAlignment="Right">
-                <Button Click="Btn_Account" Height="160" Width="160" FontSize="18" BorderBrush="{x:Null}">
+                <Button Click="Click_BtnAccount" Name="Btn_Account" Height="160" Width="160" FontSize="18" BorderBrush="{x:Null}">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/userLogo.png"/>
                     </Button.Background>
@@ -156,7 +156,7 @@
             </StackPanel>
 
             <UniformGrid Grid.Row="2" Rows="1" HorizontalAlignment="Right">
-                <Button Click="Btn_Friends" HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="120" BorderBrush="{x:Null}">
+                <Button Click="Click_BtnFriends" Name="Btn_Friends" HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="120" BorderBrush="{x:Null}">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/friendsLogo.png"/>
                     </Button.Background>
@@ -182,7 +182,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                <Button Click="Btn_Settings" HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="120" BorderBrush="{x:Null}">
+                <Button Click="Click_BtnSettings" HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="120" BorderBrush="{x:Null}">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/configLogo.png"/>
                     </Button.Background>

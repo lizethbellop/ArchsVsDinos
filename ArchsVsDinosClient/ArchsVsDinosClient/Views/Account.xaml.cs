@@ -31,7 +31,7 @@ namespace ArchsVsDinosClient.Views
 
         private void LoadUserData()
         {
-            var user = UserSession.Instance.CurrentUser;
+            var user = UserSession.Instance.currentUser;
 
             TxtUsername.Text = user.username;
             TxtNickname.Text = user.nickname;
@@ -50,31 +50,31 @@ namespace ArchsVsDinosClient.Views
             base.OnClosed(e);
         }
 
-        private void Btn_Cancel(object sender, RoutedEventArgs e)
+        private void Click_BtnCancel(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             this.Close();   
         }
 
-        private void Btn_PersonalStatistics(object sender, RoutedEventArgs e)
+        private void Click_BtnPersonalStatistics(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new PersonalStatistics().ShowDialog();
         }
 
-        private void Btn_EditPassword(object sender, RoutedEventArgs e)
+        private void Click_BtnEditPassword(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new EditPassword().ShowDialog();
         }
 
-        private void Btn_EditUsername(object sender, RoutedEventArgs e)
+        private void Click_BtnEditUsername(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new EditUsername().ShowDialog();
         }
 
-        private void Btn_EditNickname(object sender, RoutedEventArgs e)
+        private void Click_BtnEditNickname(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new EditAccountViews.EditNickname().ShowDialog();

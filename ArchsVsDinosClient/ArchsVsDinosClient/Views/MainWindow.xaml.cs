@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Media;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.Models;
 
 namespace ArchsVsDinosClient
 {
@@ -26,27 +27,36 @@ namespace ArchsVsDinosClient
         public MainWindow()
         {
             InitializeComponent();
+            ConfigureForTypeSession();
         }
 
-        private void Btn_CreateMatch(object sender, RoutedEventArgs e)
+        private void ConfigureForTypeSession()
+        {
+            if (UserSession.Instance.isGuest)
+            {
+                Btn_Creatematch.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Click_BtnCreateMatch(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new Lobby().ShowDialog();
         }
 
-        private void Btn_Account(object sender, RoutedEventArgs e)
+        private void Click_BtnAccount(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new Account().ShowDialog();
         }
 
-        private void Btn_Friends(object sender, RoutedEventArgs e)
+        private void Click_BtnFriends(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new FriendsMainMenu().ShowDialog();
         }
 
-        private void Btn_Settings(object sender, RoutedEventArgs e)
+        private void Click_BtnSettings(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             new Settings().ShowDialog();

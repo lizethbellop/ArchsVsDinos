@@ -39,7 +39,7 @@
                     <StackPanel>
                         <UniformGrid Margin="0,0,0,-50">
                             <Label Content="{x:Static language:Lang.Register_Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572"/>
-                            <Button HorizontalAlignment="Left" Click="Btn_EditUsername" Content="{x:Static language:Lang.Account_EditText}" Margin="5" Height="40" Width="90" Foreground="White" FontWeight="Bold" 
+                            <Button HorizontalAlignment="Left" Click="Click_BtnEditUsername" Content="{x:Static language:Lang.Account_EditText}" Margin="5" Height="40" Width="90" Foreground="White" FontWeight="Bold" 
                                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                                 <Button.Background>
                                     <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
@@ -68,7 +68,7 @@
                     <StackPanel>
                         <UniformGrid Margin="0,0,0,-50">
                             <Label HorizontalAlignment="Left" Content="{x:Static language:Lang.Register_Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
-                            <Button HorizontalAlignment="Left" Click="Btn_EditNickname" Content="{x:Static language:Lang.Account_EditText}" Margin="5" Height="40" Width="90" Foreground="White" FontWeight="Bold" 
+                            <Button HorizontalAlignment="Left" Click="Click_BtnEditNickname" Content="{x:Static language:Lang.Account_EditText}" Margin="5" Height="40" Width="90" Foreground="White" FontWeight="Bold" 
                                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                                 <Button.Background>
                                     <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
@@ -231,7 +231,7 @@
 
         <Grid Grid.Row="2">
             <UniformGrid Columns="3" HorizontalAlignment="Right" Width="500">
-                <Button HorizontalAlignment="Left" Content="{x:Static language:Lang.Account_EditPassword}" Click="Btn_EditPassword" Margin="5" Height="70" Width="155" Foreground="White" FontWeight="Bold" 
+                <Button HorizontalAlignment="Left" Content="{x:Static language:Lang.Account_EditPassword}" Click="Click_BtnEditPassword" Margin="5" Height="70" Width="155" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
@@ -254,7 +254,7 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Click ="Btn_PersonalStatistics" Margin="5" Height="70" Width="155" Foreground="White" FontWeight="Bold" 
+                <Button Content="{x:Static language:Lang.Account_SeeStatistics}" Click ="Click_BtnPersonalStatistics" Margin="5" Height="70" Width="155" Foreground="White" FontWeight="Bold" 
                 BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rock1.png"/>
@@ -277,7 +277,7 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="70" Width="120" Foreground="White" FontWeight="Bold" 
+                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Click_BtnCancel" Margin="5" Height="70" Width="120" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>

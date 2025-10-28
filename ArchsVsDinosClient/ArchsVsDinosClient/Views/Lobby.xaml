@@ -29,7 +29,7 @@
         <Grid Grid.Column="0">
 
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                <Button Content="{x:Static language:Lang.GlobalReturnText}" Click="Btn_CancelMatch" Height="70" Width="140" Margin="0,10,0,20" Foreground="#FFFFAE80" FontWeight="Bold" 
+                <Button Content="{x:Static language:Lang.GlobalReturnText}" Click="Click_BtnCancelMatch" Height="70" Width="140" Margin="0,10,0,20" Foreground="#FFFFAE80" FontWeight="Bold" 
                         BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="23">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/hotIron.png"/>
@@ -54,14 +54,13 @@
                 <Label Content="{x:Static language:Lang.GlobalGroupChatText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" Foreground="Black"/>
                 <Border Background="White" BorderBrush="#FF00730B" BorderThickness="1" Height="350" CornerRadius="5">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <TextBlock x:Name="TxtB_Chat" TextWrapping="Wrap" Padding="5" FontFamily="Trebuchet MS" FontSize="12" Background="#80FFFFFF"/>
+                        <TextBlock x:Name="TxtBl_Chat" TextWrapping="Wrap" Padding="5" FontFamily="Trebuchet MS" FontSize="12" Background="#80FFFFFF"/>
                     </ScrollViewer>
                 </Border>
             </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom">
-                <TextBox x:Name="TbMessage" Height="30" Margin="0,5,0,0" FontFamily="Trebuchet MS"
-                             BorderBrush="#FF029700" BorderThickness="1" Padding="5"/>
+                <TextBox x:Name="TxtB_Message" Height="30" Margin="0,5,0,0" FontFamily="Trebuchet MS" BorderBrush="#FF029700" BorderThickness="1" Padding="5"/>
             </StackPanel>
 
         </Grid>
@@ -498,7 +497,7 @@
                        Foreground="Black" HorizontalAlignment="Right" Margin="0,10,0,20"/>
 
                 <StackPanel Margin="20,0,0,20" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                    <Button Content="{x:Static language:Lang.Lobby_InviteFriends}" Click ="Btn_InviteFriends" Height="80" Width="170" Margin="0,30,0,20" Foreground="White" FontWeight="Bold" 
+                    <Button Content="{x:Static language:Lang.Lobby_InviteFriends}" Click ="Click_BtnInviteFriends" Name="Btn_InviteFriends" Height="80" Width="170" Margin="0,30,0,20" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" HorizontalAlignment="Right">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
@@ -516,7 +515,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button Content="{x:Static language:Lang.Lobby_InviteByEmail}" Click="Btn_InvitePlayerByEmail" Height="80" Width="240" Margin="0,30,0,20" Foreground="White" FontWeight="Bold" 
+                    <Button Content="{x:Static language:Lang.Lobby_InviteByEmail}" Click="Click_BtnInvitePlayerByEmail" Name="Btn_InvitePlayerByEmail" Height="80" Width="240" Margin="0,30,0,20" Foreground="White" FontWeight="Bold" 
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" HorizontalAlignment="Right">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
@@ -581,7 +580,7 @@
                 </StackPanel>
 
                 <StackPanel Margin="12,-230,0,0" Grid.Row="2">
-                    <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_CancelInviteFriend" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}">
+                    <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Click_BtnCancelInviteFriend" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
                         </Button.Background>
@@ -634,7 +633,7 @@
                 </StackPanel>
 
                 <StackPanel Margin="12,-530,0,0" Grid.Row="2">
-                    <Button Content="{x:Static language:Lang.Lobby_Invite}" Click="Btn_InvitePlayerByEmail" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}">
+                    <Button Content="{x:Static language:Lang.Lobby_Invite}" Click="Click_BtnInvitePlayerByEmail" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
                         </Button.Background>
@@ -660,7 +659,7 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_CancelInviteByEmail" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}" Margin="0,20,0,0">
+                    <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Click_BtnCancelInviteByEmail" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}" Margin="0,20,0,0">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
                         </Button.Background>

@@ -12,14 +12,13 @@ namespace ArchsVsDinosClient.Models
         private static UserSession instance;
         private static readonly object lockObject = new object();
 
-        public UserDTO CurrentUser { get; private set; }
-        public PlayerDTO CurrentPlayer { get; private set; }
-        public bool IsLoggedIn { get; private set; }
-
+        public UserDTO currentUser { get; private set; }
+        public PlayerDTO currentPlayer { get; private set; }
+        public bool isGuest { get; private set; }
         
         private UserSession()
         {
-            IsLoggedIn = false;
+            isGuest = false;
         }
 
         
@@ -41,28 +40,33 @@ namespace ArchsVsDinosClient.Models
             }
         }
 
-        
         public void Login(UserDTO user, PlayerDTO player = null)
         {
-            CurrentUser = user;
-            CurrentPlayer = player;
-            IsLoggedIn = true;
+            currentUser = user;
+            currentPlayer = player;
+            isGuest = false;
         }
 
-        
+        public void LoginAsGuest()
+        {
+            currentUser = null;
+            currentPlayer = null;
+            isGuest = true;
+        }
+
         public void Logout()
         {
-            CurrentUser = null;
-            CurrentPlayer = null;
-            IsLoggedIn = false;
+            currentUser = null;
+            currentPlayer = null;
+            isGuest = false;
         }
 
         
-        public string GetUsername() => CurrentUser?.username ?? string.Empty;
-        public string GetNickname() => CurrentUser?.nickname ?? string.Empty;
-        public string GetName() => CurrentUser?.name ?? string.Empty;
-        public int GetUserId() => CurrentUser?.idUser ?? 0;
-        public bool HasPlayer() => CurrentPlayer != null;
-        public int GetPlayerId() => CurrentPlayer?.idPlayer ?? 0;
+        public string GetUsername() => currentUser?.username ?? string.Empty;
+        public string GetNickname() => currentUser?.nickname ?? string.Empty;
+        public string GetName() => currentUser?.name ?? string.Empty;
+        public int GetUserId() => currentUser?.idUser ?? 0;
+        public bool HasPlayer() => currentPlayer != null;
+        public int GetPlayerId() => currentPlayer?.idPlayer ?? 0;
     }
 }

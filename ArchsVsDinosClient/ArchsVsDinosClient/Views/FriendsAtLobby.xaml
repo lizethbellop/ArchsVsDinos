@@ -117,7 +117,7 @@
         <UniformGrid Grid.Row="4" Columns="2" HorizontalAlignment="Center">
 
             <Button Content="{x:Static language:Lang.Friends_Invite}" Margin="5" Height="50" Width="120" 
-        Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
                 <Button.Background>
                     <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
                 </Button.Background>

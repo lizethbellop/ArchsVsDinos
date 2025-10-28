@@ -23,31 +23,31 @@ namespace ArchsVsDinosClient.Views
         }
 
 
-        private void Btn_CancelMatch(object sender, RoutedEventArgs e)
+        private void Click_BtnCancelMatch(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             this.Close();
         }
 
-        private void Btn_InviteFriends(object sender, RoutedEventArgs e)
+        private void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             Gr_MyFriends.Visibility = Visibility.Visible;
         }
 
-        private void Btn_CancelInviteFriend(object sender, RoutedEventArgs e)
+        private void Click_BtnCancelInviteFriend(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             Gr_MyFriends.Visibility = Visibility.Collapsed;
         }
 
-        private void Btn_InvitePlayerByEmail(object sender, RoutedEventArgs e)
+        private void Click_BtnInvitePlayerByEmail(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
             Gr_InviteByEmail.Visibility = Visibility.Visible;
         }
 
-        private void Btn_CancelInviteByEmail(object sender, RoutedEventArgs e)
+        private void Click_BtnCancelInviteByEmail(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             Gr_InviteByEmail.Visibility = Visibility.Collapsed;
