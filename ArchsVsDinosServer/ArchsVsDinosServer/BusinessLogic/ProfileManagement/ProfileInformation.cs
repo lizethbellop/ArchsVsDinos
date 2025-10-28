@@ -252,5 +252,48 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                 return null;
             }
         }
+
+        public PlayerDTO GetPlayerByUsername(string username)
+        {
+            try
+            {
+                using (var context = GetContext())
+                {
+                    var user = context.UserAccount.FirstOrDefault(u => u.username == username);
+
+                    if (user == null)
+                        return null;
+
+                    var player = context.Player.FirstOrDefault(p => p.idPlayer == user.idPlayer);
+
+                    if (player == null)
+                        return null;
+
+                    return new PlayerDTO
+                    {
+                        idPlayer = player.idPlayer,
+                        facebook = player.facebook,
+                        instagram = player.instagram,
+                        x = player.x,
+                        tiktok = player.tiktok,
+                        totalWins = player.totalWins,
+                        totalLosses = player.totalLosses,
+                        totalPoints = player.totalPoints,
+                        profilePicture = player.profilePicture
+                    };
+                }
+            }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError($"Database connection error at Change Profile Picture", ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Error getting player by username: {ex.Message}", ex);
+                return null;
+            }
+
+        }
     }
 }
