@@ -13,6 +13,7 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void CreatedMatch(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
 
+        /*
         [OperationContract(IsOneWay = true)]
         void JoinedMatch(LobbyPlayerDTO userAccountDTO);
 
@@ -29,7 +30,7 @@ namespace Contracts
         void LeftMatchLobby(LobbyPlayerDTO playerWhoLeft);
 
         [OperationContract(IsOneWay = true)]
-        void CancelledMatchLobby(string hostUsername);
+        void CancelledMatchLobby(string hostUsername);*/
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Contracts.DTO;
+using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,11 @@ namespace Contracts
     public interface IMatchLobbyManager
     {
         [OperationContract]
-        void CreateMatch(UserAccountDTO hostUserAccountDTO);
+        MatchLobbyResultCode CreateMatch(UserAccountDTO hostUserAccountDTO);
 
+        /*
         [OperationContract]
-        void JoinMatch(UserAccountDTO userAccountDTO, string matchCode);
+        MatchLobbyResultCode JoinMatch(UserAccountDTO userAccountDTO, string matchCode);
 
         [OperationContract]
         void InviteFriendToMatch(string username, string friendUsername, string matchCode);
@@ -30,7 +32,7 @@ namespace Contracts
         void LeaveMatchLobby(string username);
 
         [OperationContract]
-        void CancelMatchLobby(string username);
+        void CancelMatchLobby(string username);*/
     
     }
 
