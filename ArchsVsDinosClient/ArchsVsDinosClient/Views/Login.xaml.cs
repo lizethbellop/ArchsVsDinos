@@ -20,9 +20,6 @@ using AuthenticationService = ArchsVsDinosClient.AuthenticationService;
 
 namespace ArchsVsDinosClient
 {
-    /// <summary>
-    /// Lógica de interacción para Login.xaml
-    /// </summary>
     public partial class Login : Window
     {
         public Login()

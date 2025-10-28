@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para Lobby.xaml
-    /// </summary>
     public partial class Lobby : Window
     {
         public Lobby()

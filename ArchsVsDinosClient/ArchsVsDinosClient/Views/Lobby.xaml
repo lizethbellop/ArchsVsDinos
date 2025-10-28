@@ -119,13 +119,11 @@
                                             CornerRadius="4" Margin="3" HorizontalAlignment="Center">
                                     </Border>
                                 </StackPanel>
-
                                 <Grid Grid.Row="1" Margin="0,5,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-
                                     <Button Grid.Column="0" Content="{x:Static language:Lang.Lobby_AddFriend}" Height="50" Margin="10,0,10,0" Foreground="Black" FontWeight="Bold" 
                                             BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15">
                                         <Button.Background>

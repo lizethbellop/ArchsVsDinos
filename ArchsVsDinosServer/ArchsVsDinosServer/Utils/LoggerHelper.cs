@@ -23,7 +23,7 @@ namespace ArchsVsDinosServer.Utils
 
         public static void LogError(string message, Exception ex) 
         {
-            if (ex != null)
+            if(ex != null)
             {
                 log.Error(message, ex);
             }

@@ -133,6 +133,7 @@ namespace ArchsVsDinosClient.Views
 
         }
 
+        // I'm practicing validations after a long time, sorry if I'm wrong, try it on your computer to see if it works, haha.
         private bool ValidateInputs(string name, string username, string email, string password, string nickname)
         {
             if(ValidationHelper.IsEmpty(name) || ValidationHelper.IsEmpty(username) || ValidationHelper.IsEmpty(email) || ValidationHelper.IsEmpty(password) || ValidationHelper.IsEmpty(nickname))

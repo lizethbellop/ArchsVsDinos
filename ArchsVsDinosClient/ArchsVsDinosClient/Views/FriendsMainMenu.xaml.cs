@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para FriendsMainMenu.xaml
-    /// </summary>
     public partial class FriendsMainMenu : Window
     {
         public FriendsMainMenu()

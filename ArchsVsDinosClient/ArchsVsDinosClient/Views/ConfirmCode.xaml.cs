@@ -16,9 +16,7 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para VerificationCode.xaml
-    /// </summary>
+
     public partial class ConfirmCode : Window
     {
 

@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para GameStatistics.xaml
-    /// </summary>
     public partial class GameStatistics : Window
     {
         public GameStatistics()

@@ -22,7 +22,7 @@ namespace ArchsVsDinosServer.BusinessLogic
     {
 
         public static List<VerificationCode> verificationCodes = new List<VerificationCode>();
-        
+
         public RegisterResponse RegisterUser(UserAccountDTO userAccountDTO, string code)
         {
 
