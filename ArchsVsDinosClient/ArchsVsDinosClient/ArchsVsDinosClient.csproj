@@ -308,9 +308,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\logo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Images\configLogo.png" />
     <Resource Include="Resources\Images\userLogo.png" />
   </ItemGroup>
@@ -377,6 +374,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Images\logo.png" />
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
