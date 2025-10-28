@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,8 +9,11 @@ namespace ArchsVsDinosServer.Interfaces
 {
     public interface IDbContext : IDisposable
     {
-        IQueryable<UserAccount> UserAccount { get; }
-        IQueryable<Player> Player { get; }
+        DbSet<UserAccount> UserAccount { get; }
+        DbSet<Player> Player { get; }
+
+        DbSet<Friendship> Friendship { get; }
+        DbSet<FriendRequest> FriendRequest { get; }
 
         int SaveChanges();
     }

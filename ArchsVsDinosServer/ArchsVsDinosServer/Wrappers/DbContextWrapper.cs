@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosServer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,25 +10,27 @@ namespace ArchsVsDinosServer.Wrappers
 {
     public class DbContextWrapper : IDbContext
     {
-        private readonly ArchsVsDinosConnection _context;
+        private readonly ArchsVsDinosConnection context;
 
         public DbContextWrapper()
         {
-            _context = new ArchsVsDinosConnection();
+            context = new ArchsVsDinosConnection();
         }
 
-        public IQueryable<UserAccount> UserAccount => _context.UserAccount;
+        public DbSet<UserAccount> UserAccount => context.UserAccount;
+        public DbSet<Player> Player => context.Player;
+        public DbSet<Friendship> Friendship => context.Friendship;
+        public DbSet<FriendRequest> FriendRequest => context.FriendRequest;
 
-        public IQueryable<Player> Player => _context.Player;
 
         public void Dispose()
         {
-            _context.Dispose();
+            context.Dispose();
         }
 
         public int SaveChanges()
         {
-            throw new NotImplementedException();
+            return context.SaveChanges();
         }
     }
 }
