@@ -16,12 +16,16 @@ namespace Host
             using (ServiceHost registerHost = new ServiceHost(typeof(RegisterManager)))
             using (ServiceHost authenticationHost = new ServiceHost(typeof(AuthenticationManager)))
             using (ServiceHost profileHost = new ServiceHost(typeof(ProfileManager)))
+            using (ServiceHost chatHost = new ServiceHost(typeof(ChatManager)))
+            using (ServiceHost lobbyHost = new ServiceHost(typeof(MatchLobbyManager)))
             {
                 try
                 {
                     registerHost.Open();
                     authenticationHost.Open();
                     profileHost.Open();
+                    chatHost.Open();
+                    lobbyHost.Open();
                     Console.WriteLine("Server is running");
                     Console.ReadLine();
                 }
@@ -33,6 +37,8 @@ namespace Host
                     registerHost.Abort();
                     authenticationHost.Abort();
                     profileHost.Abort();
+                    chatHost.Abort();
+                    lobbyHost.Abort();
                 }
 
             }

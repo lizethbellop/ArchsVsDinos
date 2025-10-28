@@ -262,6 +262,9 @@
     <None Include="Connected Services\AuthenticationService\item3.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\AuthenticationService\item31.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\ProfileManagerService\ArchsVsDinosClient.ProfileManagerService.UpdateResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
