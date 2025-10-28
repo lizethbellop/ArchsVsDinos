@@ -14,14 +14,12 @@ namespace Contracts
         [OperationContract]
         ChatResultCode Connect(string username);
         
-        [OperationContract]
-        ChatResultCode Disconnect(string username);
+        [OperationContract(IsOneWay = true)]
+        void Disconnect(string username);
         
-        [OperationContract]
+        [OperationContract(IsOneWay = true)]
         void SendMessageToRoom(string message, string username);
 
-        [OperationContract]
-        List<string> GetConnectedUsers();
 
     }
 }

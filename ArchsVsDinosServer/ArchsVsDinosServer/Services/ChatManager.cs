@@ -17,29 +17,24 @@ namespace ArchsVsDinosServer.Services
 
         public ChatManager()
         {
-            chatBusinessLogic = new Chat();
+            var loggerHelper = new Wrappers.LoggerHelperWrapper();
+            chatBusinessLogic = new Chat(loggerHelper);
         }
 
         public ChatResultCode Connect(string username)
         {
-            throw new NotImplementedException();
+            return chatBusinessLogic.Connect(username);
         }
 
-        public ChatResultCode Disconnect(string username)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<string> GetConnectedUsers()
-        {
-            throw new NotImplementedException();
-        }
 
         public void SendMessageToRoom(string message, string username)
         {
             chatBusinessLogic.SendMessageToRoom(message, username);
         }
 
-        
+        public void Disconnect(string username)
+        {
+            chatBusinessLogic.Disconnect(username);
+        }
     }
 }
