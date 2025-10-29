@@ -17,6 +17,8 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Friend_CannotAddYourself,
         [EnumMember] Friend_DatabaseError,
         [EnumMember] Friend_UnexpectedError,
-        [EnumMember] Friend_InternalError
+        [EnumMember] Friend_InternalError,
+        [EnumMember] Friend_EmptyUsername,
+        [EnumMember] Friend_NoFriends,
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using Contracts.DTO.Response;
 
 namespace Contracts
 {
@@ -11,10 +12,10 @@ namespace Contracts
     public interface IFriendManager
     {
         [OperationContract]
-        bool AddFriend(string username, string friendUsername);
+        FriendResponse AddFriend(string username, string friendUsername);
 
         [OperationContract]
-        bool RemoveFriend(string username, string friendUsername);
+        FriendResponse RemoveFriend(string username, string friendUsername);
 
         [OperationContract]
         List<string> GetFriends(string username);

@@ -15,6 +15,8 @@ namespace ArchsVsDinosServer.Interfaces
         DbSet<Friendship> Friendship { get; }
         DbSet<FriendRequest> FriendRequest { get; }
 
+        Database Database { get; }
+
         int SaveChanges();
     }
 }

@@ -45,12 +45,17 @@
   <ItemGroup>
     <Compile Include="DTO\ConfigurationDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
+    <Compile Include="DTO\Response\FriendCheckResponse.cs" />
+    <Compile Include="DTO\Response\FriendListResponse.cs" />
+    <Compile Include="DTO\Response\FriendRequestListResponse.cs" />
+    <Compile Include="DTO\Response\FriendRequestResponse.cs" />
     <Compile Include="DTO\Response\FriendResponse.cs" />
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\Response\RegisterResponse.cs" />
     <Compile Include="DTO\Response\UpdateResponse.cs" />
     <Compile Include="DTO\Result Codes\ChatResultCode.cs" />
+    <Compile Include="DTO\Result Codes\FriendRequestResultCode.cs" />
     <Compile Include="DTO\Result Codes\FriendResultCode.cs" />
     <Compile Include="DTO\Result Codes\MatchLobbyResultCode.cs" />
     <Compile Include="DTO\Result Codes\LoginResultCode.cs" />

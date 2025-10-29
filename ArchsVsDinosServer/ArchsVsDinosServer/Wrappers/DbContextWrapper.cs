@@ -22,6 +22,8 @@ namespace ArchsVsDinosServer.Wrappers
         public DbSet<Friendship> Friendship => context.Friendship;
         public DbSet<FriendRequest> FriendRequest => context.FriendRequest;
 
+        public Database Database => context.Database;
+
 
         public void Dispose()
         {
