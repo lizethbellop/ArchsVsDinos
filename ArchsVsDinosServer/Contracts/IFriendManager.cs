@@ -12,9 +12,6 @@ namespace Contracts
     public interface IFriendManager
     {
         [OperationContract]
-        FriendResponse AddFriend(string username, string friendUsername);
-
-        [OperationContract]
         FriendResponse RemoveFriend(string username, string friendUsername);
 
         [OperationContract]

@@ -3,6 +3,8 @@ using ArchsVsDinosServer.Interfaces;
 using Contracts;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
+using System.Data.SqlClient;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -25,7 +27,6 @@ namespace ArchsVsDinosServer.Services
             callbackManager = new FriendRequestCallbackManager(loggerHelper);
         }
 
-        // Constructor para pruebas unitarias
         public FriendRequestManager(FriendRequestLogic logic, FriendRequestCallbackManager manager, ILoggerHelper logger)
         {
             friendRequestLogic = logic;
@@ -37,19 +38,31 @@ namespace ArchsVsDinosServer.Services
             try
             {
                 var response = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
+                callbackManager.NotifyFriendRequestAccepted(toUser, response.success);
 
-                // Notificar al que aceptó (toUser)
-                callbackManager.NotifyFriendRequestAccepted(toUser, response.Success);
-
-                // Si fue exitoso, notificar al que envió la solicitud (fromUser)
-                if (response.Success)
+                if (response.success)
                 {
                     callbackManager.NotifyFriendRequestAccepted(fromUser, true);
                 }
             }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError($"Database connection error in AcceptFriendRequest service for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestAccepted(toUser, false);
+            }
+            catch (SqlException ex)
+            {
+                loggerHelper.LogError($"SQL error in AcceptFriendRequest service for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestAccepted(toUser, false);
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError($"Communication error while notifying AcceptFriendRequest for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestAccepted(toUser, false);
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error en AcceptFriendRequest del servicio", ex);
+                loggerHelper.LogError($"Unexpected error in AcceptFriendRequest service for users {fromUser} and {toUser}", ex);
                 callbackManager.NotifyFriendRequestAccepted(toUser, false);
             }
         }
@@ -60,18 +73,33 @@ namespace ArchsVsDinosServer.Services
             {
                 var response = friendRequestLogic.GetPendingRequests(username);
 
-                if (response.Success)
+                if (response.success)
                 {
-                    callbackManager.NotifyPendingRequestsReceived(username, response.Requests);
+                    callbackManager.NotifyPendingRequestsReceived(username, response.requests);
                 }
                 else
                 {
                     callbackManager.NotifyPendingRequestsReceived(username, new List<string>());
                 }
             }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError($"Database connection error in GetPendingRequests service for user {username}", ex);
+                callbackManager.NotifyPendingRequestsReceived(username, new List<string>());
+            }
+            catch (SqlException ex)
+            {
+                loggerHelper.LogError($"SQL error in GetPendingRequests service for user {username}", ex);
+                callbackManager.NotifyPendingRequestsReceived(username, new List<string>());
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError($"Communication error while notifying GetPendingRequests for user {username}", ex);
+                callbackManager.NotifyPendingRequestsReceived(username, new List<string>());
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error en GetPendingRequests del servicio", ex);
+                loggerHelper.LogError($"Unexpected error in GetPendingRequests service for user {username}", ex);
                 callbackManager.NotifyPendingRequestsReceived(username, new List<string>());
             }
         }
@@ -81,19 +109,31 @@ namespace ArchsVsDinosServer.Services
             try
             {
                 var response = friendRequestLogic.RejectFriendRequest(fromUser, toUser);
+                callbackManager.NotifyFriendRequestRejected(toUser, response.success);
 
-                // Notificar al que rechazó (toUser)
-                callbackManager.NotifyFriendRequestRejected(toUser, response.Success);
-
-                // Si fue exitoso, notificar al que envió la solicitud (fromUser)
-                if (response.Success)
+                if (response.success)
                 {
                     callbackManager.NotifyFriendRequestRejected(fromUser, true);
                 }
             }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError($"Database connection error in RejectFriendRequest service for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestRejected(toUser, false);
+            }
+            catch (SqlException ex)
+            {
+                loggerHelper.LogError($"SQL error in RejectFriendRequest service for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestRejected(toUser, false);
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError($"Communication error while notifying RejectFriendRequest for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestRejected(toUser, false);
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error en RejectFriendRequest del servicio", ex);
+                loggerHelper.LogError($"Unexpected error in RejectFriendRequest service for users {fromUser} and {toUser}", ex);
                 callbackManager.NotifyFriendRequestRejected(toUser, false);
             }
         }
@@ -103,19 +143,31 @@ namespace ArchsVsDinosServer.Services
             try
             {
                 var response = friendRequestLogic.SendFriendRequest(fromUser, toUser);
+                callbackManager.NotifyFriendRequestSent(fromUser, response.success);
 
-                // Notificar al remitente sobre el resultado
-                callbackManager.NotifyFriendRequestSent(fromUser, response.Success);
-
-                // Si fue exitoso, notificar al receptor
-                if (response.Success)
+                if (response.success)
                 {
                     callbackManager.NotifyFriendRequestReceived(toUser, fromUser);
                 }
             }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError($"Database connection error in SendFriendRequest service for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestSent(fromUser, false);
+            }
+            catch (SqlException ex)
+            {
+                loggerHelper.LogError($"SQL error in SendFriendRequest service for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestSent(fromUser, false);
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError($"Communication error while notifying SendFriendRequest for users {fromUser} and {toUser}", ex);
+                callbackManager.NotifyFriendRequestSent(fromUser, false);
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error en SendFriendRequest del servicio", ex);
+                loggerHelper.LogError($"Unexpected error in SendFriendRequest service for users {fromUser} and {toUser}", ex);
                 callbackManager.NotifyFriendRequestSent(fromUser, false);
             }
         }
@@ -127,9 +179,17 @@ namespace ArchsVsDinosServer.Services
                 var callback = OperationContext.Current.GetCallbackChannel<IFriendRequestCallback>();
                 callbackManager.Subscribe(username, callback);
             }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError($"Communication error in Subscribe service for user {username}", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                loggerHelper.LogError($"Invalid operation in Subscribe service for user {username}", ex);
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error en Subscribe del servicio para {username}", ex);
+                loggerHelper.LogError($"Unexpected error in Subscribe service for user {username}", ex);
             }
         }
 
@@ -139,9 +199,13 @@ namespace ArchsVsDinosServer.Services
             {
                 callbackManager.Unsubscribe(username);
             }
+            catch (InvalidOperationException ex)
+            {
+                loggerHelper.LogError($"Invalid operation in Unsubscribe service for user {username}", ex);
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error en Unsubscribe del servicio para {username}", ex);
+                loggerHelper.LogError($"Unexpected error in Unsubscribe service for user {username}", ex);
             }
         }
     }

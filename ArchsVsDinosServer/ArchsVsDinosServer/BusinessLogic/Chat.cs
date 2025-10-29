@@ -26,6 +26,7 @@ namespace ArchsVsDinosServer.BusinessLogic
         public ChatResultCode Connect(string username)
         {
             IChatManagerCallback callback;
+
             try
             {
                 callback = OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
@@ -36,7 +37,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return ChatResultCode.Chat_ConnectionError;
             }
 
-            if (ConnectedUsers.ContainsKey(username))
+            if (!ConnectedUsers.TryAdd(username, callback))
             {
                 try
                 {
@@ -53,7 +54,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return ChatResultCode.Chat_UserAlreadyConnected;
             }
 
-            ConnectedUsers[username] = callback;
             BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserConnected, $"{username} has joined");
             UpdateUserList();
             return ChatResultCode.Chat_UserConnected;
@@ -66,7 +66,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserDisconnected, $"{username} has left the lobby");
                 UpdateUserList();
             }
-            
         }
 
         public void SendMessageToRoom(string message, string username)
@@ -74,8 +73,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             // TODO: agregar filtro de palabras
             BroadcastMessageToAll(username, message);
         }
-
-        
 
         private void BroadcastSystemNotificationWithEnum(ChatResultCode code, string message)
         {
@@ -102,6 +99,7 @@ namespace ArchsVsDinosServer.BusinessLogic
         private void UpdateUserList()
         {
             var users = ConnectedUsers.Keys.ToList();
+
             foreach (var user in ConnectedUsers.ToArray())
             {
                 SafeCallbackInvoke(user.Key, () =>
@@ -135,7 +133,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 ConnectedUsers.TryRemove(username, out _);
             }
-
         }
     }
 }

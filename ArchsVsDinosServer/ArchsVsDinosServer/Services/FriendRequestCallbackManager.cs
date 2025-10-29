@@ -28,7 +28,7 @@ namespace ArchsVsDinosServer.Services
             {
                 if (string.IsNullOrWhiteSpace(username) || callback == null)
                 {
-                    loggerHelper.LogWarning("Intento de suscripción con username vacío o callback nulo");
+                    loggerHelper.LogWarning("Attempt to subscribe without username or callback");
                     return false;
                 }
 
@@ -37,20 +37,30 @@ namespace ArchsVsDinosServer.Services
                     if (!subscribers.ContainsKey(username))
                     {
                         subscribers[username] = callback;
-                        loggerHelper.LogWarning($"Usuario {username} suscrito a notificaciones de solicitudes");
+                        loggerHelper.LogInfo($"User {username} subscribed to friend request notifications"); 
                         return true;
                     }
                     else
                     {
                         subscribers[username] = callback;
-                        loggerHelper.LogWarning($"Usuario {username} actualizó su suscripción");
+                        loggerHelper.LogInfo($"User {username} updated subscription");
                         return true;
                     }
                 }
             }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError($"Communication error while subscribing user {username}", ex);
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                loggerHelper.LogError($"Invalid operation while subscribing user {username}", ex);
+                return false;
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error al suscribir usuario {username}", ex);
+                loggerHelper.LogError($"Unexpected error while subscribing user {username}", ex);
                 return false;
             }
         }
@@ -61,6 +71,7 @@ namespace ArchsVsDinosServer.Services
             {
                 if (string.IsNullOrWhiteSpace(username))
                 {
+                    loggerHelper.LogWarning("Attempt to unsubscribe without username");
                     return false;
                 }
 
@@ -69,15 +80,22 @@ namespace ArchsVsDinosServer.Services
                     if (subscribers.ContainsKey(username))
                     {
                         subscribers.Remove(username);
-                        loggerHelper.LogWarning($"Usuario {username} desuscrito de notificaciones");
+                        loggerHelper.LogInfo($"User {username} unsubscribed from notifications");
                         return true;
                     }
+
+                    loggerHelper.LogWarning($"User {username} was not subscribed");
                     return false;
                 }
             }
+            catch (InvalidOperationException ex)
+            {
+                loggerHelper.LogError($"Invalid operation while unsubscribing user {username}", ex);
+                return false;
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error al desuscribir usuario {username}", ex);
+                loggerHelper.LogError($"Unexpected error while unsubscribing user {username}", ex);
                 return false;
             }
         }
