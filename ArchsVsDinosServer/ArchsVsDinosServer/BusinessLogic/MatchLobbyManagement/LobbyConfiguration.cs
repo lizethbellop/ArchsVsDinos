@@ -41,40 +41,30 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             try
             {
                 string matchCode = CodeGenerator.GenerateMatchCode();
+                var hostPlayer = PlayerCreator.CreateHostPlayer(hostUserAccountDTO.username, hostUserAccountDTO.nickname);
 
-                ProfileInformation profileInfo = new ProfileInformation();
-                PlayerDTO hostPlayer = profileInfo.GetPlayerByUsername(hostUserAccountDTO.username);
-
-                LobbyPlayerDTO lobbyHostPlayer = new LobbyPlayerDTO
-                {
-                    username = hostUserAccountDTO.username,
-                    nickname = hostUserAccountDTO.nickname,
-                    profilePicture = hostPlayer?.profilePicture,
-                    isHost = true
-                };
-
-                MatchLobby matchLobby = new MatchLobby
+                var matchLobby = new MatchLobby
                 {
                     matchCode = matchCode,
-                    players = new List<LobbyPlayerDTO> { lobbyHostPlayer },
-                    matchLobbyCallback = callback
+                    matchLobbyCallback = callback,
                 };
+                matchLobby.AddPlayer(hostPlayer);
 
-                if (!ActiveMatches.TryAdd(matchCode, matchLobby))
+                if (!ActiveMatches.TryAdd(matchCode, matchLobby)){
                     return MatchLobbyResultCode.Lobby_MatchLobbyCreationError;
+                }
 
                 try
                 {
-                    callback.CreatedMatch(lobbyHostPlayer, matchCode);
+                    callback.CreatedMatch(hostPlayer, matchCode);
                 }
                 catch (CommunicationException ex)
                 {
-                    Console.WriteLine($"Failed to notify host: {ex.Message}");
+                    Console.WriteLine($"Error obtaining the callback: {ex.Message}");
                     return MatchLobbyResultCode.Lobby_ConnectionError;
                 }
 
                 return MatchLobbyResultCode.Lobby_MatchLobbyCreated;
-
             }
             catch (TimeoutException ex)
             {
@@ -84,10 +74,4 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
         }
     }
 
-    internal class MatchLobby
-    {
-        public string matchCode {  get; set; }
-        public List<LobbyPlayerDTO> players { get; set; }
-        public IMatchLobbyManagerCallback matchLobbyCallback { get; set; }
-    }
 }

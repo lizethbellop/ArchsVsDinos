@@ -146,6 +146,8 @@
     <Compile Include="BusinessLogic\Friend.cs" />
     <Compile Include="BusinessLogic\FriendRequestLogic.cs" />
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyConfiguration.cs" />
+    <Compile Include="BusinessLogic\MatchLobbyManagement\MatchLobby.cs" />
+    <Compile Include="BusinessLogic\MatchLobbyManagement\PlayerCreator.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\BaseProfileService.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\PasswordManager.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\ProfileInformation.cs" />

@@ -19,11 +19,42 @@
     <Grid Margin="40">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Margin="250,0,0,0">
+        <Grid Grid.Column="0">
+
+            <Button Click="Click_BtnLogOut" Name="Btn_LogOut" Visibility="Visible" Height="120" Width="120" FontSize="18" BorderBrush="{x:Null}" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Resources/Images/exit.png"/>
+                </Button.Background>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="13">
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+        </Grid>
+
+        <StackPanel Grid.Column="1">
 
             <Image x:Name="image" Source="/Resources/Images/logo.png" Stretch="Uniform" Height="180" HorizontalAlignment="Center"/>
 
@@ -57,16 +88,16 @@
             </StackPanel>
 
             <StackPanel Grid.Row="1" Margin="0,20,0,0" HorizontalAlignment="Center">
-                <Button Content="{x:Static language:Lang.Main_JoinMatch}" HorizontalAlignment="Center"  VerticalAlignment="Top" Height="110" Width="250" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="28" BorderBrush="{x:Null}" Foreground="White">
+                <Button Content="{x:Static language:Lang.Main_JoinMatch}" HorizontalAlignment="Center" VerticalAlignment="Top" Height="110" Width="250" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="28" BorderBrush="{x:Null}" Foreground="White">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rock2.png"/>
                     </Button.Background>
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="border" Background="{TemplateBinding Background}"
-             BorderBrush="{TemplateBinding BorderBrush}"
-             BorderThickness="{TemplateBinding BorderThickness}"
-             CornerRadius="13">
+                             BorderBrush="{TemplateBinding BorderBrush}"
+                             BorderThickness="{TemplateBinding BorderThickness}"
+                             CornerRadius="13">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
@@ -118,7 +149,7 @@
         </StackPanel>
 
 
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="2">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/> <!-- Button user -->
@@ -127,7 +158,7 @@
             </Grid.RowDefinitions>
             
             <StackPanel Grid.Row="0" HorizontalAlignment="Right">
-                <Button Click="Click_BtnAccount" Name="Btn_Account" Height="160" Width="160" FontSize="18" BorderBrush="{x:Null}">
+                <Button Click="Click_BtnAccount" Name="Btn_Account" Visibility="Visible" Height="160" Width="160" FontSize="18" BorderBrush="{x:Null}">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/userLogo.png"/>
                     </Button.Background>
@@ -137,7 +168,6 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="13">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
@@ -156,7 +186,7 @@
             </StackPanel>
 
             <UniformGrid Grid.Row="2" Rows="1" HorizontalAlignment="Right">
-                <Button Click="Click_BtnFriends" Name="Btn_Friends" HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="120" BorderBrush="{x:Null}">
+                <Button Click="Click_BtnFriends" Name="Btn_Friends"  Visibility="Visible" HorizontalAlignment="Left" VerticalAlignment="Top" Height="120" Width="120" BorderBrush="{x:Null}">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/friendsLogo.png"/>
                     </Button.Background>

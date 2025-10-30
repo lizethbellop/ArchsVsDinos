@@ -35,7 +35,16 @@ namespace ArchsVsDinosClient
             if (UserSession.Instance.isGuest)
             {
                 Btn_Creatematch.Visibility = Visibility.Collapsed;
+                Btn_Friends.Visibility = Visibility.Collapsed;
+                Btn_Account.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void Click_BtnLogOut(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+            new Login().ShowDialog();
+            this.Close();
         }
 
         private void Click_BtnCreateMatch(object sender, RoutedEventArgs e)
