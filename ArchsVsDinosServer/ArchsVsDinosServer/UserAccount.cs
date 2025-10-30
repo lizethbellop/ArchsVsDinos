@@ -32,6 +32,7 @@ namespace ArchsVsDinosServer
         public string nickname { get; set; }
         public int idConfiguration { get; set; }
         public int idPlayer { get; set; }
+        public bool isBanned { get; set; }
     
         public virtual Configuration Configuration { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

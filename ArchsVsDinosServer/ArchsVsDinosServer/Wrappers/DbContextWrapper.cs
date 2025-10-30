@@ -21,9 +21,9 @@ namespace ArchsVsDinosServer.Wrappers
         public DbSet<Player> Player => context.Player;
         public DbSet<Friendship> Friendship => context.Friendship;
         public DbSet<FriendRequest> FriendRequest => context.FriendRequest;
-
+        public DbSet<Strike> Strike => context.Strike;          // ← AGREGAR ESTA LÍNEA
+        public DbSet<StrikeKind> StrikeKind => context.StrikeKind;  // ← AGREGAR ESTA LÍNEA
         public Database Database => context.Database;
-
 
         public void Dispose()
         {

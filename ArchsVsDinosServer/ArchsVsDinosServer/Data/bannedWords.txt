@@ -1,0 +1,19 @@
+﻿tonto
+estupido
+idiota
+imbecil
+pendejo
+wey
+puto
+puta
+mierda
+joder
+carajo
+verga
+chingar
+cabron
+
+# Spam
+viagra
+casino
+lottery

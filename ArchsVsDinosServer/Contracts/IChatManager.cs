@@ -12,7 +12,7 @@ namespace Contracts
     public interface IChatManager
     {
         [OperationContract]
-        ChatResultCode Connect(string username);
+        void Connect(string username);
         
         [OperationContract(IsOneWay = true)]
         void Disconnect(string username);

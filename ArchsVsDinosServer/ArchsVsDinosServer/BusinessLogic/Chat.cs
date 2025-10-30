@@ -23,7 +23,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             this.loggerHelper = loggerHelper;
         }
 
-        public ChatResultCode Connect(string username)
+        public void Connect(string username)
         {
             IChatManagerCallback callback;
 
@@ -33,8 +33,8 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (InvalidOperationException ex)
             {
-                loggerHelper.LogError($"Error obtaining the callback: {ex.Message}", ex);
-                return ChatResultCode.Chat_ConnectionError;
+                loggerHelper.LogError($"Error obtaining callback: {ex.Message}", ex);
+                return;
             }
 
             if (!ConnectedUsers.TryAdd(username, callback))
@@ -43,21 +43,17 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     callback.ReceiveSystemNotification(ChatResultCode.Chat_UserAlreadyConnected, "User already connected");
                 }
-                catch (CommunicationException)
+                catch (Exception ex)
                 {
-                    loggerHelper.LogWarning($"Communication error with user {username}");
+                    loggerHelper.LogWarning($"Error sending notification to {username}: {ex.Message}");
                 }
-                catch (TimeoutException)
-                {
-                    loggerHelper.LogWarning($"Timeout communicating with user {username}");
-                }
-                return ChatResultCode.Chat_UserAlreadyConnected;
+                return;
             }
 
             BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserConnected, $"{username} has joined");
             UpdateUserList();
-            return ChatResultCode.Chat_UserConnected;
         }
+
 
         public void Disconnect(string username)
         {

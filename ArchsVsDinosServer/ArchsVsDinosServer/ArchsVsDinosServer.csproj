@@ -187,6 +187,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthenticationManager.cs" />
     <Compile Include="Services\ChatManager.cs" />
+    <Compile Include="Services\StrikeManager.cs" />
     <Compile Include="Services\FriendRequestCallbackManager.cs" />
     <Compile Include="Services\FriendRequestManager.cs" />
     <Compile Include="Services\MatchLobbyManager.cs" />
@@ -206,6 +207,7 @@
     </Compile>
     <Compile Include="Utils\CodeGenerator.cs" />
     <Compile Include="Utils\LoggerHelper.cs" />
+    <Compile Include="Utils\ProfanityFilter.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\ServiceDependencies.cs" />
     <Compile Include="Utils\ValidationHelper.cs" />
@@ -236,6 +238,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
       <LastGenOutput>ArchsVsDinosModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="Data\bannedWords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

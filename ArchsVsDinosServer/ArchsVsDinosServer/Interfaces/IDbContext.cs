@@ -11,12 +11,11 @@ namespace ArchsVsDinosServer.Interfaces
     {
         DbSet<UserAccount> UserAccount { get; }
         DbSet<Player> Player { get; }
-
         DbSet<Friendship> Friendship { get; }
         DbSet<FriendRequest> FriendRequest { get; }
-
+        DbSet<Strike> Strike { get; } 
+        DbSet<StrikeKind> StrikeKind { get; }  
         Database Database { get; }
-
         int SaveChanges();
     }
 }

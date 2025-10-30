@@ -132,6 +132,7 @@
           <Property Name="nickname" Type="varchar" MaxLength="45" Nullable="false" />
           <Property Name="idConfiguration" Type="int" Nullable="false" />
           <Property Name="idPlayer" Type="int" Nullable="false" />
+          <Property Name="isBanned" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="UserHasStrike">
           <Key>
@@ -484,6 +485,7 @@
           <NavigationProperty Name="Friendship1" Relationship="Self.FK__Friendshi__idUse__48CFD27E" FromRole="UserAccount" ToRole="Friendship" />
           <NavigationProperty Name="Player" Relationship="Self.FK__UserAccou__idPla__44FF419A" FromRole="UserAccount" ToRole="Player" />
           <NavigationProperty Name="Strike" Relationship="Self.UserHasStrike" FromRole="UserAccount" ToRole="Strike" />
+          <Property Name="isBanned" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK__UserAccou__idCon__440B1D61">
           <End Role="Configuration" Type="Self.Configuration" Multiplicity="1" />
@@ -788,6 +790,7 @@
           <EntitySetMapping Name="UserAccount">
             <EntityTypeMapping TypeName="ArchsVsDinosModel.UserAccount">
               <MappingFragment StoreEntitySet="UserAccount">
+                <ScalarProperty Name="isBanned" ColumnName="isBanned" />
                 <ScalarProperty Name="idUser" ColumnName="idUser" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="email" ColumnName="email" />

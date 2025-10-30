@@ -21,9 +21,9 @@ namespace ArchsVsDinosServer.Services
             chatBusinessLogic = new Chat(loggerHelper);
         }
 
-        public ChatResultCode Connect(string username)
+        public void Connect(string username)
         {
-            return chatBusinessLogic.Connect(username);
+            chatBusinessLogic.Connect(username);
         }
 
 
