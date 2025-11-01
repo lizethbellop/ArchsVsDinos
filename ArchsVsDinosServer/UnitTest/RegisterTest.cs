@@ -59,9 +59,9 @@ namespace UnitTest
             string code = "A7HC3N9K";
                 Register.verificationCodes.Add(new VerificationCode
                 {
-                    email = email,
-                    code = code,
-                    expiration = DateTime.Now.AddMinutes(10)
+                    Email = email,
+                    Code = code,
+                    Expiration = DateTime.Now.AddMinutes(10)
                 });
 
             //Act
@@ -81,9 +81,9 @@ namespace UnitTest
 
             Register.verificationCodes.Add(new VerificationCode
             {
-                email = email,
-                code = code,
-                expiration = DateTime.Now.AddMinutes(10)
+                Email = email,
+                Code = code,
+                Expiration = DateTime.Now.AddMinutes(10)
             });
 
             //Act

@@ -39,8 +39,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 LoginResponse response = new LoginResponse();
                 if (IsEmpty(username, password))
                 {
-                    response.success = false;
-                    response.resultCode = LoginResultCode.Authentication_EmptyFields;
+                    response.Success = false;
+                    response.ResultCode = LoginResultCode.Authentication_EmptyFields;
                     return response;
                 }
 
@@ -51,39 +51,39 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (user == null)
                     {
-                        response.success = false;
-                        response.resultCode = LoginResultCode.Authentication_InvalidCredentials;
+                        response.Success = false;
+                        response.ResultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
                     if (!securityHelper.VerifyPassword(password, user.password))
                     {
-                        response.success = false;
-                        response.resultCode = LoginResultCode.Authentication_InvalidCredentials;
+                        response.Success = false;
+                        response.ResultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
-                    response.success = true;
-                    response.resultCode = LoginResultCode.Authentication_Success;
-                    response.userSession = new UserDTO
+                    response.Success = true;
+                    response.ResultCode = LoginResultCode.Authentication_Success;
+                    response.UserSession = new UserDTO
                     {
-                        idUser = user.idUser,
-                        name = user.name,
-                        nickname = user.nickname,
-                        username = user.username,
-                        email = user.email,
+                        IdUser = user.idUser,
+                        Name = user.name,
+                        Nickname = user.nickname,
+                        Username = user.username,
+                        Email = user.email,
                     };
                     if (user.Player != null)
                     {
-                        response.associatedPlayer = new PlayerDTO
+                        response.AssociatedPlayer = new PlayerDTO
                         {
-                            idPlayer = user.Player.idPlayer,
-                            facebook = user.Player.facebook,
-                            instagram = user.Player.instagram,
-                            x = user.Player.x,
-                            tiktok = user.Player.tiktok,
-                            profilePicture = user.Player.profilePicture,
-                            totalWins = user.Player.totalWins,
-                            totalLosses = user.Player.totalLosses,
-                            totalPoints = user.Player.totalPoints
+                            IdPlayer = user.Player.idPlayer,
+                            Facebook = user.Player.facebook,
+                            Instagram = user.Player.instagram,
+                            X = user.Player.x,
+                            Tiktok = user.Player.tiktok,
+                            ProfilePicture = user.Player.profilePicture,
+                            TotalWins = user.Player.totalWins,
+                            TotalLosses = user.Player.totalLosses,
+                            TotalPoints = user.Player.totalPoints
                         };
                     }
                     return response;
@@ -94,8 +94,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Database connection error at Login for user: {username}", ex);
                 return new LoginResponse
                 {
-                    success = false,
-                    resultCode = LoginResultCode.Authentication_DatabaseError
+                    Success = false,
+                    ResultCode = LoginResultCode.Authentication_DatabaseError
                 };
             }
             catch (Exception ex)
@@ -103,8 +103,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 Console.WriteLine($"Error en Login: {ex.Message}");
                 return new LoginResponse
                 {
-                    success = false,
-                    resultCode = LoginResultCode.Authentication_UnexpectedError
+                    Success = false,
+                    ResultCode = LoginResultCode.Authentication_UnexpectedError
                 };
             }
         }

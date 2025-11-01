@@ -52,8 +52,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode =UpdateResultCode.Profile_EmptyFields
+                Success = false,
+                ResultCode =UpdateResultCode.Profile_EmptyFields
             };
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
@@ -71,8 +71,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_SamePasswordValue
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_SamePasswordValue
             };
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
@@ -90,8 +90,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_PasswordTooShort
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_PasswordTooShort
             };
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
@@ -110,8 +110,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UserNotFound
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UserNotFound
             };
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
@@ -140,8 +140,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_SamePasswordValue
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_SamePasswordValue
             };
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
@@ -172,8 +172,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = true,
-                resultCode = UpdateResultCode.Profile_ChangePasswordSuccess
+                Success = true,
+                ResultCode = UpdateResultCode.Profile_ChangePasswordSuccess
             };
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
@@ -202,8 +202,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_DatabaseError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_DatabaseError
             };
 
             UpdateResponse result = passwordManagerException.ChangePassword(username, currentPassword, newPassword);
@@ -231,8 +231,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UnexpectedError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
             UpdateResponse result = passwordManagerException.ChangePassword(username, currentPassword, newPassword);

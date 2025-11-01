@@ -12,19 +12,19 @@ namespace Contracts.DTO
     {
 
         [DataMember]
-        public string name { get; set; }
+        public string Name { get; set; }
         [DataMember]
-        public string email { get; set; }
+        public string Email { get; set; }
         [DataMember]
-        public string password { get; set; }
+        public string Password { get; set; }
         [DataMember]
-        public string username { get; set; }
+        public string Username { get; set; }
         [DataMember]
-        public string nickname { get; set; }
+        public string Nickname { get; set; }
         [DataMember]
-        public int idConfiguration { get; set; }
+        public int IdConfiguration { get; set; }
         [DataMember]
-        public int idPlayer { get; set; }
+        public int IdPlayer { get; set; }
 
     }
 }

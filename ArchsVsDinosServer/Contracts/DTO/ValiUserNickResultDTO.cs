@@ -12,7 +12,7 @@ namespace Contracts.DTO
     {
 
         [DataMember]
-        public bool isValid {  get; set; }
+        public bool IsValid {  get; set; }
 
 
         [DataMember]

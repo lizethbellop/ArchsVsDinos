@@ -45,8 +45,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_EmptyFields
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_EmptyFields
             };
 
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
@@ -63,8 +63,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_SameUsernameValue
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_SameUsernameValue
             };
 
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
@@ -88,8 +88,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UsernameExists
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UsernameExists
             };
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
             Assert.AreEqual(expectedResult, result);
@@ -106,8 +106,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UserNotFound
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UserNotFound
             };
 
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
@@ -132,8 +132,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = true,
-                resultCode = UpdateResultCode.Profile_ChangeUsernameSuccess
+                Success = true,
+                ResultCode = UpdateResultCode.Profile_ChangeUsernameSuccess
             };
 
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
@@ -160,8 +160,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_DatabaseError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_DatabaseError
             };
 
             UpdateResponse result = profileInfo.UpdateUsername(currentUsername, newUsername);

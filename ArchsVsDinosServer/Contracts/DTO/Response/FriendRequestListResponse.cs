@@ -12,12 +12,12 @@ namespace Contracts.DTO.Response
     public class FriendRequestListResponse
     {
         [DataMember]
-        public bool success { get; set; }
+        public bool Success { get; set; }
 
         [DataMember]
-        public FriendRequestResultCode resultCode { get; set; }
+        public FriendRequestResultCode ResultCode { get; set; }
 
         [DataMember]
-        public List<string> requests { get; set; }
+        public List<string> Requests { get; set; }
     }
 }

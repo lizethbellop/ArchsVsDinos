@@ -36,8 +36,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                 if (UpdateIsEmpty(username, newNickname))
                 {
-                    response.success = false;
-                    response.resultCode = UpdateResultCode.Profile_EmptyFields;
+                    response.Success = false;
+                    response.ResultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
 
@@ -47,42 +47,42 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                     if (userAccount == null)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
 
                     if (userAccount.nickname == newNickname)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_SameNicknameValue;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_SameNicknameValue;
                         return response;
                     }
 
                     if (context.UserAccount.Any(u => u.nickname == newNickname))
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_NicknameExists;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_NicknameExists;
                         return response;
                     }
 
                     userAccount.nickname = newNickname;
                     context.SaveChanges();
 
-                    response.success = true;
-                    response.resultCode = UpdateResultCode.Profile_ChangeNicknameSuccess;
+                    response.Success = true;
+                    response.ResultCode = UpdateResultCode.Profile_ChangeNicknameSuccess;
                     return response;
                 }
             }
             catch (DbEntityValidationException ex)
             {
                 loggerHelper.LogError("Error de validacion de base de datos del UpdateNickname", ex);
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
                 loggerHelper.LogError($"Error al actualizar el nickname: {ex.Message}", ex);
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 
@@ -94,8 +94,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                 if (UpdateIsEmpty(currentUsername, newUsername))
                 {
-                    response.success = false;
-                    response.resultCode = UpdateResultCode.Profile_EmptyFields;
+                    response.Success = false;
+                    response.ResultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
 
@@ -104,8 +104,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                 {
                     if (context.UserAccount.Any(u => u.username == newUsername))
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_UsernameExists;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_UsernameExists;
                         return response;
                     }
 
@@ -113,23 +113,23 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                     if (userAccount == null)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
 
                     if (userAccount.username == newUsername)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_SameUsernameValue;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_SameUsernameValue;
                         return response;
                     }
 
                     userAccount.username = newUsername;
                     context.SaveChanges();
 
-                    response.success = true;
-                    response.resultCode = UpdateResultCode.Profile_ChangeUsernameSuccess;
+                    response.Success = true;
+                    response.ResultCode = UpdateResultCode.Profile_ChangeUsernameSuccess;
 
                     return response;
                 }
@@ -137,12 +137,12 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             catch (EntityException ex)
             {
                 loggerHelper.LogError($"Database connection error at Update Username", ex);
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener el perfil: {ex.Message}");
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 
@@ -168,24 +168,24 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     UserAccount user = context.UserAccount.FirstOrDefault(u => u.username == username);
                     if (user == null)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
 
                     Player player = context.Player.FirstOrDefault(p => p.idPlayer == user.idPlayer);
                     if (player == null)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_PlayerNotFound;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_PlayerNotFound;
                         return response;
                     }
 
                     player.profilePicture = fileName;
                     context.SaveChanges();
 
-                    response.success = true;
-                    response.resultCode = UpdateResultCode.Profile_Success;
+                    response.Success = true;
+                    response.ResultCode = UpdateResultCode.Profile_Success;
                     return response;
 
                 }
@@ -193,17 +193,17 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             catch (EntityException ex)
             {
                 loggerHelper.LogError($"Database connection error at Change Profile Picture", ex);
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (IOException ex)
             {
                 loggerHelper.LogError($"An error with the file happened", ex);
-                return new UpdateResponse { success = false, resultCode =UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { Success = false, ResultCode =UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error while changing the profile picture: {ex.Message}");
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 
@@ -271,15 +271,15 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                     return new PlayerDTO
                     {
-                        idPlayer = player.idPlayer,
-                        facebook = player.facebook,
-                        instagram = player.instagram,
-                        x = player.x,
-                        tiktok = player.tiktok,
-                        totalWins = player.totalWins,
-                        totalLosses = player.totalLosses,
-                        totalPoints = player.totalPoints,
-                        profilePicture = player.profilePicture
+                        IdPlayer = player.idPlayer,
+                        Facebook = player.facebook,
+                        Instagram = player.instagram,
+                        X = player.x,
+                        Tiktok = player.tiktok,
+                        TotalWins = player.totalWins,
+                        TotalLosses = player.totalLosses,
+                        TotalPoints = player.totalPoints,
+                        ProfilePicture = player.profilePicture
                     };
                 }
             }

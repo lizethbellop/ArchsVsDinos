@@ -11,13 +11,13 @@ namespace Contracts.DTO
     {
 
         [DataMember]
-        public string username { get; set; }
+        public string Username { get; set; }
         [DataMember]
-        public string nickname { get; set; }
+        public string Nickname { get; set; }
         [DataMember]
-        public string profilePicture { get; set; }
+        public string ProfilePicture { get; set; }
         [DataMember]
-        public bool isHost { get; set; }
+        public bool IsHost { get; set; }
 
     }
 }

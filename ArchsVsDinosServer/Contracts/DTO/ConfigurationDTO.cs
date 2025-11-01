@@ -10,10 +10,10 @@ namespace Contracts.DTO
     public class ConfigurationDTO
     {
         [DataMember]
-        public int idConfiguration { get; set; }
+        public int IdConfiguration { get; set; }
         [DataMember]
-        public int musicVolume { get; set; }
+        public int MusicVolume { get; set; }
         [DataMember]
-        public int soundVolume { get; set; }
+        public int SoundVolume { get; set; }
     }
 }

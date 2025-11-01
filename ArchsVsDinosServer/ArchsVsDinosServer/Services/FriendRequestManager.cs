@@ -38,9 +38,9 @@ namespace ArchsVsDinosServer.Services
             try
             {
                 var response = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
-                callbackManager.NotifyFriendRequestAccepted(toUser, response.success);
+                callbackManager.NotifyFriendRequestAccepted(toUser, response.Success);
 
-                if (response.success)
+                if (response.Success)
                 {
                     callbackManager.NotifyFriendRequestAccepted(fromUser, true);
                 }
@@ -73,9 +73,9 @@ namespace ArchsVsDinosServer.Services
             {
                 var response = friendRequestLogic.GetPendingRequests(username);
 
-                if (response.success)
+                if (response.Success)
                 {
-                    callbackManager.NotifyPendingRequestsReceived(username, response.requests);
+                    callbackManager.NotifyPendingRequestsReceived(username, response.Requests);
                 }
                 else
                 {
@@ -109,9 +109,9 @@ namespace ArchsVsDinosServer.Services
             try
             {
                 var response = friendRequestLogic.RejectFriendRequest(fromUser, toUser);
-                callbackManager.NotifyFriendRequestRejected(toUser, response.success);
+                callbackManager.NotifyFriendRequestRejected(toUser, response.Success);
 
-                if (response.success)
+                if (response.Success)
                 {
                     callbackManager.NotifyFriendRequestRejected(fromUser, true);
                 }
@@ -143,9 +143,9 @@ namespace ArchsVsDinosServer.Services
             try
             {
                 var response = friendRequestLogic.SendFriendRequest(fromUser, toUser);
-                callbackManager.NotifyFriendRequestSent(fromUser, response.success);
+                callbackManager.NotifyFriendRequestSent(fromUser, response.Success);
 
-                if (response.success)
+                if (response.Success)
                 {
                     callbackManager.NotifyFriendRequestReceived(toUser, fromUser);
                 }

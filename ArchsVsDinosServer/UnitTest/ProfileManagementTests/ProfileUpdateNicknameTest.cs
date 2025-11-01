@@ -46,8 +46,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_EmptyFields
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_EmptyFields
             };
 
             UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
@@ -65,8 +65,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UserNotFound
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UserNotFound
             };
 
             UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
@@ -93,8 +93,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_SameNicknameValue
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_SameNicknameValue
             };
 
             UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
@@ -121,8 +121,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = true,
-                resultCode = UpdateResultCode.Profile_ChangeNicknameSuccess
+                Success = true,
+                ResultCode = UpdateResultCode.Profile_ChangeNicknameSuccess
             };
 
             UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
@@ -150,8 +150,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_DatabaseError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_DatabaseError
             };
 
             UpdateResponse result = profileInfo.UpdateNickname(username, newNickname);
@@ -179,8 +179,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UnexpectedError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
             UpdateResponse result = profileInfo.UpdateNickname(username, newNickname);

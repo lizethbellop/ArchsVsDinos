@@ -60,10 +60,10 @@ namespace UnitTest
             
             LoginResponse expectedResult = new LoginResponse
             {
-                success = false,
-                userSession = null,
-                associatedPlayer = null,
-                resultCode = LoginResultCode.Authentication_EmptyFields
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_EmptyFields
             };
 
             
@@ -84,10 +84,10 @@ namespace UnitTest
 
             LoginResponse expectedResult = new LoginResponse
             {
-                success = false,
-                userSession = null,
-                associatedPlayer = null,
-                resultCode = LoginResultCode.Authentication_EmptyFields
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_EmptyFields
             };
 
 
@@ -107,10 +107,10 @@ namespace UnitTest
             
             LoginResponse expectedResult = new LoginResponse
             {
-                success = false,
-                userSession = null,
-                associatedPlayer = null,
-                resultCode = LoginResultCode.Authentication_EmptyFields
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_EmptyFields
             };
 
             LoginResponse result = authentication.Login(username, password);
@@ -130,10 +130,10 @@ namespace UnitTest
 
             LoginResponse expectedResult = new LoginResponse
             {
-                success = false,
-                userSession = null,
-                associatedPlayer = null,
-                resultCode = LoginResultCode.Authentication_InvalidCredentials
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_InvalidCredentials
             };
 
             LoginResponse result = authentication.Login(username, password);
@@ -182,28 +182,28 @@ namespace UnitTest
 
             LoginResponse expectedResult = new LoginResponse
             {
-                success = true,
-                userSession = new UserDTO
+                Success = true,
+                UserSession = new UserDTO
                 {
-                    idUser = 1,
-                    username = "user123",
-                    name = "Carlos Sainz",
-                    nickname = "chilli55",
-                    email = "csainz@f1.com"
+                    IdUser = 1,
+                    Username = "user123",
+                    Name = "Carlos Sainz",
+                    Nickname = "chilli55",
+                    Email = "csainz@f1.com"
                 },
-                associatedPlayer = new PlayerDTO
+                AssociatedPlayer = new PlayerDTO
                 {
-                    idPlayer = 1,
-                    facebook = "facebook.com/csainz",
-                    instagram = "instagram.com/csainz",
-                    x = "x.com/csainz",
-                    tiktok = "tiktok.com/@csainz",
-                    totalWins = 10,
-                    totalLosses = 5,
-                    totalPoints = 100,
-                    profilePicture = "/profilepictures/yourpfp"
+                    IdPlayer = 1,
+                    Facebook = "facebook.com/csainz",
+                    Instagram = "instagram.com/csainz",
+                    X = "x.com/csainz",
+                    Tiktok = "tiktok.com/@csainz",
+                    TotalWins = 10,
+                    TotalLosses = 5,
+                    TotalPoints = 100,
+                    ProfilePicture = "/profilepictures/yourpfp"
                 },
-                resultCode = LoginResultCode.Authentication_Success
+                ResultCode = LoginResultCode.Authentication_Success
             };
 
             LoginResponse result = authentication.Login(username, password);
@@ -234,10 +234,10 @@ namespace UnitTest
 
             LoginResponse expectedResult = new LoginResponse
             {
-                success = false,
-                userSession = null,
-                associatedPlayer = null,
-                resultCode = LoginResultCode.Authentication_InvalidCredentials
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_InvalidCredentials
             };
 
             LoginResponse result = authentication.Login(username, password);
@@ -264,10 +264,10 @@ namespace UnitTest
 
             LoginResponse expectedResult = new LoginResponse
             {
-                success = false,
-                userSession = null,
-                associatedPlayer = null,
-                resultCode = LoginResultCode.Authentication_DatabaseError
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_DatabaseError
             };
 
             LoginResponse result = authenticationException.Login(username, password);
@@ -295,10 +295,10 @@ namespace UnitTest
 
             LoginResponse expectedResult = new LoginResponse
             {
-                success = false,
-                userSession = null,
-                associatedPlayer = null,
-                resultCode = LoginResultCode.Authentication_UnexpectedError
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_UnexpectedError
             };
 
             LoginResponse result = authenticationException.Login(username, password);

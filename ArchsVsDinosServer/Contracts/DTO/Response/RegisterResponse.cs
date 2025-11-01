@@ -12,17 +12,17 @@ namespace Contracts.DTO.Response
     public class RegisterResponse
     {
         [DataMember]
-        public bool success { get; set; }
+        public bool Success { get; set; }
 
         [DataMember]
-        public RegisterResultCode resultCode { get; set; }
+        public RegisterResultCode ResultCode { get; set; }
 
         public override bool Equals(object objectResponse)
         {
             if (objectResponse == null || GetType() != objectResponse.GetType())
                 return false;
             var other = (RegisterResponse)objectResponse;
-            return success == other.success;
+            return Success == other.Success;
         }
 
         public override int GetHashCode()
@@ -30,7 +30,7 @@ namespace Contracts.DTO.Response
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + success.GetHashCode();
+                hash = hash * 23 + Success.GetHashCode();
                 return hash;
             }
 

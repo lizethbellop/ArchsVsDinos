@@ -32,22 +32,22 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                 if (ChangePasswordIsEmpty(username, currentPassword, newPassword))
                 {
-                    response.success = false;
-                    response.resultCode = UpdateResultCode.Profile_EmptyFields;
+                    response.Success = false;
+                    response.ResultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
 
                 if (currentPassword == newPassword)
                 {
-                    response.success = false;
-                    response.resultCode = UpdateResultCode.Profile_SamePasswordValue;
+                    response.Success = false;
+                    response.ResultCode = UpdateResultCode.Profile_SamePasswordValue;
                     return response;
                 }
 
                 if (newPassword.Length < 8)
                 {
-                    response.success = false;
-                    response.resultCode = UpdateResultCode.Profile_PasswordTooShort;
+                    response.Success = false;
+                    response.ResultCode = UpdateResultCode.Profile_PasswordTooShort;
                     return response;
                 }
 
@@ -57,23 +57,23 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                     if (userAccount == null)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
 
                     if (!VerifyPassword(currentPassword, userAccount.password))
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_InvalidPassword;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_InvalidPassword;
                         return response;
                     }
 
                     userAccount.password = securityHelper.HashPassword(newPassword);
                     context.SaveChanges();
 
-                    response.success = true;
-                    response.resultCode = UpdateResultCode.Profile_ChangePasswordSuccess;
+                    response.Success = true;
+                    response.ResultCode = UpdateResultCode.Profile_ChangePasswordSuccess;
                     return response;
 
 
@@ -82,11 +82,11 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             catch (DbEntityValidationException ex)
             {
                 loggerHelper.LogError("Error de validacion en el metodo ChangePassword", ex);
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 

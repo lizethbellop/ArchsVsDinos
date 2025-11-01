@@ -12,25 +12,25 @@ namespace Contracts.DTO
     public class LoginResponse
     {
         [DataMember]
-        public bool success { get; set; }
+        public bool Success { get; set; }
 
         [DataMember]
-        public UserDTO userSession { get; set; }
+        public UserDTO UserSession { get; set; }
 
         [DataMember]
-        public PlayerDTO associatedPlayer { get; set; }
+        public PlayerDTO AssociatedPlayer { get; set; }
 
         [DataMember]
-        public LoginResultCode resultCode { get; set; }
+        public LoginResultCode ResultCode { get; set; }
 
         public override bool Equals(object objectLogin)
         {
             if (objectLogin == null || GetType() != objectLogin.GetType())
                 return false;
             var other = (LoginResponse)objectLogin;
-            return success == other.success &&
-                   Equals(userSession, other.userSession) &&
-                   Equals(associatedPlayer, other.associatedPlayer);
+            return Success == other.Success &&
+                   Equals(UserSession, other.UserSession) &&
+                   Equals(AssociatedPlayer, other.AssociatedPlayer);
         }
 
         public override int GetHashCode()
@@ -38,9 +38,9 @@ namespace Contracts.DTO
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + success.GetHashCode();
-                hash = hash * 23 + (userSession?.GetHashCode() ?? 0);
-                hash = hash * 23 + (associatedPlayer?.GetHashCode() ?? 0);
+                hash = hash * 23 + Success.GetHashCode();
+                hash = hash * 23 + (UserSession?.GetHashCode() ?? 0);
+                hash = hash * 23 + (AssociatedPlayer?.GetHashCode() ?? 0);
                 return hash;
             }
         }

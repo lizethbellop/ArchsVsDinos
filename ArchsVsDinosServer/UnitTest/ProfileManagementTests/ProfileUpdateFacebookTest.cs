@@ -44,8 +44,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_EmptyFields
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_EmptyFields
             };
 
             UpdateResponse result = socialMediaManager.UpdateFacebook(username, newFacebook);
@@ -64,8 +64,8 @@ namespace UnitTest.ProfileManagementTests
 
             var expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UserNotFound
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UserNotFound
             };
 
             UpdateResponse result = socialMediaManager.UpdateFacebook(username, newFacebook);
@@ -92,8 +92,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_PlayerNotFound
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_PlayerNotFound
             };
 
             UpdateResponse result = socialMediaManager.UpdateFacebook(username, newFacebook);
@@ -127,8 +127,8 @@ namespace UnitTest.ProfileManagementTests
 
             var expectedResult = new UpdateResponse
             {
-                success = true,
-                resultCode = UpdateResultCode.Profile_UpdateFacebookSuccess
+                Success = true,
+                ResultCode = UpdateResultCode.Profile_UpdateFacebookSuccess
             };
 
             UpdateResponse result = socialMediaManager.UpdateFacebook(username, newFacebook);
@@ -156,8 +156,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_DatabaseError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_DatabaseError
             };
 
             UpdateResponse result = socialMediaManagerException.UpdateFacebook(username, newFacebook);
@@ -185,8 +185,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UnexpectedError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
             UpdateResponse result = socialMediaManagerException.UpdateFacebook(username, newFacebook);

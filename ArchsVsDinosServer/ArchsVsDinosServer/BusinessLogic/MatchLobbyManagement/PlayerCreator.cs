@@ -16,10 +16,10 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             var profile = new ProfileInformation().GetPlayerByUsername(username);
             return new LobbyPlayerDTO
             {
-                username = username,
-                nickname = nickname,
-                profilePicture = profile?.profilePicture,
-                isHost = true
+                Username = username,
+                Nickname = nickname,
+                ProfilePicture = profile?.ProfilePicture,
+                IsHost = true
             };
         }
 
@@ -28,10 +28,10 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             var profile = new ProfileInformation().GetPlayerByUsername(username);
             return new LobbyPlayerDTO
             {
-                username = username,
-                nickname = nickname,
-                profilePicture = profile?.profilePicture,
-                isHost = false
+                Username = username,
+                Nickname = nickname,
+                ProfilePicture = profile?.ProfilePicture,
+                IsHost = false
             };
         }
 

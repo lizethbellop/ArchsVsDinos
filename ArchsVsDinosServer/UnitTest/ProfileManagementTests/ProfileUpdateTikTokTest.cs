@@ -41,8 +41,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_EmptyFields
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_EmptyFields
             };
 
             UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);
@@ -61,8 +61,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UserNotFound
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UserNotFound
             };
 
             UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);
@@ -89,8 +89,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_PlayerNotFound
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_PlayerNotFound
             };
 
             UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);
@@ -124,8 +124,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = true,
-                resultCode = UpdateResultCode.Profile_UpdateTikTokSuccess
+                Success = true,
+                ResultCode = UpdateResultCode.Profile_UpdateTikTokSuccess
             };
 
             UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);
@@ -153,8 +153,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_DatabaseError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_DatabaseError
             };
 
             UpdateResponse result = socialMediaManagerException.UpdateTikTok(username, newTikTok);
@@ -182,8 +182,8 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse expectedResult = new UpdateResponse
             {
-                success = false,
-                resultCode = UpdateResultCode.Profile_UnexpectedError
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_UnexpectedError
             };
 
             UpdateResponse result = socialMediaManagerException.UpdateTikTok(username, newTikTok);

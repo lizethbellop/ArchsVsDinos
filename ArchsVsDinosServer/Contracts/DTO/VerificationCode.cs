@@ -8,9 +8,9 @@ namespace Contracts.DTO
 {
     public class VerificationCode
     {
-        public string email { get; set; }
-        public string code { get; set; }
-        public DateTime expiration { get; set; }
+        public string Email { get; set; }
+        public string Code { get; set; }
+        public DateTime Expiration { get; set; }
     }
 
 }

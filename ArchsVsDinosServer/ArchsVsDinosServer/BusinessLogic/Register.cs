@@ -30,11 +30,11 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 RegisterResponse response = new RegisterResponse();
 
-                if (CheckCode(userAccountDTO.email, code))
+                if (CheckCode(userAccountDTO.Email, code))
                 {
 
-                    var validationUsernameAndNickname = ValidateUsernameAndNicknameResult(userAccountDTO.username, userAccountDTO.nickname);
-                    if (!validationUsernameAndNickname.success)
+                    var validationUsernameAndNickname = ValidateUsernameAndNicknameResult(userAccountDTO.Username, userAccountDTO.Nickname);
+                    if (!validationUsernameAndNickname.Success)
                         return validationUsernameAndNickname;
 
                     using (var scope = new TransactionScope())
@@ -51,11 +51,11 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                         var userAccount = new UserAccount
                         {
-                            email = userAccountDTO.email,
-                            password = SecurityHelper.HashPassword(userAccountDTO.password),
-                            name = userAccountDTO.name,
-                            username = userAccountDTO.username,
-                            nickname = userAccountDTO.nickname,
+                            email = userAccountDTO.Email,
+                            password = SecurityHelper.HashPassword(userAccountDTO.Password),
+                            name = userAccountDTO.Name,
+                            username = userAccountDTO.Username,
+                            nickname = userAccountDTO.Nickname,
                             idConfiguration = configuration.idConfiguration,
                             idPlayer = player.idPlayer
                         };
@@ -66,8 +66,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                         return new RegisterResponse
                         {
-                            success = true,
-                            resultCode = RegisterResultCode.Register_Success
+                            Success = true,
+                            ResultCode = RegisterResultCode.Register_Success
                         };
                     }
                 }
@@ -75,8 +75,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     return new RegisterResponse
                     {
-                        success = false,
-                        resultCode = RegisterResultCode.Register_InvalidCode
+                        Success = false,
+                        ResultCode = RegisterResultCode.Register_InvalidCode
                     };
                 }
 
@@ -86,8 +86,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 LoggerHelper.LogError($"Database connection error at Register", ex);
                 return new RegisterResponse
                 {
-                    success = false,
-                    resultCode = RegisterResultCode.Register_DatabaseError
+                    Success = false,
+                    ResultCode = RegisterResultCode.Register_DatabaseError
                 };
             }
             catch (Exception ex)
@@ -95,8 +95,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 Console.WriteLine($"Error in Register: {ex.Message}");
                 return new RegisterResponse
                 {
-                    success = false,
-                    resultCode = RegisterResultCode.Register_UnexpectedError
+                    Success = false,
+                    ResultCode = RegisterResultCode.Register_UnexpectedError
                 };
             }
         }
@@ -121,9 +121,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 verificationCodes.Add(new VerificationCode
                 {
-                    email = email,
-                    code = verificationCode,
-                    expiration = DateTime.Now.AddMinutes(10)
+                    Email = email,
+                    Code = verificationCode,
+                    Expiration = DateTime.Now.AddMinutes(10)
                 });
 
                 return true;
@@ -144,9 +144,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public bool CheckCode(string email, string code)
         {
-            var dataCheck = verificationCodes.Find(x => x.email == email && x.code == code);
+            var dataCheck = verificationCodes.Find(x => x.Email == email && x.Code == code);
         
-            if (dataCheck != null && dataCheck.expiration > DateTime.Now)
+            if (dataCheck != null && dataCheck.Expiration > DateTime.Now)
             {
                 verificationCodes.Remove(dataCheck);
                 return true;
@@ -170,25 +170,25 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (usernameExists && nicknameExists)
                     {
-                        response.success = false;
-                        response.resultCode = RegisterResultCode.Register_BothExists;
+                        response.Success = false;
+                        response.ResultCode = RegisterResultCode.Register_BothExists;
                         return response;
                     }
 
                     if (usernameExists)
                     {
-                        response.success = false;
-                        response.resultCode = RegisterResultCode.Register_UsernameExists;
+                        response.Success = false;
+                        response.ResultCode = RegisterResultCode.Register_UsernameExists;
                         return response;
                     }
                     if (nicknameExists)
                     {
-                        response.success = false;
-                        response.resultCode = RegisterResultCode.Register_NicknameExists;
+                        response.Success = false;
+                        response.ResultCode = RegisterResultCode.Register_NicknameExists;
                         return response;
                     }
 
-                    response.success = true;
+                    response.Success = true;
                     return response;
 
                 }
@@ -198,8 +198,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 Console.WriteLine($"Error validating username and nickname : {ex.Message}");
                 return new RegisterResponse
                 {
-                    success = false,
-                    resultCode = RegisterResultCode.Register_DatabaseError
+                    Success = false,
+                    ResultCode = RegisterResultCode.Register_DatabaseError
                 };
             }
 
@@ -208,8 +208,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 Console.WriteLine($"Error in Register: {ex.Message}");
                 return new RegisterResponse
                 {
-                    success = false,
-                    resultCode = RegisterResultCode.Register_UnexpectedError
+                    Success = false,
+                    ResultCode = RegisterResultCode.Register_UnexpectedError
                 };
             }
 

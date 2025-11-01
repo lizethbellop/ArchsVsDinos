@@ -8,22 +8,22 @@ namespace Contracts.DTO
 {
     public class UserDTO
     {
-        public int idUser { get; set; }
-        public string username { get; set; }
-        public string name { get; set; }
-        public string nickname { get; set; }
-        public string email { get; set; }
+        public int IdUser { get; set; }
+        public string Username { get; set; }
+        public string Name { get; set; }
+        public string Nickname { get; set; }
+        public string Email { get; set; }
 
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
                 return false;
             var other = (UserDTO)obj;
-            return idUser == other.idUser &&
-                   username == other.username &&
-                   name == other.name &&
-                   nickname == other.nickname &&
-                   email == other.email;
+            return IdUser == other.IdUser &&
+                   Username == other.Username &&
+                   Name == other.Name &&
+                   Nickname == other.Nickname &&
+                   Email == other.Email;
         }
 
         public override int GetHashCode()
@@ -31,11 +31,11 @@ namespace Contracts.DTO
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + idUser.GetHashCode();
-                hash = hash * 23 + (username?.GetHashCode() ?? 0);
-                hash = hash * 23 + (name?.GetHashCode() ?? 0);
-                hash = hash * 23 + (nickname?.GetHashCode() ?? 0);
-                hash = hash * 23 + (email?.GetHashCode() ?? 0);
+                hash = hash * 23 + IdUser.GetHashCode();
+                hash = hash * 23 + (Username?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Name?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Nickname?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Email?.GetHashCode() ?? 0);
                 return hash;
             }
         }

@@ -10,25 +10,25 @@ namespace Contracts.DTO
     public class PlayerDTO
     {
         [DataMember]
-        public int idPlayer { get; set; }
+        public int IdPlayer { get; set; }
         [DataMember]
-        public string facebook { get; set; }
+        public string Facebook { get; set; }
         [DataMember]
-        public string instagram { get; set; }
+        public string Instagram { get; set; }
         [DataMember]
-        public string x { get; set; }
+        public string X { get; set; }
 
         [DataMember]
-        public string tiktok { get; set; }
+        public string Tiktok { get; set; }
         [DataMember]
-        public int totalWins { get; set; }
+        public int TotalWins { get; set; }
         [DataMember]
-        public int totalLosses { get; set; }
+        public int TotalLosses { get; set; }
         [DataMember]
-        public int totalPoints { get; set; }
+        public int TotalPoints { get; set; }
 
         [DataMember]
-        public string profilePicture { get; set; }
+        public string ProfilePicture { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -36,15 +36,15 @@ namespace Contracts.DTO
                 return false;
 
             var other = (PlayerDTO)obj;
-            return idPlayer == other.idPlayer &&
-                   facebook == other.facebook &&
-                   instagram == other.instagram &&
-                   x == other.x &&
-                   tiktok == other.tiktok &&
-                   totalWins == other.totalWins &&
-                   totalLosses == other.totalLosses &&
-                   totalPoints == other.totalPoints &&
-                   profilePicture == other.profilePicture;
+            return IdPlayer == other.IdPlayer &&
+                   Facebook == other.Facebook &&
+                   Instagram == other.Instagram &&
+                   X == other.X &&
+                   Tiktok == other.Tiktok &&
+                   TotalWins == other.TotalWins &&
+                   TotalLosses == other.TotalLosses &&
+                   TotalPoints == other.TotalPoints &&
+                   ProfilePicture == other.ProfilePicture;
         }
 
         public override int GetHashCode()
@@ -52,15 +52,15 @@ namespace Contracts.DTO
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + idPlayer.GetHashCode();
-                hash = hash * 23 + (facebook?.GetHashCode() ?? 0);
-                hash = hash * 23 + (instagram?.GetHashCode() ?? 0);
-                hash = hash * 23 + (x?.GetHashCode() ?? 0);
-                hash = hash * 23 + (tiktok?.GetHashCode() ?? 0);
-                hash = hash * 23 + totalWins.GetHashCode();
-                hash = hash * 23 + totalLosses.GetHashCode();
-                hash = hash * 23 + totalPoints.GetHashCode();
-                hash = hash * 23 + (profilePicture?.GetHashCode() ?? 0);
+                hash = hash * 23 + IdPlayer.GetHashCode();
+                hash = hash * 23 + (Facebook?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Instagram?.GetHashCode() ?? 0);
+                hash = hash * 23 + (X?.GetHashCode() ?? 0);
+                hash = hash * 23 + (Tiktok?.GetHashCode() ?? 0);
+                hash = hash * 23 + TotalWins.GetHashCode();
+                hash = hash * 23 + TotalLosses.GetHashCode();
+                hash = hash * 23 + TotalPoints.GetHashCode();
+                hash = hash * 23 + (ProfilePicture?.GetHashCode() ?? 0);
                 return hash;
             }
         }

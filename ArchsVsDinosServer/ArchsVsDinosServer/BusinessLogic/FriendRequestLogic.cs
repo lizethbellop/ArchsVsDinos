@@ -38,8 +38,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 if (IsEmpty(fromUser, toUser))
                 {
-                    response.success = false;
-                    response.resultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
+                    response.Success = false;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
                     return response;
                 }
 
@@ -50,15 +50,15 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (sender == null || receiver == null)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
                         return response;
                     }
 
                     if (sender.idUser == receiver.idUser)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_CannotSendToYourself;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_CannotSendToYourself;
                         return response;
                     }
 
@@ -66,8 +66,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (alreadyFriends)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_AlreadyFriends;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_AlreadyFriends;
                         return response;
                     }
 
@@ -75,8 +75,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (existingRequest)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_RequestAlreadySent;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_RequestAlreadySent;
                         return response;
                     }
 
@@ -89,8 +89,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                     context.FriendRequest.Add(friendRequest);
                     context.SaveChanges();
 
-                    response.success = true;
-                    response.resultCode = FriendRequestResultCode.FriendRequest_Success;
+                    response.Success = true;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_Success;
                     return response;
                 }
             }
@@ -99,8 +99,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de conexión a BD en SendFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError
                 };
             }
             catch (SqlException ex)
@@ -108,8 +108,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error SQL en SendFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError
                 };
             }
             catch (InvalidOperationException ex)
@@ -117,8 +117,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de operación inválida en SendFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
                 };
             }
             catch (Exception ex)
@@ -126,8 +126,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error inesperado en SendFriendRequest: {ex.Message}", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
                 };
             }
         }
@@ -140,8 +140,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 if (IsEmpty(fromUser, toUser))
                 {
-                    response.success = false;
-                    response.resultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
+                    response.Success = false;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
                     return response;
                 }
 
@@ -152,8 +152,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (sender == null || receiver == null)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
                         return response;
                     }
 
@@ -164,8 +164,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (friendRequest == null)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_RequestNotFound;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_RequestNotFound;
                         return response;
                     }
 
@@ -190,8 +190,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                             context.SaveChanges();
                             transaction.Commit();
 
-                            response.success = true;
-                            response.resultCode = FriendRequestResultCode.FriendRequest_Success;
+                            response.Success = true;
+                            response.ResultCode = FriendRequestResultCode.FriendRequest_Success;
                             return response;
                         }
                         catch
@@ -207,8 +207,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de conexión a BD en AcceptFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError
                 };
             }
             catch (SqlException ex)
@@ -216,8 +216,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error SQL en AcceptFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError
                 };
             }
             catch (InvalidOperationException ex)
@@ -225,8 +225,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de operación inválida en AcceptFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
                 };
             }
             catch (Exception ex)
@@ -234,8 +234,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error inesperado en AcceptFriendRequest: {ex.Message}", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
                 };
             }
         }
@@ -248,8 +248,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 if (IsEmpty(fromUser, toUser))
                 {
-                    response.success = false;
-                    response.resultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
+                    response.Success = false;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
                     return response;
                 }
 
@@ -260,8 +260,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (sender == null || receiver == null)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
                         return response;
                     }
 
@@ -272,16 +272,16 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (friendRequest == null)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_RequestNotFound;
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_RequestNotFound;
                         return response;
                     }
 
                     friendRequest.status = "Rejected";
                     context.SaveChanges();
 
-                    response.success = true;
-                    response.resultCode = FriendRequestResultCode.FriendRequest_Success;
+                    response.Success = true;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_Success;
                     return response;
                 }
             }
@@ -290,8 +290,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de conexión a BD en RejectFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError
                 };
             }
             catch (SqlException ex)
@@ -299,8 +299,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error SQL en RejectFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError
                 };
             }
             catch (InvalidOperationException ex)
@@ -308,8 +308,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de operación inválida en RejectFriendRequest", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
                 };
             }
             catch (Exception ex)
@@ -317,8 +317,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error inesperado en RejectFriendRequest: {ex.Message}", ex);
                 return new FriendRequestResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
                 };
             }
         }
@@ -331,9 +331,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 if (IsUsernameEmpty(username))
                 {
-                    response.success = false;
-                    response.resultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
-                    response.requests = new List<string>();
+                    response.Success = false;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
+                    response.Requests = new List<string>();
                     return response;
                 }
 
@@ -343,17 +343,17 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (user == null)
                     {
-                        response.success = false;
-                        response.resultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
-                        response.requests = new List<string>();
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
+                        response.Requests = new List<string>();
                         return response;
                     }
 
                     List<string> pendingRequests = GetPendingRequestsList(context, user.idUser);
 
-                    response.success = true;
-                    response.resultCode = FriendRequestResultCode.FriendRequest_Success;
-                    response.requests = pendingRequests;
+                    response.Success = true;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_Success;
+                    response.Requests = pendingRequests;
                     return response;
                 }
             }
@@ -362,9 +362,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de conexión a BD en GetPendingRequests para usuario {username}", ex);
                 return new FriendRequestListResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError,
-                    requests = new List<string>()
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError,
+                    Requests = new List<string>()
                 };
             }
             catch (SqlException ex)
@@ -372,9 +372,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error SQL en GetPendingRequests para usuario {username}", ex);
                 return new FriendRequestListResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_DatabaseError,
-                    requests = new List<string>()
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError,
+                    Requests = new List<string>()
                 };
             }
             catch (InvalidOperationException ex)
@@ -382,9 +382,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error de operación inválida en GetPendingRequests para usuario {username}", ex);
                 return new FriendRequestListResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError,
-                    requests = new List<string>()
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError,
+                    Requests = new List<string>()
                 };
             }
             catch (Exception ex)
@@ -392,9 +392,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogError($"Error inesperado en GetPendingRequests para usuario {username}: {ex.Message}", ex);
                 return new FriendRequestListResponse
                 {
-                    success = false,
-                    resultCode = FriendRequestResultCode.FriendRequest_UnexpectedError,
-                    requests = new List<string>()
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError,
+                    Requests = new List<string>()
                 };
             }
         }

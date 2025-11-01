@@ -32,8 +32,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                 if (UpdateIsEmpty(username, link))
                 {
-                    response.success = false;
-                    response.resultCode = UpdateResultCode.Profile_EmptyFields;
+                    response.Success = false;
+                    response.ResultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
 
@@ -43,8 +43,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                     if (userAccount == null)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_UserNotFound;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_UserNotFound;
                         return response;
                     }
 
@@ -52,8 +52,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                     if (player == null)
                     {
-                        response.success = false;
-                        response.resultCode = UpdateResultCode.Profile_PlayerNotFound;
+                        response.Success = false;
+                        response.ResultCode = UpdateResultCode.Profile_PlayerNotFound;
                         return response;
                     }
 
@@ -74,19 +74,19 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     }
 
                     context.SaveChanges();
-                    response.success = true;
-                    response.resultCode = successCode;
+                    response.Success = true;
+                    response.ResultCode = successCode;
                     return response;
                 }
             }
             catch (DbEntityValidationException ex)
             {
                 loggerHelper.LogError($"Database validation error at Update {platform}", ex);
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_DatabaseError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
-                return new UpdateResponse { success = false, resultCode = UpdateResultCode.Profile_UnexpectedError };
+                return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
 
