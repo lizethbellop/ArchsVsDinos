@@ -16,11 +16,11 @@ namespace ArchsVsDinosClient.Utils
 
             return new UserDTO
             {
-                idUser = source.idUser,
-                username = source.username,
-                name = source.name,
-                nickname = source.nickname,
-                email = source.email
+                idUser = source.IdUser,
+                username = source.Username,
+                name = source.Name,
+                nickname = source.Nickname,
+                email = source.Email
             };
         }
 
@@ -30,15 +30,15 @@ namespace ArchsVsDinosClient.Utils
 
             return new PlayerDTO
             {
-                idPlayer = source.idPlayer,
-                facebook = source.facebook,
-                instagram = source.instagram,
-                x = source.x,
-                tiktok = source.tiktok,
-                totalWins = source.totalWins,
-                totalLosses = source.totalLosses,
-                totalPoints = source.totalPoints,
-                profilePicture = source.profilePicture
+                idPlayer = source.IdPlayer,
+                facebook = source.Facebook,
+                instagram = source.Instagram,
+                x = source.X,
+                tiktok = source.Tiktok,
+                totalWins = source.TotalWins,
+                totalLosses = source.TotalLosses,
+                totalPoints = source.TotalPoints,
+                profilePicture = source.ProfilePicture
             };
         }
     }

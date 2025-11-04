@@ -53,10 +53,10 @@ namespace ArchsVsDinosClient.Views
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.UpdateUsername(currentUsername, newUsername);
 
-                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
                 MessageBox.Show(message);
 
-                if (response.success)
+                if (response.Success)
                 {
                     UserSession.Instance.currentUser.username = newUsername;
                     UserProfileObserver.Instance.NotifyProfileUpdated();

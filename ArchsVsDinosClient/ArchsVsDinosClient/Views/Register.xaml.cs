@@ -89,23 +89,23 @@ namespace ArchsVsDinosClient.Views
 
                 var serviceUserAccount = new RegisterService.UserAccountDTO
                 {
-                    name = UserAccountDTO.name,
-                    username = UserAccountDTO.username,
-                    email = UserAccountDTO.email,
-                    password = UserAccountDTO.password,
-                    nickname = UserAccountDTO.nickname
+                    Name = UserAccountDTO.name,
+                    Username = UserAccountDTO.username,
+                    Email = UserAccountDTO.email,
+                    Password = UserAccountDTO.password,
+                    Nickname = UserAccountDTO.nickname
                 };
 
                 RegisterResponse registered = registerClient.RegisterUser(serviceUserAccount, code);
                 
-                if(registered.success)
+                if(registered.Success)
                 {
                     MessageBox.Show(Lang.Register_CorrectRegister);
                     this.Close();
                 }
                 else
                 {
-                    switch(registered.resultCode)
+                    switch(registered.ResultCode)
                     {
                         case RegisterResultCode.Register_InvalidCode:
                             MessageBox.Show(Lang.Register_IncorrectCode);

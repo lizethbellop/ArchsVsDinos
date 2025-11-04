@@ -21,7 +21,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
 
         public MatchLobbyResultCode CreateANewMatch(UserAccountDTO hostUserAccountDTO)
         {
-            IMatchLobbyManagerCallback callback = null;
+            IMatchLobbyManagerCallback callback;
 
             try
             {

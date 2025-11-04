@@ -52,10 +52,10 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.UpdateInstagram(currentUsername, newInstagramLink);
 
-                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
                 MessageBox.Show(message);
 
-                if (response.success)
+                if (response.Success)
                 {
                     this.Close();
                 }

@@ -3,34 +3,34 @@
   <xs:import schemaLocation="http://localhost:8080/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
   <xs:complexType name="LoginResponse">
     <xs:sequence>
-      <xs:element minOccurs="0" name="associatedPlayer" nillable="true" type="tns:PlayerDTO" />
-      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="resultCode" type="q1:LoginResultCode" />
-      <xs:element minOccurs="0" name="success" type="xs:boolean" />
-      <xs:element minOccurs="0" name="userSession" nillable="true" type="tns:UserDTO" />
+      <xs:element minOccurs="0" name="AssociatedPlayer" nillable="true" type="tns:PlayerDTO" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="ResultCode" type="q1:LoginResultCode" />
+      <xs:element minOccurs="0" name="Success" type="xs:boolean" />
+      <xs:element minOccurs="0" name="UserSession" nillable="true" type="tns:UserDTO" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="LoginResponse" nillable="true" type="tns:LoginResponse" />
   <xs:complexType name="PlayerDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" name="facebook" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="idPlayer" type="xs:int" />
-      <xs:element minOccurs="0" name="instagram" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="profilePicture" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="tiktok" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="totalLosses" type="xs:int" />
-      <xs:element minOccurs="0" name="totalPoints" type="xs:int" />
-      <xs:element minOccurs="0" name="totalWins" type="xs:int" />
-      <xs:element minOccurs="0" name="x" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Facebook" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdPlayer" type="xs:int" />
+      <xs:element minOccurs="0" name="Instagram" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProfilePicture" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Tiktok" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TotalLosses" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalPoints" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalWins" type="xs:int" />
+      <xs:element minOccurs="0" name="X" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="PlayerDTO" nillable="true" type="tns:PlayerDTO" />
   <xs:complexType name="UserDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="idUser" type="xs:int" />
-      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Email" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdUser" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Nickname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="UserDTO" nillable="true" type="tns:UserDTO" />

@@ -23,10 +23,10 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.ProfileManagerService.UpdateResultCode resultCodeField;
+        private ArchsVsDinosClient.ProfileManagerService.UpdateResultCode ResultCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool successField;
+        private bool SuccessField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -39,27 +39,27 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.ProfileManagerService.UpdateResultCode resultCode {
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResultCode ResultCode {
             get {
-                return this.resultCodeField;
+                return this.ResultCodeField;
             }
             set {
-                if ((this.resultCodeField.Equals(value) != true)) {
-                    this.resultCodeField = value;
-                    this.RaisePropertyChanged("resultCode");
+                if ((this.ResultCodeField.Equals(value) != true)) {
+                    this.ResultCodeField = value;
+                    this.RaisePropertyChanged("ResultCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool success {
+        public bool Success {
             get {
-                return this.successField;
+                return this.SuccessField;
             }
             set {
-                if ((this.successField.Equals(value) != true)) {
-                    this.successField = value;
-                    this.RaisePropertyChanged("success");
+                if ((this.SuccessField.Equals(value) != true)) {
+                    this.SuccessField = value;
+                    this.RaisePropertyChanged("Success");
                 }
             }
         }

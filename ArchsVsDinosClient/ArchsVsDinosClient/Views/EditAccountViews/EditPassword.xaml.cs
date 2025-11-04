@@ -53,11 +53,11 @@ namespace ArchsVsDinosClient.Views
                 ProfileManagerClient profileManagerClient = new ProfileManagerClient();
                 UpdateResponse response = profileManagerClient.ChangePassword(currentUsername, currentPassword, newPassword);
 
-                string message = UpdateResultCodeHelper.GetMessage(response.resultCode);
+                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
                 MessageBox.Show(message);
 
 
-                if (response.success)
+                if (response.Success)
                 {
                     this.Close();
                 }

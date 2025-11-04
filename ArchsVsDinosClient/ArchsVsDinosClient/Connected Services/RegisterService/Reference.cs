@@ -23,25 +23,25 @@ namespace ArchsVsDinosClient.RegisterService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string emailField;
+        private string EmailField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int idConfigurationField;
+        private int IdConfigurationField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int idPlayerField;
+        private int IdPlayerField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string nameField;
+        private string NameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string nicknameField;
+        private string NicknameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string passwordField;
+        private string PasswordField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string usernameField;
+        private string UsernameField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -54,92 +54,92 @@ namespace ArchsVsDinosClient.RegisterService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string email {
+        public string Email {
             get {
-                return this.emailField;
+                return this.EmailField;
             }
             set {
-                if ((object.ReferenceEquals(this.emailField, value) != true)) {
-                    this.emailField = value;
-                    this.RaisePropertyChanged("email");
+                if ((object.ReferenceEquals(this.EmailField, value) != true)) {
+                    this.EmailField = value;
+                    this.RaisePropertyChanged("Email");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int idConfiguration {
+        public int IdConfiguration {
             get {
-                return this.idConfigurationField;
+                return this.IdConfigurationField;
             }
             set {
-                if ((this.idConfigurationField.Equals(value) != true)) {
-                    this.idConfigurationField = value;
-                    this.RaisePropertyChanged("idConfiguration");
+                if ((this.IdConfigurationField.Equals(value) != true)) {
+                    this.IdConfigurationField = value;
+                    this.RaisePropertyChanged("IdConfiguration");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int idPlayer {
+        public int IdPlayer {
             get {
-                return this.idPlayerField;
+                return this.IdPlayerField;
             }
             set {
-                if ((this.idPlayerField.Equals(value) != true)) {
-                    this.idPlayerField = value;
-                    this.RaisePropertyChanged("idPlayer");
+                if ((this.IdPlayerField.Equals(value) != true)) {
+                    this.IdPlayerField = value;
+                    this.RaisePropertyChanged("IdPlayer");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string name {
+        public string Name {
             get {
-                return this.nameField;
+                return this.NameField;
             }
             set {
-                if ((object.ReferenceEquals(this.nameField, value) != true)) {
-                    this.nameField = value;
-                    this.RaisePropertyChanged("name");
+                if ((object.ReferenceEquals(this.NameField, value) != true)) {
+                    this.NameField = value;
+                    this.RaisePropertyChanged("Name");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string nickname {
+        public string Nickname {
             get {
-                return this.nicknameField;
+                return this.NicknameField;
             }
             set {
-                if ((object.ReferenceEquals(this.nicknameField, value) != true)) {
-                    this.nicknameField = value;
-                    this.RaisePropertyChanged("nickname");
+                if ((object.ReferenceEquals(this.NicknameField, value) != true)) {
+                    this.NicknameField = value;
+                    this.RaisePropertyChanged("Nickname");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string password {
+        public string Password {
             get {
-                return this.passwordField;
+                return this.PasswordField;
             }
             set {
-                if ((object.ReferenceEquals(this.passwordField, value) != true)) {
-                    this.passwordField = value;
-                    this.RaisePropertyChanged("password");
+                if ((object.ReferenceEquals(this.PasswordField, value) != true)) {
+                    this.PasswordField = value;
+                    this.RaisePropertyChanged("Password");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string username {
+        public string Username {
             get {
-                return this.usernameField;
+                return this.UsernameField;
             }
             set {
-                if ((object.ReferenceEquals(this.usernameField, value) != true)) {
-                    this.usernameField = value;
-                    this.RaisePropertyChanged("username");
+                if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
+                    this.UsernameField = value;
+                    this.RaisePropertyChanged("Username");
                 }
             }
         }
@@ -164,10 +164,10 @@ namespace ArchsVsDinosClient.RegisterService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.RegisterService.RegisterResultCode resultCodeField;
+        private ArchsVsDinosClient.RegisterService.RegisterResultCode ResultCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool successField;
+        private bool SuccessField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -180,27 +180,27 @@ namespace ArchsVsDinosClient.RegisterService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.RegisterService.RegisterResultCode resultCode {
+        public ArchsVsDinosClient.RegisterService.RegisterResultCode ResultCode {
             get {
-                return this.resultCodeField;
+                return this.ResultCodeField;
             }
             set {
-                if ((this.resultCodeField.Equals(value) != true)) {
-                    this.resultCodeField = value;
-                    this.RaisePropertyChanged("resultCode");
+                if ((this.ResultCodeField.Equals(value) != true)) {
+                    this.ResultCodeField = value;
+                    this.RaisePropertyChanged("ResultCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool success {
+        public bool Success {
             get {
-                return this.successField;
+                return this.SuccessField;
             }
             set {
-                if ((this.successField.Equals(value) != true)) {
-                    this.successField = value;
-                    this.RaisePropertyChanged("success");
+                if ((this.SuccessField.Equals(value) != true)) {
+                    this.SuccessField = value;
+                    this.RaisePropertyChanged("Success");
                 }
             }
         }

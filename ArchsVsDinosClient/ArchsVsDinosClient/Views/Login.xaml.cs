@@ -51,13 +51,13 @@ namespace ArchsVsDinosClient
                 AuthenticationService.AuthenticationManagerClient authenticationClient = new AuthenticationService.AuthenticationManagerClient();
                 AuthenticationService.LoginResponse response = authenticationClient.Login(username, password);
 
-                string message = LoginResultCodeHelper.GetMessage(response.resultCode);
+                string message = LoginResultCodeHelper.GetMessage(response.ResultCode);
                 MessageBox.Show(message);
 
-                if (response.success)
+                if (response.Success)
                 {
-                    UserDTO user = response.userSession.ToUserDTO();
-                    PlayerDTO player = response.associatedPlayer.ToPlayerDTO();
+                    UserDTO user = response.UserSession.ToUserDTO();
+                    PlayerDTO player = response.AssociatedPlayer.ToPlayerDTO();
                     UserSession.Instance.Login(user, player);
 
                     new MainWindow().ShowDialog();
