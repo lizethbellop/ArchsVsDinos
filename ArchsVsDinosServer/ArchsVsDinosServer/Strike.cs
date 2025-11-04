@@ -17,7 +17,7 @@ namespace ArchsVsDinosServer
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Strike()
         {
-            this.UserAccount = new HashSet<UserAccount>();
+            this.UserHasStrike = new HashSet<UserHasStrike>();
         }
     
         public int idStrike { get; set; }
@@ -27,6 +27,6 @@ namespace ArchsVsDinosServer
     
         public virtual StrikeKind StrikeKind { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserAccount> UserAccount { get; set; }
+        public virtual ICollection<UserHasStrike> UserHasStrike { get; set; }
     }
 }

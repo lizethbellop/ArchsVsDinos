@@ -201,10 +201,10 @@
     <Compile Include="StrikeKind.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="sysdiagrams.cs">
+    <Compile Include="UserAccount.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="UserAccount.cs">
+    <Compile Include="UserHasStrike.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Utils\CodeGenerator.cs" />

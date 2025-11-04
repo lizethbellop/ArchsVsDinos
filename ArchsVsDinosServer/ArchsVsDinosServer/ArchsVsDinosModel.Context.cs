@@ -36,7 +36,7 @@ namespace ArchsVsDinosServer
         public virtual DbSet<Player> Player { get; set; }
         public virtual DbSet<Strike> Strike { get; set; }
         public virtual DbSet<StrikeKind> StrikeKind { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<UserAccount> UserAccount { get; set; }
+        public virtual DbSet<UserHasStrike> UserHasStrike { get; set; }
     }
 }

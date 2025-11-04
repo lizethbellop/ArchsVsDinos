@@ -5,18 +5,17 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="e8365a5b0c9f4647bf2f325d6d75632e" Name="Diagram1" ZoomLevel="69">
-        <EntityTypeShape EntityType="ArchsVsDinosModel.CardBody" Width="1.5" PointX="5.75" PointY="9.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ArchsVsDinosModel.CardCharacter" Width="1.5" PointX="7.75" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ArchsVsDinosModel.CardBody" Width="1.5" PointX="6.75" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ArchsVsDinosModel.CardCharacter" Width="1.5" PointX="9.25" PointY="9.25" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.Configuration" Width="1.5" PointX="3.75" PointY="1.25" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.FriendRequest" Width="1.5" PointX="8.25" PointY="3" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.Friendship" Width="1.5" PointX="8.25" PointY="6.125" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.GeneralMatch" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.MatchParticipants" Width="1.75" PointX="3" PointY="4.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="ArchsVsDinosModel.Music" Width="1.5" PointX="9.75" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ArchsVsDinosModel.Music" Width="1.5" PointX="11.625" PointY="10" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.Player" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.Strike" Width="1.5" PointX="3.75" PointY="7.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.StrikeKind" Width="1.5" PointX="1.5" PointY="8" IsExpanded="true" />
-        <EntityTypeShape EntityType="ArchsVsDinosModel.sysdiagrams" Width="1.5" PointX="10.75" PointY="0.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.UserAccount" Width="1.5" PointX="6" PointY="3.75" IsExpanded="true" />
         <AssociationConnector Association="ArchsVsDinosModel.FK__UserAccou__idCon__440B1D61" ManuallyRouted="false" />
         <AssociationConnector Association="ArchsVsDinosModel.FK__FriendReq__idRec__4CA06362" ManuallyRouted="false" />
@@ -28,6 +27,9 @@
         <AssociationConnector Association="ArchsVsDinosModel.FK__UserAccou__idPla__44FF419A" ManuallyRouted="false" />
         <AssociationConnector Association="ArchsVsDinosModel.FK__Strike__idStrike__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="ArchsVsDinosModel.UserHasStrike" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="ArchsVsDinosModel.UserHasStrike" Width="1.5" PointX="3.5" PointY="11.25" />
+        <AssociationConnector Association="ArchsVsDinosModel.FK__UserHasSt__idStr__5441852A" />
+        <AssociationConnector Association="ArchsVsDinosModel.FK__UserHasSt__idUse__5535A963" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

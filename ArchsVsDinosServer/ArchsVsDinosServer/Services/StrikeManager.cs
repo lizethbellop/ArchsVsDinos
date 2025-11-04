@@ -34,9 +34,9 @@ namespace ArchsVsDinosServer.Services
 
             try
             {
-                using (var context = contextFactory()) 
+                using (var context = contextFactory())
                 {
-                    var user = context.UserAccount.FirstOrDefault(u => u.idUser == userId);
+                    UserAccount user = context.UserAccount.FirstOrDefault(u => u.idUser == userId);
 
                     if (user == null)
                     {
@@ -70,15 +70,14 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
-
         private bool HandleProfanityCheck(IDbContext context, UserAccount user, string message)
         {
             if (!profanityFilter.ContainsProfanity(message, out var badWords))
-                return true; // clean message
+                return true;
 
             AddStrike(context, user, badWords);
 
-            int activeCount = GetActiveStrikeCount(user);
+            int activeCount = GetActiveStrikeCount(context, user);
             if (activeCount >= StrikeLimit)
             {
                 BanUser(context, user);
@@ -89,14 +88,14 @@ namespace ArchsVsDinosServer.Services
                 loggerHelper.LogInfo($"User {user.username} received strike ({activeCount}/{StrikeLimit}).");
             }
 
-            return false; // block message
+            return false;
         }
 
         private void AddStrike(IDbContext context, UserAccount user, List<string> badWords)
         {
             try
             {
-                var strikeKind = context.StrikeKind.FirstOrDefault(sk => sk.name == "Offensive Language")
+                StrikeKind strikeKind = context.StrikeKind.FirstOrDefault(sk => sk.name == "Offensive Language")
                                  ?? context.StrikeKind.FirstOrDefault();
 
                 if (strikeKind == null)
@@ -109,8 +108,17 @@ namespace ArchsVsDinosServer.Services
                     idStrikeKind = strikeKind.idStrikeKind
                 };
 
-                user.Strike.Add(strike);
                 context.Strike.Add(strike);
+                context.SaveChanges();
+
+                UserHasStrike userHasStrike = new UserHasStrike
+                {
+                    idUser = user.idUser,
+                    idStrike = strike.idStrike,
+                    strikeDate = DateTime.UtcNow
+                };
+
+                context.UserHasStrike.Add(userHasStrike);
                 context.SaveChanges();
 
                 loggerHelper.LogInfo($"Strike added for user {user.username}. Words: {string.Join(", ", badWords)}");
@@ -127,10 +135,17 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
-        private int GetActiveStrikeCount(UserAccount user)
+        private int GetActiveStrikeCount(IDbContext context, UserAccount user)
         {
             var now = DateTime.UtcNow;
-            return user.Strike.Count(s => s.endDate > now);
+
+            return context.UserHasStrike
+                .Where(uhs => uhs.idUser == user.idUser)
+                .Join(context.Strike,
+                      uhs => uhs.idStrike,
+                      s => s.idStrike,
+                      (uhs, s) => s)
+                .Count(s => s.endDate > now);
         }
 
         private void BanUser(IDbContext context, UserAccount user)

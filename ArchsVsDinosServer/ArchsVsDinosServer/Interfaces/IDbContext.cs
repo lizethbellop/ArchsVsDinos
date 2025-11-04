@@ -13,8 +13,9 @@ namespace ArchsVsDinosServer.Interfaces
         DbSet<Player> Player { get; }
         DbSet<Friendship> Friendship { get; }
         DbSet<FriendRequest> FriendRequest { get; }
-        DbSet<Strike> Strike { get; } 
-        DbSet<StrikeKind> StrikeKind { get; }  
+        DbSet<Strike> Strike { get; }
+        DbSet<StrikeKind> StrikeKind { get; }
+        DbSet<UserHasStrike> UserHasStrike { get; }  // ⬅️ NUEVO
         Database Database { get; }
         int SaveChanges();
     }
