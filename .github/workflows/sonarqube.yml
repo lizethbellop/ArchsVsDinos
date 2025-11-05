@@ -43,5 +43,6 @@ jobs:
         shell: powershell
         run: |
           ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"lizethbellop_ArchsVsDinos" /o:"lizethbellop" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-          dotnet build
+          dotnet build "ArchsVsDinosServer.sln"
+          dotnet build "ArchsVsDinosClient.sln"
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
