@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-   public interface IMatchLobbyManagerCallback
+    [ServiceContract]
+    public interface IMatchLobbyManagerCallback
     {
         [OperationContract(IsOneWay = true)]
         void CreatedMatch(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);

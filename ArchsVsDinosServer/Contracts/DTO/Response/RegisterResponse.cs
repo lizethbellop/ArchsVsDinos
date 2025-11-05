@@ -17,11 +17,11 @@ namespace Contracts.DTO.Response
         [DataMember]
         public RegisterResultCode ResultCode { get; set; }
 
-        public override bool Equals(object objectResponse)
+        public override bool Equals(object obj)
         {
-            if (objectResponse == null || GetType() != objectResponse.GetType())
+            if (obj == null || GetType() != obj.GetType())
                 return false;
-            var other = (RegisterResponse)objectResponse;
+            var other = (RegisterResponse)obj;
             return Success == other.Success;
         }
 
