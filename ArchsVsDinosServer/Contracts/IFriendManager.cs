@@ -15,9 +15,9 @@ namespace Contracts
         FriendResponse RemoveFriend(string username, string friendUsername);
 
         [OperationContract]
-        List<string> GetFriends(string username);
+        FriendListResponse GetFriends(string username);
 
         [OperationContract]
-        bool AreFriends(string username, string friendUsername);
+        FriendCheckResponse AreFriends(string username, string friendUsername);
     }
 }

@@ -13,28 +13,28 @@ namespace ArchsVsDinosServer.Services
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ChatManager : IChatManager
     {
-        private Chat chatBusinessLogic;
+        private Chat ChatBusinessLogic;
 
         public ChatManager()
         {
             var loggerHelper = new Wrappers.LoggerHelperWrapper();
-            chatBusinessLogic = new Chat(loggerHelper);
+            ChatBusinessLogic = new Chat(loggerHelper);
         }
 
         public void Connect(string username)
         {
-            chatBusinessLogic.Connect(username);
+            ChatBusinessLogic.Connect(username);
         }
 
 
         public void SendMessageToRoom(string message, string username)
         {
-            chatBusinessLogic.SendMessageToRoom(message, username);
+            ChatBusinessLogic.SendMessageToRoom(message, username);
         }
 
         public void Disconnect(string username)
         {
-            chatBusinessLogic.Disconnect(username);
+            ChatBusinessLogic.Disconnect(username);
         }
     }
 }

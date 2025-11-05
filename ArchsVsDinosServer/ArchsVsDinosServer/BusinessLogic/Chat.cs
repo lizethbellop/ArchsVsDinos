@@ -1,4 +1,7 @@
 ﻿using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Services;
+using ArchsVsDinosServer.Utils;
+using ArchsVsDinosServer.Wrappers;
 using Contracts;
 using Contracts.DTO.Result_Codes;
 using System;
@@ -14,19 +17,41 @@ namespace ArchsVsDinosServer.BusinessLogic
 
     public class Chat
     {
-        private static readonly ConcurrentDictionary<string, IChatManagerCallback> ConnectedUsers = new ConcurrentDictionary<string, IChatManagerCallback>();
+        private class UserConnection
+        {
+            public int UserId { get; set; }
+            public IChatManagerCallback Callback { get; set; }
+        }
+
+        // CORREGIDO: Cambiado de IChatManagerCallback a UserConnection
+        private static readonly ConcurrentDictionary<string, UserConnection> ConnectedUsers = new ConcurrentDictionary<string, UserConnection>();
         private const string DefaultRoom = "Lobby";
         private readonly ILoggerHelper loggerHelper;
+        private readonly StrikeManager strikeManager;
+        private readonly Func<IDbContext> contextFactory;
 
-        public Chat(ILoggerHelper loggerHelper)
+        public Chat(ILoggerHelper loggerHelper, Func<IDbContext> contextFactory)
         {
             this.loggerHelper = loggerHelper;
+            this.contextFactory = contextFactory;
+            // CORREGIDO: Pasar las dependencias necesarias a StrikeManager usando las mismas instancias
+            var dependencies = new ServiceDependencies(
+                new Wrappers.SecurityHelperWrapper(),
+                new Wrappers.ValidationHelperWrapper(),
+                loggerHelper,
+                contextFactory
+            );
+            this.strikeManager = new StrikeManager(dependencies, new ProfanityFilter());
+        }
+
+        public Chat(ILoggerHelper loggerHelper)
+            : this(loggerHelper, () => new DbContextWrapper())
+        {
         }
 
         public void Connect(string username)
         {
             IChatManagerCallback callback;
-
             try
             {
                 callback = OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
@@ -37,7 +62,28 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return;
             }
 
-            if (!ConnectedUsers.TryAdd(username, callback))
+            // Obtener userId de la base de datos
+            int userId = GetUserIdFromUsername(username);
+            if (userId == 0)
+            {
+                try
+                {
+                    callback.ReceiveSystemNotification(ChatResultCode.Chat_Error, "User not found");
+                }
+                catch (Exception ex)
+                {
+                    loggerHelper.LogWarning($"Error sending notification to {username}: {ex.Message}");
+                }
+                return;
+            }
+
+            var userConnection = new UserConnection
+            {
+                UserId = userId,
+                Callback = callback
+            };
+
+            if (!ConnectedUsers.TryAdd(username, userConnection))
             {
                 try
                 {
@@ -66,8 +112,65 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public void SendMessageToRoom(string message, string username)
         {
-            // TODO: agregar filtro de palabras
-            BroadcastMessageToAll(username, message);
+            if (string.IsNullOrWhiteSpace(message) || string.IsNullOrWhiteSpace(username))
+            {
+                return;
+            }
+
+            try
+            {
+                if (!ConnectedUsers.TryGetValue(username, out var userConnection))
+                {
+                    loggerHelper.LogWarning($"User {username} not found in connected users");
+                    return;
+                }
+
+                bool canSend = strikeManager.CanSendMessage(userConnection.UserId, message);
+
+                if (!canSend)
+                {
+                    NotifyUserMessageBlocked(username);
+                    loggerHelper.LogInfo($"Message from {username} blocked due to profanity or ban");
+                    return;
+                }
+
+                BroadcastMessageToAll(username, message);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Error sending message from {username}: {ex.Message}", ex);
+            }
+        }
+
+        private int GetUserIdFromUsername(string username)
+        {
+            try
+            {
+                using (var context = contextFactory())
+                {
+                    var user = context.UserAccount.FirstOrDefault(u => u.username == username);
+                    return user?.idUser ?? 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Error getting userId for username {username}", ex);
+                return 0;
+            }
+        }
+
+        private void NotifyUserMessageBlocked(string username)
+        {
+            if (ConnectedUsers.TryGetValue(username, out var userConnection))
+            {
+                SafeCallbackInvoke(username, () =>
+                {
+                    userConnection.Callback.ReceiveSystemNotification(
+                        ChatResultCode.Chat_MessageBlocked,
+                        "Your message contains inappropriate language and was blocked"
+                    );
+                });
+            }
         }
 
         private void BroadcastSystemNotificationWithEnum(ChatResultCode code, string message)
@@ -76,7 +179,8 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 SafeCallbackInvoke(user.Key, () =>
                 {
-                    user.Value.ReceiveSystemNotification(code, message);
+                    // CORREGIDO: Acceder a través de .Callback
+                    user.Value.Callback.ReceiveSystemNotification(code, message);
                 });
             }
         }
@@ -87,7 +191,8 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 SafeCallbackInvoke(user.Key, () =>
                 {
-                    user.Value.ReceiveMessage(DefaultRoom, fromUser, message);
+                    // CORREGIDO: Acceder a través de .Callback
+                    user.Value.Callback.ReceiveMessage(DefaultRoom, fromUser, message);
                 });
             }
         }
@@ -100,7 +205,8 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 SafeCallbackInvoke(user.Key, () =>
                 {
-                    user.Value.UpdateUserList(users);
+                    // CORREGIDO: Acceder a través de .Callback
+                    user.Value.Callback.UpdateUserList(users);
                 });
             }
         }

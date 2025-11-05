@@ -44,10 +44,30 @@ namespace ArchsVsDinosServer.Services
                         return false;
                     }
 
-                    if (user.isBanned)
+                    // ✅ VERIFICAR BANEO BASADO EN STRIKES ACTIVOS
+                    int activeCount = GetActiveStrikeCount(context, user);
+                    if (activeCount >= StrikeLimit)
                     {
-                        loggerHelper.LogInfo($"User {user.username} is banned. Message blocked.");
+                        loggerHelper.LogInfo($"User {user.username} is banned (has {activeCount} active strikes).");
+
+                        // Marcar como baneado si no lo está ya
+                        if (!user.isBanned)
+                        {
+                            user.isBanned = true;
+                            context.SaveChanges();
+                        }
+
                         return false;
+                    }
+                    else
+                    {
+                        // Si tiene menos de 3 strikes pero isBanned está en true, desbanear
+                        if (user.isBanned)
+                        {
+                            user.isBanned = false;
+                            context.SaveChanges();
+                            loggerHelper.LogInfo($"User {user.username} unbanned (strikes expired).");
+                        }
                     }
 
                     return HandleProfanityCheck(context, user, message);
@@ -152,6 +172,27 @@ namespace ArchsVsDinosServer.Services
         {
             user.isBanned = true;
             context.SaveChanges();
+        }
+
+        public bool IsUserBanned(int userId)
+        {
+            try
+            {
+                using (var context = contextFactory())
+                {
+                    var user = context.UserAccount.FirstOrDefault(u => u.idUser == userId);
+                    if (user == null)
+                        return false;
+
+                    int activeCount = GetActiveStrikeCount(context, user);
+                    return activeCount >= StrikeLimit;
+                }
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Error checking ban status for userId {userId}", ex);
+                return false;
+            }
         }
     }
 }

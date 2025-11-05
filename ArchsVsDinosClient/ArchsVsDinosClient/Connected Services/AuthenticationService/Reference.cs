@@ -406,6 +406,9 @@ namespace ArchsVsDinosClient.AuthenticationService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Authentication_UnexpectedError = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Authentication_UserBanned = 5,
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
+    [ServiceContract]
     public interface IChatManagerCallback
     {
         [OperationContract(IsOneWay = true)]

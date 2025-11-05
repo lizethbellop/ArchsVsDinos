@@ -1,24 +1,25 @@
 ﻿using ArchsVsDinosServer;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Services;
 using ArchsVsDinosServer.Utils;
 using Contracts.DTO;
+using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Result_Codes;
 
 namespace ArchsVsDinosServer.BusinessLogic
 {
     public class Authentication
     {
-
         private readonly ISecurityHelper securityHelper;
         private readonly IValidationHelper validationHelper;
         private readonly ILoggerHelper loggerHelper;
         private readonly Func<IDbContext> contextFactory;
+        private readonly StrikeManager strikeManager;
 
         public Authentication(ServiceDependencies dependencies)
         {
@@ -26,17 +27,19 @@ namespace ArchsVsDinosServer.BusinessLogic
             validationHelper = dependencies.validationHelper;
             loggerHelper = dependencies.loggerHelper;
             contextFactory = dependencies.contextFactory;
+            strikeManager = new StrikeManager(dependencies, new ProfanityFilter());
         }
 
         public Authentication() : this(new ServiceDependencies())
         {
         }
+
         public LoginResponse Login(string username, string password)
         {
-
             try
             {
                 LoginResponse response = new LoginResponse();
+
                 if (IsEmpty(username, password))
                 {
                     response.Success = false;
@@ -46,7 +49,6 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 using (var context = contextFactory())
                 {
-
                     UserAccount user = context.UserAccount.FirstOrDefault(u => u.username == username);
 
                     if (user == null)
@@ -55,12 +57,22 @@ namespace ArchsVsDinosServer.BusinessLogic
                         response.ResultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
+
                     if (!securityHelper.VerifyPassword(password, user.password))
                     {
                         response.Success = false;
                         response.ResultCode = LoginResultCode.Authentication_InvalidCredentials;
                         return response;
                     }
+
+                    if (strikeManager.IsUserBanned(user.idUser))
+                    {
+                        response.Success = false;
+                        response.ResultCode = LoginResultCode.Authentication_UserBanned;
+                        loggerHelper.LogInfo($"Banned user {username} attempted to login");
+                        return response;
+                    }
+
                     response.Success = true;
                     response.ResultCode = LoginResultCode.Authentication_Success;
                     response.UserSession = new UserDTO
@@ -71,6 +83,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                         Username = user.username,
                         Email = user.email,
                     };
+
                     if (user.Player != null)
                     {
                         response.AssociatedPlayer = new PlayerDTO
@@ -86,6 +99,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                             TotalPoints = user.Player.totalPoints
                         };
                     }
+
                     return response;
                 }
             }
@@ -100,7 +114,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en Login: {ex.Message}");
+                loggerHelper.LogError($"Unexpected error at Login for user: {username}", ex);
                 return new LoginResponse
                 {
                     Success = false,
@@ -109,7 +123,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private bool IsEmpty (string username, string password)
+        private bool IsEmpty(string username, string password)
         {
             return validationHelper.IsEmpty(username) || validationHelper.IsEmpty(password);
         }
