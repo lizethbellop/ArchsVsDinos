@@ -46,12 +46,6 @@ namespace ArchsVsDinosClient
             string password = PB_Password.Password;
 
 
-            if (!ValidateInputs(username, password)) 
-            {
-                MessageBox.Show(Lang.GlobalEmptyField);
-                return;
-            }
-
             viewModel.Username = username;
             viewModel.Password = password;
 

@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,13 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
     /// </summary>
     public partial class EditNickname : Window
     {
+        private readonly EditNicknameViewModel viewModel;
         public EditNickname()
         {
             InitializeComponent();
+            viewModel = new EditNicknameViewModel();
+            DataContext = viewModel;
+            viewModel.RequestClose += OnRequestClose;
         }
 
         private void Click_BtnCancel(object sender, RoutedEventArgs e)
@@ -34,38 +39,13 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             this.Close();
         }
 
-        private void Click_BtnSave(object sender, RoutedEventArgs e)
+        private async void Click_BtnSave(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
 
-            string currentUsername = UserSession.Instance.currentUser.username;
-            string newNickname = TxtB_NewNickname.Text;
+           viewModel.NewNickname = TxtB_NewNickname.Text;
 
-            if (!ValidateInputs(newNickname))
-            {
-                MessageBox.Show(Lang.GlobalEmptyField);
-                return;
-            }
-
-            try
-            {
-                ProfileManagerClient profileManagerClient = new ProfileManagerClient();
-                UpdateResponse response = profileManagerClient.UpdateNickname(currentUsername, newNickname);
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                MessageBox.Show(message);
-
-                if (response.Success)
-                {
-                    UserSession.Instance.currentUser.nickname = newNickname;
-                    UserProfileObserver.Instance.NotifyProfileUpdated();
-                    this.Close();
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error de conexión con el servidor");
-            }
+            await viewModel.SaveEditNickname();
 
         }
 
@@ -77,6 +57,12 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             }
 
             return true;
+        }
+
+        private void OnRequestClose(object sender, System.EventArgs e)
+        {
+            new MainWindow().ShowDialog();
+            this.Close();
         }
 
     }

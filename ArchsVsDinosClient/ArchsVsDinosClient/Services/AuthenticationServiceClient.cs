@@ -19,7 +19,7 @@ namespace ArchsVsDinosClient.Services
         }
         public async Task<LoginResponse> LoginAsync(string username, string password)
         {
-            return await client.LoginAsync(username, password);
+            return await Task.Run(() => client.Login(username, password));
         }
     }
 }
