@@ -655,6 +655,51 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡Provocar!.
+        /// </summary>
+        public static string Match_Attack {
+            get {
+                return ResourceManager.GetString("Match_Attack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Opciones.
+        /// </summary>
+        public static string Match_Options {
+            get {
+                return ResourceManager.GetString("Match_Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tiradas restantes.
+        /// </summary>
+        public static string Match_PlaysRemaining {
+            get {
+                return ResourceManager.GetString("Match_PlaysRemaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Puntos.
+        /// </summary>
+        public static string Match_Points {
+            get {
+                return ResourceManager.GetString("Match_Points", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tiempo de partida.
+        /// </summary>
+        public static string Match_TimeMatch {
+            get {
+                return ResourceManager.GetString("Match_TimeMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Estadísticas del jugador.
         /// </summary>
         public static string PlayerStatistics_Title {

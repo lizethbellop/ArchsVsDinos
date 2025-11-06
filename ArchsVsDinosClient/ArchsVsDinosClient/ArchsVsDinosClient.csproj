@@ -131,6 +131,9 @@
     <Compile Include="Views\Lobby.xaml.cs">
       <DependentUpon>Lobby.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Match.xaml.cs">
+      <DependentUpon>Match.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PersonalStatistics.xaml.cs">
       <DependentUpon>PersonalStatistics.xaml</DependentUpon>
     </Compile>
@@ -211,6 +214,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Match.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PersonalStatistics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -437,6 +444,17 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Resource Include="Resources\Images\exit.png" />
+    <Resource Include="Resources\Images\matchBackground.png" />
+    <Resource Include="Resources\Images\rockFall.png" />
+    <Resource Include="Resources\Images\bone2Button.png" />
+    <Resource Include="Resources\Images\attackNow.png" />
+    <Resource Include="Resources\Images\skinDino.png" />
+    <Resource Include="Resources\Images\trash.png" />
+    <Resource Include="Resources\Images\sandLogo.png" />
+    <Resource Include="Resources\Images\waterLogo.png" />
+    <Resource Include="Resources\Images\windLogo.png" />
+    <Resource Include="Resources\Images\bossLogo.png" />
+    <Resource Include="Resources\Images\chatLogo.png" />
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

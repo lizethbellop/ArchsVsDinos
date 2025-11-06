@@ -510,4 +510,19 @@
   <data name="Authentication_UnexpectedError" xml:space="preserve">
     <value>An unexpected error occurred</value>
   </data>
+  <data name="Match_Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Match_TimeMatch" xml:space="preserve">
+    <value>Match time</value>
+  </data>
+  <data name="Match_PlaysRemaining" xml:space="preserve">
+    <value>Plays remaining</value>
+  </data>
+  <data name="Match_Points" xml:space="preserve">
+    <value>Points</value>
+  </data>
+  <data name="Match_Attack" xml:space="preserve">
+    <value>Provoke!</value>
+  </data>
 </root>
