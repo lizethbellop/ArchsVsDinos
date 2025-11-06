@@ -17,14 +17,20 @@ using System.Windows.Shapes;
 using ArchsVsDinosClient.DTO;
 using ArchsVsDinosClient.Utils;
 using AuthenticationService = ArchsVsDinosClient.AuthenticationService;
+using ArchsVsDinosClient.ViewModels;
 
 namespace ArchsVsDinosClient
 {
     public partial class Login : Window
     {
+
+        private readonly LoginViewModel viewModel;
         public Login()
         {
             InitializeComponent();
+            viewModel = new LoginViewModel();
+            DataContext = viewModel;
+            viewModel.RequestClose += OnRequestClose;
         }
 
         private void Click_BtnRegister(object sender, RoutedEventArgs e)
@@ -33,7 +39,7 @@ namespace ArchsVsDinosClient
 
         }
 
-        private void Click_BtnLogin(object sender, RoutedEventArgs e)
+        private async void Click_BtnLogin(object sender, RoutedEventArgs e)
         {
 
             string username = TxtB_Username.Text;
@@ -46,29 +52,10 @@ namespace ArchsVsDinosClient
                 return;
             }
 
-            try
-            {
-                AuthenticationService.AuthenticationManagerClient authenticationClient = new AuthenticationService.AuthenticationManagerClient();
-                AuthenticationService.LoginResponse response = authenticationClient.Login(username, password);
+            viewModel.Username = username;
+            viewModel.Password = password;
 
-                string message = LoginResultCodeHelper.GetMessage(response.ResultCode);
-                MessageBox.Show(message);
-
-                if (response.Success)
-                {
-                    UserDTO user = response.UserSession.ToUserDTO();
-                    PlayerDTO player = response.AssociatedPlayer.ToPlayerDTO();
-                    UserSession.Instance.Login(user, player);
-
-                    new MainWindow().ShowDialog();
-                    this.Close();
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
+            await viewModel.LoginAsync();
 
         }
 
@@ -106,6 +93,12 @@ namespace ArchsVsDinosClient
             }
 
             return true;
+        }
+
+        private void OnRequestClose(object sender, System.EventArgs e)
+        {
+            new MainWindow().ShowDialog();
+            this.Close();
         }
 
     }

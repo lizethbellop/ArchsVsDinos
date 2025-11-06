@@ -12,12 +12,13 @@ namespace ArchsVsDinosServer
     using System;
     using System.Collections.Generic;
     
-    public partial class sysdiagrams
+    public partial class UserHasStrike
     {
-        public string name { get; set; }
-        public int principal_id { get; set; }
-        public int diagram_id { get; set; }
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public int idStrike { get; set; }
+        public int idUser { get; set; }
+        public Nullable<System.DateTime> strikeDate { get; set; }
+    
+        public virtual Strike Strike { get; set; }
+        public virtual UserAccount UserAccount { get; set; }
     }
 }

@@ -439,7 +439,5 @@ namespace ArchsVsDinosServer.BusinessLogic
                 .Distinct()
                 .ToList();
         }
-
-
     }
 }

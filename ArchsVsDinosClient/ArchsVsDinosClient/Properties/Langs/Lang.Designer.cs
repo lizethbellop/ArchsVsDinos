@@ -187,6 +187,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Tu cuenta ha sido suspendida temporalmente por lenguaje inapropiado en el chat. La suspensión se levanta automáticamente cuando expiren tus infracciones (30 días).
+        /// </summary>
+        public static string Authentication_UserBanned {
+            get {
+                return ResourceManager.GetString("Authentication_UserBanned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Nuevo apodo.
         /// </summary>
         public static string EditNickname_NewNickname {

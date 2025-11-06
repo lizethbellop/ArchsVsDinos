@@ -21,7 +21,7 @@ namespace ArchsVsDinosServer
             this.FriendRequest1 = new HashSet<FriendRequest>();
             this.Friendship = new HashSet<Friendship>();
             this.Friendship1 = new HashSet<Friendship>();
-            this.Strike = new HashSet<Strike>();
+            this.UserHasStrike = new HashSet<UserHasStrike>();
         }
     
         public int idUser { get; set; }
@@ -45,6 +45,6 @@ namespace ArchsVsDinosServer
         public virtual ICollection<Friendship> Friendship1 { get; set; }
         public virtual Player Player { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Strike> Strike { get; set; }
+        public virtual ICollection<UserHasStrike> UserHasStrike { get; set; }
     }
 }

@@ -29,6 +29,9 @@ namespace ArchsVsDinosClient.Utils
                 case LoginResultCode.Authentication_UnexpectedError:
                     return Lang.Authentication_UnexpectedError;
 
+                case LoginResultCode.Authentication_UserBanned:
+                    return Lang.Authentication_UserBanned;
+
                 default:
                     return Lang.Authentication_UnexpectedError;
             }

@@ -14,6 +14,7 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Authentication_EmptyFields,
         [EnumMember] Authentication_InvalidCredentials,
         [EnumMember] Authentication_DatabaseError,
-        [EnumMember] Authentication_UnexpectedError
+        [EnumMember] Authentication_UnexpectedError,
+        [EnumMember] Authentication_UserBanned
     }
 }

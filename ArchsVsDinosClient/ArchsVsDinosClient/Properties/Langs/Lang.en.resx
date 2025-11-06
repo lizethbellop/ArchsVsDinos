@@ -524,5 +524,7 @@
   </data>
   <data name="Match_Attack" xml:space="preserve">
     <value>Provoke!</value>
+  <data name="Authentication_UserBanned" xml:space="preserve">
+    <value>Your account has been temporarily suspended due to inappropriate language in chat. The suspension will be automatically lifted when your violations expire (30 days)</value>
   </data>
 </root>
