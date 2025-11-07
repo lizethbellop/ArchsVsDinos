@@ -8,11 +8,11 @@
         Title="Match" Height="780" Width="1420" ResizeMode="CanResize"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
         WindowStartupLocation="CenterScreen">
-    
+
     <Window.Background>
         <ImageBrush ImageSource="/Resources/Images/matchBackground.png"/>
     </Window.Background>
-    
+
     <Grid Margin="15,15,15,15">
 
         <Grid.RowDefinitions>
@@ -32,7 +32,7 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1.5*"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <Button Grid.Column="0" Content="{x:Static language:Lang.Match_Options}" Height="60" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Foreground="#FF5F0000" FontWeight="Bold"
                      BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
@@ -69,7 +69,24 @@
             </Grid>
 
             <Grid Grid.Column="1">
-                <Image Source="/Resources/Images/logo.png" Stretch="Uniform" HorizontalAlignment="Center" />
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    
+                </Grid>
+                
+                <Grid Grid.Column= "1">
+                    <Image Source="/Resources/Images/logo.png" Stretch="Uniform" HorizontalAlignment="Center"/>
+                </Grid>
+
+                <Grid Grid.Column= "2">
+
+                </Grid>
             </Grid>
 
             <Grid Grid.Column="2">
@@ -130,9 +147,40 @@
 
                     <!-- Left player name -->
                     <Grid Grid.Row="0">
-                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="6*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <Button>
+                                <Button.Background>
+                                    <ImageBrush ImageSource="/Resources/Images/eye.png"/>
+                                </Button.Background>
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                            CornerRadius="5" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+
+                        <Grid Grid.Column="1">
+
+                        </Grid>
                     </Grid>
-                    
+
                     <!--Left player cards -->
                     <Grid Grid.Row="1" Margin="45,0,0,0">
                         <UniformGrid Rows="3" Columns="2">
@@ -303,9 +351,83 @@
                             </Button>
                         </Grid>
                     </Grid>
+
+                    <!-- See at my deck and pass turn-->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1.3*"/>
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2.7*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="1">
+                                <Button>
+                                    <Button.Background>
+                                        <ImageBrush ImageSource="/Resources/Images/eye.png"/>
+                                    </Button.Background>
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="border" Background="{TemplateBinding Background}" 
+                CornerRadius="5" BorderThickness="0">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="5*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="1" Margin="0,10,0,0">
+                                <Button Grid.Column="0" Content="{x:Static language:Lang.Match_PassTurn}" 
+                                    Foreground="White" FontWeight="Bold"
+                                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
+                                    <Button.Background>
+                                        <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
+                                    </Button.Background>
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" BorderThickness="0">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                    </Grid>
                 </Grid>
             </Grid>
-            
+
             <!-- Center panel -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -456,8 +578,8 @@
                     </UniformGrid>
 
                 </Grid>
-                
-                
+
+
                 <!-- Center -->
                 <Grid Grid.Row="1">
                     <Grid.Background>
@@ -717,7 +839,7 @@
             </Grid>
 
             <!-- Right panel -->
-            <Grid Grid.Column="2">
+            <Grid Grid.Column="2" Margin="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*"/>
                     <RowDefinition Height="1.2*"/>
@@ -732,8 +854,38 @@
                     </Grid.RowDefinitions>
 
                     <!-- Right player name -->
-                    <Grid Grid.Row="0">
+                    <Grid Grid.Row="0" Margin="0,0,-45,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
 
+                        <Grid Grid.Column="0">
+
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Button>
+                                <Button.Background>
+                                    <ImageBrush ImageSource="/Resources/Images/eye.png"/>
+                                </Button.Background>
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                            CornerRadius="5" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
                     </Grid>
 
                     <!-- Right player cards -->
@@ -909,45 +1061,6 @@
 
         </Grid>
 
-        <!-- <Grid VerticalAlignment="Bottom" HorizontalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width=".1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width=".1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width=".1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width=".1*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-
-            <Grid Grid.Column="0">
-                <Border Background="#222" CornerRadius="4" Margin="4"
-                    />
-            </Grid>
-
-            <Grid Grid.Column="2">
-                <Border Background="#222" CornerRadius="4" Margin="4"
-                    />
-            </Grid>
-            
-            <Grid Grid.Column="4">
-                <Border Background="#222" CornerRadius="4" Margin="4"
-                    />
-            </Grid>
-            
-            <Grid Grid.Column="6">
-                <Border Background="#222" CornerRadius="4" Margin="4"
-                    />
-            </Grid>
-
-            <Grid Grid.Column="8">
-                <Border Background="#222" CornerRadius="4" Margin="4"
-                    />
-            </Grid>
-        </Grid> -->
-        
     </Grid>
-    
+
 </Window>

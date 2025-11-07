@@ -682,6 +682,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Pasar turno.
+        /// </summary>
+        public static string Match_PassTurn {
+            get {
+                return ResourceManager.GetString("Match_PassTurn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Tiradas restantes.
         /// </summary>
         public static string Match_PlaysRemaining {

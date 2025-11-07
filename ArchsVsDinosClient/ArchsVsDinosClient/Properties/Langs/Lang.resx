@@ -528,4 +528,7 @@
   <data name="Authentication_UserBanned" xml:space="preserve">
     <value>Tu cuenta ha sido suspendida temporalmente por lenguaje inapropiado en el chat. La suspensión se levanta automáticamente cuando expiren tus infracciones (30 días)</value>
   </data>
+  <data name="Match_PassTurn" xml:space="preserve">
+    <value>Pasar turno</value>
+  </data>
 </root>

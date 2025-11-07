@@ -472,6 +472,7 @@
     <Resource Include="Resources\Images\windLogo.png" />
     <Resource Include="Resources\Images\bossLogo.png" />
     <Resource Include="Resources\Images\chatLogo.png" />
+    <Resource Include="Resources\Images\eye.png" />
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
