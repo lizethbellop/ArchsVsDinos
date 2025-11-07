@@ -77,7 +77,16 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid Grid.Column="0">
-                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="1.8*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="1">
+                        <Viewbox Stretch="Uniform">
+                            <Label Visibility="Visible"  Content="Player 2" Name="Lb_TopPlayerName" FontFamily="Trebuchet MS" Foreground="White" FontWeight="Bold"/>
+                        </Viewbox>
+                    </Grid>
                 </Grid>
                 
                 <Grid Grid.Column= "1">
@@ -85,7 +94,41 @@
                 </Grid>
 
                 <Grid Grid.Column= "2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
 
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3.1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="1">
+                            <Button>
+                                <Button.Background>
+                                    <ImageBrush ImageSource="/Resources/Images/eye.png"/>
+                                </Button.Background>
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                CornerRadius="5" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Grid>
 
@@ -177,7 +220,9 @@
                         </Grid>
 
                         <Grid Grid.Column="1">
-
+                            <Viewbox Stretch="Uniform">
+                                <Label Visibility="Visible"  Content="Player 3" Name="Lb_LeftPlayerName" FontFamily="Trebuchet MS" Foreground="White" FontWeight="Bold"/>
+                            </Viewbox>
                         </Grid>
                     </Grid>
 
@@ -312,6 +357,7 @@
                             </Border>
                         </UniformGrid>
                     </Grid>
+
                 </Grid>
 
                 <Grid Grid.Row="1">
@@ -328,7 +374,7 @@
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="1">
-                            <Button Grid.Column="0">
+                            <Button Click="Click_BtnChat" Name="Btn_Chat" Visibility="Visible" Grid.Column="0">
                                 <Button.Background>
                                     <ImageBrush ImageSource="/Resources/Images/chatLogo.png"/>
                                 </Button.Background>
@@ -374,7 +420,7 @@
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="border" Background="{TemplateBinding Background}" 
-                CornerRadius="5" BorderThickness="0">
+                                                CornerRadius="5" BorderThickness="0">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
@@ -426,6 +472,68 @@
 
                     </Grid>
                 </Grid>
+                
+                <!-- Chat  -->
+                <Grid Name="Gr_Chat" Grid.RowSpan="2" Visibility="Collapsed">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="13*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!-- Chat -->
+                    <Grid Grid.Row="0" Background="White" Opacity="0.7">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="10*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <!-- Close chat button -->
+                        <Grid Grid.Row="0">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="1" Margin="2,2,2,2">
+                                <Button Click="Click_BtnClose">
+                                    <Button.Background>
+                                        <ImageBrush ImageSource="/Resources/Images/close.png"/>
+                                    </Button.Background>
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="5" BorderThickness="0">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </Grid>
+                        </Grid>
+
+                        <!-- General chat -->
+                        <Grid Grid.Row="1">
+                            
+                        </Grid>
+                        
+                    </Grid>
+                    
+                    <!-- Write message zone -->
+                    <Grid Grid.Row="1" Background="#FFB4B7FF" Opacity="0.7">
+                        <TextBox TextWrapping="NoWrap" FontFamily="Trebuchet MS" Background="#FFB4B7FF"  Margin="10,0,10,0" VerticalAlignment="Center"  FontSize="18" TextChanged="TextBox_TextChanged"/>
+                    </Grid>
+                </Grid>
             </Grid>
 
             <!-- Center panel -->
@@ -439,17 +547,8 @@
                 <!-- Top player -->
                 <Grid Grid.Row="0" Margin="5,5,5,5">
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Top player name -->
-                    <Grid Grid.Column="0">
-
-                    </Grid>
-
                     <!-- Top player cards-->
-                    <UniformGrid Grid.Column="1" Columns="6" Rows="1">
+                    <UniformGrid Columns="6" Rows="1">
                         <UniformGrid.Resources>
                             <Style x:Key="backgroundCellsColor" TargetType="Border">
                                 <Setter Property="Background" Value="#40FFFFFF"/>
@@ -861,7 +960,9 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0">
-
+                            <Viewbox Stretch="Uniform">
+                                <Label Visibility="Visible" Content="Player 4" Name="Lb_RightPlayerName" FontFamily="Trebuchet MS" Foreground="White" FontWeight="Bold"/>
+                            </Viewbox>
                         </Grid>
                         <Grid Grid.Column="1">
                             <Button>
@@ -1021,6 +1122,7 @@
                     </Grid>
                 </Grid>
 
+                <!-- Provoke now -->
                 <Grid Grid.Row="1" Margin="20,0,20,0">
                     <Button Grid.Column="0" 
                         Foreground="#FFFFF900" FontWeight="Bold"

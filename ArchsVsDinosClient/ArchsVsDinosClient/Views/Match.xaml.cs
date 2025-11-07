@@ -23,5 +23,24 @@ namespace ArchsVsDinosClient.Views
         {
             InitializeComponent();
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Click_BtnChat(object sender, RoutedEventArgs e)
+        {
+            Gr_Chat.Visibility = Visibility.Visible;
+            Btn_Chat.Visibility = Visibility.Collapsed;
+        }
+
+        private void Click_BtnClose(object sender, RoutedEventArgs e)
+        {
+            Gr_Chat.Visibility = Visibility.Collapsed;
+            Btn_Chat.Visibility = Visibility.Visible;
+        }
+
+
     }
 }
