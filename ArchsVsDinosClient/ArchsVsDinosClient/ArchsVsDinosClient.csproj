@@ -105,6 +105,10 @@
     <Compile Include="ViewModels\EditPasswordViewModel.cs" />
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />
+    <Compile Include="ViewModels\UpdateInstagramViewModel.cs" />
+    <Compile Include="ViewModels\UpdateTikTokViewModel.cs" />
+    <Compile Include="ViewModels\UpdateXViewModel.cs" />
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>
     </Compile>

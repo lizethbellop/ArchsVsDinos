@@ -1,7 +1,9 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +25,17 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
     /// </summary>
     public partial class UpdateTikTok : Window
     {
+        private readonly UpdateTikTokViewModel viewModel;
+
         public UpdateTikTok()
         {
             InitializeComponent();
+            viewModel = new UpdateTikTokViewModel(
+                new ProfileServiceClient(),
+                new MessageService()
+            );
+            DataContext = viewModel;
+            viewModel.RequestClose += OnRequestClose;
         }
 
         private void Click_BtnCancel(object sender, RoutedEventArgs e)
@@ -34,37 +44,11 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             this.Close();
         }
 
-        private void Click_BtnSave(object sender, RoutedEventArgs e)
+        private async void Click_BtnSave(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
-
-            string currentUsername = UserSession.Instance.currentUser.username;
-            string newTikTokLink = TxtB_TikTokLink.Text;
-
-            if (!ValidateInputs(newTikTokLink))
-            {
-                MessageBox.Show(Lang.GlobalEmptyField);
-                return;
-            }
-
-            try
-            {
-                ProfileManagerClient profileManagerClient = new ProfileManagerClient();
-                UpdateResponse response = profileManagerClient.UpdateTikTok(currentUsername, newTikTokLink);
-
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                MessageBox.Show(message);
-
-                if (response.Success)
-                {
-                    this.Close();
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error de conexión con el servidor");
-            }
+            viewModel.NewTikTokLink = TxtB_TikTokLink.Text;
+            await viewModel.SaveTikTokLink();
         }
 
         private bool ValidateInputs(string tiktokLink)
@@ -75,6 +59,11 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             }
 
             return true;
+        }
+
+        private void OnRequestClose(object sender, System.EventArgs e)
+        {
+            this.Close();
         }
     }
 }

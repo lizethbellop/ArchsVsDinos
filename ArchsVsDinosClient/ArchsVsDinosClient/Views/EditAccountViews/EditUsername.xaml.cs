@@ -44,7 +44,7 @@ namespace ArchsVsDinosClient.Views
             this.Close();
         }
 
-        private async Task Click_BtnSave(object sender, RoutedEventArgs e)
+        private async void Click_BtnSave(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
 

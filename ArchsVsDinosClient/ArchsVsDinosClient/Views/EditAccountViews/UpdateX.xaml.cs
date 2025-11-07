@@ -1,7 +1,9 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +25,17 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
     /// </summary>
     public partial class UpdateX : Window
     {
+        private readonly UpdateXViewModel viewModel;
+
         public UpdateX()
         {
             InitializeComponent();
+            viewModel = new UpdateXViewModel(
+                new ProfileServiceClient(),
+                new MessageService()
+            );
+            DataContext = viewModel;
+            viewModel.RequestClose += OnRequestClose;
         }
 
         private void Click_BtnCancel(object sender, RoutedEventArgs e)
@@ -34,37 +44,11 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             this.Close();
         }
 
-        private void Click_BtnSave(object sender, RoutedEventArgs e)
+        private async void Click_BtnSave(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
-
-            string currentUsername = UserSession.Instance.currentUser.username;
-            string newXLink = TxtB_XLink.Text;
-
-            if (!ValidateInputs(newXLink))
-            {
-                MessageBox.Show(Lang.GlobalEmptyField);
-                return;
-            }
-
-            try
-            {
-                ProfileManagerClient profileManagerClient = new ProfileManagerClient();
-                UpdateResponse response = profileManagerClient.UpdateX(currentUsername, newXLink);
-
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                MessageBox.Show(message);
-
-                if (response.Success)
-                {
-                    this.Close();
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error de conexión con el servidor");
-            }
+            viewModel.NewXLink = TxtB_XLink.Text;
+            await viewModel.SaveXLink();
         }
 
         private bool ValidateInputs(string xLink)
@@ -75,6 +59,11 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             }
 
             return true;
+        }
+
+        private void OnRequestClose(object sender, System.EventArgs e)
+        {
+            this.Close();
         }
     }
 }

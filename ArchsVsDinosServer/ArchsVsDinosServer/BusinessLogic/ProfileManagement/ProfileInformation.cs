@@ -33,18 +33,15 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             try
             {
                 var response = new UpdateResponse();
-
                 if (UpdateIsEmpty(username, newNickname))
                 {
                     response.Success = false;
                     response.ResultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
-
                 using (var context = GetContext())
                 {
                     var userAccount = context.UserAccount.FirstOrDefault(u => u.username == username);
-
                     if (userAccount == null)
                     {
                         response.Success = false;
@@ -52,14 +49,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         return response;
                     }
 
-                    if (userAccount.nickname == newNickname)
-                    {
-                        response.Success = false;
-                        response.ResultCode = UpdateResultCode.Profile_SameNicknameValue;
-                        return response;
-                    }
-
-                    if (context.UserAccount.Any(u => u.nickname == newNickname))
+                    if (context.UserAccount.Any(u => u.nickname.ToLower() == newNickname.ToLower() && u.username != username))
                     {
                         response.Success = false;
                         response.ResultCode = UpdateResultCode.Profile_NicknameExists;
@@ -68,7 +58,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 
                     userAccount.nickname = newNickname;
                     context.SaveChanges();
-
                     response.Success = true;
                     response.ResultCode = UpdateResultCode.Profile_ChangeNicknameSuccess;
                     return response;
@@ -91,26 +80,15 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             try
             {
                 var response = new UpdateResponse();
-
                 if (UpdateIsEmpty(currentUsername, newUsername))
                 {
                     response.Success = false;
                     response.ResultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
-
-
                 using (var context = GetContext())
                 {
-                    if (context.UserAccount.Any(u => u.username == newUsername))
-                    {
-                        response.Success = false;
-                        response.ResultCode = UpdateResultCode.Profile_UsernameExists;
-                        return response;
-                    }
-
                     var userAccount = context.UserAccount.FirstOrDefault(u => u.username == currentUsername);
-
                     if (userAccount == null)
                     {
                         response.Success = false;
@@ -118,19 +96,17 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         return response;
                     }
 
-                    if (userAccount.username == newUsername)
+                    if (context.UserAccount.Any(u => u.username.ToLower() == newUsername.ToLower() && u.username != currentUsername))
                     {
                         response.Success = false;
-                        response.ResultCode = UpdateResultCode.Profile_SameUsernameValue;
+                        response.ResultCode = UpdateResultCode.Profile_UsernameExists;
                         return response;
                     }
 
                     userAccount.username = newUsername;
                     context.SaveChanges();
-
                     response.Success = true;
                     response.ResultCode = UpdateResultCode.Profile_ChangeUsernameSuccess;
-
                     return response;
                 }
             }
@@ -141,7 +117,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al obtener el perfil: {ex.Message}");
+                loggerHelper.LogError($"Error al actualizar el username: {ex.Message}", ex);
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
