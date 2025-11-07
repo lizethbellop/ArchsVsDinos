@@ -7,7 +7,6 @@ using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,23 +14,24 @@ using System.Windows;
 
 namespace ArchsVsDinosClient.ViewModels
 {
-    public class EditNicknameViewModel
+    public class EditPasswordViewModel
     {
         private readonly IProfileServiceClient profileService;
         private readonly IMessageService messageService;
 
-        public string NewNickname { get; set; }
+        public string CurrentPassword { get; set; }
+        public string NewPassword { get; set; }
         public event EventHandler RequestClose;
 
-        public EditNicknameViewModel(IProfileServiceClient profileService, IMessageService messageService)
+        public EditPasswordViewModel(IProfileServiceClient profileService, IMessageService messageService)
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
         }
 
-        public async Task SaveEditNickname()
+        public async Task SaveEditPassword()
         {
-            if (!IsValidNickname(NewNickname))
+            if (!AreValidPasswords(CurrentPassword, NewPassword))
             {
                 messageService.ShowMessage(Lang.GlobalEmptyField);
                 return;
@@ -40,15 +40,13 @@ namespace ArchsVsDinosClient.ViewModels
             try
             {
                 string currentUsername = UserSession.Instance.currentUser.username;
-                UpdateResponse response = await profileService.UpdateNicknameAsync(currentUsername, NewNickname);
+                UpdateResponse response = await profileService.ChangePassworsAsync(currentUsername, CurrentPassword, NewPassword);
 
                 string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
                 messageService.ShowMessage(message);
 
                 if (response.Success)
                 {
-                    UserSession.Instance.currentUser.nickname = NewNickname;
-                    UserProfileObserver.Instance.NotifyProfileUpdated();
                     RequestClose?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -71,9 +69,9 @@ namespace ArchsVsDinosClient.ViewModels
             }
         }
 
-        private static bool IsValidNickname(string nickname)
+        private static bool AreValidPasswords(string currentPassword, string newPassword)
         {
-            return !string.IsNullOrWhiteSpace(nickname);
+            return !string.IsNullOrWhiteSpace(currentPassword) && !string.IsNullOrWhiteSpace(newPassword);
         }
     }
 }

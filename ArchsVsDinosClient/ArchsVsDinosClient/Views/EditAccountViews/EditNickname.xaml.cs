@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using System;
@@ -28,7 +29,10 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
         public EditNickname()
         {
             InitializeComponent();
-            viewModel = new EditNicknameViewModel();
+            viewModel = new EditNicknameViewModel(
+                new ProfileServiceClient(), 
+                new MessageService()
+            );
             DataContext = viewModel;
             viewModel.RequestClose += OnRequestClose;
         }
@@ -43,7 +47,7 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
         {
             SoundButton.PlayMovingRockSound();
 
-           viewModel.NewNickname = TxtB_NewNickname.Text;
+            viewModel.NewNickname = TxtB_NewNickname.Text;
 
             await viewModel.SaveEditNickname();
 
@@ -61,7 +65,6 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
         private void OnRequestClose(object sender, System.EventArgs e)
         {
-            new MainWindow().ShowDialog();
             this.Close();
         }
 

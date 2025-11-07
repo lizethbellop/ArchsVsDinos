@@ -1,7 +1,9 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +25,17 @@ namespace ArchsVsDinosClient.Views
     /// </summary>
     public partial class EditPassword : Window
     {
+
+        private readonly EditPasswordViewModel viewModel;
         public EditPassword()
         {
             InitializeComponent();
+            viewModel = new EditPasswordViewModel(
+                new ProfileServiceClient(),
+                new MessageService()
+            );
+            DataContext = viewModel;
+            viewModel.RequestClose += OnRequestClose;
         }
 
         private void Click_BtnCancel(object sender, RoutedEventArgs e)
@@ -37,36 +47,9 @@ namespace ArchsVsDinosClient.Views
         private void Click_BtnSave(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
-
-            string currentUsername = UserSession.Instance.currentUser.username;
-            string currentPassword = Pb_CurrentPassword.Password;
-            string newPassword = Pb_NewPasword.Password;
-
-            if (!ValidateInputs(currentPassword, newPassword))
-            {
-                MessageBox.Show(Lang.GlobalEmptyField);
-                return;
-            }
-
-            try
-            {
-                ProfileManagerClient profileManagerClient = new ProfileManagerClient();
-                UpdateResponse response = profileManagerClient.ChangePassword(currentUsername, currentPassword, newPassword);
-
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                MessageBox.Show(message);
-
-
-                if (response.Success)
-                {
-                    this.Close();
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error de conexión con el servidor");
-            }
+            viewModel.CurrentPassword = Pb_CurrentPassword.Password;
+            viewModel.NewPassword = Pb_NewPasword.Password;
+            await viewModel.SaveEditPassword();
 
         }
 
@@ -79,6 +62,11 @@ namespace ArchsVsDinosClient.Views
             }
 
             return true;
+        }
+
+        private void OnRequestClose(object sender, System.EventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -102,6 +102,8 @@
     <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Utils\UserProfileObserver.cs" />
     <Compile Include="ViewModels\EditNicknameViewModel.cs" />
+    <Compile Include="ViewModels\EditPasswordViewModel.cs" />
+    <Compile Include="ViewModels\EditUsernameViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>

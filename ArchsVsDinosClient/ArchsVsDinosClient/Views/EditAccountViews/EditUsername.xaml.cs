@@ -1,7 +1,9 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,10 +25,17 @@ namespace ArchsVsDinosClient.Views
     /// </summary>
     public partial class EditUsername : Window
     {
+
+        private readonly EditUsernameViewModel viewModel;
         public EditUsername()
         {
             InitializeComponent();
-
+            viewModel = new EditUsernameViewModel(
+                new ProfileServiceClient(),
+                new MessageService()
+            );
+            DataContext = viewModel;
+            viewModel.RequestClose += OnRequestClose;
         }
 
         private void Click_BtnCancel(object sender, RoutedEventArgs e)
@@ -35,40 +44,13 @@ namespace ArchsVsDinosClient.Views
             this.Close();
         }
 
-        private void Click_BtnSave(object sender, RoutedEventArgs e)
+        private async Task Click_BtnSave(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
 
-            string currentUsername = UserSession.Instance.currentUser.username;
-            string newUsername = TxtB_NewUsername.Text;
+            viewModel.NewUsername = TxtB_NewUsername.Text;
 
-            if (!ValidateInputs(newUsername))
-            {
-                MessageBox.Show(Lang.GlobalEmptyField);
-                return;
-            }
-
-            try
-            {
-                ProfileManagerClient profileManagerClient = new ProfileManagerClient();
-                UpdateResponse response = profileManagerClient.UpdateUsername(currentUsername, newUsername);
-
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                MessageBox.Show(message);
-
-                if (response.Success)
-                {
-                    UserSession.Instance.currentUser.username = newUsername;
-                    UserProfileObserver.Instance.NotifyProfileUpdated();
-                    this.Close();
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error de conexión con el servidor");
-            }
-
+            await viewModel.SaveEditUsername();
         }
 
         private bool ValidateInputs(string username)
@@ -79,6 +61,11 @@ namespace ArchsVsDinosClient.Views
             }
 
             return true;
+        }
+
+        private void OnRequestClose(object sender, System.EventArgs e)
+        {
+            this.Close();
         }
     }
 }
