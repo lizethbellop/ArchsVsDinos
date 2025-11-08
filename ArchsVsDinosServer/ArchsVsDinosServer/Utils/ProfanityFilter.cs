@@ -23,16 +23,22 @@ namespace ArchsVsDinosServer.Utils
 
         public ProfanityFilter()
         {
-
+            bannedWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
         private void LoadBannedWords(string filePath)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(filePath))
+                {
+                    loggerHelper?.LogWarning("Banned words file path is null or empty");
+                    return;
+                }
+
                 if (!File.Exists(filePath))
                 {
-                    loggerHelper.LogWarning($"Banned words file not found at: {filePath}");
+                    loggerHelper?.LogWarning($"Banned words file not found at: {filePath}");
                     return;
                 }
 
@@ -45,27 +51,27 @@ namespace ArchsVsDinosServer.Utils
                     bannedWords.Add(word);
                 }
 
-                loggerHelper.LogInfo($"Successfully loaded {bannedWords.Count} banned words from file");
+                loggerHelper?.LogInfo($"Successfully loaded {bannedWords.Count} banned words from file");
             }
             catch (UnauthorizedAccessException ex)
             {
-                loggerHelper.LogError($"Access denied when reading banned words file: {filePath}", ex);
+                loggerHelper?.LogError($"Access denied when reading banned words file: {filePath}", ex);
             }
             catch (FileNotFoundException ex)
             {
-                loggerHelper.LogError($"Banned words file not found: {filePath}", ex);
+                loggerHelper?.LogError($"Banned words file not found: {filePath}", ex);
             }
             catch (DirectoryNotFoundException ex)
             {
-                loggerHelper.LogError($"Directory not found for banned words file: {filePath}", ex);
+                loggerHelper?.LogError($"Directory not found for banned words file: {filePath}", ex);
             }
             catch (IOException ex)
             {
-                loggerHelper.LogError($"IO error reading banned words file: {ex.Message}", ex);
+                loggerHelper?.LogError($"IO error reading banned words file: {ex.Message}", ex);
             }
             catch (Exception ex)
             {
-                loggerHelper.LogWarning($"Unexpected error loading banned words: {ex.Message}");
+                loggerHelper?.LogWarning($"Unexpected error loading banned words: {ex.Message}");
             }
         }
 
@@ -76,6 +82,11 @@ namespace ArchsVsDinosServer.Utils
             try
             {
                 if (string.IsNullOrWhiteSpace(message))
+                {
+                    return false;
+                }
+
+                if (bannedWords == null || bannedWords.Count == 0)
                 {
                     return false;
                 }
@@ -104,17 +115,17 @@ namespace ArchsVsDinosServer.Utils
             }
             catch (RegexMatchTimeoutException ex)
             {
-                loggerHelper.LogError($"Regex timeout while checking profanity in message", ex);
+                loggerHelper?.LogError($"Regex timeout while checking profanity in message", ex);
                 return false;
             }
             catch (ArgumentException ex)
             {
-                loggerHelper.LogError($"Invalid regex pattern in profanity filter: {ex.Message}", ex);
+                loggerHelper?.LogError($"Invalid regex pattern in profanity filter: {ex.Message}", ex);
                 return false;
             }
             catch (Exception ex)
             {
-                loggerHelper.LogWarning($"Unexpected error checking profanity: {ex.Message}");
+                loggerHelper?.LogWarning($"Unexpected error checking profanity: {ex.Message}");
                 return false;
             }
         }
@@ -137,7 +148,7 @@ namespace ArchsVsDinosServer.Utils
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error normalizing message: {ex.Message}", ex);
+                loggerHelper?.LogError($"Error normalizing message: {ex.Message}", ex);
                 return message;
             }
         }

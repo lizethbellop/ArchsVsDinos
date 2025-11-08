@@ -35,7 +35,7 @@ namespace ArchsVsDinosClient
 
         private void Click_BtnRegister(object sender, RoutedEventArgs e)
         {
-            new Match().ShowDialog();
+            new Match("obearman87").ShowDialog();
 
         }
 

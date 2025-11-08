@@ -7,6 +7,7 @@ using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -23,7 +24,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             public IChatManagerCallback Callback { get; set; }
         }
 
-        // CORREGIDO: Cambiado de IChatManagerCallback a UserConnection
         private static readonly ConcurrentDictionary<string, UserConnection> ConnectedUsers = new ConcurrentDictionary<string, UserConnection>();
         private const string DefaultRoom = "Lobby";
         private readonly ILoggerHelper loggerHelper;
@@ -34,14 +34,24 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             this.loggerHelper = loggerHelper;
             this.contextFactory = contextFactory;
-            // CORREGIDO: Pasar las dependencias necesarias a StrikeManager usando las mismas instancias
+
             var dependencies = new ServiceDependencies(
                 new Wrappers.SecurityHelperWrapper(),
                 new Wrappers.ValidationHelperWrapper(),
                 loggerHelper,
                 contextFactory
             );
-            this.strikeManager = new StrikeManager(dependencies, new ProfanityFilter());
+
+            const string DATA_FOLDER = "Data";
+            const string BANNED_WORDS_FILE = "bannedWords.txt";
+            string bannedWordsPath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                DATA_FOLDER,
+                BANNED_WORDS_FILE
+            );
+
+            var profanityFilter = new ProfanityFilter(loggerHelper, bannedWordsPath);
+            this.strikeManager = new StrikeManager(dependencies, profanityFilter);
         }
 
         public Chat(ILoggerHelper loggerHelper)
@@ -62,7 +72,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return;
             }
 
-            // Obtener userId de la base de datos
             int userId = GetUserIdFromUsername(username);
             if (userId == 0)
             {
@@ -70,9 +79,21 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     callback.ReceiveSystemNotification(ChatResultCode.Chat_Error, "User not found");
                 }
-                catch (Exception ex)
+                catch (CommunicationObjectAbortedException ex)
                 {
-                    loggerHelper.LogWarning($"Error sending notification to {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Communication object aborted for {username}: {ex.Message}");
+                }
+                catch (CommunicationException ex)
+                {
+                    loggerHelper.LogWarning($"Communication error sending notification to {username}: {ex.Message}");
+                }
+                catch (TimeoutException ex)
+                {
+                    loggerHelper.LogWarning($"Timeout sending notification to {username}: {ex.Message}");
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    loggerHelper.LogWarning($"Object disposed for {username}: {ex.Message}");
                 }
                 return;
             }
@@ -89,9 +110,21 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     callback.ReceiveSystemNotification(ChatResultCode.Chat_UserAlreadyConnected, "User already connected");
                 }
-                catch (Exception ex)
+                catch (CommunicationObjectAbortedException ex)
                 {
-                    loggerHelper.LogWarning($"Error sending notification to {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Communication object aborted for {username}: {ex.Message}");
+                }
+                catch (CommunicationException ex)
+                {
+                    loggerHelper.LogWarning($"Communication error sending notification to {username}: {ex.Message}");
+                }
+                catch (TimeoutException ex)
+                {
+                    loggerHelper.LogWarning($"Timeout sending notification to {username}: {ex.Message}");
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    loggerHelper.LogWarning($"Object disposed for {username}: {ex.Message}");
                 }
                 return;
             }
@@ -99,7 +132,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserConnected, $"{username} has joined");
             UpdateUserList();
         }
-
 
         public void Disconnect(string username)
         {
@@ -179,7 +211,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 SafeCallbackInvoke(user.Key, () =>
                 {
-                    // CORREGIDO: Acceder a través de .Callback
                     user.Value.Callback.ReceiveSystemNotification(code, message);
                 });
             }
@@ -191,7 +222,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 SafeCallbackInvoke(user.Key, () =>
                 {
-                    // CORREGIDO: Acceder a través de .Callback
                     user.Value.Callback.ReceiveMessage(DefaultRoom, fromUser, message);
                 });
             }
@@ -205,7 +235,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 SafeCallbackInvoke(user.Key, () =>
                 {
-                    // CORREGIDO: Acceder a través de .Callback
                     user.Value.Callback.UpdateUserList(users);
                 });
             }

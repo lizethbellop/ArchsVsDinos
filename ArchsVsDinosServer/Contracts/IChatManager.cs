@@ -19,7 +19,5 @@ namespace Contracts
         
         [OperationContract(IsOneWay = true)]
         void SendMessageToRoom(string message, string username);
-
-
     }
 }
