@@ -23,7 +23,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Título Principal -->
+        <!-- Main Title -->
         <StackPanel Grid.Row="0" Margin="0,10,0,15" HorizontalAlignment="Center">
             <Label Content="{x:Static language:Lang.FriendsMainMenu_FriendsTitle}" 
                    FontFamily="{StaticResource Volcanic Dungeon}" 
@@ -32,7 +32,7 @@
                    Foreground="#FF295B07"/>
         </StackPanel>
 
-        <!-- Contenido Principal: 3 Columnas -->
+        <!-- Main Content: 3 Columns -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -42,7 +42,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- COLUMNA 1: Lista de Amigos -->
+            <!-- COLUMN 1: Friends List -->
             <Border Grid.Column="0" CornerRadius="10" BorderBrush="#FF196572" BorderThickness="2" Background="White">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -107,7 +107,7 @@
                 </Grid>
             </Border>
 
-            <!-- COLUMNA 2: Solicitudes Pendientes -->
+            <!-- COLUMN 2: Pending Requests -->
             <Border Grid.Column="2" CornerRadius="10" BorderBrush="#FFFFAA00" BorderThickness="2" Background="White">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -137,6 +137,7 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
+                                        <!-- Request sender info -->
                                         <Grid Grid.Row="0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -147,7 +148,8 @@
                                                 <Label Content="📩" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
                                             </Border>
 
-                                            <TextBlock Grid.Column="1" Text="{Binding SenderUsername}" 
+                                            <!-- Bind directly to string (username) -->
+                                            <TextBlock Grid.Column="1" Text="{Binding}" 
                                                        FontFamily="Trebuchet MS" 
                                                        FontSize="14" 
                                                        VerticalAlignment="Center" 
@@ -155,8 +157,10 @@
                                                        FontWeight="Bold"/>
                                         </Grid>
 
+                                        <!-- Accept/Reject buttons -->
                                         <UniformGrid Grid.Row="1" Columns="2" Margin="0,5,0,0">
-                                            <Button x:Name="BtnAcceptRequest"
+                                            <Button Click="BtnAcceptRequest_Click"
+                                                    Tag="{Binding}"
                                                     Content="{x:Static language:Lang.Friends_Accept}" 
                                                     Height="30" 
                                                     Margin="0,0,5,0"
@@ -183,7 +187,8 @@
                                                 </Button.Template>
                                             </Button>
 
-                                            <Button x:Name="BtnRejectRequest"
+                                            <Button Click="BtnRejectRequest_Click"
+                                                    Tag="{Binding}"
                                                     Content="{x:Static language:Lang.Friends_Reject}" 
                                                     Height="30" 
                                                     Margin="5,0,0,0"
@@ -218,7 +223,7 @@
                 </Grid>
             </Border>
 
-            <!-- COLUMNA 3: Buscar/Agregar Amigos -->
+            <!-- COLUMN 3: Search/Add Friends -->
             <Border Grid.Column="4" CornerRadius="10" BorderBrush="#FF9C27B0" BorderThickness="2" Background="White">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -228,7 +233,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Título -->
+                    <!-- Title -->
                     <Border Grid.Row="0" Background="#FF9C27B0" CornerRadius="8,8,0,0" Padding="10,5">
                         <Label Content="{x:Static language:Lang.Friends_SearchAddFriend}" 
                                FontFamily="Tw Cen MT Condensed Extra Bold" 
@@ -237,7 +242,7 @@
                                HorizontalAlignment="Center"/>
                     </Border>
 
-                    <!-- Buscar Usuario -->
+                    <!-- Search User Section -->
                     <StackPanel Grid.Row="1" Margin="15,15,15,10">
                         <Label Content="{x:Static language:Lang.Friends_SearchUser}" 
                                FontFamily="Tw Cen MT Condensed Extra Bold" 
@@ -255,6 +260,7 @@
                         </Border>
 
                         <Button x:Name="BtnSearchFriend"
+                                Click="BtnSearchFriend_Click"
                                 Content="{x:Static language:Lang.Friends_Search}" 
                                 Height="40" 
                                 Margin="0,10,0,0"
@@ -288,7 +294,7 @@
                         </Button>
                     </StackPanel>
 
-                    <!-- Resultado de Búsqueda -->
+                    <!-- Search Result Panel (Initially Hidden) -->
                     <Border Grid.Row="2" x:Name="SearchResultPanel" 
                             Margin="15,0,15,10" 
                             Padding="10" 
@@ -304,6 +310,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
+                            <!-- Username found -->
                             <TextBlock Grid.Row="0" 
                                        x:Name="TxtSearchResult"
                                        Text="Usuario encontrado" 
@@ -314,6 +321,7 @@
                                        HorizontalAlignment="Center"
                                        Margin="0,0,0,5"/>
 
+                            <!-- Friendship status -->
                             <TextBlock Grid.Row="1" 
                                        x:Name="TxtFriendshipStatus"
                                        Text="¿Son amigos?" 
@@ -323,8 +331,10 @@
                                        HorizontalAlignment="Center"
                                        Margin="0,0,0,10"/>
 
+                            <!-- Send request button -->
                             <Button Grid.Row="2" 
                                     x:Name="BtnSendRequest"
+                                    Click="BtnSendRequest_Click"
                                     Content="{x:Static language:Lang.Friends_SendRequest}" 
                                     Height="35" 
                                     Background="#FF9C27B0" 
@@ -355,7 +365,7 @@
             </Border>
         </Grid>
 
-        <!-- Botón Cerrar -->
+        <!-- Close Button -->
         <UniformGrid Grid.Row="2" HorizontalAlignment="Center" Margin="0,15,0,0">
             <Button Content="{x:Static language:Lang.GlobalCloseText}" 
                     Click="Click_BtnClose" 

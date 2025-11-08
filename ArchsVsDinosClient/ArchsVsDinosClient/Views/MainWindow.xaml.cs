@@ -62,7 +62,8 @@ namespace ArchsVsDinosClient
         private void Click_BtnFriends(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
-            new FriendsMainMenu().ShowDialog();
+            string username = UserSession.Instance.currentUser.username;
+            new FriendsMainMenu(username).ShowDialog();
         }
 
         private void Click_BtnSettings(object sender, RoutedEventArgs e)

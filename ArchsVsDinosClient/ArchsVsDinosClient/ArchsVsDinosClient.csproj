@@ -125,6 +125,7 @@
     <Compile Include="ViewModels\EditNicknameViewModel.cs" />
     <Compile Include="ViewModels\EditPasswordViewModel.cs" />
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
+    <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />

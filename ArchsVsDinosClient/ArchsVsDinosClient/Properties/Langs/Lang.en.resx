@@ -573,4 +573,25 @@
   <data name="Friends_Reject" xml:space="preserve">
     <value>Reject</value>
   </data>
+  <data name="FriendRequest_SentSuccess" xml:space="preserve">
+    <value>Friend request sent</value>
+  </data>
+  <data name="FriendRequest_AcceptedSuccess" xml:space="preserve">
+    <value>Request accepted</value>
+  </data>
+  <data name="FriendRequest_RejectedSuccess" xml:space="preserve">
+    <value>Request rejected</value>
+  </data>
+  <data name="FriendRequest_SentError" xml:space="preserve">
+    <value>Request could not be sent</value>
+  </data>
+  <data name="FriendRequest_AcceptedError" xml:space="preserve">
+    <value>The request could not be accepted</value>
+  </data>
+  <data name="FriendRequest_RejectedError" xml:space="preserve">
+    <value>The request could not be rejected</value>
+  </data>
+  <data name="FriendRequest_NewRequestFrom" xml:space="preserve">
+    <value>New friendship request from {0}</value>
+  </data>
 </root>

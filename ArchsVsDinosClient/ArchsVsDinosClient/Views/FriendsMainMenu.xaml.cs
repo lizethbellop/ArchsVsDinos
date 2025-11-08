@@ -1,4 +1,6 @@
-﻿using ArchsVsDinosClient.Utils;
+﻿using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +19,189 @@ namespace ArchsVsDinosClient.Views
 {
     public partial class FriendsMainMenu : Window
     {
-        public FriendsMainMenu()
+        private readonly FriendsViewModel friendsViewModel;
+        private readonly FriendRequestViewModel friendRequestViewModel;
+        private string currentUsername;
+
+        public FriendsMainMenu(string username)
         {
             InitializeComponent();
+
+            currentUsername = username;
+            friendsViewModel = new FriendsViewModel();
+            friendRequestViewModel = new FriendRequestViewModel(username);
+
+            SubscribeToEvents();
+            InitializeData();
+        }
+
+        private void SubscribeToEvents()
+        {
+            friendsViewModel.FriendsLoaded += OnFriendsLoaded;
+
+            friendRequestViewModel.RequestsLoaded += OnRequestsLoaded;
+            friendRequestViewModel.RequestSent += OnRequestSent;
+            friendRequestViewModel.RequestAccepted += OnRequestAccepted;
+            friendRequestViewModel.RequestRejected += OnRequestRejected;
+            friendRequestViewModel.NewRequestReceived += OnNewRequestReceived;
+
+            BtnSearchFriend.Click += BtnSearchFriend_Click;
+            BtnSendRequest.Click += BtnSendRequest_Click;
+        }
+
+        private void InitializeData()
+        {
+            friendRequestViewModel.Subscribe(currentUsername);
+            friendsViewModel.LoadFriendsAsync(currentUsername);
+            friendRequestViewModel.LoadPendingRequests(currentUsername);
+        }
+
+        private void OnFriendsLoaded(object sender, EventArgs e)
+        {
+            LbFriends.ItemsSource = null;
+            LbFriends.ItemsSource = friendsViewModel.Friends;
+        }
+
+        private void OnRequestsLoaded(object sender, EventArgs e)
+        {
+            LbPendingRequests.ItemsSource = null;
+            LbPendingRequests.ItemsSource = friendRequestViewModel.PendingRequests;
+        }
+
+        private void OnRequestSent(object sender, EventArgs e)
+        {
+            TxtB_SearchUsername.Clear();
+            SearchResultPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private async void OnRequestAccepted(object sender, EventArgs e)
+        {
+            await friendsViewModel.LoadFriendsAsync(currentUsername);
+            friendRequestViewModel.LoadPendingRequests(currentUsername);
+        }
+
+        private void OnRequestRejected(object sender, EventArgs e)
+        {
+            friendRequestViewModel.LoadPendingRequests(currentUsername);
+        }
+
+        private void OnNewRequestReceived(object sender, string fromUser)
+        {
+            friendRequestViewModel.LoadPendingRequests(currentUsername);
+        }
+
+        private async void BtnSearchFriend_Click(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+
+            string searchUsername = TxtB_SearchUsername.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(searchUsername))
+            {
+                MessageBox.Show(Lang.GlobalEmptyField);
+                return;
+            }
+
+            if (searchUsername.Equals(currentUsername, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(Lang.Friend_CannotAddYourself);
+                SearchResultPanel.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            bool areFriends = await friendsViewModel.AreFriendsAsync(currentUsername, searchUsername);
+
+            if (areFriends)
+            {
+                TxtSearchResult.Text = $"👥 {searchUsername}";
+                TxtFriendshipStatus.Text = Lang.Friend_AlreadyFriends;
+                BtnSendRequest.IsEnabled = false;
+                BtnSendRequest.Opacity = 0.5;
+            }
+            else
+            {
+                TxtSearchResult.Text = $"👤 {searchUsername}";
+                TxtFriendshipStatus.Text = Lang.Friend_NotFriends;
+                BtnSendRequest.IsEnabled = true;
+                BtnSendRequest.Opacity = 1.0;
+                BtnSendRequest.Tag = searchUsername;
+            }
+
+            SearchResultPanel.Visibility = Visibility.Visible;
+        }
+
+        private void BtnSendRequest_Click(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+
+            Button button = sender as Button;
+            if (button?.Tag == null)
+            {
+                return;
+            }
+
+            string receiverUsername = button.Tag.ToString();
+            friendRequestViewModel.SendFriendRequest(currentUsername, receiverUsername);
+        }
+
+        private void BtnAcceptRequest_Click(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+
+            Button button = sender as Button;
+            if (button == null)
+            {
+                return;
+            }
+
+            string senderUsername = button.Tag as string;
+            if (string.IsNullOrWhiteSpace(senderUsername))
+            {
+                return;
+            }
+
+            friendRequestViewModel.AcceptFriendRequest(senderUsername, currentUsername);
+        }
+
+        private void BtnRejectRequest_Click(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+
+            Button button = sender as Button;
+            if (button == null)
+            {
+                return;
+            }
+
+            string senderUsername = button.Tag as string;
+            if (string.IsNullOrWhiteSpace(senderUsername))
+            {
+                return;
+            }
+
+            friendRequestViewModel.RejectFriendRequest(senderUsername, currentUsername);
         }
 
         private void Click_BtnClose(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
+
+            UnsubscribeFromEvents();
+            friendRequestViewModel.Unsubscribe(currentUsername);
+            friendRequestViewModel.Dispose();
+
             this.Close();
         }
 
+        private void UnsubscribeFromEvents()
+        {
+            friendsViewModel.FriendsLoaded -= OnFriendsLoaded;
+
+            friendRequestViewModel.RequestsLoaded -= OnRequestsLoaded;
+            friendRequestViewModel.RequestSent -= OnRequestSent;
+            friendRequestViewModel.RequestAccepted -= OnRequestAccepted;
+            friendRequestViewModel.RequestRejected -= OnRequestRejected;
+            friendRequestViewModel.NewRequestReceived -= OnNewRequestReceived;
+        }
     }
 }

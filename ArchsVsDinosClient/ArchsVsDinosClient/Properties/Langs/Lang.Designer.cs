@@ -322,6 +322,69 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo aceptar la solicitud.
+        /// </summary>
+        public static string FriendRequest_AcceptedError {
+            get {
+                return ResourceManager.GetString("FriendRequest_AcceptedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Solicitud aceptada.
+        /// </summary>
+        public static string FriendRequest_AcceptedSuccess {
+            get {
+                return ResourceManager.GetString("FriendRequest_AcceptedSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Nueva solicitud de amistad de {0}.
+        /// </summary>
+        public static string FriendRequest_NewRequestFrom {
+            get {
+                return ResourceManager.GetString("FriendRequest_NewRequestFrom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo rechazar la solicitud.
+        /// </summary>
+        public static string FriendRequest_RejectedError {
+            get {
+                return ResourceManager.GetString("FriendRequest_RejectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Solicitud rechazada.
+        /// </summary>
+        public static string FriendRequest_RejectedSuccess {
+            get {
+                return ResourceManager.GetString("FriendRequest_RejectedSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo enviar la solicitud.
+        /// </summary>
+        public static string FriendRequest_SentError {
+            get {
+                return ResourceManager.GetString("FriendRequest_SentError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Solicitud de amistad enviada.
+        /// </summary>
+        public static string FriendRequest_SentSuccess {
+            get {
+                return ResourceManager.GetString("FriendRequest_SentSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Aceptar.
         /// </summary>
         public static string Friends_Accept {
