@@ -259,6 +259,78 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ya son amigos.
+        /// </summary>
+        public static string Friend_AlreadyFriends {
+            get {
+                return ResourceManager.GetString("Friend_AlreadyFriends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No puedes agregarte a ti mismo como amigo.
+        /// </summary>
+        public static string Friend_CannotAddYourself {
+            get {
+                return ResourceManager.GetString("Friend_CannotAddYourself", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error de base de datos.
+        /// </summary>
+        public static string Friend_DatabaseError {
+            get {
+                return ResourceManager.GetString("Friend_DatabaseError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No son amigos.
+        /// </summary>
+        public static string Friend_NotFriends {
+            get {
+                return ResourceManager.GetString("Friend_NotFriends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Operación Exitosa.
+        /// </summary>
+        public static string Friend_Success {
+            get {
+                return ResourceManager.GetString("Friend_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error inesperado.
+        /// </summary>
+        public static string Friend_UnexpectedError {
+            get {
+                return ResourceManager.GetString("Friend_UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Usuario no encontrado.
+        /// </summary>
+        public static string Friend_UserNotFound {
+            get {
+                return ResourceManager.GetString("Friend_UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Aceptar.
+        /// </summary>
+        public static string Friends_Accept {
+            get {
+                return ResourceManager.GetString("Friends_Accept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Agregar.
         /// </summary>
         public static string Friends_Add {
@@ -291,6 +363,60 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Friends_MyFriends {
             get {
                 return ResourceManager.GetString("Friends_MyFriends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Solicitudes pendientes.
+        /// </summary>
+        public static string Friends_PendingRequests {
+            get {
+                return ResourceManager.GetString("Friends_PendingRequests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Rechazar.
+        /// </summary>
+        public static string Friends_Reject {
+            get {
+                return ResourceManager.GetString("Friends_Reject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Buscar.
+        /// </summary>
+        public static string Friends_Search {
+            get {
+                return ResourceManager.GetString("Friends_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Buscar y Agregar.
+        /// </summary>
+        public static string Friends_SearchAddFriend {
+            get {
+                return ResourceManager.GetString("Friends_SearchAddFriend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Buscar usuario.
+        /// </summary>
+        public static string Friends_SearchUser {
+            get {
+                return ResourceManager.GetString("Friends_SearchUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Enviar solicitud.
+        /// </summary>
+        public static string Friends_SendRequest {
+            get {
+                return ResourceManager.GetString("Friends_SendRequest", resourceCulture);
             }
         }
         

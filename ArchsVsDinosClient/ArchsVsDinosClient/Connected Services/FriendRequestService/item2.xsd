@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8086/?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:element name="SendFriendRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="fromUser" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="toUser" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AcceptFriendRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="fromUser" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="toUser" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RejectFriendRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="fromUser" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="toUser" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPendingRequests">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Subscribe">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SubscribeResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Unsubscribe">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="UnsubscribeResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnFriendRequestSent">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="success" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnFriendRequestAccepted">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="success" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnFriendRequestRejected">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="success" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnPendingRequestsReceived">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="requests" nillable="true" type="q1:ArrayOfstring" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnFriendRequestReceived">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="fromUser" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

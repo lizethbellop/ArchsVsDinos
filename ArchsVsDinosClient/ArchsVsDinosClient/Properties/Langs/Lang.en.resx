@@ -531,4 +531,46 @@
   <data name="Match_PassTurn" xml:space="preserve">
     <value>Pass turn</value>
   </data>
+  <data name="Friend_Success" xml:space="preserve">
+    <value>Operation Successful</value>
+  </data>
+  <data name="Friend_UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="Friend_AlreadyFriends" xml:space="preserve">
+    <value>Already friends</value>
+  </data>
+  <data name="Friend_NotFriends" xml:space="preserve">
+    <value>You are not friends</value>
+  </data>
+  <data name="Friend_CannotAddYourself" xml:space="preserve">
+    <value>You cannot add yourself as a friend</value>
+  </data>
+  <data name="Friend_DatabaseError" xml:space="preserve">
+    <value>Database error</value>
+  </data>
+  <data name="Friend_UnexpectedError" xml:space="preserve">
+    <value>Unexpected error</value>
+  </data>
+  <data name="Friends_PendingRequests" xml:space="preserve">
+    <value>Pending requests</value>
+  </data>
+  <data name="Friends_SearchAddFriend" xml:space="preserve">
+    <value>Search and Add</value>
+  </data>
+  <data name="Friends_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Friends_SearchUser" xml:space="preserve">
+    <value>Search User</value>
+  </data>
+  <data name="Friends_SendRequest" xml:space="preserve">
+    <value>Send request</value>
+  </data>
+  <data name="Friends_Accept" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="Friends_Reject" xml:space="preserve">
+    <value>Reject</value>
+  </data>
 </root>

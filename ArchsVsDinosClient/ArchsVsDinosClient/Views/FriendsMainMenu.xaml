@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="FriendsMainMenu" Height="600" Width="550"
+        Title="FriendsMainMenu" Height="750" Width="900"
         WindowStartupLocation="CenterScreen">
 
     <Window.Background>
@@ -15,146 +15,367 @@
             <GradientStop Color="#FFE8FFBB" Offset="0.988"/>
         </LinearGradientBrush>
     </Window.Background>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Título Principal -->
         <StackPanel Grid.Row="0" Margin="0,10,0,15" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.FriendsMainMenu_FriendsTitle}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="#FF295B07"/>
+            <Label Content="{x:Static language:Lang.FriendsMainMenu_FriendsTitle}" 
+                   FontFamily="{StaticResource Volcanic Dungeon}" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   Foreground="#FF295B07"/>
         </StackPanel>
 
-        <Border Grid.Row="1" CornerRadius="10" BorderBrush="#FF196572" BorderThickness="2" Margin="0,0,0,10" Background="White">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        <!-- Contenido Principal: 3 Columnas -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-                <Border Grid.Row="0" Background="#FF6ABA2A" CornerRadius="8,8,0,0" Padding="10,5">
-                    <Label Content="{x:Static language:Lang.Friends_MyFriends}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="White" HorizontalAlignment="Center"/>
-                </Border>
+            <!-- COLUMNA 1: Lista de Amigos -->
+            <Border Grid.Column="0" CornerRadius="10" BorderBrush="#FF196572" BorderThickness="2" Background="White">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <ListBox Grid.Row="1" x:Name="LbFriends" BorderThickness="0" Background="Transparent" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="5">
-                    <ListBox.Foreground>
-                        <ImageBrush/>
-                    </ListBox.Foreground>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border Margin="5" Padding="10" CornerRadius="8" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background">
-                                                    <Setter.Value>
-                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                            <GradientStop Color="#FFEAFFBB" Offset="0"/>
-                                                            <GradientStop Color="#FFD4F5FF" Offset="1"/>
-                                                        </LinearGradientBrush>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
+                    <Border Grid.Row="0" Background="#FF6ABA2A" CornerRadius="8,8,0,0" Padding="10,5">
+                        <Label Content="{x:Static language:Lang.Friends_MyFriends}" 
+                               FontFamily="Tw Cen MT Condensed Extra Bold" 
+                               FontSize="18" 
+                               Foreground="White" 
+                               HorizontalAlignment="Center"/>
+                    </Border>
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
+                    <ListBox Grid.Row="1" x:Name="LbFriends" 
+                             BorderThickness="0" 
+                             Background="Transparent" 
+                             ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                             Margin="5">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="5" Padding="10" CornerRadius="8" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                <GradientStop Color="#FFEAFFBB" Offset="0"/>
+                                                                <GradientStop Color="#FFD4F5FF" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
 
-                                    <Border Grid.Column="0" Width="35" Height="35" CornerRadius="17.5" Background="#FF6ABA2A" Margin="0,0,10,0">
-                                        <Label Content="👤" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border Grid.Column="0" Width="35" Height="35" CornerRadius="17.5" Background="#FF6ABA2A" Margin="0,0,10,0">
+                                            <Label Content="👤" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
+                                        </Border>
+
+                                        <TextBlock Grid.Column="1" Text="{Binding}" 
+                                                   FontFamily="Trebuchet MS" 
+                                                   FontSize="16" 
+                                                   VerticalAlignment="Center" 
+                                                   Foreground="#FF196572" 
+                                                   FontWeight="Bold"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- COLUMNA 2: Solicitudes Pendientes -->
+            <Border Grid.Column="2" CornerRadius="10" BorderBrush="#FFFFAA00" BorderThickness="2" Background="White">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#FFFFAA00" CornerRadius="8,8,0,0" Padding="10,5">
+                        <Label Content="{x:Static language:Lang.Friends_PendingRequests}" 
+                               FontFamily="Tw Cen MT Condensed Extra Bold" 
+                               FontSize="18" 
+                               Foreground="White" 
+                               HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <ListBox Grid.Row="1" x:Name="LbPendingRequests" 
+                             BorderThickness="0" 
+                             Background="Transparent" 
+                             ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                             Margin="5">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="5" Padding="10" CornerRadius="8" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Grid.Column="0" Width="30" Height="30" CornerRadius="15" Background="#FFFFAA00" Margin="0,0,10,0">
+                                                <Label Content="📩" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
+                                            </Border>
+
+                                            <TextBlock Grid.Column="1" Text="{Binding SenderUsername}" 
+                                                       FontFamily="Trebuchet MS" 
+                                                       FontSize="14" 
+                                                       VerticalAlignment="Center" 
+                                                       Foreground="#FF196572" 
+                                                       FontWeight="Bold"/>
+                                        </Grid>
+
+                                        <UniformGrid Grid.Row="1" Columns="2" Margin="0,5,0,0">
+                                            <Button x:Name="BtnAcceptRequest"
+                                                    Content="{x:Static language:Lang.Friends_Accept}" 
+                                                    Height="30" 
+                                                    Margin="0,0,5,0"
+                                                    FontSize="12" 
+                                                    FontWeight="Bold"
+                                                    Background="#FF4CAF50" 
+                                                    Foreground="White" 
+                                                    BorderBrush="Transparent" 
+                                                    FontFamily="Tw Cen MT Condensed Extra Bold">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="0">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="border" Property="Background" Value="#FF388E3C"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsPressed" Value="True">
+                                                                <Setter TargetName="border" Property="Background" Value="#FF2E7D32"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+
+                                            <Button x:Name="BtnRejectRequest"
+                                                    Content="{x:Static language:Lang.Friends_Reject}" 
+                                                    Height="30" 
+                                                    Margin="5,0,0,0"
+                                                    FontSize="12" 
+                                                    FontWeight="Bold"
+                                                    Background="#FFD32F2F" 
+                                                    Foreground="White" 
+                                                    BorderBrush="Transparent" 
+                                                    FontFamily="Tw Cen MT Condensed Extra Bold">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="0">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="border" Property="Background" Value="#FFB71C1C"/>
+                                                            </Trigger>
+                                                            <Trigger Property="IsPressed" Value="True">
+                                                                <Setter TargetName="border" Property="Background" Value="#FF8B0000"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </UniformGrid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- COLUMNA 3: Buscar/Agregar Amigos -->
+            <Border Grid.Column="4" CornerRadius="10" BorderBrush="#FF9C27B0" BorderThickness="2" Background="White">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Título -->
+                    <Border Grid.Row="0" Background="#FF9C27B0" CornerRadius="8,8,0,0" Padding="10,5">
+                        <Label Content="{x:Static language:Lang.Friends_SearchAddFriend}" 
+                               FontFamily="Tw Cen MT Condensed Extra Bold" 
+                               FontSize="18" 
+                               Foreground="White" 
+                               HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <!-- Buscar Usuario -->
+                    <StackPanel Grid.Row="1" Margin="15,15,15,10">
+                        <Label Content="{x:Static language:Lang.Friends_SearchUser}" 
+                               FontFamily="Tw Cen MT Condensed Extra Bold" 
+                               FontSize="14" 
+                               Foreground="#FF196572"/>
+
+                        <Border CornerRadius="8" Background="White" BorderBrush="Gray" BorderThickness="1" Height="35" Margin="0,5,0,0">
+                            <TextBox x:Name="TxtB_SearchUsername" 
+                                     TextWrapping="NoWrap" 
+                                     FontFamily="Trebuchet MS" 
+                                     BorderThickness="0" 
+                                     Background="Transparent" 
+                                     Padding="10,5" 
+                                     VerticalAlignment="Center"/>
+                        </Border>
+
+                        <Button x:Name="BtnSearchFriend"
+                                Content="{x:Static language:Lang.Friends_Search}" 
+                                Height="40" 
+                                Margin="0,10,0,0"
+                                Foreground="White" 
+                                FontWeight="Bold"
+                                BorderBrush="Transparent" 
+                                FontFamily="Tw Cen MT Condensed Extra Bold" 
+                                FontSize="14">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                            </Button.Background>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border" 
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="10">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
 
-                                    <TextBlock Grid.Column="1" Text="{Binding}" FontFamily="Trebuchet MS" FontSize="16" VerticalAlignment="Center" Foreground="#FF196572" FontWeight="Bold"/>
+                    <!-- Resultado de Búsqueda -->
+                    <Border Grid.Row="2" x:Name="SearchResultPanel" 
+                            Margin="15,0,15,10" 
+                            Padding="10" 
+                            CornerRadius="8" 
+                            Background="#FFF3E5F5" 
+                            BorderBrush="#FF9C27B0" 
+                            BorderThickness="1"
+                            Visibility="Collapsed">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                                    <Button Grid.Column="2" Content="{x:Static language:Lang.FriendsMainMenu_EliminateFriend}" Width="80" Height="30" FontSize="14" FontWeight="Bold"
-                                            Background="#FFD32F2F" Foreground="White" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border x:Name="border" Background="{TemplateBinding Background}"
-                                                        CornerRadius="5" BorderThickness="0">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
+                            <TextBlock Grid.Row="0" 
+                                       x:Name="TxtSearchResult"
+                                       Text="Usuario encontrado" 
+                                       FontFamily="Trebuchet MS" 
+                                       FontSize="14" 
+                                       FontWeight="Bold"
+                                       Foreground="#FF196572" 
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,5"/>
 
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="border" Property="Background" Value="#FFB71C1C"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsPressed" Value="True">
-                                                        <Setter TargetName="border" Property="Background" Value="#FF8B0000"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-        </Border>
+                            <TextBlock Grid.Row="1" 
+                                       x:Name="TxtFriendshipStatus"
+                                       Text="¿Son amigos?" 
+                                       FontFamily="Trebuchet MS" 
+                                       FontSize="12" 
+                                       Foreground="#FF666666" 
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,10"/>
 
-        <StackPanel Grid.Row="2"  Margin="0,0,0,-30" HorizontalAlignment="Center">
-            <UniformGrid>
-                <Label Content="{x:Static language:Lang.Friends_AddFriend}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="#FF196572" HorizontalAlignment="Center"/>
-            </UniformGrid>
-            <UniformGrid Margin="20,0,20,0" HorizontalAlignment="Center">
-                <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="200" Height="29">
-                    <TextBox x:Name="TxtB_Email" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
-                </Border>
-                <Button Content="{x:Static language:Lang.Friends_Add}" Height="45" Width="80" Foreground="White" FontWeight="Bold"
-                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
-                    </Button.Background>
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="13">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="border" Property="Opacity" Value="0.4"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </UniformGrid>
+                            <Button Grid.Row="2" 
+                                    x:Name="BtnSendRequest"
+                                    Content="{x:Static language:Lang.Friends_SendRequest}" 
+                                    Height="35" 
+                                    Background="#FF9C27B0" 
+                                    Foreground="White" 
+                                    FontWeight="Bold"
+                                    BorderBrush="Transparent" 
+                                    FontFamily="Tw Cen MT Condensed Extra Bold" 
+                                    FontSize="13">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#FF7B1FA2"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#FF6A1B9A"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
 
-        </StackPanel>
-
-        <UniformGrid Grid.Row="3" HorizontalAlignment="Center">
-
-            <Button Content="{x:Static language:Lang.GlobalCloseText}" Click="Click_BtnClose" Margin="5" Height="60" Width="120" Foreground="White" FontWeight="Bold" 
-                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+        <!-- Botón Cerrar -->
+        <UniformGrid Grid.Row="2" HorizontalAlignment="Center" Margin="0,15,0,0">
+            <Button Content="{x:Static language:Lang.GlobalCloseText}" 
+                    Click="Click_BtnClose" 
+                    Height="60" 
+                    Width="120" 
+                    Foreground="White" 
+                    FontWeight="Bold" 
+                    BorderBrush="Transparent" 
+                    FontFamily="Tw Cen MT Condensed Extra Bold" 
+                    FontSize="16">
                 <Button.Background>
                     <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
                 </Button.Background>
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="13">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="13">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -163,9 +384,6 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Opacity" Value="0.6"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.4"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

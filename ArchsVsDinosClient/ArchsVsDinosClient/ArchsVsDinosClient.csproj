@@ -68,6 +68,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\FriendRequestService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\FriendService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\LobbyService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -92,12 +102,18 @@
     <Compile Include="Services\AuthenticationServiceClient.cs" />
     <Compile Include="Services\ChatCallbackHandler.cs" />
     <Compile Include="Services\ChatServiceClient.cs" />
+    <Compile Include="Services\FriendRequestCallbackHandler.cs" />
+    <Compile Include="Services\FriendRequestServiceClient.cs" />
+    <Compile Include="Services\FriendServiceClient.cs" />
     <Compile Include="Services\Interfaces\IAuthenticationServiceClient.cs" />
     <Compile Include="Services\Interfaces\IChatServiceClient.cs" />
+    <Compile Include="Services\Interfaces\IFriendRequestServiceClient.cs" />
+    <Compile Include="Services\Interfaces\IFriendServiceClient.cs" />
     <Compile Include="Services\Interfaces\IMessageService.cs" />
     <Compile Include="Services\Interfaces\IProfileServiceClient.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\ProfileServiceClient.cs" />
+    <Compile Include="Utils\FriendResultCodeHelper.cs" />
     <Compile Include="Utils\LoginResultCodeHelper.cs" />
     <Compile Include="Utils\MappingHelper.cs" />
     <Compile Include="Utils\SoundButton.cs">
@@ -109,6 +125,7 @@
     <Compile Include="ViewModels\EditNicknameViewModel.cs" />
     <Compile Include="ViewModels\EditPasswordViewModel.cs" />
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
+    <Compile Include="ViewModels\FriendsViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />
     <Compile Include="ViewModels\UpdateInstagramViewModel.cs" />
@@ -320,6 +337,41 @@
     <None Include="Connected Services\ChatManager\item3.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\FriendRequestService\FriendRequestManager.wsdl" />
+    <None Include="Connected Services\FriendRequestService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FriendRequestService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FriendRequestService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FriendService\ArchsVsDinosClient.FriendService.FriendCheckResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FriendService\ArchsVsDinosClient.FriendService.FriendListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FriendService\ArchsVsDinosClient.FriendService.FriendResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\FriendService\FriendManager.wsdl" />
+    <None Include="Connected Services\FriendService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FriendService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FriendService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FriendService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\FriendService\item4.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.MatchLobbyResultCode.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -421,6 +473,8 @@
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\AuthenticationService\" />
     <WCFMetadataStorage Include="Connected Services\ChatManager\" />
+    <WCFMetadataStorage Include="Connected Services\FriendRequestService\" />
+    <WCFMetadataStorage Include="Connected Services\FriendService\" />
     <WCFMetadataStorage Include="Connected Services\LobbyService\" />
     <WCFMetadataStorage Include="Connected Services\ProfileManagerService\" />
     <WCFMetadataStorage Include="Connected Services\RegisterService\" />
@@ -479,6 +533,20 @@
     <Resource Include="Resources\Images\chatLogo.png" />
     <Resource Include="Resources\Images\eye.png" />
     <Resource Include="Resources\Images\close.png" />
+    <None Include="Connected Services\FriendService\item.disco" />
+    <None Include="Connected Services\FriendService\configuration91.svcinfo" />
+    <None Include="Connected Services\FriendService\configuration.svcinfo" />
+    <None Include="Connected Services\FriendService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\FriendRequestService\item.disco" />
+    <None Include="Connected Services\FriendRequestService\configuration91.svcinfo" />
+    <None Include="Connected Services\FriendRequestService\configuration.svcinfo" />
+    <None Include="Connected Services\FriendRequestService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

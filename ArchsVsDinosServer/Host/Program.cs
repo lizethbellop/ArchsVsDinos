@@ -18,6 +18,8 @@ namespace Host
             using (ServiceHost profileHost = new ServiceHost(typeof(ProfileManager)))
             using (ServiceHost chatHost = new ServiceHost(typeof(ChatManager)))
             using (ServiceHost lobbyHost = new ServiceHost(typeof(MatchLobbyManager)))
+            using (ServiceHost friendHost = new ServiceHost(typeof(FriendManager)))
+            using(ServiceHost friendRequestHost = new ServiceHost(typeof(FriendRequestManager)))
             {
                 try
                 {
@@ -26,6 +28,8 @@ namespace Host
                     profileHost.Open();
                     chatHost.Open();
                     lobbyHost.Open();
+                    friendHost.Open();
+                    friendRequestHost.Open();
                     Console.WriteLine("Server is running");
                     Console.ReadLine();
                 }

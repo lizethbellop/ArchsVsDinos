@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8085/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+  <xs:import schemaLocation="http://localhost:8085/?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="FriendResponse">
+    <xs:sequence>
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="ResultCode" type="q1:FriendResultCode" />
+      <xs:element minOccurs="0" name="Success" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FriendResponse" nillable="true" type="tns:FriendResponse" />
+  <xs:complexType name="FriendListResponse">
+    <xs:sequence>
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Friends" nillable="true" type="q2:ArrayOfstring" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="ResultCode" type="q3:FriendResultCode" />
+      <xs:element minOccurs="0" name="Success" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FriendListResponse" nillable="true" type="tns:FriendListResponse" />
+  <xs:complexType name="FriendCheckResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AreFriends" type="xs:boolean" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="ResultCode" type="q4:FriendResultCode" />
+      <xs:element minOccurs="0" name="Success" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FriendCheckResponse" nillable="true" type="tns:FriendCheckResponse" />
+</xs:schema>
