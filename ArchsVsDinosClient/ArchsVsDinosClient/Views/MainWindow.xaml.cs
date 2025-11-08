@@ -32,7 +32,7 @@ namespace ArchsVsDinosClient
 
         private void ConfigureForTypeSession()
         {
-            if (UserSession.Instance.isGuest)
+            if (UserSession.Instance.IsGuest)
             {
                 Btn_Creatematch.Visibility = Visibility.Collapsed;
                 Btn_Friends.Visibility = Visibility.Collapsed;
@@ -62,7 +62,7 @@ namespace ArchsVsDinosClient
         private void Click_BtnFriends(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
-            string username = UserSession.Instance.currentUser.username;
+            string username = UserSession.Instance.CurrentUser.Username;
             new FriendsMainMenu(username).ShowDialog();
         }
 

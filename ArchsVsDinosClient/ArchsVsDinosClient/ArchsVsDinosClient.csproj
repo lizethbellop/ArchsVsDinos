@@ -128,6 +128,7 @@
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />
     <Compile Include="ViewModels\UpdateInstagramViewModel.cs" />
     <Compile Include="ViewModels\UpdateTikTokViewModel.cs" />
@@ -174,14 +175,14 @@
     <Compile Include="Views\PersonalStatistics.xaml.cs">
       <DependentUpon>PersonalStatistics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Register.xaml.cs">
+    <Compile Include="Views\RegisterViews\ConfirmCode.xaml.cs">
+      <DependentUpon>ConfirmCode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RegisterViews\Register.xaml.cs">
       <DependentUpon>Register.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ConfirmCode.xaml.cs">
-      <DependentUpon>ConfirmCode.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\Account.xaml">
       <SubType>Designer</SubType>
@@ -259,15 +260,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Register.xaml">
+    <Page Include="Views\RegisterViews\ConfirmCode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RegisterViews\Register.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ConfirmCode.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

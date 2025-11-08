@@ -39,7 +39,7 @@ namespace ArchsVsDinosClient.ViewModels
 
             try
             {
-                string currentUsername = UserSession.Instance.currentUser.username;
+                string currentUsername = UserSession.Instance.CurrentUser.Username;
                 UpdateResponse response = await profileService.ChangePassworsAsync(currentUsername, CurrentPassword, NewPassword);
 
                 string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);

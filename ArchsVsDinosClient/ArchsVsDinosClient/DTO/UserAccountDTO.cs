@@ -9,12 +9,12 @@ namespace ArchsVsDinosClient.DTO
 {
     public class UserAccountDTO
     {
-        public string name { get; set; }
-        public string email { get; set; }
-        public string password { get; set; }
-        public string username { get; set; }
-        public string nickname { get; set; }
-        public int idConfiguration { get; set; }
-        public int idPlayer { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Username { get; set; }
+        public string Nickname { get; set; }
+        public int IdConfiguration { get; set; }
+        public int IdPlayer { get; set; }
     }
 }

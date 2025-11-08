@@ -22,7 +22,7 @@ namespace ArchsVsDinosClient.Views
 
         public string EnteredCode { get; private set; }
         public bool IsCancelled { get; private set; } = true;
-       
+
         public ConfirmCode()
         {
             InitializeComponent();
@@ -34,7 +34,7 @@ namespace ArchsVsDinosClient.Views
             SoundButton.PlayMovingRockSound();
             EnteredCode = TxtB_Code.Text;
 
-            if(ValidationHelper.IsEmpty(EnteredCode))
+            if (ValidationHelper.IsEmpty(EnteredCode))
             {
                 MessageBox.Show(Lang.GlobalEmptyField);
                 return;

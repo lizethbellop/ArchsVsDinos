@@ -35,8 +35,8 @@ namespace ArchsVsDinosClient
 
         private void Click_BtnRegister(object sender, RoutedEventArgs e)
         {
-            new Match("obearman87").ShowDialog();
-
+            //new Match("obearman87").ShowDialog();
+            new Register().ShowDialog();
         }
 
         private async void Click_BtnLogin(object sender, RoutedEventArgs e)

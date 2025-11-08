@@ -8,14 +8,14 @@ namespace ArchsVsDinosClient.DTO
 {
     public class PlayerDTO
     {
-        public int idPlayer { get; set; }
-        public string facebook { get; set; }
-        public string instagram { get; set; }
-        public string x { get; set; }
-        public string tiktok { get; set; }
-        public int totalWins { get; set; }
-        public int totalLosses { get; set; }
-        public int totalPoints { get; set; }
-        public string profilePicture { get; set; }
+        public int IdPlayer { get; set; }
+        public string Facebook { get; set; }
+        public string Instagram { get; set; }
+        public string X { get; set; }
+        public string Tiktok { get; set; }
+        public int TotalWins { get; set; }
+        public int TotalLosses { get; set; }
+        public int TotalPoints { get; set; }
+        public string ProfilePicture { get; set; }
     }
 }

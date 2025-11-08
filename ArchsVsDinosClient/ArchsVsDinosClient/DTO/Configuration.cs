@@ -9,8 +9,8 @@ namespace ArchsVsDinosClient.DTO
 {
     internal class Configuration
     {
-        public int idConfiguration { get; set; }
-        public int musicVolume { get; set; }
-        public int soundVolume { get; set; }
+        public int IdConfiguration { get; set; }
+        public int MusicVolume { get; set; }
+        public int SoundVolume { get; set; }
     }
 }

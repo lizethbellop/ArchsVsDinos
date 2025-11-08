@@ -36,7 +36,7 @@ namespace ArchsVsDinosClient.ViewModels
 
             try
             {
-                string currentUsername = UserSession.Instance.currentUser.username;
+                string currentUsername = UserSession.Instance.CurrentUser.Username;
                 UpdateResponse response = await profileService.UpdateTikTokAsync(currentUsername, NewTikTokLink);
 
                 string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);

@@ -8,8 +8,8 @@ namespace ArchsVsDinosClient.DTO.Response
 {
     public class LoginResponse
     {
-        public bool success { get; set; }
-        public UserDTO userSession { get; set; }
-        public PlayerDTO associatedPlayer { get; set; }
+        public bool Success { get; set; }
+        public UserDTO UserSession { get; set; }
+        public PlayerDTO AssociatedPlayer { get; set; }
     }
 }

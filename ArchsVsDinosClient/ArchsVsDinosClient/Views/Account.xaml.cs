@@ -31,12 +31,12 @@ namespace ArchsVsDinosClient.Views
 
         private void LoadUserData()
         {
-            var user = UserSession.Instance.currentUser;
+            var user = UserSession.Instance.CurrentUser;
 
-            TxtUsername.Text = user.username;
-            TxtNickname.Text = user.nickname;
-            TxtEmail.Text = user.email;
-            TxtName.Text = user.name;
+            TxtUsername.Text = user.Username;
+            TxtNickname.Text = user.Nickname;
+            TxtEmail.Text = user.Email;
+            TxtName.Text = user.Name;
         }
 
         private void RefreshUserData()

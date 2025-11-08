@@ -444,7 +444,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="1" Margin="0,10,0,0">
-                                <Button Grid.Column="0" Content="Pass Turn" 
+                                <Button Grid.Column="0" Content="{x:Static language:Lang.Match_PassTurn}"
                                     Foreground="White" FontWeight="Bold"
                                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                                     <Button.Background>

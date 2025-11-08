@@ -39,7 +39,7 @@ namespace ArchsVsDinosClient.ViewModels
 
             try
             {
-                string currentUsername = UserSession.Instance.currentUser.username;
+                string currentUsername = UserSession.Instance.CurrentUser.Username;
                 UpdateResponse response = await profileService.UpdateNicknameAsync(currentUsername, NewNickname);
 
                 string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
@@ -47,7 +47,7 @@ namespace ArchsVsDinosClient.ViewModels
 
                 if (response.Success)
                 {
-                    UserSession.Instance.currentUser.nickname = NewNickname;
+                    UserSession.Instance.CurrentUser.Nickname = NewNickname;
                     UserProfileObserver.Instance.NotifyProfileUpdated();
                     RequestClose?.Invoke(this, EventArgs.Empty);
                 }
