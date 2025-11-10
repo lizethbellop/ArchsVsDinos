@@ -27,6 +27,12 @@ namespace ArchsVsDinosClient.ChatManager {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Chat_ConnectionError = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Chat_MessageBlocked = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Chat_Error = 5,
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -34,10 +40,10 @@ namespace ArchsVsDinosClient.ChatManager {
     public interface IChatManager {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManager/Connect", ReplyAction="http://tempuri.org/IChatManager/ConnectResponse")]
-        ArchsVsDinosClient.ChatManager.ChatResultCode Connect(string username);
+        void Connect(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManager/Connect", ReplyAction="http://tempuri.org/IChatManager/ConnectResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ChatManager.ChatResultCode> ConnectAsync(string username);
+        System.Threading.Tasks.Task ConnectAsync(string username);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/Disconnect")]
         void Disconnect(string username);
@@ -93,11 +99,11 @@ namespace ArchsVsDinosClient.ChatManager {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public ArchsVsDinosClient.ChatManager.ChatResultCode Connect(string username) {
-            return base.Channel.Connect(username);
+        public void Connect(string username) {
+            base.Channel.Connect(username);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ChatManager.ChatResultCode> ConnectAsync(string username) {
+        public System.Threading.Tasks.Task ConnectAsync(string username) {
             return base.Channel.ConnectAsync(username);
         }
         

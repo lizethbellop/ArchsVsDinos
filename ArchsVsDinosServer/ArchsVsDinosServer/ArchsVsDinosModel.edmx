@@ -122,7 +122,7 @@
           <Property Name="nickname" Type="varchar" MaxLength="45" Nullable="false" />
           <Property Name="idConfiguration" Type="int" Nullable="false" />
           <Property Name="idPlayer" Type="int" Nullable="false" />
-          <Property Name="isBanned" Type="bit" Nullable="false" />
+          <Property Name="isBanned" Type="bit" />
         </EntityType>
         <EntityType Name="UserHasStrike">
           <Key>
@@ -458,7 +458,7 @@
 					<Property Name="nickname" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
 					<Property Name="idConfiguration" Type="Int32" Nullable="false" />
 					<Property Name="idPlayer" Type="Int32" Nullable="false" />
-					<Property Name="isBanned" Type="Boolean" Nullable="false" />
+					<Property Name="isBanned" Type="Boolean" />
 					<NavigationProperty Name="Configuration" Relationship="Self.FK__UserAccou__idCon__440B1D61" FromRole="UserAccount" ToRole="Configuration" />
 					<NavigationProperty Name="FriendRequest" Relationship="Self.FK__FriendReq__idRec__4CA06362" FromRole="UserAccount" ToRole="FriendRequest" />
 					<NavigationProperty Name="FriendRequest1" Relationship="Self.FK__FriendReq__idUse__4BAC3F29" FromRole="UserAccount" ToRole="FriendRequest" />
@@ -474,9 +474,9 @@
 					</Key>
 					<Property Name="idStrike" Type="Int32" Nullable="false" />
 					<Property Name="idUser" Type="Int32" Nullable="false" />
-					<Property Name="strikeDate" Type="DateTime" Precision="7" />
 					<NavigationProperty Name="Strike" Relationship="Self.FK__UserHasSt__idStr__5441852A" FromRole="UserHasStrike" ToRole="Strike" />
 					<NavigationProperty Name="UserAccount" Relationship="Self.FK__UserHasSt__idUse__5535A963" FromRole="UserHasStrike" ToRole="UserAccount" />
+          <Property Name="strikeDate" Type="DateTime" Precision="7" />
 				</EntityType>
 				<Association Name="FK__UserAccou__idCon__440B1D61">
 					<End Role="Configuration" Type="Self.Configuration" Multiplicity="1" />
@@ -809,9 +809,9 @@
 					<EntitySetMapping Name="UserHasStrike">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.UserHasStrike">
 							<MappingFragment StoreEntitySet="UserHasStrike">
-								<ScalarProperty Name="idStrike" ColumnName="idStrike" />
-								<ScalarProperty Name="idUser" ColumnName="idUser" />
 								<ScalarProperty Name="strikeDate" ColumnName="strikeDate" />
+                <ScalarProperty Name="idStrike" ColumnName="idStrike" />
+								<ScalarProperty Name="idUser" ColumnName="idUser" />
 							</MappingFragment>
 						</EntityTypeMapping>
 					</EntitySetMapping>

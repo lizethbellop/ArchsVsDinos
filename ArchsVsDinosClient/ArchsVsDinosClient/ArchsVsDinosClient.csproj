@@ -320,12 +320,6 @@
     <None Include="Connected Services\AuthenticationService\item3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\AuthenticationService\item31.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\ChatManager\ArchsVsDinosClient.ChatManager.ChatResultCode.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Connected Services\ChatManager\ChatManager.wsdl" />
     <None Include="Connected Services\ChatManager\item.xsd">
       <SubType>Designer</SubType>
@@ -421,7 +415,7 @@
     <None Include="Connected Services\RegisterService\item3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\RegisterService\item31.xsd">
+    <None Include="Connected Services\RegisterService\item4.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\RegisterService\RegisterManager.wsdl" />
@@ -459,13 +453,6 @@
     <Resource Include="Resources\Images\tableWood.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Connected Services\RegisterService\item.disco" />
-    <None Include="Connected Services\RegisterService\configuration91.svcinfo" />
-    <None Include="Connected Services\RegisterService\configuration.svcinfo" />
-    <None Include="Connected Services\RegisterService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Resource Include="Resources\Images\garra.png" />
     <Resource Include="Resources\Images\Begin.png" />
   </ItemGroup>
@@ -492,35 +479,7 @@
     <Resource Include="Resources\Images\boneButton.png" />
     <Resource Include="Resources\Images\boneDestroyedButton.png" />
     <Resource Include="Resources\Images\noPlayers.png" />
-    <None Include="Connected Services\ProfileManagerService\item.disco" />
-    <None Include="Connected Services\ProfileManagerService\configuration91.svcinfo" />
-    <None Include="Connected Services\ProfileManagerService\configuration.svcinfo" />
-    <None Include="Connected Services\ProfileManagerService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Connected Services\AuthenticationService\item.disco" />
-    <None Include="Connected Services\AuthenticationService\configuration91.svcinfo" />
-    <None Include="Connected Services\AuthenticationService\configuration.svcinfo" />
-    <None Include="Connected Services\AuthenticationService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Resource Include="Resources\Images\logo.png" />
-    <None Include="Connected Services\ChatManager\item.disco" />
-    <None Include="Connected Services\ChatManager\configuration91.svcinfo" />
-    <None Include="Connected Services\ChatManager\configuration.svcinfo" />
-    <None Include="Connected Services\ChatManager\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Connected Services\LobbyService\item.disco" />
-    <None Include="Connected Services\LobbyService\configuration91.svcinfo" />
-    <None Include="Connected Services\LobbyService\configuration.svcinfo" />
-    <None Include="Connected Services\LobbyService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Resource Include="Resources\Images\exit.png" />
     <Resource Include="Resources\Images\matchBackground.png" />
     <Resource Include="Resources\Images\rockFall.png" />
@@ -535,6 +494,41 @@
     <Resource Include="Resources\Images\chatLogo.png" />
     <Resource Include="Resources\Images\eye.png" />
     <Resource Include="Resources\Images\close.png" />
+    <None Include="Connected Services\RegisterService\item.disco" />
+    <None Include="Connected Services\RegisterService\configuration91.svcinfo" />
+    <None Include="Connected Services\RegisterService\configuration.svcinfo" />
+    <None Include="Connected Services\RegisterService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\AuthenticationService\item.disco" />
+    <None Include="Connected Services\AuthenticationService\configuration91.svcinfo" />
+    <None Include="Connected Services\AuthenticationService\configuration.svcinfo" />
+    <None Include="Connected Services\AuthenticationService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\ProfileManagerService\item.disco" />
+    <None Include="Connected Services\ProfileManagerService\configuration91.svcinfo" />
+    <None Include="Connected Services\ProfileManagerService\configuration.svcinfo" />
+    <None Include="Connected Services\ProfileManagerService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\LobbyService\item.disco" />
+    <None Include="Connected Services\LobbyService\configuration91.svcinfo" />
+    <None Include="Connected Services\LobbyService\configuration.svcinfo" />
+    <None Include="Connected Services\LobbyService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\ChatManager\item.disco" />
+    <None Include="Connected Services\ChatManager\configuration91.svcinfo" />
+    <None Include="Connected Services\ChatManager\configuration.svcinfo" />
+    <None Include="Connected Services\ChatManager\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <None Include="Connected Services\FriendService\item.disco" />
     <None Include="Connected Services\FriendService\configuration91.svcinfo" />
     <None Include="Connected Services\FriendService\configuration.svcinfo" />

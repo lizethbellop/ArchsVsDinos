@@ -6,6 +6,8 @@
       <xs:enumeration value="Chat_UserDisconnected" />
       <xs:enumeration value="Chat_UserAlreadyConnected" />
       <xs:enumeration value="Chat_ConnectionError" />
+      <xs:enumeration value="Chat_MessageBlocked" />
+      <xs:enumeration value="Chat_Error" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="ChatResultCode" nillable="true" type="tns:ChatResultCode" />

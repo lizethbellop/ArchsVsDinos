@@ -35,7 +35,6 @@ namespace ArchsVsDinosClient
 
         private void Click_BtnRegister(object sender, RoutedEventArgs e)
         {
-            //new Match("obearman87").ShowDialog();
             new Register().ShowDialog();
         }
 
@@ -56,7 +55,8 @@ namespace ArchsVsDinosClient
         private void Click_BtnPlayAsGuest(object sender, RoutedEventArgs e)
         {
             UserSession.Instance.LoginAsGuest();
-            new MainWindow().ShowDialog();
+            var main = new MainWindow();
+            main.Show();
             this.Close();
         }
         
@@ -91,7 +91,8 @@ namespace ArchsVsDinosClient
 
         private void OnRequestClose(object sender, System.EventArgs e)
         {
-            new MainWindow().ShowDialog();
+            var main = new MainWindow();
+            main.Show();
             this.Close();
         }
 
