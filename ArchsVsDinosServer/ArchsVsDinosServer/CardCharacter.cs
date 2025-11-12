@@ -20,5 +20,6 @@ namespace ArchsVsDinosServer
         public string armyType { get; set; }
         public Nullable<int> power { get; set; }
         public string imagePath { get; set; }
+        public string idCardGlobal { get; set; }
     }
 }
