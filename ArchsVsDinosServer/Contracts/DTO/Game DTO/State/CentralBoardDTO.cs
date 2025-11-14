@@ -11,12 +11,21 @@ namespace Contracts.DTO.Game_DTO.State
     public class CentralBoardDTO
     {
         [DataMember]
-        public ArchArmyDTO LandArmy { get; set; }
+        public int LandArmyCount { get; set; }
 
         [DataMember]
-        public ArchArmyDTO SeaArmy { get; set; }
+        public int SeaArmyCount { get; set; }
 
         [DataMember]
-        public ArchArmyDTO SkyArmy { get; set; }
+        public int SkyArmyCount { get; set; }
+
+        [DataMember]
+        public int LandArmyPower { get; set; }
+
+        [DataMember]
+        public int SeaArmyPower { get; set; }
+
+        [DataMember]
+        public int SkyArmyPower { get; set; }
     }
 }

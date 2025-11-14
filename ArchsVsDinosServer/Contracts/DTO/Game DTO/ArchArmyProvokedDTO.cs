@@ -23,9 +23,6 @@ namespace Contracts.DTO.Game_DTO
         public string ArmyType { get; set; }
 
         [DataMember]
-        public List<CardDTO> ArchCards { get; set; }
-
-        [DataMember]
-        public int TotalArchPower { get; set; }
+        public BattleResultDTO BattleResult { get; set; }
     }
 }

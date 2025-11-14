@@ -55,7 +55,7 @@
     <Compile Include="DTO\Game DTO\DinoDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoPlayedDTO.cs" />
     <Compile Include="DTO\Game DTO\GameEndedDTO.cs" />
-    <Compile Include="DTO\Game DTO\GameInitializeDTO.cs" />
+    <Compile Include="DTO\Game DTO\GameInitializedDTO.cs" />
     <Compile Include="DTO\Game DTO\GameStartedDTO.cs" />
     <Compile Include="DTO\Game DTO\PlayerHandDTO.cs" />
     <Compile Include="DTO\Game DTO\PlayerInGameDTO.cs" />

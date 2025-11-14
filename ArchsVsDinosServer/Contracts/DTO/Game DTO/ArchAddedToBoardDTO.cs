@@ -24,5 +24,8 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public string ArmyType { get; set; }
+
+        [DataMember]
+        public int NewArchCount { get; set; }
     }
 }

@@ -14,12 +14,18 @@ namespace Contracts.DTO.Game_DTO
         public int MatchId { get; set; }
 
         [DataMember]
-        public List<PlayerScoreDTO> FinalScores { get; set; }
+        public string Reason { get; set; }
 
         [DataMember]
         public int WinnerUserId { get; set; }
 
         [DataMember]
         public string WinnerUsername { get; set; }
+
+        [DataMember]
+        public int WinnerPoints { get; set; }
+
+        [DataMember]
+        public List<PlayerScoreDTO> FinalScores { get; set; }
     }
 }

@@ -17,21 +17,27 @@ namespace Contracts.DTO.Game_DTO
         public string ArmyType { get; set; }
 
         [DataMember]
-        public int ArchArmyPower { get; set; }
+        public int ArchPower { get; set; }
 
         [DataMember]
-        public List<DinoBattleDTO> DinosInBattle { get; set; }
+        public bool DinosWon { get; set; }
 
         [DataMember]
-        public int WinnerUserId { get; set; }
+        public int? WinnerUserId { get; set; }
 
         [DataMember]
         public string WinnerUsername { get; set; }
 
         [DataMember]
+        public int WinnerPower { get; set; }
+
+        [DataMember]
         public int PointsAwarded { get; set; }
 
         [DataMember]
-        public bool ArchsWon { get; set; }
+        public List<CardDTO> ArchCards { get; set; }
+
+        [DataMember]
+        public Dictionary<int, int> PlayerPowers { get; set; }
     }
 }

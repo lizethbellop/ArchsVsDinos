@@ -21,5 +21,8 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public int TurnNumber { get; set; }
+
+        [DataMember]
+        public TimeSpan RemainingTime { get; set; }
     }
 }

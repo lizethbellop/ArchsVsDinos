@@ -14,16 +14,22 @@ namespace Contracts.DTO.Game_DTO.State
         public int MatchId { get; set; }
 
         [DataMember]
-        public int CurrentPlayerUserId { get; set; }
+        public bool IsStarted { get; set; }
+
+        [DataMember]
+        public int CurrentTurnUserId { get; set; }
 
         [DataMember]
         public int TurnNumber { get; set; }
 
         [DataMember]
-        public CentralBoardDTO CentralBoard { get; set; }
+        public TimeSpan RemainingTime { get; set; }
 
         [DataMember]
-        public List<PlayerGameStateDTO> PlayersState { get; set; }
+        public List<PlayerInGameDTO> Players { get; set; }
+
+        [DataMember]
+        public CentralBoardDTO CentralBoard { get; set; }
 
         [DataMember]
         public int DrawPile1Count { get; set; }
@@ -36,8 +42,5 @@ namespace Contracts.DTO.Game_DTO.State
 
         [DataMember]
         public int DiscardPileCount { get; set; }
-
-        [DataMember]
-        public bool IsGameEnded { get; set; }
     }
 }

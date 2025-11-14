@@ -17,9 +17,9 @@ namespace Contracts.DTO.Game_DTO
         public string Username { get; set; }
 
         [DataMember]
-        public int TotalPoints { get; set; }
+        public int Points { get; set; }
 
         [DataMember]
-        public int ArchsEaten { get; set; }
+        public int Position { get; set; }
     }
 }

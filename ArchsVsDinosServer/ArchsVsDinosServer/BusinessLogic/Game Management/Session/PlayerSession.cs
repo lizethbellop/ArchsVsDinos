@@ -31,17 +31,72 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Manager.Session
 
         public void AddCard(CardInGame card)
         {
-            hand.Add(card);
+            if (card != null)
+            {
+                hand.Add(card);
+            }
         }
 
-        public void RemoveCard(CardInGame card)
+        public bool RemoveCard(CardInGame card)
         {
-            hand.Remove(card);
+            if (card != null)
+            {
+                return hand.Remove(card);
+            }
+            return false;
+        }
+
+        public CardInGame RemoveCardById(string cardGlobalId)
+        {
+            if (string.IsNullOrWhiteSpace(cardGlobalId))
+            {
+                return null;
+            }
+
+            var card = hand.FirstOrDefault(c => c.IdCardGlobal == cardGlobalId);
+            if (card != null)
+            {
+                hand.Remove(card);
+            }
+
+            return card;
         }
 
         public void AddDino(DinoInstance dino)
         {
-            dinos.Add(dino);
+            if (dino != null)
+            {
+                dinos.Add(dino);
+            }
+        }
+
+        public bool RemoveDino(DinoInstance dino)
+        {
+            if (dino != null)
+            {
+                return dinos.Remove(dino);
+            }
+            return false;
+        }
+
+        public DinoInstance GetDinoByHeadCardId(string headCardId)
+        {
+            if (string.IsNullOrWhiteSpace(headCardId))
+            {
+                return null;
+            }
+
+            return dinos.FirstOrDefault(d => d.HeadCard?.IdCardGlobal == headCardId);
+        }
+
+        public void ClearHand()
+        {
+            hand.Clear();
+        }
+
+        public void ClearDinos()
+        {
+            dinos.Clear();
         }
     }
 }

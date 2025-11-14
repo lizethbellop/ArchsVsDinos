@@ -20,9 +20,12 @@ namespace Contracts.DTO.Game_DTO
         public string PlayerUsername { get; set; }
 
         [DataMember]
-        public CardDTO DinoHead { get; set; }
+        public int DinoInstanceId { get; set; }
 
         [DataMember]
-        public int DinoInstanceId { get; set; }
+        public CardDTO HeadCard { get; set; }
+
+        [DataMember]
+        public string ArmyType { get; set; }
     }
 }

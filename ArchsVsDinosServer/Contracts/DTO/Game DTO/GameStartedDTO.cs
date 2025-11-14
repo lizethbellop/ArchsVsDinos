@@ -30,5 +30,8 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public int DrawPile3Count { get; set; }
+        
+        [DataMember]
+        public DateTime StartTime { get; set; }
     }
 }
