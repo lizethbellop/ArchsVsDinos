@@ -23,7 +23,11 @@ namespace ArchsVsDinosServer.Wrappers
         public DbSet<FriendRequest> FriendRequest => context.FriendRequest;
         public DbSet<Strike> Strike => context.Strike;
         public DbSet<StrikeKind> StrikeKind => context.StrikeKind;
-        public DbSet<UserHasStrike> UserHasStrike => context.UserHasStrike;  // ⬅️ NUEVO
+        public DbSet<UserHasStrike> UserHasStrike => context.UserHasStrike;
+
+        public DbSet<CardBody> CardBody => context.CardBody;
+        public DbSet<CardCharacter> CardCharacter => context.CardCharacter;
+
         public Database Database => context.Database;
 
         public void Dispose()

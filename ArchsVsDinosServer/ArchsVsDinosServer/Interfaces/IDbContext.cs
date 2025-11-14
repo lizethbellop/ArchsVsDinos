@@ -15,7 +15,9 @@ namespace ArchsVsDinosServer.Interfaces
         DbSet<FriendRequest> FriendRequest { get; }
         DbSet<Strike> Strike { get; }
         DbSet<StrikeKind> StrikeKind { get; }
-        DbSet<UserHasStrike> UserHasStrike { get; }  // ⬅️ NUEVO
+        DbSet<UserHasStrike> UserHasStrike { get; }
+        DbSet<CardBody> CardBody { get; }
+        DbSet<CardCharacter> CardCharacter { get; }
         Database Database { get; }
         int SaveChanges();
     }
