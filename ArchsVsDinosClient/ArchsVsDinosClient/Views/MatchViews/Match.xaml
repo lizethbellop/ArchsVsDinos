@@ -1,12 +1,12 @@
-﻿<Window x:Class="ArchsVsDinosClient.Views.Match"
+﻿<Window x:Class="ArchsVsDinosClient.Views.MatchViews.Match"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
+        xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
         mc:Ignorable="d"
         Title="Match" Height="780" Width="1420" ResizeMode="CanResize"
-        xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
+        xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs" xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
         WindowStartupLocation="CenterScreen">
 
     <Window.Background>
@@ -88,7 +88,7 @@
                         </Viewbox>
                     </Grid>
                 </Grid>
-                
+
                 <Grid Grid.Column= "1">
                     <Image Source="/Resources/Images/logo.png" Stretch="Uniform" HorizontalAlignment="Center"/>
                 </Grid>
@@ -173,6 +173,8 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
+
+
             <!-- Left Panel -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
@@ -227,140 +229,14 @@
                     </Grid>
 
                     <!--Left player cards -->
-                    <Grid Grid.Row="1" Margin="45,0,0,0">
-                        <UniformGrid Rows="3" Columns="2">
 
-                            <UniformGrid.Resources>
-                                <Style x:Key="backgroundCellsColor" TargetType="Border">
-                                    <Setter Property="Background" Value="#40FFFFFF"/>
-                                </Style>
-                            </UniformGrid.Resources>
-
-                            <!-- Cell 1 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                       />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 2 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 3 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 4 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 5 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="6">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 6 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="6">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-                        </UniformGrid>
+                    <Grid Grid.Row="1" Margin="45,5,5,5">
+                        <controls:PlayerCell x:Name="LeftPlayerCell"/>
                     </Grid>
 
                 </Grid>
 
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" Margin="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1.15*"/>
@@ -472,7 +348,7 @@
 
                     </Grid>
                 </Grid>
-                
+
                 <!-- Chat  -->
                 <Grid Name="Gr_Chat" Grid.RowSpan="2" Visibility="Collapsed">
 
@@ -480,7 +356,7 @@
                         <RowDefinition Height="13*"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    
+
                     <!-- Chat -->
                     <Grid Grid.Row="0" Background="White" Opacity="0.7">
 
@@ -488,7 +364,7 @@
                             <RowDefinition Height="1*"/>
                             <RowDefinition Height="10*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <!-- Close chat button -->
                         <Grid Grid.Row="0">
 
@@ -531,22 +407,22 @@
 
                             <!-- Mensajes del chat -->
                             <ScrollViewer Grid.Row="0" 
-                  x:Name="ChatScrollViewer"
-                  VerticalScrollBarVisibility="Auto"
-                  Padding="10"
-                  Background="Transparent">
+                          x:Name="ChatScrollViewer"
+                          VerticalScrollBarVisibility="Auto"
+                          Padding="10"
+                          Background="Transparent">
                                 <ItemsControl ItemsSource="{Binding Messages}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border Background="#33000000"
-                            CornerRadius="5"
-                            Padding="8,5"
-                            Margin="0,2">
+                                                CornerRadius="5"
+                                                Padding="8,5"
+                                                Margin="0,2">
                                                 <TextBlock Text="{Binding}" 
-                                   TextWrapping="Wrap"
-                                   Foreground="Black"
-                                   FontSize="13"
-                                   FontFamily="Trebuchet MS"/>
+                                               TextWrapping="Wrap"
+                                               Foreground="Black"
+                                               FontSize="13"
+                                               FontFamily="Trebuchet MS"/>
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -555,16 +431,16 @@
 
                             <!-- Usuarios online -->
                             <Border Grid.Row="1" 
-            Background="#22000000"
-            Padding="8,5"
-            Margin="10,0">
+                                Background="#22000000"
+                                Padding="8,5"
+                                Margin="10,0">
                                 <StackPanel>
                                     <TextBlock Text="Online:" 
-                       FontWeight="SemiBold" 
-                       FontSize="11" 
-                       Foreground="#FF333333"
-                       FontFamily="Trebuchet MS"
-                       Margin="0,0,0,3"/>
+                                       FontWeight="SemiBold" 
+                                       FontSize="11" 
+                                       Foreground="#FF333333"
+                                       FontFamily="Trebuchet MS"
+                                       Margin="0,0,0,3"/>
                                     <ItemsControl ItemsSource="{Binding OnlineUsers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -574,14 +450,14 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Background="#FFB4B7FF"
-                                CornerRadius="8"
-                                Padding="6,2"
-                                Margin="0,0,4,4">
+                                                    CornerRadius="8"
+                                                    Padding="6,2"
+                                                    Margin="0,0,4,4">
                                                     <TextBlock Text="{Binding}" 
-                                       Foreground="White"
-                                       FontSize="10"
-                                       FontWeight="SemiBold"
-                                       FontFamily="Trebuchet MS"/>
+                                                       Foreground="White"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       FontFamily="Trebuchet MS"/>
                                                 </Border>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -622,134 +498,9 @@
                 <Grid Grid.Row="0" Margin="5,5,5,5">
 
                     <!-- Top player cards-->
-                    <UniformGrid Columns="6" Rows="1">
-                        <UniformGrid.Resources>
-                            <Style x:Key="backgroundCellsColor" TargetType="Border">
-                                <Setter Property="Background" Value="#40FFFFFF"/>
-                            </Style>
-                        </UniformGrid.Resources>
-
-                        <!-- Cell 1 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 2 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 3 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 4 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 5 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 6 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-                    </UniformGrid>
-
+                    <Grid>
+                        <controls:PlayerCellHorizontal x:Name="TopPlayerCards"/>
+                    </Grid>
                 </Grid>
 
 
@@ -869,10 +620,6 @@
                         </Grid>
                     </Grid>
 
-                    <!-- My cards and player bottom cards -->
-                    <Grid Grid.Row="2">
-
-                    </Grid>
                 </Grid>
 
                 <Grid Grid.Row="2">
@@ -881,133 +628,11 @@
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
 
-                    <UniformGrid Grid.Column="1" Columns="6" Rows="1">
-                        <UniformGrid.Resources>
-                            <Style x:Key="backgroundCellsColor" TargetType="Border">
-                                <Setter Property="Background" Value="#40FFFFFF"/>
-                            </Style>
-                        </UniformGrid.Resources>
-
-                        <!-- Cell 1 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 2 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 3 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 4 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 5 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-
-                        <!-- Cell 6 -->
-                        <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                            <UniformGrid Rows="3" Columns="3" Margin="1">
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                   />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                                <Border Background="#222" CornerRadius="4" Margin="4"
-                                    />
-                                <Border  CornerRadius="4" Margin="4"/>
-                            </UniformGrid>
-                        </Border>
-                    </UniformGrid>
+                    <!-- Bottom player cards -->
+                    <Grid Grid.Row="0">
+                        <controls:PlayerCellHorizontal x:Name="BottomPlayerCards"/>
+                    </Grid>
+                    
                 </Grid>
             </Grid>
 
@@ -1064,135 +689,8 @@
                     </Grid>
 
                     <!-- Right player cards -->
-                    <Grid Grid.Row="1">
-                        <UniformGrid Rows="3" Columns="2">
-
-                            <UniformGrid.Resources>
-                                <Style x:Key="backgroundCellsColor" TargetType="Border">
-                                    <Setter Property="Background" Value="#40FFFFFF"/>
-                                </Style>
-                            </UniformGrid.Resources>
-
-                            <!-- Cell 1 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 2 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 3 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 4 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="1">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 5 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="6">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-
-                            <!-- Cell 6 -->
-                            <Border Style="{StaticResource backgroundCellsColor}" BorderBrush="#666" BorderThickness="1.5" CornerRadius="6" Margin="6">
-                                <UniformGrid Rows="3" Columns="3" Margin="6">
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                    <Border Background="#222" CornerRadius="4" Margin="4"
-                                        />
-                                    <Border  CornerRadius="4" Margin="4"/>
-                                </UniformGrid>
-                            </Border>
-                        </UniformGrid>
+                    <Grid Grid.Row="1" Margin="5">
+                        <controls:PlayerCell x:Name="RightPlayerCards"/>
                     </Grid>
                 </Grid>
 

@@ -1,5 +1,4 @@
-﻿using ArchsVsDinosClient.Models;
-using ArchsVsDinosClient.Services;
+﻿using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,11 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ArchsVsDinosClient.Views
+namespace ArchsVsDinosClient.Views.MatchViews
 {
-    /// <summary>
-    /// Lógica de interacción para Match.xaml
-    /// </summary>
+
     public partial class Match : Window
     {
         private readonly ChatViewModel chatViewModel;

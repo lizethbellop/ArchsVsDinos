@@ -190,6 +190,7 @@
     <Compile Include="Services\AuthenticationManager.cs" />
     <Compile Include="Services\ChatManager.cs" />
     <Compile Include="Services\FriendManager.cs" />
+    <Compile Include="Services\MatchLobbyCallbackManager.cs" />
     <Compile Include="Services\StrikeManager.cs" />
     <Compile Include="Services\FriendRequestCallbackManager.cs" />
     <Compile Include="Services\FriendRequestManager.cs" />

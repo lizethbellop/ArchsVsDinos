@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosServer.Default;
+using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Utils;
 using Contracts.DTO;
 using Contracts.DTO.Response;
@@ -92,7 +93,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in Register: {ex.Message}");
+                LoggerHelper.LogError($"Unexpected error at Register", ex);
                 return new RegisterResponse
                 {
                     Success = false,
@@ -131,12 +132,12 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (SmtpException ex)
             {
-                Console.WriteLine($"Error sending email : {ex.Message}");
+                LoggerHelper.LogError($"Smtp error at sending email", ex);
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending email : {ex.Message}");
+                LoggerHelper.LogError($"Unexpected error at sending email", ex);
                 return false;
             }
         }

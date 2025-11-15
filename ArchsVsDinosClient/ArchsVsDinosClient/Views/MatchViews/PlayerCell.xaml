@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="ArchsVsDinosClient.Views.MatchViews.PlayerCell"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews">
+
+    <UniformGrid Rows="3" Columns="2">
+        <controls:CardCell x:Name="CombinationCell_1" CellId="IdCombinationCell_1"/>
+        <controls:CardCell x:Name="CombinationCell_2" CellId="IdCombinationCell_2"/>
+        <controls:CardCell x:Name="CombinationCell_3" CellId="IdCombinationCell_3"/>
+        <controls:CardCell x:Name="CombinationCell_4" CellId="IdCombinationCell_4"/>
+        <controls:CardCell x:Name="CombinationCell_5" CellId="IdCombinationCell_5"/>
+        <controls:CardCell x:Name="CombinationCell_6" CellId="IdCombinationCell_6"/>
+    </UniformGrid>
+
+</UserControl>
+

@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="ArchsVsDinosClient.Views.MatchViews.CardCell"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+
+    <Border x:Name="OuterBorder"
+        Background="#40FFFFFF"
+        BorderBrush="#666"
+        BorderThickness="1"
+        CornerRadius="6"
+        Margin="1">
+
+        <UniformGrid Rows="3" Columns="3" Margin="1">
+            <Border x:Name="Part_1" CornerRadius="4" Margin="4"/>
+            <Border x:Name="Part_Head" Background="#222" CornerRadius="4" Margin="4"/>
+            <Border x:Name="Part_3" CornerRadius="4" Margin="4"/>
+
+            <Border x:Name="Part_LeftArm" Background="#222" CornerRadius="4" Margin="4"/>
+            <Border x:Name="Part_Chest" Background="#222" CornerRadius="4" Margin="4"/>
+            <Border x:Name="Part_RightArm" Background="#222" CornerRadius="4" Margin="4"/>
+
+            <Border x:Name="Part_7" CornerRadius="4" Margin="4"/>
+            <Border x:Name="Part_Legs" Background="#222" CornerRadius="4" Margin="4"/>
+            <Border x:Name="Part_9" CornerRadius="4" Margin="4"/>
+        </UniformGrid>
+
+    </Border>
+
+</UserControl>

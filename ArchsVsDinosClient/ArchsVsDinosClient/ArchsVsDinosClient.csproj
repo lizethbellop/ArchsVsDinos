@@ -127,6 +127,7 @@
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
+    <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />
@@ -169,8 +170,17 @@
     <Compile Include="Views\Lobby.xaml.cs">
       <DependentUpon>Lobby.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Match.xaml.cs">
+    <Compile Include="Views\MatchViews\CardCell.xaml.cs">
+      <DependentUpon>CardCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MatchViews\Match.xaml.cs">
       <DependentUpon>Match.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MatchViews\PlayerCell.xaml.cs">
+      <DependentUpon>PlayerCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MatchViews\PlayerCellHorizontal.xaml.cs">
+      <DependentUpon>PlayerCellHorizontal.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PersonalStatistics.xaml.cs">
       <DependentUpon>PersonalStatistics.xaml</DependentUpon>
@@ -252,7 +262,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Match.xaml">
+    <Page Include="Views\MatchViews\CardCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\Match.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\PlayerCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\PlayerCellHorizontal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

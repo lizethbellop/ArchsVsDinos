@@ -14,10 +14,10 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void CreatedMatch(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
 
-        /*
+        
         [OperationContract(IsOneWay = true)]
         void JoinedMatch(LobbyPlayerDTO userAccountDTO);
-
+        /*
         [OperationContract]
         void InvitedFriendToMatch(string username, string matchCode);
 

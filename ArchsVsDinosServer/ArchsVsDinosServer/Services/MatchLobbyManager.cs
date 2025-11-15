@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosServer.BusinessLogic;
 using ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement;
+using ArchsVsDinosServer.Interfaces;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Result_Codes;
@@ -16,7 +17,7 @@ namespace ArchsVsDinosServer.Services
     public class MatchLobbyManager : IMatchLobbyManager
     {
 
-        private LobbyConfiguration lobbyBusinessLogic;
+        private readonly LobbyConfiguration lobbyBusinessLogic;
 
         public MatchLobbyManager()
         {
