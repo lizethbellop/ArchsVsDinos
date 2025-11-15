@@ -13,6 +13,7 @@
           <Property Name="name" Type="varchar" MaxLength="45" Nullable="false" />
           <Property Name="power" Type="int" />
           <Property Name="imagePath" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="idCardGlobal" Type="varchar" MaxLength="45" Nullable="false" />
         </EntityType>
         <EntityType Name="CardCharacter">
           <Key>
@@ -24,6 +25,7 @@
           <Property Name="armyType" Type="varchar" MaxLength="20" Nullable="false" />
           <Property Name="power" Type="int" />
           <Property Name="imagePath" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="idCardGlobal" Type="varchar" MaxLength="45" Nullable="false" />
         </EntityType>
         <EntityType Name="Configuration">
           <Key>
@@ -122,7 +124,7 @@
           <Property Name="nickname" Type="varchar" MaxLength="45" Nullable="false" />
           <Property Name="idConfiguration" Type="int" Nullable="false" />
           <Property Name="idPlayer" Type="int" Nullable="false" />
-          <Property Name="isBanned" Type="bit" />
+          <Property Name="isBanned" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="UserHasStrike">
           <Key>
@@ -336,6 +338,7 @@
 					<Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
 					<Property Name="power" Type="Int32" />
 					<Property Name="imagePath" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="idCardGlobal" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="CardCharacter">
 					<Key>
@@ -347,6 +350,7 @@
 					<Property Name="armyType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
 					<Property Name="power" Type="Int32" />
 					<Property Name="imagePath" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="idCardGlobal" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="Configuration">
 					<Key>
@@ -458,7 +462,7 @@
 					<Property Name="nickname" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
 					<Property Name="idConfiguration" Type="Int32" Nullable="false" />
 					<Property Name="idPlayer" Type="Int32" Nullable="false" />
-					<Property Name="isBanned" Type="Boolean" />
+					<Property Name="isBanned" Type="Boolean" Nullable="false" />
 					<NavigationProperty Name="Configuration" Relationship="Self.FK__UserAccou__idCon__440B1D61" FromRole="UserAccount" ToRole="Configuration" />
 					<NavigationProperty Name="FriendRequest" Relationship="Self.FK__FriendReq__idRec__4CA06362" FromRole="UserAccount" ToRole="FriendRequest" />
 					<NavigationProperty Name="FriendRequest1" Relationship="Self.FK__FriendReq__idUse__4BAC3F29" FromRole="UserAccount" ToRole="FriendRequest" />
@@ -678,7 +682,8 @@
 					<EntitySetMapping Name="CardBody">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.CardBody">
 							<MappingFragment StoreEntitySet="CardBody">
-								<ScalarProperty Name="idCardBody" ColumnName="idCardBody" />
+								<ScalarProperty Name="idCardGlobal" ColumnName="idCardGlobal" />
+                <ScalarProperty Name="idCardBody" ColumnName="idCardBody" />
 								<ScalarProperty Name="name" ColumnName="name" />
 								<ScalarProperty Name="power" ColumnName="power" />
 								<ScalarProperty Name="imagePath" ColumnName="imagePath" />
@@ -688,7 +693,8 @@
 					<EntitySetMapping Name="CardCharacter">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.CardCharacter">
 							<MappingFragment StoreEntitySet="CardCharacter">
-								<ScalarProperty Name="idCardCharacter" ColumnName="idCardCharacter" />
+								<ScalarProperty Name="idCardGlobal" ColumnName="idCardGlobal" />
+                <ScalarProperty Name="idCardCharacter" ColumnName="idCardCharacter" />
 								<ScalarProperty Name="name" ColumnName="name" />
 								<ScalarProperty Name="type" ColumnName="type" />
 								<ScalarProperty Name="armyType" ColumnName="armyType" />

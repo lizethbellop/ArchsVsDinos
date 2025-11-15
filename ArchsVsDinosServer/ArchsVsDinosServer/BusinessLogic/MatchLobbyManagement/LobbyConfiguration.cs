@@ -19,7 +19,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
     {
         
         private readonly ConcurrentDictionary<string, MatchLobby> ActiveMatches = new ConcurrentDictionary<string, MatchLobby>();
-        private readonly MatchLobbyCallbackManager callbackManager = new MatchLobbyCallbackManager(new LoggerHelper());
+        //private readonly MatchLobbyCallbackManager callbackManager = new MatchLobbyCallbackManager(new LoggerHelper());
 
         public MatchLobbyResultCode CreateANewMatch(UserAccountDTO hostUserAccountDTO)
         {
@@ -56,7 +56,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                     return MatchLobbyResultCode.Lobby_MatchLobbyCreationError;
                 }
 
-                callbackManager.CreatedMatch(hostPlayer, matchCode);
+                //callbackManager.CreatedMatch(hostPlayer, matchCode);
 
                 return MatchLobbyResultCode.Lobby_MatchLobbyCreated;
             }

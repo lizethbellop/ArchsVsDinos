@@ -44,6 +44,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\ConfigurationDTO.cs" />
+    <Compile Include="DTO\Game DTO\ArchAddedToBoardDTO.cs" />
+    <Compile Include="DTO\Game DTO\ArchArmyDTO.cs" />
+    <Compile Include="DTO\Game DTO\ArchArmyProvokedDTO.cs" />
+    <Compile Include="DTO\Game DTO\BattleResultDTO.cs" />
+    <Compile Include="DTO\Game DTO\BodyPartAttachedDTO.cs" />
+    <Compile Include="DTO\Game DTO\CardDrawnDTO.cs" />
+    <Compile Include="DTO\Game DTO\CardDTO.cs" />
+    <Compile Include="DTO\Game DTO\DinoBattleDTO.cs" />
+    <Compile Include="DTO\Game DTO\DinoDTO.cs" />
+    <Compile Include="DTO\Game DTO\DinoPlayedDTO.cs" />
+    <Compile Include="DTO\Game DTO\GameEndedDTO.cs" />
+    <Compile Include="DTO\Game DTO\GameInitializedDTO.cs" />
+    <Compile Include="DTO\Game DTO\GameStartedDTO.cs" />
+    <Compile Include="DTO\Game DTO\PlayerHandDTO.cs" />
+    <Compile Include="DTO\Game DTO\PlayerInGameDTO.cs" />
+    <Compile Include="DTO\Game DTO\PlayerScoreDTO.cs" />
+    <Compile Include="DTO\Game DTO\State\CentralBoardDTO.cs" />
+    <Compile Include="DTO\Game DTO\State\GameStateDTO.cs" />
+    <Compile Include="DTO\Game DTO\State\PlayerGameStateDTO.cs" />
+    <Compile Include="DTO\Game DTO\TurnedChangedDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
     <Compile Include="DTO\Response\FriendCheckResponse.cs" />
     <Compile Include="DTO\Response\FriendListResponse.cs" />
@@ -55,10 +75,15 @@
     <Compile Include="DTO\Response\RegisterResponse.cs" />
     <Compile Include="DTO\Response\UpdateResponse.cs" />
     <Compile Include="DTO\Result Codes\ChatResultCode.cs" />
+    <Compile Include="DTO\Result Codes\DrawCardResultCode.cs" />
+    <Compile Include="DTO\Result Codes\EndTurnResultCode.cs" />
     <Compile Include="DTO\Result Codes\FriendRequestResultCode.cs" />
     <Compile Include="DTO\Result Codes\FriendResultCode.cs" />
+    <Compile Include="DTO\Result Codes\GameSetupResultCode.cs" />
     <Compile Include="DTO\Result Codes\MatchLobbyResultCode.cs" />
     <Compile Include="DTO\Result Codes\LoginResultCode.cs" />
+    <Compile Include="DTO\Result Codes\PlayCardResultCode.cs" />
+    <Compile Include="DTO\Result Codes\ProvokeResultCode.cs" />
     <Compile Include="DTO\Result Codes\RegisterResultCode.cs" />
     <Compile Include="DTO\Result Codes\UpdateResultCode.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
@@ -71,6 +96,8 @@
     <Compile Include="IFriendManager.cs" />
     <Compile Include="IFriendRequestCallback.cs" />
     <Compile Include="IFriendRequestManager.cs" />
+    <Compile Include="IGameManager.cs" />
+    <Compile Include="IGameManagerCallback.cs" />
     <Compile Include="IMatchLobbyManager.cs" />
     <Compile Include="IMatchLobbyManagerCallback.cs" />
     <Compile Include="IProfileManager.cs" />
