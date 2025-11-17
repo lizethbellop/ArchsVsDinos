@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views;
+using ArchsVsDinosClient.Views.MatchViews;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,10 @@ namespace ArchsVsDinosClient
             this.Close();
         }
 
+        private void Click_BtnHowToPlay(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void Click_BtnAccount(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
@@ -74,6 +79,7 @@ namespace ArchsVsDinosClient
             SoundButton.PlayMovingRockSound();
             new Settings().ShowDialog();
         }
+
 
 
     }

@@ -538,8 +538,8 @@
 
             <StackPanel VerticalAlignment="Bottom" Margin="5,5,5,5">
 
-                <Button Content="¡INICIAR!" Height="200" Foreground="White" FontWeight="Bold" 
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30">
+                <Button Click="Click_BtnBegin" Content="{x:Static language:Lang.Lobby_BeginText}" Height="200" Foreground="White" FontWeight="Bold" 
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="50">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/Begin.png"/>
                     </Button.Background>
