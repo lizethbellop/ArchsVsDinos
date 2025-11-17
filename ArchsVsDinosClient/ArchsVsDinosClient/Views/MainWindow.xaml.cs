@@ -1,7 +1,11 @@
-﻿using ArchsVsDinosClient.Views;
+﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
+using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,9 +17,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Media;
-using ArchsVsDinosClient.Utils;
-using ArchsVsDinosClient.Models;
 
 namespace ArchsVsDinosClient
 {
@@ -71,6 +72,7 @@ namespace ArchsVsDinosClient
             SoundButton.PlayMovingRockSound();
             new Settings().ShowDialog();
         }
+
 
     }
 }

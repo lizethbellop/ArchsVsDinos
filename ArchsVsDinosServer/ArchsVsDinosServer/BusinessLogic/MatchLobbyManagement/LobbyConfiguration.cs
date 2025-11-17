@@ -18,26 +18,25 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
     public class LobbyConfiguration
     {
         
-        private readonly ConcurrentDictionary<string, MatchLobby> ActiveMatches = new ConcurrentDictionary<string, MatchLobby>();
-        //private readonly MatchLobbyCallbackManager callbackManager = new MatchLobbyCallbackManager(new LoggerHelper());
+        private readonly ConcurrentDictionary<string, Lobby> ActiveMatches = new ConcurrentDictionary<string, Lobby>();
 
-        public MatchLobbyResultCode CreateANewMatch(UserAccountDTO hostUserAccountDTO)
+        public LobbyResultCode CreateANewMatch(UserAccountDTO hostUserAccountDTO)
         {
-            IMatchLobbyManagerCallback callback;
+            ILobbyManagerCallback callback;
 
             try
             {
-                callback = OperationContext.Current.GetCallbackChannel<IMatchLobbyManagerCallback>();
+                callback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
             }
             catch (CommunicationException ex)
             {
                 Console.WriteLine($"Error obtaining the callback: {ex.Message}");
-                return MatchLobbyResultCode.Lobby_ConnectionError;
+                return LobbyResultCode.Lobby_ConnectionError;
             }
             catch (TimeoutException ex)
             {
                 Console.WriteLine($"Timeout while notifying: {ex.Message}");
-                return MatchLobbyResultCode.Lobby_ConnectionError;
+                return LobbyResultCode.Lobby_ConnectionError;
             }
 
             try
@@ -45,25 +44,23 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 string matchCode = CodeGenerator.GenerateMatchCode();
                 var hostPlayer = PlayerCreator.CreateHostPlayer(hostUserAccountDTO.Username, hostUserAccountDTO.Nickname);
 
-                var matchLobby = new MatchLobby
+                var matchLobby = new Lobby
                 {
                     MatchCode = matchCode,
-                    MatchLobbyCallback = callback,
+                    LobbyCallback = callback,
                 };
                 matchLobby.AddPlayer(hostPlayer);
 
                 if (!ActiveMatches.TryAdd(matchCode, matchLobby)){
-                    return MatchLobbyResultCode.Lobby_MatchLobbyCreationError;
+                    return LobbyResultCode.Lobby_LobbyCreationError;
                 }
 
-                //callbackManager.CreatedMatch(hostPlayer, matchCode);
-
-                return MatchLobbyResultCode.Lobby_MatchLobbyCreated;
+                return LobbyResultCode.Lobby_LobbyCreated;
             }
             catch (TimeoutException ex)
             {
                 Console.WriteLine($"Timeout creating the match: {ex.Message}");
-                return MatchLobbyResultCode.Lobby_MatchLobbyCreationError;
+                return LobbyResultCode.Lobby_LobbyCreationError;
             }
         }
     }

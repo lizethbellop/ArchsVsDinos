@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
 {
-    internal class MatchLobby
+    internal class Lobby
     {
         public string MatchCode { get; set; }
         public List<LobbyPlayerDTO> Players { get; set; } = new List<LobbyPlayerDTO>();
-        public IMatchLobbyManagerCallback MatchLobbyCallback { get; set; }
+        public ILobbyManagerCallback LobbyCallback { get; set; }
 
         private const int MaxPlayers = 4;
 

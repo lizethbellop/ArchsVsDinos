@@ -6,7 +6,15 @@
              xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+    <Border x:Name="BorderGlow"
+            BorderThickness="0"
+            CornerRadius="10"
+            BorderBrush="Yellow"
+            SnapsToDevicePixels="True">
+
+        <!-- Aquí va el contenido actual de tu carta -->
+        <Grid>
+            <!-- Imagen, elementos, etc -->
+        </Grid>
+    </Border>
 </UserControl>

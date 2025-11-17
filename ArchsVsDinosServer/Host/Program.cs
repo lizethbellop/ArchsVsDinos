@@ -17,7 +17,7 @@ namespace Host
             using (ServiceHost authenticationHost = new ServiceHost(typeof(AuthenticationManager)))
             using (ServiceHost profileHost = new ServiceHost(typeof(ProfileManager)))
             using (ServiceHost chatHost = new ServiceHost(typeof(ChatManager)))
-            using (ServiceHost lobbyHost = new ServiceHost(typeof(MatchLobbyManager)))
+            using (ServiceHost lobbyHost = new ServiceHost(typeof(LobbyManager)))
             using (ServiceHost friendHost = new ServiceHost(typeof(FriendManager)))
             using(ServiceHost friendRequestHost = new ServiceHost(typeof(FriendRequestManager)))
             {

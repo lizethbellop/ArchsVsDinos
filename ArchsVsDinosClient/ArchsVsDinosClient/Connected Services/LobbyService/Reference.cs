@@ -155,20 +155,20 @@ namespace ArchsVsDinosClient.LobbyService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="MatchLobbyResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
-    public enum MatchLobbyResultCode : int {
+    [System.Runtime.Serialization.DataContractAttribute(Name="LobbyResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum LobbyResultCode : int {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_MatchLobbyCreated = 0,
+        Lobby_LobbyCreated = 0,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_MatchLobbyJoined = 1,
+        Lobby_LobbyJoined = 1,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_MatchLobbyCreationError = 2,
+        Lobby_LobbyCreationError = 2,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_MatchLobbyJoinedError = 3,
+        Lobby_LobbyJoinedError = 3,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Lobby_ConnectionError = 4,
@@ -268,57 +268,60 @@ namespace ArchsVsDinosClient.LobbyService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="LobbyService.IMatchLobbyManager", CallbackContract=typeof(ArchsVsDinosClient.LobbyService.IMatchLobbyManagerCallback))]
-    public interface IMatchLobbyManager {
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="LobbyService.ILobbyManager", CallbackContract=typeof(ArchsVsDinosClient.LobbyService.ILobbyManagerCallback))]
+    public interface ILobbyManager {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMatchLobbyManager/CreateMatch", ReplyAction="http://tempuri.org/IMatchLobbyManager/CreateMatchResponse")]
-        ArchsVsDinosClient.LobbyService.MatchLobbyResultCode CreateMatch(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CreateLobby", ReplyAction="http://tempuri.org/ILobbyManager/CreateLobbyResponse")]
+        ArchsVsDinosClient.LobbyService.LobbyResultCode CreateLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMatchLobbyManager/CreateMatch", ReplyAction="http://tempuri.org/IMatchLobbyManager/CreateMatchResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchLobbyResultCode> CreateMatchAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CreateLobby", ReplyAction="http://tempuri.org/ILobbyManager/CreateLobbyResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IMatchLobbyManagerCallback {
+    public interface ILobbyManagerCallback {
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IMatchLobbyManager/CreatedMatch")]
-        void CreatedMatch(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/CreatedLobby")]
+        void CreatedLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/JoinedLobby")]
+        void JoinedLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO userAccountDTO);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IMatchLobbyManagerChannel : ArchsVsDinosClient.LobbyService.IMatchLobbyManager, System.ServiceModel.IClientChannel {
+    public interface ILobbyManagerChannel : ArchsVsDinosClient.LobbyService.ILobbyManager, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class MatchLobbyManagerClient : System.ServiceModel.DuplexClientBase<ArchsVsDinosClient.LobbyService.IMatchLobbyManager>, ArchsVsDinosClient.LobbyService.IMatchLobbyManager {
+    public partial class LobbyManagerClient : System.ServiceModel.DuplexClientBase<ArchsVsDinosClient.LobbyService.ILobbyManager>, ArchsVsDinosClient.LobbyService.ILobbyManager {
         
-        public MatchLobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance) : 
+        public LobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance) : 
                 base(callbackInstance) {
         }
         
-        public MatchLobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName) : 
+        public LobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName) : 
                 base(callbackInstance, endpointConfigurationName) {
         }
         
-        public MatchLobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, string remoteAddress) : 
+        public LobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, string remoteAddress) : 
                 base(callbackInstance, endpointConfigurationName, remoteAddress) {
         }
         
-        public MatchLobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public LobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(callbackInstance, endpointConfigurationName, remoteAddress) {
         }
         
-        public MatchLobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public LobbyManagerClient(System.ServiceModel.InstanceContext callbackInstance, System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public ArchsVsDinosClient.LobbyService.MatchLobbyResultCode CreateMatch(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO) {
-            return base.Channel.CreateMatch(hostUserAccountDTO);
+        public ArchsVsDinosClient.LobbyService.LobbyResultCode CreateLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO) {
+            return base.Channel.CreateLobby(hostUserAccountDTO);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchLobbyResultCode> CreateMatchAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO) {
-            return base.Channel.CreateMatchAsync(hostUserAccountDTO);
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO) {
+            return base.Channel.CreateLobbyAsync(hostUserAccountDTO);
         }
     }
 }

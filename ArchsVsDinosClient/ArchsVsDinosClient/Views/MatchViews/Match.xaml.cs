@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Services;
+﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -85,33 +86,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
-           // List<CardModel> myCards = ObtenerCartasDelJugador(); // tu método para obtener cartas
-            //ShowMyDeck(myCards);
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
         }
-        /*
-        public void ShowMyDeck(List<CardModel> myCards)
-        {
-            double overlap = 60; // cuánto cubre cada carta la anterior
-            double startY = 0;   // posición inicial
-
-            MyDeckCanvas.Children.Clear();
-
-            for (int i = 0; i < myCards.Count; i++)
-            {
-                var card = new CardControl(); // tu UserControl de carta
-                card.Width = 120;             // ajustar según tu diseño
-                card.Height = 180;
-
-                Canvas.SetLeft(card, i * 30); // desplazamiento horizontal parcial
-                Canvas.SetTop(card, startY);  // todas alineadas abajo
-
-                MyDeckCanvas.Children.Add(card);
-            }
-        }*/
 
         private void Click_BtnChat(object sender, RoutedEventArgs e)
         {

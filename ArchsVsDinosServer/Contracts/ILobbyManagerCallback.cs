@@ -9,29 +9,29 @@ using System.Threading.Tasks;
 namespace Contracts
 {
     [ServiceContract]
-    public interface IMatchLobbyManagerCallback
+    public interface ILobbyManagerCallback
     {
         [OperationContract(IsOneWay = true)]
-        void CreatedMatch(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
+        void CreatedLobby(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
 
         
         [OperationContract(IsOneWay = true)]
-        void JoinedMatch(LobbyPlayerDTO userAccountDTO);
+        void JoinedLobby(LobbyPlayerDTO userAccountDTO);
         /*
         [OperationContract]
-        void InvitedFriendToMatch(string username, string matchCode);
+        void InvitedFriendToLobby(string username, string matchCode);
 
         [OperationContract(IsOneWay = true)]
-        void InvitedByEmailToMatch(string email, string matchCode);
+        void InvitedByEmailToLobby(string email, string matchCode);
 
         [OperationContract(IsOneWay = true)]
-        void ExpelledPlayerFromMatch(LobbyPlayerDTO explledPlayer);
+        void ExpelledPlayerFromLobby(LobbyPlayerDTO explledPlayer);
 
         [OperationContract(IsOneWay = true)]
-        void LeftMatchLobby(LobbyPlayerDTO playerWhoLeft);
+        void LeftLobby(LobbyPlayerDTO playerWhoLeft);
 
         [OperationContract(IsOneWay = true)]
-        void CancelledMatchLobby(string hostUsername);*/
+        void CancelledLobby(string hostUsername);*/
 
     }
 }

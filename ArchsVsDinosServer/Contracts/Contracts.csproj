@@ -80,7 +80,7 @@
     <Compile Include="DTO\Result Codes\FriendRequestResultCode.cs" />
     <Compile Include="DTO\Result Codes\FriendResultCode.cs" />
     <Compile Include="DTO\Result Codes\GameSetupResultCode.cs" />
-    <Compile Include="DTO\Result Codes\MatchLobbyResultCode.cs" />
+    <Compile Include="DTO\Result Codes\LobbyResultCode.cs" />
     <Compile Include="DTO\Result Codes\LoginResultCode.cs" />
     <Compile Include="DTO\Result Codes\PlayCardResultCode.cs" />
     <Compile Include="DTO\Result Codes\ProvokeResultCode.cs" />
@@ -98,8 +98,8 @@
     <Compile Include="IFriendRequestManager.cs" />
     <Compile Include="IGameManager.cs" />
     <Compile Include="IGameManagerCallback.cs" />
-    <Compile Include="IMatchLobbyManager.cs" />
-    <Compile Include="IMatchLobbyManagerCallback.cs" />
+    <Compile Include="ILobbyManager.cs" />
+    <Compile Include="ILobbyManagerCallback.cs" />
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

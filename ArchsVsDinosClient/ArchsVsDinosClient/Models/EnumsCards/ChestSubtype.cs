@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Models
 {
-    internal class ChestSubtype
+    public enum ChestSubtype
     {
+        None, 
+        Complete, 
+        Arms,
+        ArmsLegs
     }
 }

@@ -9,18 +9,18 @@ using System.Text;
 
 namespace ArchsVsDinosServer.Services
 {
-    public class MatchLobbyCallbackManager
+    public class LobbyCallbackManager
     {
 
         public event Action<LobbyPlayerDTO, string> OnCreatedMatch;
         private readonly ILoggerHelper loggerHelper;
 
-        public MatchLobbyCallbackManager(ILoggerHelper loggerHelper)
+        public LobbyCallbackManager(ILoggerHelper loggerHelper)
         {
             this.loggerHelper = loggerHelper;
         }
 
-        public void CreatedMatch(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode)
+        public void CreatedLobby(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode)
         {
             try
             {
@@ -32,7 +32,6 @@ namespace ArchsVsDinosServer.Services
 
                 OnCreatedMatch?.Invoke(hostLobbyPlayerDTO, matchCode);
 
-                loggerHelper.LogInfo($"Notificación de creación de partida enviada a: {hostLobbyPlayerDTO.Username}, código: {matchCode}");
             }
             catch (CommunicationException ex)
             {

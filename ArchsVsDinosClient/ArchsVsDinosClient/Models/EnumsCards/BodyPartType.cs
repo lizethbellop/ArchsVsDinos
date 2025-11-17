@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Models
 {
-    internal class BodyPartType
+    public enum BodyPartType
     {
+        None,
+        Chest,
+        LeftArm,
+        RightArm,
+        Legs
     }
 }

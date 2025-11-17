@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace ArchsVsDinosClient.Views
 {
     public partial class Lobby : Window
     {
+
         public Lobby()
         {
             InitializeComponent();

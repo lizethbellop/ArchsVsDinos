@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Models
 {
-    internal class ElementType
+    public enum ElementType
     {
+        None, 
+        Sea, 
+        Sand, 
+        Wind
     }
 }

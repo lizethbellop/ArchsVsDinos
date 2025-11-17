@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace Contracts.DTO.Result_Codes
 {
     [DataContract]
-    public enum MatchLobbyResultCode
+    public enum LobbyResultCode
     {
-        [EnumMember] Lobby_MatchLobbyCreated,
-        [EnumMember] Lobby_MatchLobbyJoined,
-        [EnumMember] Lobby_MatchLobbyCreationError,
-        [EnumMember] Lobby_MatchLobbyJoinedError,
+        [EnumMember] Lobby_LobbyCreated,
+        [EnumMember] Lobby_LobbyJoined,
+        [EnumMember] Lobby_LobbyCreationError,
+        [EnumMember] Lobby_LobbyJoinedError,
         [EnumMember] Lobby_ConnectionError
     }
 

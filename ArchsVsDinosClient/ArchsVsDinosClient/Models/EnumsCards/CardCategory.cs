@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Models
 {
-    internal class CardCategory
+    public enum CardCategory
     {
+        Arch,
+        DinoHead,
+        BodyPart
     }
 }

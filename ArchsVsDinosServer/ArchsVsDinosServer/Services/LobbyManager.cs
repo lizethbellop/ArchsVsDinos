@@ -14,17 +14,17 @@ using System.Threading.Tasks;
 namespace ArchsVsDinosServer.Services
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class MatchLobbyManager : IMatchLobbyManager
+    public class LobbyManager : ILobbyManager
     {
 
         private readonly LobbyConfiguration lobbyBusinessLogic;
 
-        public MatchLobbyManager()
+        public LobbyManager()
         {
             lobbyBusinessLogic = new LobbyConfiguration();
         }
 
-        public MatchLobbyResultCode CreateMatch(UserAccountDTO hostUserAccountDTO)
+        public LobbyResultCode CreateLobby(UserAccountDTO hostUserAccountDTO)
         {
             return lobbyBusinessLogic.CreateANewMatch(hostUserAccountDTO);
         }

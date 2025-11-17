@@ -98,6 +98,12 @@
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
+    <Compile Include="Models\EnumsCards\BodyPartType.cs" />
+    <Compile Include="Models\Card.cs" />
+    <Compile Include="Models\EnumsCards\CardCategory.cs" />
+    <Compile Include="Models\CardRepository.cs" />
+    <Compile Include="Models\EnumsCards\ChestSubtype.cs" />
+    <Compile Include="Models\EnumsCards\ElementType.cs" />
     <Compile Include="Models\UserSession.cs" />
     <Compile Include="Services\AuthenticationServiceClient.cs" />
     <Compile Include="Services\ChatCallbackHandler.cs" />
@@ -122,13 +128,14 @@
     <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Utils\UserProfileObserver.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
+    <Compile Include="ViewModels\DeckViewModel.cs" />
     <Compile Include="ViewModels\EditNicknameViewModel.cs" />
     <Compile Include="ViewModels\EditPasswordViewModel.cs" />
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
-    <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MatchViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />
@@ -173,6 +180,9 @@
     </Compile>
     <Compile Include="Views\MatchViews\CardCell.xaml.cs">
       <DependentUpon>CardCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MatchViews\DeckCardSelection.xaml.cs">
+      <DependentUpon>DeckCardSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MatchViews\Match.xaml.cs">
       <DependentUpon>Match.xaml</DependentUpon>
@@ -264,6 +274,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\MatchViews\CardCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\DeckCardSelection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -391,7 +405,7 @@
     <None Include="Connected Services\FriendService\item4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.MatchLobbyResultCode.datasource">
+    <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.LobbyResultCode.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Connected Services\LobbyService\item.xsd">
@@ -594,11 +608,6 @@
     <Resource Include="Resources\Images\Cards\Archs\Wind\Power4\A_Wind4_2.png" />
     <Resource Include="Resources\Images\Cards\Archs\Wind\Power5\A_Wind5_1.png" />
     <Resource Include="Resources\Images\Cards\Archs\Wind\Power5\A_Wind5_2.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestArms\Power0\ChestArms_Power0_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestArms\Power1\ChestArms_Power1_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestArms\Power1\ChestArms_Power1_2.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestArms\Power1\ChestArms_Power1_3.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestArms\Power2\ChestArms_Power2_1.png" />
     <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_1.png" />
     <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_2.png" />
     <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_3.png" />
@@ -663,6 +672,11 @@
     <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_5.png" />
     <Resource Include="Resources\Images\Cards\RightArm\Power2\Right_Power2_1.png" />
     <Resource Include="Resources\Images\Cards\RightArm\Power3\Right_Power3_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power0\ChestArms_Power0_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_2.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_3.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power2\ChestArms_Power2_1.png" />
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -671,9 +685,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestArms\Power3\" />
     <Folder Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power2\" />
     <Folder Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power3\" />
+    <Folder Include="Resources\Images\Cards\Chest\ChestArms\Power3\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

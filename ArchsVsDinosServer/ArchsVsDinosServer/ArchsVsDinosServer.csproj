@@ -202,11 +202,11 @@
     <Compile Include="Services\AuthenticationManager.cs" />
     <Compile Include="Services\ChatManager.cs" />
     <Compile Include="Services\FriendManager.cs" />
-    <Compile Include="Services\MatchLobbyCallbackManager.cs" />
+    <Compile Include="Services\LobbyCallbackManager.cs" />
     <Compile Include="Services\StrikeManager.cs" />
     <Compile Include="Services\FriendRequestCallbackManager.cs" />
     <Compile Include="Services\FriendRequestManager.cs" />
-    <Compile Include="Services\MatchLobbyManager.cs" />
+    <Compile Include="Services\LobbyManager.cs" />
     <Compile Include="Services\ProfileManager.cs" />
     <Compile Include="Services\RegisterManager.cs" />
     <Compile Include="Strike.cs">
@@ -226,6 +226,7 @@
     <Compile Include="Utils\ProfanityFilter.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\ServiceDependencies.cs" />
+    <Compile Include="Utils\UnregisteredPlayerGenerator.cs" />
     <Compile Include="Utils\ValidationHelper.cs" />
     <Compile Include="Wrappers\DbContextWrapper.cs" />
     <Compile Include="Wrappers\LoggerHelperWrapper.cs" />
