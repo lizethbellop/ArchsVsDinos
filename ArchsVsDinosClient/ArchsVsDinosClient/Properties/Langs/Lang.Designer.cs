@@ -646,6 +646,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error crando sala, intente de nuevo.
+        /// </summary>
+        public static string Lobby_ErrorCreatingLobby {
+            get {
+                return ResourceManager.GetString("Lobby_ErrorCreatingLobby", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Expulsar.
         /// </summary>
         public static string Lobby_ExpellText {
@@ -696,6 +705,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_InviteFriends {
             get {
                 return ResourceManager.GetString("Lobby_InviteFriends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Sala creada con éxito.
+        /// </summary>
+        public static string Lobby_LobbyCreated {
+            get {
+                return ResourceManager.GetString("Lobby_LobbyCreated", resourceCulture);
             }
         }
         

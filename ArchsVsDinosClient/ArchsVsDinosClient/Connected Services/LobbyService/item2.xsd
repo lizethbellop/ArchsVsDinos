@@ -14,6 +14,7 @@
   <xs:element name="UserAccountDTO" nillable="true" type="tns:UserAccountDTO" />
   <xs:complexType name="LobbyPlayerDTO">
     <xs:sequence>
+      <xs:element minOccurs="0" name="IdPlayer" type="xs:int" />
       <xs:element minOccurs="0" name="IsHost" type="xs:boolean" />
       <xs:element minOccurs="0" name="Nickname" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ProfilePicture" nillable="true" type="xs:string" />

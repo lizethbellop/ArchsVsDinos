@@ -594,4 +594,10 @@
   <data name="FriendRequest_NewRequestFrom" xml:space="preserve">
     <value>Nueva solicitud de amistad de {0}</value>
   </data>
+  <data name="Lobby_LobbyCreated" xml:space="preserve">
+    <value>Sala creada con éxito</value>
+  </data>
+  <data name="Lobby_ErrorCreatingLobby" xml:space="preserve">
+    <value>Error crando sala, intente de nuevo</value>
+  </data>
 </root>

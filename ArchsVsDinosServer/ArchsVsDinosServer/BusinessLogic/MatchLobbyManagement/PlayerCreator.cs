@@ -12,15 +12,15 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
     public static class PlayerCreator
     {
 
-        public static LobbyPlayerDTO CreateHostPlayer(string username, string nickname)
+        public static LobbyPlayerDTO FromLogin(UserAccountDTO userAccount, PlayerDTO player, bool isHost)
         {
-            var profile = new ProfileInformation().GetPlayerByUsername(username);
             return new LobbyPlayerDTO
             {
-                Username = username,
-                Nickname = nickname,
-                ProfilePicture = profile?.ProfilePicture,
-                IsHost = true
+                IdPlayer = player?.IdPlayer ?? 0,
+                Username = userAccount.Username,
+                Nickname = userAccount.Nickname,
+                ProfilePicture = player?.ProfilePicture,
+                IsHost = isHost
             };
         }
 

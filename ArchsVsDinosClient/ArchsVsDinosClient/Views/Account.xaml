@@ -103,7 +103,9 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
+                        <UniformGrid Margin="0,0,0,0">
+                            <Label Content="{x:Static language:Lang.Register_Name}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
+                        </UniformGrid>
                         <TextBlock x:Name="TxtName" FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,15"/>
                     </StackPanel>
 

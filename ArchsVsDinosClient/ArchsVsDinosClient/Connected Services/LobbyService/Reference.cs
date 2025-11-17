@@ -184,6 +184,9 @@ namespace ArchsVsDinosClient.LobbyService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int IdPlayerField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool IsHostField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -202,6 +205,19 @@ namespace ArchsVsDinosClient.LobbyService {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int IdPlayer {
+            get {
+                return this.IdPlayerField;
+            }
+            set {
+                if ((this.IdPlayerField.Equals(value) != true)) {
+                    this.IdPlayerField = value;
+                    this.RaisePropertyChanged("IdPlayer");
+                }
             }
         }
         

@@ -42,7 +42,14 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             try
             {
                 string matchCode = CodeGenerator.GenerateMatchCode();
-                var hostPlayer = PlayerCreator.CreateHostPlayer(hostUserAccountDTO.Username, hostUserAccountDTO.Nickname);
+
+                PlayerDTO player = new ProfileInformation().GetPlayerByUsername(hostUserAccountDTO.Username);
+
+                var hostPlayer = PlayerCreator.FromLogin(
+                    hostUserAccountDTO,
+                    player,
+                    true
+                );
 
                 var matchLobby = new Lobby
                 {

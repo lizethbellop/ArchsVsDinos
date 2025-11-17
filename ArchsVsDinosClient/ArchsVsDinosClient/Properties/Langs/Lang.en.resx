@@ -594,4 +594,10 @@
   <data name="FriendRequest_NewRequestFrom" xml:space="preserve">
     <value>New friendship request from {0}</value>
   </data>
+  <data name="Lobby_LobbyCreated" xml:space="preserve">
+    <value>Lobby successfully created</value>
+  </data>
+  <data name="Lobby_ErrorCreatingLobby" xml:space="preserve">
+    <value>Error creating lobby, try again</value>
+  </data>
 </root>

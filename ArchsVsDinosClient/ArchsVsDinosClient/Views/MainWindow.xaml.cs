@@ -51,7 +51,9 @@ namespace ArchsVsDinosClient
         private void Click_BtnCreateMatch(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
-            new Lobby().ShowDialog();
+            var lobby = new Lobby();
+            lobby.Show();
+            this.Close();
         }
 
         private void Click_BtnAccount(object sender, RoutedEventArgs e)
