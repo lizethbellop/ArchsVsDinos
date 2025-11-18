@@ -167,6 +167,9 @@
     <Compile Include="BusinessLogic\ProfileManagement\ProfileInformation.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\SocialMediaManager.cs" />
     <Compile Include="BusinessLogic\Register.cs" />
+    <Compile Include="BusinessLogic\Statistics\LeaderboardCalculator.cs" />
+    <Compile Include="BusinessLogic\Statistics\MatchResultProcessor.cs" />
+    <Compile Include="BusinessLogic\Statistics\StatisticsHelper.cs" />
     <Compile Include="CardBody.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
@@ -206,6 +209,7 @@
     <Compile Include="Services\FriendManager.cs" />
     <Compile Include="Services\GameManager.cs" />
     <Compile Include="Services\LobbyCallbackManager.cs" />
+    <Compile Include="Services\StatisticsManager.cs" />
     <Compile Include="Services\StrikeManager.cs" />
     <Compile Include="Services\FriendRequestCallbackManager.cs" />
     <Compile Include="Services\FriendRequestManager.cs" />

@@ -85,7 +85,13 @@
     <Compile Include="DTO\Result Codes\PlayCardResultCode.cs" />
     <Compile Include="DTO\Result Codes\ProvokeResultCode.cs" />
     <Compile Include="DTO\Result Codes\RegisterResultCode.cs" />
+    <Compile Include="DTO\Result Codes\SaveMatchResultCode.cs" />
     <Compile Include="DTO\Result Codes\UpdateResultCode.cs" />
+    <Compile Include="DTO\Statistics\LeaderboardEntryDTO.cs" />
+    <Compile Include="DTO\Statistics\MatchHistoryDTO.cs" />
+    <Compile Include="DTO\Statistics\MatchResultDTO.cs" />
+    <Compile Include="DTO\Statistics\PlayerMatchResult.cs" />
+    <Compile Include="DTO\Statistics\PlayerStatisticsDTO.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\ValiUserNickResultDTO.cs" />
@@ -102,6 +108,7 @@
     <Compile Include="ILobbyManagerCallback.cs" />
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
+    <Compile Include="IStatisticsManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
