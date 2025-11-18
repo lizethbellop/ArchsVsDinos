@@ -18,6 +18,9 @@ namespace ArchsVsDinosServer.Interfaces
         DbSet<UserHasStrike> UserHasStrike { get; }
         DbSet<CardBody> CardBody { get; }
         DbSet<CardCharacter> CardCharacter { get; }
+
+        DbSet<GeneralMatch> GeneralMatch { get; }
+        DbSet<MatchParticipants> MatchParticipants { get; }
         Database Database { get; }
         int SaveChanges();
     }

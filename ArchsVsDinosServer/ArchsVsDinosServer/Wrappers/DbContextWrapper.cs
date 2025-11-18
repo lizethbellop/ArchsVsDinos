@@ -28,6 +28,9 @@ namespace ArchsVsDinosServer.Wrappers
         public DbSet<CardBody> CardBody => context.CardBody;
         public DbSet<CardCharacter> CardCharacter => context.CardCharacter;
 
+        public DbSet<GeneralMatch> GeneralMatch => context.GeneralMatch;
+        public DbSet<MatchParticipants> MatchParticipants => context.MatchParticipants;
+
         public Database Database => context.Database;
 
         public void Dispose()

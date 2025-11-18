@@ -30,6 +30,7 @@ namespace ArchsVsDinosServer
         public int totalPoints { get; set; }
         public string tiktok { get; set; }
         public string profilePicture { get; set; }
+        public int totalMatches { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatchParticipants> MatchParticipants { get; set; }

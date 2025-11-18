@@ -94,6 +94,7 @@
           <Property Name="totalPoints" Type="int" Nullable="false" />
           <Property Name="tiktok" Type="varchar" MaxLength="45" />
           <Property Name="profilePicture" Type="varchar" MaxLength="255" />
+          <Property Name="totalMatches" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Strike">
           <Key>
@@ -429,6 +430,7 @@
 					<Property Name="profilePicture" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
 					<NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="Player" ToRole="MatchParticipants" />
 					<NavigationProperty Name="UserAccount" Relationship="Self.FK__UserAccou__idPla__44FF419A" FromRole="Player" ToRole="UserAccount" />
+          <Property Name="totalMatches" Type="Int32" Nullable="false" />
 				</EntityType>
 				<EntityType Name="Strike">
 					<Key>
@@ -766,7 +768,8 @@
 					<EntitySetMapping Name="Player">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.Player">
 							<MappingFragment StoreEntitySet="Player">
-								<ScalarProperty Name="profilePicture" ColumnName="profilePicture" />
+								<ScalarProperty Name="totalMatches" ColumnName="totalMatches" />
+                <ScalarProperty Name="profilePicture" ColumnName="profilePicture" />
 								<ScalarProperty Name="tiktok" ColumnName="tiktok" />
 								<ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
 								<ScalarProperty Name="facebook" ColumnName="facebook" />

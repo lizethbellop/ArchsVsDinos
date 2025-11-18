@@ -21,7 +21,8 @@ namespace ArchsVsDinosServer.Default
             x = "",
             totalWins = 0,
             totalLosses = 0,
-            totalPoints = 0
+            totalPoints = 0,
+            totalMatches = 0
         };
     }
 }
