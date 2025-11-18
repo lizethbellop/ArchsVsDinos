@@ -43,15 +43,15 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 return null;
             }
 
-            // Si es un Arch (bebé), va directo al tablero
-            if (IsArchBaby(card))
+            // Si es un Arch (archLand, archSea, archSky), va directo al tablero
+            if (ArmyTypeHelper.IsArch(card.ArmyType))
             {
-                PlaceArchOnBoard(session.CentralBoard, cardId);
+                PlaceArchOnBoard(session.CentralBoard, cardId, card.ArmyType);
                 session.MarkCardDrawn();
                 return card; // Retornamos la carta para notificar
             }
 
-            // Carta normal va a la mano del jugador
+            // Carta normal (Dino) va a la mano del jugador
             player.AddCard(card);
             session.MarkCardDrawn();
 
@@ -77,7 +77,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
             {
                 DinoInstanceId = nextDinoId++,
                 HeadCard = card,
-                ArmyType = card.ArmyType
+                ArmyType = card.ArmyType // dinoLand, dinoSea o dinoSky
             };
 
             // Remover carta de la mano y agregar dino al jugador
@@ -138,27 +138,20 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
             return session.Players.ToList()[nextIndex];
         }
 
-        private bool IsArchBaby(CardInGame card)
+        private void PlaceArchOnBoard(CentralBoard board, string cardId, string armyType)
         {
-            return card != null &&
-                   card.ArmyType != null &&
-                   card.ArmyType.ToLower() == "arch";
-        }
-
-        private void PlaceArchOnBoard(CentralBoard board, string cardId)
-        {
-            if (board == null || string.IsNullOrWhiteSpace(cardId))
+            if (board == null || string.IsNullOrWhiteSpace(cardId) || string.IsNullOrWhiteSpace(armyType))
             {
                 return;
             }
 
-            var card = cardHelper.CreateCardInGame(cardId);
-            if (card == null)
+            string baseType = ArmyTypeHelper.GetBaseType(armyType);
+            if (string.IsNullOrWhiteSpace(baseType))
             {
                 return;
             }
 
-            var army = board.GetArmyByType(card.ArmyType);
+            var army = board.GetArmyByType(baseType);
             if (army != null)
             {
                 army.Add(cardId);

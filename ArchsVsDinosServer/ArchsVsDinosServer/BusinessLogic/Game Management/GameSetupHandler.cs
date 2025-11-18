@@ -5,6 +5,7 @@ using ArchsVsDinosServer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,21 +74,20 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                         continue;
                     }
 
-                    // Si es un Arch (bebé), ponerlo en el tablero central
-                    if (IsArchBaby(card))
+                    // Si es un Arch (archLand, archSea, archSky), ponerlo en el tablero central
+                    if (ArmyTypeHelper.IsArch(card.ArmyType))
                     {
-                        PlaceArchOnBoard(session.CentralBoard, card);
+                        PlaceArchOnBoard(session.CentralBoard, cardId, card.ArmyType);
                         // No cuenta como carta en mano, seguir repartiendo
                         continue;
                     }
 
-                    // Agregar carta normal a la mano
+                    // Agregar carta normal (Dino) a la mano
                     player.AddCard(card);
                     playerHand.Add(card);
                 }
             }
 
-            // Retornar las cartas restantes
             return deckCopy.Skip(currentIndex).ToList();
         }
 
@@ -110,26 +110,23 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
             session.SetDrawPiles(piles);
         }
 
-        private bool IsArchBaby(CardInGame card)
+        private void PlaceArchOnBoard(CentralBoard board, string cardId, string armyType)
         {
-            // Un Arch bebé tiene armyType "arch"
-            return card.ArmyType != null && card.ArmyType.ToLower() == "arch";
-        }
-
-        private void PlaceArchOnBoard(CentralBoard board, CardInGame archCard)
-        {
-            if (archCard == null || string.IsNullOrWhiteSpace(archCard.IdCardGlobal))
+            if (board == null || string.IsNullOrWhiteSpace(cardId) || string.IsNullOrWhiteSpace(armyType))
             {
                 return;
             }
 
-            // Los Archs se colocan boca abajo en su ejército correspondiente
-            // Aquí guardamos el idCardGlobal, no el objeto completo
-            var army = board.GetArmyByType(archCard.ArmyType);
+            var baseType = ArmyTypeHelper.GetBaseType(armyType);
+            if (string.IsNullOrWhiteSpace(baseType))
+            {
+                return;
+            }
+
+            var army = board.GetArmyByType(baseType);
             if (army != null)
             {
-                // Nota: CentralBoard.GetArmyByType retorna List<int> pero necesitamos string
-                // Esto necesita ajuste en CentralBoard
+                army.Add(cardId);
             }
         }
 
@@ -140,7 +137,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 return null;
             }
 
-            // Seleccionar jugador aleatorio para empezar
             var players = session.Players.ToList();
             var randomIndex = GetSecureRandomNumber(players.Count);
 
@@ -154,7 +150,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 return 0;
             }
 
-            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+            using (var rng = RandomNumberGenerator.Create())
             {
                 var bytes = new byte[4];
                 rng.GetBytes(bytes);

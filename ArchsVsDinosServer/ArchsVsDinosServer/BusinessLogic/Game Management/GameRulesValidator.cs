@@ -52,7 +52,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 return false;
             }
 
-            // Para provocar, no debes haber tomado ninguna acción
             return !session.HasDrawnThisTurn &&
                    session.CardsPlayedThisTurn == 0 &&
                    !session.HasTakenMainAction;
@@ -67,7 +66,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
         {
             return card != null &&
                    card.Type == "head" &&
-                   !string.IsNullOrWhiteSpace(card.ArmyType);
+                   ArmyTypeHelper.IsDino(card.ArmyType);
         }
 
         public bool IsValidBodyPart(CardInGame card)
@@ -84,7 +83,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 return false;
             }
 
-            // El body debe ser del mismo tipo de ejército que el dino
             return bodyCard.ArmyType == dino.ArmyType;
         }
 
@@ -110,7 +108,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
 
         public bool IsValidArmyType(string armyType)
         {
-            return armyType == "land" || armyType == "sea" || armyType == "sky";
+            return ArmyTypeHelper.IsValidArmyType(armyType) || ArmyTypeHelper.IsValidBaseType(armyType);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Contracts.DTO.Game_DTO
         public int DinoInstanceId { get; set; }
 
         [DataMember]
-        public CardDTO BodyPart { get; set; }
+        public CardDTO BodyCard { get; set; }
 
         [DataMember]
         public int NewTotalPower { get; set; }

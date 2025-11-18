@@ -25,7 +25,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 return null;
             }
 
-            // Obtener poder del ejército Arch
             var archArmy = session.CentralBoard.GetArmyByType(armyType);
             if (archArmy == null || archArmy.Count == 0)
             {
@@ -34,10 +33,8 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
 
             int archPower = CalculateArchPower(archArmy);
 
-            // Obtener todos los dinos del tipo correspondiente de TODOS los jugadores
             var playerDinos = GetAllPlayerDinosOfType(session, armyType);
 
-            // Calcular poder de cada jugador
             var playerPowers = new Dictionary<int, int>();
             foreach (var kvp in playerDinos)
             {
@@ -45,9 +42,8 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 playerPowers[kvp.Key] = totalPower;
             }
 
-            // Determinar ganador
             var maxPower = playerPowers.Any() ? playerPowers.Values.Max() : 0;
-            var dinosWin = maxPower >= archPower;
+            var dinosWin = maxPower >= archPower; // Empate = Dinos ganan
 
             PlayerSession winner = null;
             if (dinosWin && maxPower > 0)
@@ -67,7 +63,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 PlayerDinos = playerDinos
             };
 
-            // Aplicar consecuencias de la batalla
             ApplyBattleConsequences(session, result);
 
             return result;
@@ -80,18 +75,15 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
                 return;
             }
 
-            // Si los Dinos ganan, el ganador recibe puntos
             if (result.DinosWon && result.Winner != null)
             {
                 var archPoints = CalculateArchPoints(result.ArchCardIds);
                 result.Winner.Points += archPoints;
             }
 
-            // Los Archs van al descarte (ganen o pierdan)
             session.AddToDiscard(result.ArchCardIds);
             session.CentralBoard.ClearArmy(result.ArmyType);
 
-            // Todos los Dinos que lucharon van al descarte
             foreach (var kvp in result.PlayerDinos)
             {
                 var player = session.Players.FirstOrDefault(p => p.UserId == kvp.Key);
@@ -106,10 +98,16 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
         {
             var result = new Dictionary<int, List<DinoInstance>>();
 
+            var dinoType = ArmyTypeHelper.ToDinoType(armyType);
+            if (string.IsNullOrWhiteSpace(dinoType))
+            {
+                return result;
+            }
+
             foreach (var player in session.Players)
             {
                 var playerDinos = player.Dinos
-                    .Where(d => d.ArmyType != null && d.ArmyType.ToLower() == armyType.ToLower())
+                    .Where(d => d.ArmyType == dinoType)
                     .ToList();
 
                 if (playerDinos.Any())
@@ -139,8 +137,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
 
         private int CalculateArchPoints(List<string> archCardIds)
         {
-            // Los puntos pueden ser iguales al poder o tener una lógica diferente
-            // Por ahora usamos el mismo cálculo
             return CalculateArchPower(archCardIds);
         }
 
@@ -148,19 +144,16 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Management
         {
             foreach (var dino in dinos)
             {
-                // Descartar cabeza
                 if (dino.HeadCard != null)
                 {
                     session.AddToDiscard(dino.HeadCard.IdCardGlobal);
                 }
 
-                // Descartar partes del cuerpo
                 foreach (var bodyPart in dino.BodyParts)
                 {
                     session.AddToDiscard(bodyPart.IdCardGlobal);
                 }
 
-                // Remover dino del jugador
                 player.RemoveDino(dino);
             }
         }
