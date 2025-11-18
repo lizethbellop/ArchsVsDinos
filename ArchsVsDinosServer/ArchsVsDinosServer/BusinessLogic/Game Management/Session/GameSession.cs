@@ -155,5 +155,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Game_Manager.Session
                 return 0;
             }
         }
+
     }
 }
