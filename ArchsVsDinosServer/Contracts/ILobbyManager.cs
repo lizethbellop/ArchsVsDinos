@@ -17,7 +17,9 @@ namespace Contracts
 
         /*
         [OperationContract]
-        MatchLobbyResultCode JoinLobby(UserAccountDTO userAccountDTO, string matchCode);
+        LobbyResultCode JoinLobby(UserAccountDTO userAccountDTO, string matchCode);
+
+        
 
         [OperationContract]
         void InviteFriendToLobby(string username, string friendUsername, string matchCode);
@@ -33,7 +35,7 @@ namespace Contracts
 
         [OperationContract]
         void CancelLobby(string username);*/
-    
+
     }
 
 }

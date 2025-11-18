@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews.MatchSeeDeck" xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
         mc:Ignorable="d"
         Title="WatchDeckHorizontal" Height="540" Width="1320" ResizeMode="CanResize"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" WindowStyle="None">
 
     <Window.Background>
         <ImageBrush ImageSource="/Resources/Images/seeDeckHorizontalBackground.png"/>

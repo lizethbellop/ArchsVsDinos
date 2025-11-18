@@ -131,6 +131,8 @@
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
     <Compile Include="Utils\LoginResultCodeHelper.cs" />
     <Compile Include="Utils\MappingHelper.cs" />
+    <Compile Include="Utils\MusicPlayer.cs" />
+    <Compile Include="Utils\MusicTracks.cs" />
     <Compile Include="Utils\SoundButton.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
@@ -754,6 +756,17 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Images\teethDino.png" />
+    <Resource Include="Resources\Images\bondDinoUser.png" />
+    <Content Include="Resources\Music\MusicAttack.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Music\MusicMain.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Music\MusicMatch.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

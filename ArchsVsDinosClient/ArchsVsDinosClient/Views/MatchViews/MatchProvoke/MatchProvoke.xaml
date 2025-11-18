@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MatchProvoke" Height="780" Width="1420" ResizeMode="CanResize"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs" xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" WindowStyle="None">
 
     <Window.Background>
         <ImageBrush ImageSource="/Resources/Images/provokeBackground.png"/>
@@ -54,7 +54,7 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1" Margin="10,10,10,10">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
@@ -63,6 +63,68 @@
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
+                    </Grid.Background>
+                    <StackPanel HorizontalAlignment="Center">
+                        <Label Content="Hola" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
+                    </Grid.Background>
+                    <StackPanel HorizontalAlignment="Center">
+                        <Label Content="Hola" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
+                    </Grid.Background>
+                    <StackPanel HorizontalAlignment="Center">
+                        <Label Content="Hola" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <Grid.Background>
+                        <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
+                    </Grid.Background>
+                    <StackPanel HorizontalAlignment="Center">
+                        <Label Content="xXProGamerXx" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="4">
+                    <StackPanel>
+                        <Label Content="P. Archs" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center">
+                            <Label.Effect>
+                            <DropShadowEffect Color="#FFBA7BFF"
+                                      BlurRadius="20"
+                                      ShadowDepth="0"
+                                      Opacity="1"/>
+                            </Label.Effect> 
+                        </Label>
+                        <!--<Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="25" FontWeight="Bold" Foreground="#FFEDFF31" HorizontalAlignment="Center"/>-->
+                        <Label Content="25" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center">
+                            <Label.Effect>
+                                <DropShadowEffect Color="Red"
+                                  BlurRadius="20"
+                                  ShadowDepth="0"
+                                  Opacity="1"/>
+                            </Label.Effect>
+                        </Label>
+                    </StackPanel>
+                </Grid>
                 
             </Grid>
 

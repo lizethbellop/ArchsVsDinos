@@ -24,17 +24,19 @@ namespace ArchsVsDinosServer.Services
             lobbyBusinessLogic = new LobbyConfiguration();
         }
 
+        
         public LobbyResultCode CreateLobby(UserAccountDTO hostUserAccountDTO)
         {
             return lobbyBusinessLogic.CreateANewMatch(hostUserAccountDTO);
         }
 
         /*
-        public JoinMatch(UserAccountDTO userAccountDTO, string matchCode)
+        public LobbyResultCode JoinLobby(UserAccountDTO userAccountDTO, string matchCode)
         {
-
+            return lobbyBusinessLogic.JoinToMatchWithCode(userAccountDTO, matchCode);
         }
 
+        
         public InviteFriendToMatch(string username, string friendUsername, string matchCode)
         {
 

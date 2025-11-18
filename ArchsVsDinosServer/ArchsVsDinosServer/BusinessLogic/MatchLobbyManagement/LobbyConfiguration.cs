@@ -70,6 +70,11 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 return LobbyResultCode.Lobby_LobbyCreationError;
             }
         }
+        /*
+        public LobbyResultCode JoinToMatchWithCode(UserAccountDTO hostUserAccountDTO)
+        {
+
+        }*/
     }
 
 }

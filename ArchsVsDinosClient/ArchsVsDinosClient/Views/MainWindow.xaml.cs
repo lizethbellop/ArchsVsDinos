@@ -30,6 +30,7 @@ namespace ArchsVsDinosClient
         {
             InitializeComponent();
             ConfigureForTypeSession();
+            MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Main);
         }
 
         private void ConfigureForTypeSession()
@@ -45,7 +46,8 @@ namespace ArchsVsDinosClient
         private void Click_BtnLogOut(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
-            new Login().ShowDialog();
+            var login = new Login();
+            login.Show();
             this.Close();
         }
 
