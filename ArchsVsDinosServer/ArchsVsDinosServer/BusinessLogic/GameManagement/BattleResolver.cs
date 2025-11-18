@@ -1,5 +1,5 @@
-﻿using ArchsVsDinosServer.BusinessLogic.Game_Manager.Cards;
-using ArchsVsDinosServer.BusinessLogic.Game_Manager.Session;
+﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
+using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Utils;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArchsVsDinosServer.BusinessLogic.Game_Management
+namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public class BattleResolver
     {

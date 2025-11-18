@@ -1,11 +1,11 @@
-﻿using ArchsVsDinosServer.BusinessLogic.Game_Manager.Board;
+﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArchsVsDinosServer.BusinessLogic.Game_Manager.Session
+namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
 {
     public class GameSession
     {

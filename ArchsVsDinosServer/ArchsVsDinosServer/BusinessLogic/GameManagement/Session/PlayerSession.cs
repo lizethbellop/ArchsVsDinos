@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ArchsVsDinosServer.BusinessLogic.Game_Manager.Cards;
+using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 
-namespace ArchsVsDinosServer.BusinessLogic.Game_Manager.Session
+namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
 {
     public class PlayerSession
     {

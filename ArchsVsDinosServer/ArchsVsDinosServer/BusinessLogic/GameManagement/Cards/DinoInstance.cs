@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArchsVsDinosServer.BusinessLogic.Game_Manager.Cards
+namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
 {
     public class DinoInstance
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArchsVsDinosServer.BusinessLogic.Game_Management
+namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public static class ArmyTypeHelper
     {

@@ -1,6 +1,6 @@
-﻿using ArchsVsDinosServer.BusinessLogic.Game_Management;
-using ArchsVsDinosServer.BusinessLogic.Game_Manager.Cards;
-using ArchsVsDinosServer.BusinessLogic.Game_Manager.Session;
+﻿using ArchsVsDinosServer.BusinessLogic.GameManagement;
+using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
+using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Utils;
 using Contracts;

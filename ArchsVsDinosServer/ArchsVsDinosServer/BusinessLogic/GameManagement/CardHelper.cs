@@ -1,4 +1,4 @@
-﻿using ArchsVsDinosServer.BusinessLogic.Game_Manager.Cards;
+﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Utils;
 using Contracts.DTO.Game_DTO;
@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArchsVsDinosServer.BusinessLogic.Game_Management
+namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public class CardHelper
     {
