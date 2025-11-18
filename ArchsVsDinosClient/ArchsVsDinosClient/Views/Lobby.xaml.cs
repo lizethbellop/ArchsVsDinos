@@ -4,6 +4,7 @@ using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
+using ArchsVsDinosClient.Views.MatchViews;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
@@ -63,6 +64,14 @@ namespace ArchsVsDinosClient.Views
                     }
                 }
             }
+        }
+
+        private void Click_BtnBegin(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+            var match = new MainMatch(UserSession.Instance.CurrentUser.Username);
+            match.Show();
+            this.Close();
         }
 
         private void Click_BtnCancelMatch(object sender, RoutedEventArgs e)

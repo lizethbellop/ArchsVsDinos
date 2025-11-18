@@ -189,8 +189,11 @@
     <Compile Include="Views\MatchViews\DeckCardSelection.xaml.cs">
       <DependentUpon>DeckCardSelection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MatchViews\Match.xaml.cs">
-      <DependentUpon>Match.xaml</DependentUpon>
+    <Compile Include="Views\MatchViews\MainMatch.xaml.cs">
+      <DependentUpon>MainMatch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MatchViews\MatchSeeDeck\MatchSeeDeckHorizontal.xaml.cs">
+      <DependentUpon>MatchSeeDeckHorizontal.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MatchViews\PlayerCell.xaml.cs">
       <DependentUpon>PlayerCell.xaml</DependentUpon>
@@ -286,7 +289,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MatchViews\Match.xaml">
+    <Page Include="Views\MatchViews\MainMatch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\MatchSeeDeck\MatchSeeDeckHorizontal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -682,6 +689,8 @@
     <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_2.png" />
     <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_3.png" />
     <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power2\ChestArms_Power2_1.png" />
+    <Resource Include="Resources\Images\provokeBackground.png" />
+    <Resource Include="Resources\Images\seeDeckHorizontalBackground.png" />
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -693,6 +702,7 @@
     <Folder Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power2\" />
     <Folder Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power3\" />
     <Folder Include="Resources\Images\Cards\Chest\ChestArms\Power3\" />
+    <Folder Include="Views\MatchViews\MatchProvoke\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

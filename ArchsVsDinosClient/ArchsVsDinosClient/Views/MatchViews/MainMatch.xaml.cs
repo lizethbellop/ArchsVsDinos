@@ -1,6 +1,8 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Services;
+using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
+using ArchsVsDinosClient.Views.MatchViews.MatchSeeDeck;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,12 +22,12 @@ using System.Windows.Shapes;
 namespace ArchsVsDinosClient.Views.MatchViews
 {
 
-    public partial class Match : Window
+    public partial class MainMatch : Window
     {
         private readonly ChatViewModel chatViewModel;
         private readonly string currentUsername;
 
-        public Match(string username)
+        public MainMatch(string username)
         {
             InitializeComponent();
 
@@ -86,6 +88,30 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
+        }
+
+        private void Click_BtnSeeDeckP1(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayMovingRockSound();
+            new MatchSeeDeckHorizontal().ShowDialog();
+        }
+
+        private void Click_BtnSeeDeckP2(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayMovingRockSound();
+            new MatchSeeDeckHorizontal().ShowDialog();
+        }
+
+        private void Click_BtnSeeDeckP3(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayMovingRockSound();
+            new MatchSeeDeckHorizontal().ShowDialog();
+        }
+
+        private void Click_BtnSeeDeckP4(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayMovingRockSound();
+            new MatchSeeDeckHorizontal().ShowDialog();
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
