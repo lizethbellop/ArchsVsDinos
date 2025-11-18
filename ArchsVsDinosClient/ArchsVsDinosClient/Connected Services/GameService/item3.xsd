@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="GameSetupResultCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="MatchNotFound" />
+      <xs:enumeration value="GameAlreadyInitialized" />
+      <xs:enumeration value="NotEnoughPlayers" />
+      <xs:enumeration value="DatabaseError" />
+      <xs:enumeration value="UnexpectedError" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="GameSetupResultCode" nillable="true" type="tns:GameSetupResultCode" />
+  <xs:simpleType name="DrawCardResultCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="NotYourTurn" />
+      <xs:enumeration value="DrawPileEmpty" />
+      <xs:enumeration value="InvalidDrawPile" />
+      <xs:enumeration value="AlreadyDrewThisTurn" />
+      <xs:enumeration value="GameNotStarted" />
+      <xs:enumeration value="DatabaseError" />
+      <xs:enumeration value="UnexpectedError" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DrawCardResultCode" nillable="true" type="tns:DrawCardResultCode" />
+  <xs:simpleType name="PlayCardResultCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="NotYourTurn" />
+      <xs:enumeration value="CardNotInHand" />
+      <xs:enumeration value="InvalidCardType" />
+      <xs:enumeration value="AlreadyPlayedTwoCards" />
+      <xs:enumeration value="MustAttachToHead" />
+      <xs:enumeration value="InvalidDinoHead" />
+      <xs:enumeration value="ArmyTypeMismatch" />
+      <xs:enumeration value="DatabaseError" />
+      <xs:enumeration value="UnexpectedError" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="PlayCardResultCode" nillable="true" type="tns:PlayCardResultCode" />
+  <xs:simpleType name="ProvokeResultCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="NotYourTurn" />
+      <xs:enumeration value="InvalidArmyType" />
+      <xs:enumeration value="NoArchsInArmy" />
+      <xs:enumeration value="AlreadyTookAction" />
+      <xs:enumeration value="DatabaseError" />
+      <xs:enumeration value="UnexpectedError" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ProvokeResultCode" nillable="true" type="tns:ProvokeResultCode" />
+  <xs:simpleType name="EndTurnResultCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="NotYourTurn" />
+      <xs:enumeration value="GameEnded" />
+      <xs:enumeration value="DatabaseError" />
+      <xs:enumeration value="UnexpectedError" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="EndTurnResultCode" nillable="true" type="tns:EndTurnResultCode" />
+</xs:schema>

@@ -78,6 +78,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\GameService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\LobbyService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -192,6 +197,9 @@
     <Compile Include="Views\MatchViews\MainMatch.xaml.cs">
       <DependentUpon>MainMatch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MatchViews\MatchProvoke\MatchProvoke.xaml.cs">
+      <DependentUpon>MatchProvoke.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MatchViews\MatchSeeDeck\MatchSeeDeckHorizontal.xaml.cs">
       <DependentUpon>MatchSeeDeckHorizontal.xaml</DependentUpon>
     </Compile>
@@ -290,6 +298,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MatchViews\MainMatch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\MatchProvoke\MatchProvoke.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -417,6 +429,49 @@
     <None Include="Connected Services\FriendService\item4.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.CentralBoardDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.DrawCardResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.EndTurnResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.GameSetupResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.GameStateDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.PlayCardResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.PlayerHandDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.ProvokeResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\GameManager.wsdl" />
+    <None Include="Connected Services\GameService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item5.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.LobbyResultCode.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -515,6 +570,7 @@
     <WCFMetadataStorage Include="Connected Services\ChatManager\" />
     <WCFMetadataStorage Include="Connected Services\FriendRequestService\" />
     <WCFMetadataStorage Include="Connected Services\FriendService\" />
+    <WCFMetadataStorage Include="Connected Services\GameService\" />
     <WCFMetadataStorage Include="Connected Services\LobbyService\" />
     <WCFMetadataStorage Include="Connected Services\ProfileManagerService\" />
     <WCFMetadataStorage Include="Connected Services\RegisterService\" />
@@ -691,6 +747,13 @@
     <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power2\ChestArms_Power2_1.png" />
     <Resource Include="Resources\Images\provokeBackground.png" />
     <Resource Include="Resources\Images\seeDeckHorizontalBackground.png" />
+    <None Include="Connected Services\GameService\item.disco" />
+    <None Include="Connected Services\GameService\configuration91.svcinfo" />
+    <None Include="Connected Services\GameService\configuration.svcinfo" />
+    <None Include="Connected Services\GameService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Sounds\movingRock.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -702,7 +765,6 @@
     <Folder Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power2\" />
     <Folder Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power3\" />
     <Folder Include="Resources\Images\Cards\Chest\ChestArms\Power3\" />
-    <Folder Include="Views\MatchViews\MatchProvoke\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

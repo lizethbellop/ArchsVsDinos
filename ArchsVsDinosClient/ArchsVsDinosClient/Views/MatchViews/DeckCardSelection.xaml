@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <Border x:Name="BorderGlow"
             BorderThickness="0"
             CornerRadius="10"

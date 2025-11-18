@@ -11,7 +11,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
     public class GameRulesValidator
     {
         private const int MaxCardsPerTurn = 2;
-        private const int MaxActionsPerTurn = 2;
+        private const int MaxActionsPerTurn = 3;
 
         public bool CanDrawCard(GameSession session, int userId)
         {

@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="GameManager" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="NetTcpBinding_IGameManager_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+      <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" />
+      <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
+      <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IGameManager_InitializeGame_InputMessage">
+    <wsdl:part name="parameters" element="tns:InitializeGame" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_InitializeGame_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InitializeGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_StartGame_InputMessage">
+    <wsdl:part name="parameters" element="tns:StartGame" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_StartGame_OutputMessage">
+    <wsdl:part name="parameters" element="tns:StartGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_DrawCard_InputMessage">
+    <wsdl:part name="parameters" element="tns:DrawCard" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_DrawCard_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DrawCardResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_PlayDinoHead_InputMessage">
+    <wsdl:part name="parameters" element="tns:PlayDinoHead" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_PlayDinoHead_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PlayDinoHeadResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_AttachBodyPartToDino_InputMessage">
+    <wsdl:part name="parameters" element="tns:AttachBodyPartToDino" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_AttachBodyPartToDino_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AttachBodyPartToDinoResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_ProvokeArchArmy_InputMessage">
+    <wsdl:part name="parameters" element="tns:ProvokeArchArmy" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_ProvokeArchArmy_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ProvokeArchArmyResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_EndTurn_InputMessage">
+    <wsdl:part name="parameters" element="tns:EndTurn" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_EndTurn_OutputMessage">
+    <wsdl:part name="parameters" element="tns:EndTurnResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_GetGameState_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGameState" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_GetGameState_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGameStateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_GetPlayerHand_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerHand" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_GetPlayerHand_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerHandResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_GetCentralBoard_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCentralBoard" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_GetCentralBoard_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCentralBoardResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnGameInitialized_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnGameInitialized" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnGameStarted_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnGameStarted" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnTurnChanged_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnTurnChanged" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnCardDrawn_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnCardDrawn" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnDinoHeadPlayed_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnDinoHeadPlayed" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnBodyPartAttached_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnBodyPartAttached" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnArchAddedToBoard_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnArchAddedToBoard" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnArchArmyProvoked_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnArchArmyProvoked" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnBattleResolved_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnBattleResolved" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnGameEnded_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnGameEnded" />
+  </wsdl:message>
+  <wsdl:portType name="IGameManager">
+    <wsdl:operation name="InitializeGame">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/InitializeGame" message="tns:IGameManager_InitializeGame_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/InitializeGameResponse" message="tns:IGameManager_InitializeGame_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="StartGame">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/StartGame" message="tns:IGameManager_StartGame_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/StartGameResponse" message="tns:IGameManager_StartGame_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DrawCard">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/DrawCard" message="tns:IGameManager_DrawCard_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/DrawCardResponse" message="tns:IGameManager_DrawCard_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PlayDinoHead">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/PlayDinoHead" message="tns:IGameManager_PlayDinoHead_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/PlayDinoHeadResponse" message="tns:IGameManager_PlayDinoHead_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AttachBodyPartToDino">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/AttachBodyPartToDino" message="tns:IGameManager_AttachBodyPartToDino_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/AttachBodyPartToDinoResponse" message="tns:IGameManager_AttachBodyPartToDino_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ProvokeArchArmy">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/ProvokeArchArmy" message="tns:IGameManager_ProvokeArchArmy_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/ProvokeArchArmyResponse" message="tns:IGameManager_ProvokeArchArmy_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="EndTurn">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/EndTurn" message="tns:IGameManager_EndTurn_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/EndTurnResponse" message="tns:IGameManager_EndTurn_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGameState">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/GetGameState" message="tns:IGameManager_GetGameState_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/GetGameStateResponse" message="tns:IGameManager_GetGameState_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerHand">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/GetPlayerHand" message="tns:IGameManager_GetPlayerHand_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/GetPlayerHandResponse" message="tns:IGameManager_GetPlayerHand_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCentralBoard">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/GetCentralBoard" message="tns:IGameManager_GetCentralBoard_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/GetCentralBoardResponse" message="tns:IGameManager_GetCentralBoard_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnGameInitialized">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnGameInitialized" message="tns:IGameManager_OnGameInitialized_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnGameStarted">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnGameStarted" message="tns:IGameManager_OnGameStarted_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnTurnChanged">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnTurnChanged" message="tns:IGameManager_OnTurnChanged_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnCardDrawn">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnCardDrawn" message="tns:IGameManager_OnCardDrawn_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnDinoHeadPlayed">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnDinoHeadPlayed" message="tns:IGameManager_OnDinoHeadPlayed_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnBodyPartAttached">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnBodyPartAttached" message="tns:IGameManager_OnBodyPartAttached_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnArchAddedToBoard">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnArchAddedToBoard" message="tns:IGameManager_OnArchAddedToBoard_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnArchArmyProvoked">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnArchArmyProvoked" message="tns:IGameManager_OnArchArmyProvoked_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnBattleResolved">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnBattleResolved" message="tns:IGameManager_OnBattleResolved_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnGameEnded">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnGameEnded" message="tns:IGameManager_OnGameEnded_OutputCallbackMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NetTcpBinding_IGameManager" type="tns:IGameManager">
+    <wsp:PolicyReference URI="#NetTcpBinding_IGameManager_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
+    <wsdl:operation name="InitializeGame">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/InitializeGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StartGame">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/StartGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DrawCard">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/DrawCard" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlayDinoHead">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/PlayDinoHead" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AttachBodyPartToDino">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/AttachBodyPartToDino" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ProvokeArchArmy">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/ProvokeArchArmy" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EndTurn">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/EndTurn" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGameState">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/GetGameState" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerHand">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/GetPlayerHand" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCentralBoard">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/GetCentralBoard" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnGameInitialized">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnGameInitialized" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnGameStarted">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnGameStarted" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnTurnChanged">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnTurnChanged" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnCardDrawn">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnCardDrawn" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnDinoHeadPlayed">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnDinoHeadPlayed" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnBodyPartAttached">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnBodyPartAttached" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnArchAddedToBoard">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnArchAddedToBoard" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnArchArmyProvoked">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnArchArmyProvoked" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnBattleResolved">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnBattleResolved" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnGameEnded">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnGameEnded" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="GameManager">
+    <wsdl:port name="NetTcpBinding_IGameManager" binding="tns:NetTcpBinding_IGameManager">
+      <soap12:address location="net.tcp://localhost:8098/GameManager" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.tcp://localhost:8098/GameManager</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
