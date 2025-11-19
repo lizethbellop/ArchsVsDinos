@@ -170,6 +170,7 @@
     <Compile Include="BusinessLogic\Statistics\LeaderboardCalculator.cs" />
     <Compile Include="BusinessLogic\Statistics\MatchResultProcessor.cs" />
     <Compile Include="BusinessLogic\Statistics\StatisticsHelper.cs" />
+    <Compile Include="BusinessLogic\StrikeInfo.cs" />
     <Compile Include="CardBody.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
