@@ -13,10 +13,13 @@ namespace Contracts
     {
         [OperationContract(IsOneWay = true)]
         void CreatedLobby(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
-
         
         [OperationContract(IsOneWay = true)]
         void JoinedLobby(LobbyPlayerDTO userAccountDTO);
+
+        [OperationContract(IsOneWay = true)]
+        void LobbyCancelled(string matchCode);
+
         /*
         [OperationContract]
         void InvitedFriendToLobby(string username, string matchCode);
@@ -30,8 +33,7 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void LeftLobby(LobbyPlayerDTO playerWhoLeft);
 
-        [OperationContract(IsOneWay = true)]
-        void CancelledLobby(string hostUsername);*/
+        */
 
     }
 }

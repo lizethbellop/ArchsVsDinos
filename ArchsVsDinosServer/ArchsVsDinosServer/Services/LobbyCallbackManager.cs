@@ -47,5 +47,32 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
+        public void JoinedLobby(LobbyPlayerDTO userAccountDTO)
+        {
+            try
+            {
+                if (userAccountDTO == null)
+                {
+                    loggerHelper.LogWarning("Invalid player joined lobby.");
+                    return;
+                }
+
+                loggerHelper.LogInfo($"Player {userAccountDTO.Username} joined lobby.");
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError("Communication error while joining to the lobby", ex);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError("Error in JoinedLobby notification.", ex);
+            }
+        }
+        public void LobbyCancelled(string matchCode)
+        {
+
+        }
+
     }
+    
 }

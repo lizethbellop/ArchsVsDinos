@@ -12,9 +12,18 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
     {
         public string MatchCode { get; set; }
         public List<LobbyPlayerDTO> Players { get; set; } = new List<LobbyPlayerDTO>();
-        public ILobbyManagerCallback LobbyCallback { get; set; }
+
+        public List<ILobbyManagerCallback> Callbacks { get; private set; } = new List<ILobbyManagerCallback>();
 
         private const int MaxPlayers = 4;
+
+        public void AddCallback(ILobbyManagerCallback callback)
+        {
+            lock (Callbacks)
+            {
+                Callbacks.Add(callback);
+            }
+        }
 
         public bool AddPlayer(LobbyPlayerDTO player)
         {
