@@ -98,6 +98,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\StatisticsService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="DTO\Configuration.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
@@ -134,6 +139,7 @@
     <Compile Include="Services\LobbyServiceClient.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\ProfileServiceClient.cs" />
+    <Compile Include="Services\StatisticsServiceClient.cs" />
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
     <Compile Include="Utils\LoginResultCodeHelper.cs" />
     <Compile Include="Utils\MappingHelper.cs" />
@@ -533,6 +539,31 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\RegisterService\RegisterManager.wsdl" />
+    <None Include="Connected Services\StatisticsService\ArchsVsDinosClient.StatisticsService.LeaderboardEntryDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\StatisticsService\ArchsVsDinosClient.StatisticsService.MatchHistoryDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\StatisticsService\ArchsVsDinosClient.StatisticsService.PlayerStatisticsDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\StatisticsService\ArchsVsDinosClient.StatisticsService.SaveMatchResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\StatisticsService\item.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\StatisticsService\item1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\StatisticsService\item2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\StatisticsService\item3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\StatisticsService\StatisticsManager.wsdl" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -584,6 +615,7 @@
     <WCFMetadataStorage Include="Connected Services\LobbyService\" />
     <WCFMetadataStorage Include="Connected Services\ProfileManagerService\" />
     <WCFMetadataStorage Include="Connected Services\RegisterService\" />
+    <WCFMetadataStorage Include="Connected Services\StatisticsService\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\hotIron.png" />
@@ -766,6 +798,13 @@
     </None>
     <Resource Include="Resources\Images\teethDino.png" />
     <Resource Include="Resources\Images\bondDinoUser.png" />
+    <None Include="Connected Services\StatisticsService\item.disco" />
+    <None Include="Connected Services\StatisticsService\configuration91.svcinfo" />
+    <None Include="Connected Services\StatisticsService\configuration.svcinfo" />
+    <None Include="Connected Services\StatisticsService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Music\MusicAttack.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
