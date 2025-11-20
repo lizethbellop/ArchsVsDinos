@@ -27,6 +27,8 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+
+            this.profileService.ConnectionError += OnConnectionError;
         }
 
         public async Task SaveEditPassword()
@@ -37,36 +39,30 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
+            string currentUsername = UserSession.Instance.CurrentUser.Username;
+            UpdateResponse response = await profileService.ChangePassworsAsync(currentUsername, CurrentPassword, NewPassword);
+
+            if (response == null || !response.Success)
             {
-                string currentUsername = UserSession.Instance.CurrentUser.Username;
-                UpdateResponse response = await profileService.ChangePassworsAsync(currentUsername, CurrentPassword, NewPassword);
-
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                messageService.ShowMessage(message);
-
-                if (response.Success)
+                if (response != null) 
                 {
-                    RequestClose?.Invoke(this, EventArgs.Empty);
+                    string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+                    messageService.ShowMessage(message);
                 }
+                return;
             }
-            catch (TimeoutException ex)
+
+            string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+            messageService.ShowMessage(successMessage);
+            RequestClose?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                messageService.ShowMessage(Lang.GlobalServerError);
-                // TODO: Logger cliente
-            }
-            catch (CommunicationException ex)
-            {
-                // TODO: Logger cliente
-            }
-            catch (InvalidOperationException ex)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception ex)
-            {
-                // TODO: Logger cliente
-            }
+                messageService.ShowMessage($"{title}: {message}");
+            });
         }
 
         private static bool AreValidPasswords(string currentPassword, string newPassword)

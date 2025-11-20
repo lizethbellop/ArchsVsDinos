@@ -8,6 +8,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
 {
     public interface IFriendRequestServiceClient : IDisposable
     {
+        event Action<string, string> ConnectionError;
         void SendFriendRequest(string fromUser, string toUser);
         void AcceptFriendRequest(string fromUser, string toUser);
         void RejectFriendRequest(string fromUser, string toUser);

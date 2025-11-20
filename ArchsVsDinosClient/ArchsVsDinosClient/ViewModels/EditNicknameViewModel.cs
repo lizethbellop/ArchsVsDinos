@@ -27,6 +27,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            this.profileService.ConnectionError += OnConnectionError;
         }
 
         public async Task SaveEditNickname()
@@ -37,38 +38,32 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
+            string currentUsername = UserSession.Instance.CurrentUser.Username;
+            UpdateResponse response = await profileService.UpdateNicknameAsync(currentUsername, NewNickname);
+
+            if (response == null || !response.Success)
             {
-                string currentUsername = UserSession.Instance.CurrentUser.Username;
-                UpdateResponse response = await profileService.UpdateNicknameAsync(currentUsername, NewNickname);
-
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                messageService.ShowMessage(message);
-
-                if (response.Success)
+                if (response != null) 
                 {
-                    UserSession.Instance.CurrentUser.Nickname = NewNickname;
-                    UserProfileObserver.Instance.NotifyProfileUpdated();
-                    RequestClose?.Invoke(this, EventArgs.Empty);
+                    string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+                    messageService.ShowMessage(message);
                 }
+                return;
             }
-            catch (TimeoutException ex)
+
+            string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+            messageService.ShowMessage(successMessage);
+            UserSession.Instance.CurrentUser.Nickname = NewNickname;
+            UserProfileObserver.Instance.NotifyProfileUpdated();
+            RequestClose?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                messageService.ShowMessage(Lang.GlobalServerError);
-                // TODO: Logger cliente
-            }
-            catch (CommunicationException ex)
-            {
-                // TODO: Logger cliente
-            }
-            catch (InvalidOperationException ex)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception ex)
-            {
-                // TODO: Logger cliente
-            }
+                messageService.ShowMessage($"{title}: {message}");
+            });
         }
 
         private static bool IsValidNickname(string nickname)

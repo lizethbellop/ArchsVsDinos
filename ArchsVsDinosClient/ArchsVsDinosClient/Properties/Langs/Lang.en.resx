@@ -600,4 +600,28 @@
   <data name="Lobby_ErrorCreatingLobby" xml:space="preserve">
     <value>Error creating lobby, try again</value>
   </data>
+  <data name="WcfErrorConnectionLost" xml:space="preserve">
+    <value>Connection to server lost</value>
+  </data>
+  <data name="WcfNoConnection" xml:space="preserve">
+    <value>Could not connect to server</value>
+  </data>
+  <data name="WcfErrorTimeout" xml:space="preserve">
+    <value>Connection Timeout</value>
+  </data>
+  <data name="WcfErrorService" xml:space="preserve">
+    <value>Service Error</value>
+  </data>
+  <data name="WcfErrorUnexpected" xml:space="preserve">
+    <value>Unexpected Error</value>
+  </data>
+  <data name="WcfErrorOperationFailed" xml:space="preserve">
+    <value>The operation could not be completed, the server may be inactive</value>
+  </data>
+  <data name="WcfErrorOperationTimeout" xml:space="preserve">
+    <value>The operation took too long, verify your connection</value>
+  </data>
+  <data name="WcfInfoConnectionRestored" xml:space="preserve">
+    <value>Connection restored</value>
+  </data>
 </root>

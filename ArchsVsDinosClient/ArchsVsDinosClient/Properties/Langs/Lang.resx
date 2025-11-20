@@ -600,4 +600,28 @@
   <data name="Lobby_ErrorCreatingLobby" xml:space="preserve">
     <value>Error crando sala, intente de nuevo</value>
   </data>
+  <data name="WcfErrorConnectionLost" xml:space="preserve">
+    <value>Se perdió la conexión con el servidor</value>
+  </data>
+  <data name="WcfNoConnection" xml:space="preserve">
+    <value>No se pudo conectar con el servidor</value>
+  </data>
+  <data name="WcfErrorTimeout" xml:space="preserve">
+    <value>Tiempo de espera agotado</value>
+  </data>
+  <data name="WcfErrorService" xml:space="preserve">
+    <value>Error en el servicio</value>
+  </data>
+  <data name="WcfErrorUnexpected" xml:space="preserve">
+    <value>Error inesperado</value>
+  </data>
+  <data name="WcfErrorOperationFailed" xml:space="preserve">
+    <value>No se pudo completar la operación, el servidor podría estar inactivo</value>
+  </data>
+  <data name="WcfErrorOperationTimeout" xml:space="preserve">
+    <value>La operación tardó demasiado, verifica tu conexión</value>
+  </data>
+  <data name="WcfInfoConnectionRestored" xml:space="preserve">
+    <value>Conexión restablecida</value>
+  </data>
 </root>

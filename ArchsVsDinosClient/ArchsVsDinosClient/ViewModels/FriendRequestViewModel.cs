@@ -34,6 +34,7 @@ namespace ArchsVsDinosClient.ViewModels
             PendingRequests = new string[0];
 
             SubscribeToCallbacks();
+            friendRequestService.ConnectionError += OnConnectionError;
         }
 
         private void SubscribeToCallbacks()
@@ -52,21 +53,7 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
-            {
-                friendRequestService.Subscribe(username);
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception)
-            {
-            }
+            friendRequestService.Subscribe(username);
         }
 
         public void Unsubscribe(string username)
@@ -76,21 +63,7 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
-            {
-                friendRequestService.Unsubscribe(username);
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception)
-            {
-            }
+            friendRequestService.Unsubscribe(username);
         }
 
         public void SendFriendRequest(string fromUser, string toUser)
@@ -101,23 +74,7 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            // ❌ VALIDACIÓN ELIMINADA - Ya está en el code-behind
-
-            try
-            {
-                friendRequestService.SendFriendRequest(fromUser, toUser);
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception)
-            {
-            }
+            friendRequestService.SendFriendRequest(fromUser, toUser);
         }
 
         public void AcceptFriendRequest(string fromUser, string toUser)
@@ -128,21 +85,7 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
-            {
-                friendRequestService.AcceptFriendRequest(fromUser, toUser);
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception)
-            {
-            }
+            friendRequestService.AcceptFriendRequest(fromUser, toUser);
         }
 
         public void RejectFriendRequest(string fromUser, string toUser)
@@ -153,21 +96,7 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
-            {
-                friendRequestService.RejectFriendRequest(fromUser, toUser);
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception)
-            {
-            }
+            friendRequestService.RejectFriendRequest(fromUser, toUser);
         }
 
         public void LoadPendingRequests(string username)
@@ -178,21 +107,15 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
+            friendRequestService.GetPendingRequests(username);
+        }
+
+        private void OnConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                friendRequestService.GetPendingRequests(username);
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-            }
-            catch (Exception)
-            {
-            }
+                messageService.ShowMessage($"{title}: {message}");
+            });
         }
 
         private void OnFriendRequestSent(bool success)
@@ -266,6 +189,7 @@ namespace ArchsVsDinosClient.ViewModels
                 friendRequestService.FriendRequestRejected -= OnFriendRequestRejected;
                 friendRequestService.PendingRequestsReceived -= OnPendingRequestsReceived;
                 friendRequestService.FriendRequestReceived -= OnFriendRequestReceived;
+                friendRequestService.ConnectionError -= OnConnectionError; // 🆕 AGREGAR
                 friendRequestService.Dispose();
             }
         }

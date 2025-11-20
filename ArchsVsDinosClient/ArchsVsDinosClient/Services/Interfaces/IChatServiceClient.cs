@@ -12,7 +12,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<string, string, string> MessageReceived;
         event Action<ChatResultCode, string> SystemNotificationReceived;
         event Action<List<string>> UserListUpdated;
-
+        event Action<string, string> ConnectionError;
         Task ConnectAsync(string username);
         Task SendMessageAsync(string message, string username);
         Task DisconnectAsync(string username);

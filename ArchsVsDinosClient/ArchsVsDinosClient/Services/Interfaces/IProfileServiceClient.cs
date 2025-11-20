@@ -9,6 +9,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
 {
     public interface IProfileServiceClient
     {
+        event Action<string, string> ConnectionError;
         Task<UpdateResponse> UpdateNicknameAsync(string currentUsername, string newNickname);
         Task<UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername);
         Task<UpdateResponse> ChangePassworsAsync(string currentUsername, string currentPassword, string newPassword);

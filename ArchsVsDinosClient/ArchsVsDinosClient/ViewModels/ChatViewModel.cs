@@ -75,17 +75,20 @@ namespace ArchsVsDinosClient.ViewModels
 
             Messages = new ObservableCollection<string>();
             OnlineUsers = new ObservableCollection<string>();
+
             SendMessageCommand = new AsyncRelayCommand(SendMessageAsync, CanSendMessage);
 
-            this.chatService.MessageReceived += OnMessageReceived;
-            this.chatService.SystemNotificationReceived += OnSystemNotificationReceived;
-            this.chatService.UserListUpdated += OnUserListUpdated;
+            chatService.MessageReceived += OnMessageReceived;
+            chatService.SystemNotificationReceived += OnSystemNotificationReceived;
+            chatService.UserListUpdated += OnUserListUpdated;
+            chatService.ConnectionError += OnConnectionError;
         }
 
-        public ChatViewModel() : this(new ChatServiceClient())
-        {
-        }
+        public ChatViewModel() : this(new ChatServiceClient()) { }
 
+        // ------------------------------------------------------
+        //  CONNECTION
+        // ------------------------------------------------------
         public async Task ConnectAsync(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -95,69 +98,46 @@ namespace ArchsVsDinosClient.ViewModels
             }
 
             IsBusy = true;
-            try
-            {
-                currentUsername = username;
-                await chatService.ConnectAsync(username).ConfigureAwait(true);
-                IsConnected = true;
-            }
-            catch (Exception ex)
-            {
-                AddSystemMessage($"Error connecting: {ex.Message}");
-                IsConnected = false;
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+            currentUsername = username;
+
+            await chatService.ConnectAsync(username);
+            IsConnected = true;
+            IsBusy = false;
         }
 
         public async Task DisconnectAsync()
         {
-            if (!IsConnected)
-            {
-                return;
-            }
+            if (!IsConnected) return;
 
             IsBusy = true;
-            try
-            {
-                await chatService.DisconnectAsync(currentUsername).ConfigureAwait(true);
-            }
-            catch (Exception ex)
-            {
-                AddSystemMessage($"Error disconnecting: {ex.Message}");
-            }
-            finally
-            {
-                IsConnected = false;
-                IsBusy = false;
-            }
+            await chatService.DisconnectAsync(currentUsername);
+            IsConnected = false;
+            IsBusy = false;
         }
 
         private async Task SendMessageAsync()
         {
             if (string.IsNullOrWhiteSpace(MessageInput) || !IsConnected)
-            {
                 return;
-            }
 
             string messageToSend = MessageInput;
             MessageInput = string.Empty;
 
-            try
-            {
-                await chatService.SendMessageAsync(messageToSend, currentUsername).ConfigureAwait(true);
-            }
-            catch (Exception ex)
-            {
-                AddSystemMessage($"Error sending message: {ex.Message}");
-            }
+            await chatService.SendMessageAsync(messageToSend, currentUsername);
         }
 
         private bool CanSendMessage()
         {
             return IsConnected && !string.IsNullOrWhiteSpace(MessageInput) && !IsBusy;
+        }
+
+        private void OnConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                IsConnected = false;
+                AddSystemMessage($"! {title}: {message}");
+            });
         }
 
         private void OnMessageReceived(string roomId, string fromUser, string message)
@@ -176,11 +156,12 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        private void OnUserListUpdated(System.Collections.Generic.List<string> users)
+        private void OnUserListUpdated(List<string> users)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 OnlineUsers.Clear();
+
                 if (users != null)
                 {
                     foreach (var user in users)
@@ -204,30 +185,25 @@ namespace ArchsVsDinosClient.ViewModels
 
         protected virtual void Dispose(bool disposing)
         {
-            if (isDisposed)
-            {
-                return;
-            }
+            if (isDisposed) return;
 
             if (disposing)
             {
-                if (chatService != null)
-                {
-                    chatService.MessageReceived -= OnMessageReceived;
-                    chatService.SystemNotificationReceived -= OnSystemNotificationReceived;
-                    chatService.UserListUpdated -= OnUserListUpdated;
-                    chatService.Dispose();
-                }
+                chatService.MessageReceived -= OnMessageReceived;
+                chatService.SystemNotificationReceived -= OnSystemNotificationReceived;
+                chatService.UserListUpdated -= OnUserListUpdated;
+                chatService.ConnectionError -= OnConnectionError;
+                chatService.Dispose();
             }
 
             isDisposed = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
 }

@@ -1508,5 +1508,77 @@ namespace ArchsVsDinosClient.Properties.Langs {
                 return ResourceManager.GetString("VerificationC_VerificationCode", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se perdió la conexión con el servidor.
+        /// </summary>
+        public static string WcfErrorConnectionLost {
+            get {
+                return ResourceManager.GetString("WcfErrorConnectionLost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo completar la operación, el servidor podría estar inactivo.
+        /// </summary>
+        public static string WcfErrorOperationFailed {
+            get {
+                return ResourceManager.GetString("WcfErrorOperationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La operación tardó demasiado, verifica tu conexión.
+        /// </summary>
+        public static string WcfErrorOperationTimeout {
+            get {
+                return ResourceManager.GetString("WcfErrorOperationTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error en el servicio.
+        /// </summary>
+        public static string WcfErrorService {
+            get {
+                return ResourceManager.GetString("WcfErrorService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tiempo de espera agotado.
+        /// </summary>
+        public static string WcfErrorTimeout {
+            get {
+                return ResourceManager.GetString("WcfErrorTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error inesperado.
+        /// </summary>
+        public static string WcfErrorUnexpected {
+            get {
+                return ResourceManager.GetString("WcfErrorUnexpected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Conexión restablecida.
+        /// </summary>
+        public static string WcfInfoConnectionRestored {
+            get {
+                return ResourceManager.GetString("WcfInfoConnectionRestored", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo conectar con el servidor.
+        /// </summary>
+        public static string WcfNoConnection {
+            get {
+                return ResourceManager.GetString("WcfNoConnection", resourceCulture);
+            }
+        }
     }
 }

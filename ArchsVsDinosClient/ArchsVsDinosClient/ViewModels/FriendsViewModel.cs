@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Properties.Langs;
+﻿using ArchsVsDinosClient.FriendService;
+using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
@@ -28,6 +29,8 @@ namespace ArchsVsDinosClient.ViewModels
             friendService = new FriendServiceClient();
             messageService = new MessageService();
             Friends = new string[0];
+
+            friendService.ConnectionError += OnConnectionError;
         }
 
         public async Task LoadFriendsAsync(string username)
@@ -38,35 +41,18 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
-            {
-                var response = await friendService.GetFriendsAsync(username);
+            var response = await friendService.GetFriendsAsync(username);
 
-                if (response.Success)
-                {
-                    Friends = response.Friends;
-                    FriendsLoaded?.Invoke(this, EventArgs.Empty);
-                }
-                else
-                {
-                    string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
-                    messageService.ShowMessage(message);
-                }
-            }
-            catch (TimeoutException)
+            if (response == null || !response.Success)
             {
-                MessageBox.Show(Lang.GlobalServerError);
+                string message = FriendResultCodeHelper.GetMessage(response?.ResultCode ?? FriendResultCode.Friend_UnexpectedError);
+                messageService.ShowMessage(message);
+                return;
             }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (Exception)
-            {
-            }
+
+            Friends = response.Friends;
+            FriendsLoaded?.Invoke(this, EventArgs.Empty);
+
         }
 
         public async Task RemoveFriendAsync(string username, string friendUsername)
@@ -77,31 +63,20 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
-            {
-                var response = await friendService.RemoveFriendAsync(username, friendUsername);
-                string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
-                messageService.ShowMessage(message);
+            var response = await friendService.RemoveFriendAsync(username, friendUsername);
 
-                if (response.Success)
-                {
-                    await LoadFriendsAsync(username);
-                    FriendRemoved?.Invoke(this, EventArgs.Empty);
-                }
-            }
-            catch (TimeoutException)
+            if (response == null)
             {
-                MessageBox.Show(Lang.GlobalServerError);
+                return;
             }
-            catch (CommunicationException)
+
+            string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
+            messageService.ShowMessage(message);
+
+            if (response.Success)
             {
-                // TODO: Logger cliente
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (Exception)
-            {
+                await LoadFriendsAsync(username);
+                FriendRemoved?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -113,37 +88,27 @@ namespace ArchsVsDinosClient.ViewModels
                 return false;
             }
 
-            try
-            {
-                var response = await friendService.AreFriendsAsync(username, friendUsername);
+            var response = await friendService.AreFriendsAsync(username, friendUsername);
 
-                if (response.Success)
+            if (response == null || !response.Success)
+            {
+                if (response != null) // Si no es null, mostrar mensaje de error de negocio
                 {
-                    return response.AreFriends;
+                    string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
+                    messageService.ShowMessage(message);
                 }
+                return false;
+            }
 
-                string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
-                messageService.ShowMessage(message);
-                return false;
-            }
-            catch (TimeoutException)
+            return response.AreFriends;
+        }
+
+        private void OnConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(Lang.GlobalServerError);
-                return false;
-            }
-            catch (CommunicationException)
-            {
-                // TODO: Logger cliente
-                return false;
-            }
-            catch (InvalidOperationException)
-            {
-                return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+                messageService.ShowMessage($"{title}: {message}");
+            });
         }
 
         private bool ValidateInputs(string username, string friendUsername)

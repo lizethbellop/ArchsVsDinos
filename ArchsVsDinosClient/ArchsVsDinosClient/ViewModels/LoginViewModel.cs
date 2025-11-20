@@ -1,32 +1,52 @@
-﻿using ArchsVsDinosClient.Models;
+﻿using ArchsVsDinosClient.AuthenticationService;
+using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using ArchsVsDinosClient.DTO;
-using System.ServiceModel;
+using ClientDTO = ArchsVsDinosClient.DTO;
+using ServiceDTO = ArchsVsDinosClient.AuthenticationService;
+
 
 namespace ArchsVsDinosClient.ViewModels
 {
-    public class LoginViewModel
+    public class LoginViewModel : INotifyPropertyChanged
     {
         private readonly IAuthenticationServiceClient authenticationService;
         private readonly IMessageService messageService;
-        public string Username { get; set; }
-        public string Password { get; set; }
+        private string username;
+        private string password;
+        public string Username
+        {
+            get => username;
+            set { username = value; OnPropertyChanged(); }
+        }
+
+        public string Password
+        {
+            get => password;
+            set { password = value; OnPropertyChanged(); }
+        }
 
         public event EventHandler RequestClose;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public LoginViewModel()
         {
             authenticationService = new AuthenticationServiceClient();
             messageService = new MessageService();
+
+            authenticationService.ConnectionError += OnConnectionError;
         }
 
         public async Task LoginAsync()
@@ -37,39 +57,31 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
-            {
-                var response = await authenticationService.LoginAsync(Username, Password);
+            var response = await authenticationService.LoginAsync(Username, Password);
 
-                string message = LoginResultCodeHelper.GetMessage(response.ResultCode);
+            if (response == null || response.Success)
+            {
+                string message = LoginResultCodeHelper.GetMessage(response?.ResultCode ?? LoginResultCode.Authentication_UnexpectedError);
                 messageService.ShowMessage(message);
-
-                if (response.Success)
-                {
-                    UserDTO user = response.UserSession.ToUserDTO();
-                    PlayerDTO player = response.AssociatedPlayer.ToPlayerDTO();
-                    UserSession.Instance.Login(user, player);
-
-                    RequestClose?.Invoke(this, EventArgs.Empty);
-                }
-
+                return;
             }
-            catch (TimeoutException ex)
+
+            string successMessage = LoginResultCodeHelper.GetMessage(response.ResultCode);
+            messageService.ShowMessage(successMessage);
+
+            ClientDTO.UserDTO user = response.UserSession.ToUserDTO();
+            ClientDTO.PlayerDTO player = response.AssociatedPlayer.ToPlayerDTO();
+            UserSession.Instance.Login(user, player);
+            RequestClose?.Invoke(this, EventArgs.Empty);
+
+        }
+
+        private void OnConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(Lang.GlobalServerError);
-            }
-            catch (CommunicationException ex)
-            {
-                // TODO: Logger cliente
-            }
-            catch (InvalidOperationException ex)
-            {
-
-            }
-            catch(Exception ex)
-            {
-
-            }
+                messageService.ShowMessage($"{title}: {message}");
+            });
         }
 
         private bool ValidateInputs(string username, string password)
@@ -80,6 +92,11 @@ namespace ArchsVsDinosClient.ViewModels
             }
 
             return true;
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

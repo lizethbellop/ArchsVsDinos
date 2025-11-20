@@ -104,6 +104,8 @@
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Models\EnumsCards\BodyPartType.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\EnumsCards\CardCategory.cs" />
@@ -117,13 +119,17 @@
     <Compile Include="Services\FriendRequestCallbackHandler.cs" />
     <Compile Include="Services\FriendRequestServiceClient.cs" />
     <Compile Include="Services\FriendServiceClient.cs" />
+    <Compile Include="Services\GameCallbackHandler.cs" />
+    <Compile Include="Services\GameServiceClient.cs" />
     <Compile Include="Services\Interfaces\IAuthenticationServiceClient.cs" />
     <Compile Include="Services\Interfaces\IChatServiceClient.cs" />
     <Compile Include="Services\Interfaces\IFriendRequestServiceClient.cs" />
     <Compile Include="Services\Interfaces\IFriendServiceClient.cs" />
+    <Compile Include="Services\Interfaces\IGameServiceClient.cs" />
     <Compile Include="Services\Interfaces\ILobbyServiceClient.cs" />
     <Compile Include="Services\Interfaces\IMessageService.cs" />
     <Compile Include="Services\Interfaces\IProfileServiceClient.cs" />
+    <Compile Include="Services\Interfaces\IStatisticsServiceClient.cs" />
     <Compile Include="Services\LobbyCallbackManager.cs" />
     <Compile Include="Services\LobbyServiceClient.cs" />
     <Compile Include="Services\MessageService.cs" />
@@ -138,6 +144,7 @@
     </Compile>
     <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Utils\UserProfileObserver.cs" />
+    <Compile Include="Utils\WcfConnectionGuardian.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\DeckViewModel.cs" />
     <Compile Include="ViewModels\EditNicknameViewModel.cs" />
@@ -145,6 +152,7 @@
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
+    <Compile Include="ViewModels\GameManagerViewModel.cs" />
     <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

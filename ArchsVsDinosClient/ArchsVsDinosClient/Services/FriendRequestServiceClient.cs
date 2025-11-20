@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosClient.FriendRequestService;
 using ArchsVsDinosClient.Services.Interfaces;
+using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ArchsVsDinosClient.Logging;
 
 namespace ArchsVsDinosClient.Services
 {
@@ -15,6 +17,7 @@ namespace ArchsVsDinosClient.Services
         private readonly FriendRequestManagerClient client;
         private readonly InstanceContext context;
         private readonly FriendRequestCallbackHandler callback;
+        private readonly WcfConnectionGuardian guardian;
         private readonly SynchronizationContext syncContext;
         private bool isDisposed;
 
@@ -23,6 +26,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<bool> FriendRequestRejected;
         public event Action<string[]> PendingRequestsReceived;
         public event Action<string> FriendRequestReceived;
+        public event Action<string, string> ConnectionError;
 
         public FriendRequestServiceClient()
         {
@@ -39,36 +43,60 @@ namespace ArchsVsDinosClient.Services
             context.SynchronizationContext = syncContext;
 
             client = new FriendRequestManagerClient(context);
+
+            guardian = new WcfConnectionGuardian(
+                onError: (title, msg) => ConnectionError?.Invoke(title, msg),
+                logger: new Logger()
+            );
+            guardian.MonitorClientState(client);
         }
 
         public void SendFriendRequest(string fromUser, string toUser)
         {
-            client.SendFriendRequest(fromUser, toUser);
+            _ = guardian.ExecuteAsync(
+            async () => await System.Threading.Tasks.Task.Run(() => client.SendFriendRequest(fromUser, toUser)),
+            operationName: "enviar solicitud de amistad"
+            );
         }
 
         public void AcceptFriendRequest(string fromUser, string toUser)
         {
-            client.AcceptFriendRequest(fromUser, toUser);
+            _ = guardian.ExecuteAsync(
+            async () => await System.Threading.Tasks.Task.Run(() => client.AcceptFriendRequest(fromUser, toUser)),
+            operationName: "aceptar solicitud de amistad"
+            );
         }
 
         public void RejectFriendRequest(string fromUser, string toUser)
         {
-            client.RejectFriendRequest(fromUser, toUser);
+            _ = guardian.ExecuteAsync(
+            async () => await System.Threading.Tasks.Task.Run(() => client.RejectFriendRequest(fromUser, toUser)),
+            operationName: "rechazar solicitud de amistad"
+            );
         }
 
         public void GetPendingRequests(string username)
         {
-            client.GetPendingRequests(username);
+            _ = guardian.ExecuteAsync(
+            async () => await System.Threading.Tasks.Task.Run(() => client.GetPendingRequests(username)),
+            operationName: "obtener solicitudes pendientes"
+            );
         }
 
         public void Subscribe(string username)
         {
-            client.Subscribe(username);
+            _ = guardian.ExecuteAsync(
+            async () => await System.Threading.Tasks.Task.Run(() => client.Subscribe(username)),
+            operationName: "suscribir a notificaciones"
+            );
         }
 
         public void Unsubscribe(string username)
         {
-            client.Unsubscribe(username);
+            _ = guardian.ExecuteAsync(
+            async () => await System.Threading.Tasks.Task.Run(() => client.Unsubscribe(username)),
+            operationName: "desuscribir de notificaciones"
+            );
         }
 
         private void OnFriendRequestSent(bool success)
@@ -104,10 +132,7 @@ namespace ArchsVsDinosClient.Services
 
         protected virtual void Dispose(bool disposing)
         {
-            if (isDisposed)
-            {
-                return;
-            }
+            if (isDisposed) return;
 
             if (disposing)
             {
@@ -125,19 +150,19 @@ namespace ArchsVsDinosClient.Services
                     try
                     {
                         if (client.State == CommunicationState.Opened)
-                        {
                             client.Close();
-                        }
                         else if (client.State == CommunicationState.Faulted)
-                        {
                             client.Abort();
-                        }
                     }
                     catch (CommunicationException)
                     {
                         client.Abort();
                     }
                     catch (TimeoutException)
+                    {
+                        client.Abort();
+                    }
+                    catch
                     {
                         client.Abort();
                     }
