@@ -156,5 +156,13 @@ namespace ArchsVsDinosServer.Services
                 return new List<MatchHistoryDTO>();
             }
         }
+
+        public GameStatisticsDTO GetMatchStatistics(int matchId)
+        {
+            throw new NotImplementedException();
+            
+            //var processor = new MatchResultProcessor(dependencies);
+            //return processor.GetMatchStatistics(matchId);
+        }
     }
 }

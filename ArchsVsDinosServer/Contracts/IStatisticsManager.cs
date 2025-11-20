@@ -23,5 +23,8 @@ namespace Contracts
 
         [OperationContract]
         List<MatchHistoryDTO> GetPlayerMatchHistory(int userId, int count);
+
+        [OperationContract]
+        GameStatisticsDTO GetMatchStatistics(int matchId);
     }
 }

@@ -8,16 +8,13 @@ using System.Threading.Tasks;
 namespace Contracts.DTO.Statistics
 {
     [DataContract]
-    public class PlayerMatchResult
+    public class PlayerMatchStatsDTO
     {
         [DataMember]
         public int UserId { get; set; }
 
         [DataMember]
-        public int Points { get; set; }
-
-        [DataMember]
-        public bool IsWinner { get; set; }
+        public string Username { get; set; }
 
         [DataMember]
         public int Position { get; set; }
@@ -27,5 +24,11 @@ namespace Contracts.DTO.Statistics
 
         [DataMember]
         public int SupremeBossesEliminated { get; set; }
+
+        [DataMember]
+        public int Points { get; set; }
+
+        [DataMember]
+        public bool IsWinner { get; set; }
     }
 }
