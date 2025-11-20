@@ -15,7 +15,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
     {
         private readonly CardHelper cardHelper;
         private const int InitialHandSize = 5;
-        private const int NumberOfDrawPiles = 3;
 
         public GameSetupHandler(ServiceDependencies dependencies)
         {
@@ -31,7 +30,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             lock (session.SyncRoot)
             {
-                // Agregar jugadores a la sesión
                 int turnOrder = 1;
                 foreach (var player in players)
                 {
@@ -39,18 +37,22 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                     session.AddPlayer(player);
                 }
 
-                // Obtener todas las cartas y barajarlas
                 var allCardIds = cardHelper.GetAllCardIds();
                 var shuffledDeck = cardHelper.ShuffleCards(allCardIds);
 
-                // Repartir manos iniciales y procesar Archs (bebés)
                 var remainingDeck = DealInitialHands(session, shuffledDeck);
 
-                // Dividir el mazo restante en 3 pilas
-                CreateDrawPiles(session, remainingDeck);
+                CreateSinglePile(session, remainingDeck);
 
                 return true;
             }
+        }
+
+
+        private void CreateSinglePile(GameSession session, List<string> remainingCards)
+        {
+            var pile = new List<string>(remainingCards);
+            session.SetDrawPiles(new List<List<string>> { pile });
         }
 
         private List<string> DealInitialHands(GameSession session, List<string> deck)
@@ -89,25 +91,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             }
 
             return deckCopy.Skip(currentIndex).ToList();
-        }
-
-        private void CreateDrawPiles(GameSession session, List<string> remainingCards)
-        {
-            var piles = new List<List<string>>();
-            var cardsPerPile = remainingCards.Count / NumberOfDrawPiles;
-            var remainder = remainingCards.Count % NumberOfDrawPiles;
-
-            var currentIndex = 0;
-
-            for (int i = 0; i < NumberOfDrawPiles; i++)
-            {
-                var pileSize = cardsPerPile + (i < remainder ? 1 : 0);
-                var pile = remainingCards.Skip(currentIndex).Take(pileSize).ToList();
-                piles.Add(pile);
-                currentIndex += pileSize;
-            }
-
-            session.SetDrawPiles(piles);
         }
 
         private void PlaceArchOnBoard(CentralBoard board, string cardId, string armyType)

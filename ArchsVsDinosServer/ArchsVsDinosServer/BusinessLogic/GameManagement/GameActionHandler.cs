@@ -43,7 +43,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return null;
             }
 
-            // Si es un Arch (archLand, archSea, archSky), va directo al tablero
+            // Si es un Arch va directo al tablero
             if (ArmyTypeHelper.IsArch(card.ArmyType))
             {
                 PlaceArchOnBoard(session.CentralBoard, cardId, card.ArmyType);
@@ -77,7 +77,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             {
                 DinoInstanceId = nextDinoId++,
                 HeadCard = card,
-                ArmyType = card.ArmyType // dinoLand, dinoSea o dinoSky
+                ArmyType = card.ArmyType 
             };
 
             // Remover carta de la mano y agregar dino al jugador
