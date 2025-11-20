@@ -72,6 +72,8 @@
           <Property Name="points" Type="int" Nullable="false" />
           <Property Name="isWinner" Type="bit" Nullable="false" />
           <Property Name="isDefeated" Type="bit" Nullable="false" />
+          <Property Name="archaeologistsEliminated" Type="int" Nullable="false" />
+          <Property Name="supremeBossesEliminated" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Music">
           <Key>
@@ -406,6 +408,8 @@
 					<Property Name="isDefeated" Type="Boolean" Nullable="false" />
 					<NavigationProperty Name="GeneralMatch" Relationship="Self.FK__MatchPart__idGen__59FA5E80" FromRole="MatchParticipants" ToRole="GeneralMatch" />
 					<NavigationProperty Name="Player" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="MatchParticipants" ToRole="Player" />
+          <Property Name="archaeologistsEliminated" Type="Int32" Nullable="false" />
+          <Property Name="supremeBossesEliminated" Type="Int32" Nullable="false" />
 				</EntityType>
 				<EntityType Name="Music">
 					<Key>
@@ -747,7 +751,9 @@
 					<EntitySetMapping Name="MatchParticipants">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.MatchParticipants">
 							<MappingFragment StoreEntitySet="MatchParticipants">
-								<ScalarProperty Name="idMatchParticipant" ColumnName="idMatchParticipant" />
+								<ScalarProperty Name="supremeBossesEliminated" ColumnName="supremeBossesEliminated" />
+                <ScalarProperty Name="archaeologistsEliminated" ColumnName="archaeologistsEliminated" />
+                <ScalarProperty Name="idMatchParticipant" ColumnName="idMatchParticipant" />
 								<ScalarProperty Name="idGeneralMatch" ColumnName="idGeneralMatch" />
 								<ScalarProperty Name="idPlayer" ColumnName="idPlayer" />
 								<ScalarProperty Name="points" ColumnName="points" />

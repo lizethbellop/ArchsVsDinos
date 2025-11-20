@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8088/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" />
+  <xs:import schemaLocation="http://localhost:8088/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+  <xs:element name="SaveMatchStatistics">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" minOccurs="0" name="matchResult" nillable="true" type="q1:MatchResultDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SaveMatchStatisticsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="SaveMatchStatisticsResult" type="q2:SaveMatchResultCode" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlayerStatistics">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="userId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlayerStatisticsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" minOccurs="0" name="GetPlayerStatisticsResult" nillable="true" type="q3:PlayerStatisticsDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLeaderboard">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="topN" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLeaderboardResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" minOccurs="0" name="GetLeaderboardResult" nillable="true" type="q4:ArrayOfLeaderboardEntryDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlayerMatchHistory">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="userId" type="xs:int" />
+        <xs:element minOccurs="0" name="count" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetPlayerMatchHistoryResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" minOccurs="0" name="GetPlayerMatchHistoryResult" nillable="true" type="q5:ArrayOfMatchHistoryDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

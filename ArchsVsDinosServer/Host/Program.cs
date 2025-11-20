@@ -21,6 +21,7 @@ namespace Host
             using (ServiceHost friendHost = new ServiceHost(typeof(FriendManager)))
             using(ServiceHost friendRequestHost = new ServiceHost(typeof(FriendRequestManager)))
             using (ServiceHost gameHost = new ServiceHost(typeof(GameManager)))
+            using (ServiceHost statisticsHost = new ServiceHost(typeof(StatisticsManager)))
             {
                 try
                 {
@@ -32,6 +33,7 @@ namespace Host
                     friendHost.Open();
                     friendRequestHost.Open();
                     gameHost.Open();
+                    statisticsHost.Open();
                     Console.WriteLine("Server is running");
                     Console.ReadLine();
                 }

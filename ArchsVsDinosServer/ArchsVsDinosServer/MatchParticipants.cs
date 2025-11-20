@@ -20,6 +20,8 @@ namespace ArchsVsDinosServer
         public int points { get; set; }
         public bool isWinner { get; set; }
         public bool isDefeated { get; set; }
+        public int archaeologistsEliminated { get; set; }
+        public int supremeBossesEliminated { get; set; }
     
         public virtual GeneralMatch GeneralMatch { get; set; }
         public virtual Player Player { get; set; }

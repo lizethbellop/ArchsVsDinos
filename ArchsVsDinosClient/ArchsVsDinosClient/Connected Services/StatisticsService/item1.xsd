@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="MatchResultDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MatchDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="MatchId" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerResults" nillable="true" type="tns:ArrayOfPlayerMatchResult" />
+      <xs:element minOccurs="0" name="WinnerUserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MatchResultDTO" nillable="true" type="tns:MatchResultDTO" />
+  <xs:complexType name="ArrayOfPlayerMatchResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerMatchResult" nillable="true" type="tns:PlayerMatchResult" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerMatchResult" nillable="true" type="tns:ArrayOfPlayerMatchResult" />
+  <xs:complexType name="PlayerMatchResult">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="IsWinner" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Points" type="xs:int" />
+      <xs:element minOccurs="0" name="Position" type="xs:int" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerMatchResult" nillable="true" type="tns:PlayerMatchResult" />
+  <xs:complexType name="PlayerStatisticsDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TotalLosses" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalMatches" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalPoints" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalWins" type="xs:int" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="WinRate" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerStatisticsDTO" nillable="true" type="tns:PlayerStatisticsDTO" />
+  <xs:complexType name="ArrayOfLeaderboardEntryDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LeaderboardEntryDTO" nillable="true" type="tns:LeaderboardEntryDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLeaderboardEntryDTO" nillable="true" type="tns:ArrayOfLeaderboardEntryDTO" />
+  <xs:complexType name="LeaderboardEntryDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Position" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalPoints" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalWins" type="xs:int" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LeaderboardEntryDTO" nillable="true" type="tns:LeaderboardEntryDTO" />
+  <xs:complexType name="ArrayOfMatchHistoryDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MatchHistoryDTO" nillable="true" type="tns:MatchHistoryDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMatchHistoryDTO" nillable="true" type="tns:ArrayOfMatchHistoryDTO" />
+  <xs:complexType name="MatchHistoryDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MatchDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="MatchId" type="xs:int" />
+      <xs:element minOccurs="0" name="Points" type="xs:int" />
+      <xs:element minOccurs="0" name="Position" type="xs:int" />
+      <xs:element minOccurs="0" name="TotalPlayers" type="xs:int" />
+      <xs:element minOccurs="0" name="Won" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MatchHistoryDTO" nillable="true" type="tns:MatchHistoryDTO" />
+</xs:schema>
