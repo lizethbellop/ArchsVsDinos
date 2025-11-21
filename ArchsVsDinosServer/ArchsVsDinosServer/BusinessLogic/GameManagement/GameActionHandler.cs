@@ -43,15 +43,13 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return null;
             }
 
-            // Si es un Arch va directo al tablero
             if (ArmyTypeHelper.IsArch(card.ArmyType))
             {
                 PlaceArchOnBoard(session.CentralBoard, cardId, card.ArmyType);
                 session.MarkCardDrawn();
-                return card; // Retornamos la carta para notificar
+                return card; 
             }
 
-            // Carta normal (Dino) va a la mano del jugador
             player.AddCard(card);
             session.MarkCardDrawn();
 

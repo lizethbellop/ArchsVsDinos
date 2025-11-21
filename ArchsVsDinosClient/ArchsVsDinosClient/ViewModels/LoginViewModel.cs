@@ -59,7 +59,7 @@ namespace ArchsVsDinosClient.ViewModels
 
             var response = await authenticationService.LoginAsync(Username, Password);
 
-            if (response == null || response.Success)
+            if (response == null || !response.Success)
             {
                 string message = LoginResultCodeHelper.GetMessage(response?.ResultCode ?? LoginResultCode.Authentication_UnexpectedError);
                 messageService.ShowMessage(message);

@@ -7,13 +7,37 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Services
 {
-    public class LobbyCallbackManager 
+    public class LobbyCallbackManager : ILobbyManagerCallback
     {
-        public event Action<LobbyPlayerDTO, string> OnCreatedMatch;
+        public event Action<LobbyPlayerDTO, string> OnCreatedLobby;
+        public event Action<LobbyPlayerDTO> OnJoinedLobby;
+        public event Action<LobbyPlayerDTO> OnPlayerLeftLobby;
+        public event Action<LobbyPlayerDTO> OnPlayerExpelled;
+        public event Action<string> OnLobbyCancelled;
 
-        public void LobbyCreated(LobbyPlayerDTO player, string lobbyId)
+        public void CreatedLobby(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode)
         {
-            OnCreatedMatch?.Invoke(player, lobbyId);
+            OnCreatedLobby?.Invoke(hostLobbyPlayerDTO, matchCode);
+        }
+
+        public void JoinedLobby(LobbyPlayerDTO userAccountDTO)
+        {
+            OnJoinedLobby?.Invoke(userAccountDTO);
+        }
+
+        public void LeftLobby(LobbyPlayerDTO playerWhoLeft)
+        {
+            OnPlayerLeftLobby?.Invoke(playerWhoLeft);
+        }
+
+        public void ExpelledFromLobby(LobbyPlayerDTO expelledPlayer)
+        {
+            OnPlayerExpelled?.Invoke(expelledPlayer);
+        }
+
+        public void LobbyCancelled(string matchCode)
+        {
+            OnLobbyCancelled?.Invoke(matchCode);
         }
     }
 }

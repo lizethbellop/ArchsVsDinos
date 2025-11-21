@@ -7,6 +7,14 @@
       <xs:enumeration value="Lobby_LobbyCreationError" />
       <xs:enumeration value="Lobby_LobbyJoinedError" />
       <xs:enumeration value="Lobby_ConnectionError" />
+      <xs:enumeration value="Lobby_NotExist" />
+      <xs:enumeration value="Lobby_NotHost" />
+      <xs:enumeration value="Lobby_LobbyCancelled" />
+      <xs:enumeration value="Lobby_LobbyCancelationError" />
+      <xs:enumeration value="Lobby_LobbyLeft" />
+      <xs:enumeration value="Lobby_LobbyLeftError" />
+      <xs:enumeration value="Lobby_PlayerExpelled" />
+      <xs:enumeration value="Lobby_PlayerExpelledError" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="LobbyResultCode" nillable="true" type="tns:LobbyResultCode" />

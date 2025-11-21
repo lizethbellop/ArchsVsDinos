@@ -48,7 +48,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             }
         }
 
-
         private void CreateSinglePile(GameSession session, List<string> remainingCards)
         {
             var pile = new List<string>(remainingCards);

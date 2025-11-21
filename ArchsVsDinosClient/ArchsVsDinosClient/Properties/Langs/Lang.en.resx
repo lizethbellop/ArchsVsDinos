@@ -175,7 +175,7 @@
     <value>Start!</value>
   </data>
   <data name="Lobby_ExpellText" xml:space="preserve">
-    <value>Expel</value>
+    <value>Kick</value>
   </data>
   <data name="Lobby_GameBeginningText" xml:space="preserve">
     <value>Game Beginning</value>
@@ -623,5 +623,23 @@
   </data>
   <data name="WcfInfoConnectionRestored" xml:space="preserve">
     <value>Connection restored</value>
+  </data>
+  <data name="Lobby_LobbyCancelled" xml:space="preserve">
+    <value>The host has cancelled the match . Returning to the main window...</value>
+  </data>
+  <data name="Lobby_LobbyExpell" xml:space="preserve">
+    <value>You have been kicked from the match. Returning to the main screen...</value>
+  </data>
+  <data name="Lobby_LobbyBeginHost" xml:space="preserve">
+    <value>Only the host can start the match</value>
+  </data>
+  <data name="Lobby_CancellationLobbyConfirmation" xml:space="preserve">
+    <value>Are you sure you want to cancel the match?</value>
+  </data>
+  <data name="Lobby_OnlyHostCanKick" xml:space="preserve">
+    <value>Only the host can kick players.</value>
+  </data>
+  <data name="Lobby_QuestKick" xml:space="preserve">
+    <value>Do you want to kick </value>
   </data>
 </root>

@@ -646,6 +646,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¿Está segur@ que quiere cancelar la partida?.
+        /// </summary>
+        public static string Lobby_CancellationLobbyConfirmation {
+            get {
+                return ResourceManager.GetString("Lobby_CancellationLobbyConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Error crando sala, intente de nuevo.
         /// </summary>
         public static string Lobby_ErrorCreatingLobby {
@@ -709,11 +718,56 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Sólo el host puede iniciar partida.
+        /// </summary>
+        public static string Lobby_LobbyBeginHost {
+            get {
+                return ResourceManager.GetString("Lobby_LobbyBeginHost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El host ha cancelado la partida. Regresando a pantalla principal....
+        /// </summary>
+        public static string Lobby_LobbyCancelled {
+            get {
+                return ResourceManager.GetString("Lobby_LobbyCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Sala creada con éxito.
         /// </summary>
         public static string Lobby_LobbyCreated {
             get {
                 return ResourceManager.GetString("Lobby_LobbyCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Has sido expulsado de la partida. Rgresando a pantalla principal....
+        /// </summary>
+        public static string Lobby_LobbyExpell {
+            get {
+                return ResourceManager.GetString("Lobby_LobbyExpell", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Sólo el host puede expulsar jugadores.
+        /// </summary>
+        public static string Lobby_OnlyHostCanKick {
+            get {
+                return ResourceManager.GetString("Lobby_OnlyHostCanKick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¿Quieres es pulsar a .
+        /// </summary>
+        public static string Lobby_QuestKick {
+            get {
+                return ResourceManager.GetString("Lobby_QuestKick", resourceCulture);
             }
         }
         

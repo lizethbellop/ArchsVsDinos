@@ -20,6 +20,12 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void LobbyCancelled(string matchCode);
 
+        [OperationContract(IsOneWay = true)]
+        void LeftLobby(LobbyPlayerDTO playerWhoLeft);
+
+        [OperationContract(IsOneWay = true)]
+        void ExpelledFromLobby(LobbyPlayerDTO expelledPlayer);
+
         /*
         [OperationContract]
         void InvitedFriendToLobby(string username, string matchCode);
@@ -27,11 +33,9 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void InvitedByEmailToLobby(string email, string matchCode);
 
-        [OperationContract(IsOneWay = true)]
-        void ExpelledPlayerFromLobby(LobbyPlayerDTO explledPlayer);
 
-        [OperationContract(IsOneWay = true)]
-        void LeftLobby(LobbyPlayerDTO playerWhoLeft);
+
+
 
         */
 

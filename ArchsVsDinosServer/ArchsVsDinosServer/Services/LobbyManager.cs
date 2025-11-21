@@ -40,6 +40,16 @@ namespace ArchsVsDinosServer.Services
         {
             return lobbyBusinessLogic.CancelTheLobby(matchCode, usernameRequester);
         }
+
+        public LobbyResultCode LeaveLobby(string username)
+        {
+            return lobbyBusinessLogic.LeaveTheLobby(username);
+        }
+
+        public LobbyResultCode ExpelPlayerLobby(string username, string hostUsername)
+        {
+            return lobbyBusinessLogic.ExpelThePlayer(username, hostUsername);
+        }
         /*
         public InviteFriendToMatch(string username, string friendUsername, string matchCode)
         {
@@ -52,10 +62,7 @@ namespace ArchsVsDinosServer.Services
         }
         */
         /*
-        public ExpelPlayerFromMatch(string username)
-        {
 
-        }
 
         public LeaveMatchLobby(string username)
         {

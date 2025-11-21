@@ -624,4 +624,22 @@
   <data name="WcfInfoConnectionRestored" xml:space="preserve">
     <value>Conexión restablecida</value>
   </data>
+  <data name="Lobby_LobbyCancelled" xml:space="preserve">
+    <value>El host ha cancelado la partida. Regresando a pantalla principal...</value>
+  </data>
+  <data name="Lobby_LobbyExpell" xml:space="preserve">
+    <value>Has sido expulsado de la partida. Rgresando a pantalla principal...</value>
+  </data>
+  <data name="Lobby_LobbyBeginHost" xml:space="preserve">
+    <value>Sólo el host puede iniciar partida</value>
+  </data>
+  <data name="Lobby_CancellationLobbyConfirmation" xml:space="preserve">
+    <value>¿Está segur@ que quiere cancelar la partida?</value>
+  </data>
+  <data name="Lobby_OnlyHostCanKick" xml:space="preserve">
+    <value>Sólo el host puede expulsar jugadores</value>
+  </data>
+  <data name="Lobby_QuestKick" xml:space="preserve">
+    <value>¿Quieres es pulsar a </value>
+  </data>
 </root>
