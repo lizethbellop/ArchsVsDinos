@@ -160,6 +160,7 @@
     <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Utils\UserProfileObserver.cs" />
     <Compile Include="Utils\WcfConnectionGuardian.cs" />
+    <Compile Include="ViewModels\AvatarSelectionViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\DeckViewModel.cs" />
     <Compile Include="ViewModels\EditNicknameViewModel.cs" />
@@ -181,6 +182,9 @@
     <Compile Include="ViewModels\UpdateXViewModel.cs" />
     <Compile Include="Views\Account.xaml.cs">
       <DependentUpon>Account.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AvatarSelection.xaml.cs">
+      <DependentUpon>AvatarSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditAccountViews\EditNickname.xaml.cs">
       <DependentUpon>EditNickname.xaml</DependentUpon>
@@ -255,6 +259,10 @@
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\Account.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AvatarSelection.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -196,6 +196,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Selecciona tu avatar.
+        /// </summary>
+        public static string Avatar_SelectTitle {
+            get {
+                return ResourceManager.GetString("Avatar_SelectTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Nuevo apodo.
         /// </summary>
         public static string EditNickname_NewNickname {

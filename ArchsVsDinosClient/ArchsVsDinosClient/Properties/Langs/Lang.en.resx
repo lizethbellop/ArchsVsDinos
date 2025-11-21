@@ -678,4 +678,7 @@
   <data name="JoinMatch_ErrorJoinMatch" xml:space="preserve">
     <value>Error trying to join game, please try again</value>
   </data>
+  <data name="Avatar_SelectTitle" xml:space="preserve">
+    <value>Select your avatar</value>
+  </data>
 </root>
