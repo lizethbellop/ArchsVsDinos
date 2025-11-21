@@ -41,5 +41,6 @@ namespace ArchsVsDinosClient.Utils
                 ProfilePicture = source.ProfilePicture
             };
         }
+
     }
 }

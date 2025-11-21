@@ -203,6 +203,9 @@
     <Compile Include="Views\GameStatistics.xaml.cs">
       <DependentUpon>GameStatistics.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LobbyViews\JoinCode.xaml.cs">
+      <DependentUpon>JoinCode.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LobbyViews\Lobby.xaml.cs">
       <DependentUpon>Lobby.xaml</DependentUpon>
     </Compile>
@@ -283,6 +286,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\GameStatistics.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LobbyViews\JoinCode.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

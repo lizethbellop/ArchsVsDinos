@@ -60,6 +60,13 @@ namespace ArchsVsDinosClient
             this.Close();
         }
 
+        private void Click_BtnJoinToMatch(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayMovingRockSound();
+            var joinCode = new JoinCode();
+            joinCode.Show();
+        }
+
         private void Click_BtnHowToPlay(object sender, RoutedEventArgs e)
         {
         }

@@ -642,4 +642,13 @@
   <data name="Lobby_QuestKick" xml:space="preserve">
     <value>¿Quieres es pulsar a </value>
   </data>
+  <data name="JoinLobby_LobbyCode" xml:space="preserve">
+    <value>Ingrese el código de partida</value>
+  </data>
+  <data name="JoinCode_Invalid" xml:space="preserve">
+    <value>Código de partida inválido, intente de nuevo</value>
+  </data>
+  <data name="JoinMatch_ErrorJoinMatch" xml:space="preserve">
+    <value>Error intentando entrar a partida, intente de nuevo</value>
+  </data>
 </root>

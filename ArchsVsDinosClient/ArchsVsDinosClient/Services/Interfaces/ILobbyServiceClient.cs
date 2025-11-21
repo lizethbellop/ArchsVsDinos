@@ -16,7 +16,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<string> LobbyCancelled;
 
         void CreateLobby(UserAccountDTO userAccount);
-        void JoinLobby(UserAccountDTO userAccount, string matchCode);
+        LobbyResultCode JoinLobby(UserAccountDTO userAccount, string matchCode);
         void LeaveLobby(string username);
         void ExpelPlayer(string hostUsername, string targetUsername);
         void CancellLobby(string matchCode, string usernameRequester);
