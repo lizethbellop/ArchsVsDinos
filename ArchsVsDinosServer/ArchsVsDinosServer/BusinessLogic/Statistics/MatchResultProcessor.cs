@@ -50,6 +50,9 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                             {
                                 participant.points = playerResult.Points;
                                 participant.isWinner = playerResult.IsWinner;
+
+                                participant.archaeologistsEliminated = playerResult.ArchaeologistsEliminated;
+                                participant.supremeBossesEliminated = playerResult.SupremeBossesEliminated;
                             }
                             else
                             {
@@ -60,7 +63,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                         UpdatePlayerStatistics(context, matchResult);
 
                         context.SaveChanges();
-
                         transaction.Commit();
 
                         logger.LogInfo($"ProcessMatchResults: Successfully processed match {matchResult.MatchId}");
@@ -108,12 +110,11 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
 
                 if (player != null)
                 {
-                    
                     player.totalMatches++;
 
                     if (playerResult.IsWinner)
                     {
-                       player.totalWins++;
+                        player.totalWins++;
                     }
                     else
                     {
@@ -126,6 +127,108 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                 {
                     logger.LogWarning($"UpdatePlayerStatistics: Player {playerResult.UserId} not found in database");
                 }
+            }
+        }
+
+        public GameStatisticsDTO GetMatchStatistics(int matchId)
+        {
+            using (var context = contextFactory())
+            {
+                try
+                {
+                    var match = context.GeneralMatch.FirstOrDefault(m => m.idGeneralMatch == matchId);
+
+                    if (match == null)
+                    {
+                        logger.LogWarning($"GetMatchStatistics: Match {matchId} not found");
+                        return null;
+                    }
+
+                    var participants = context.MatchParticipants
+                        .Where(mp => mp.idGeneralMatch == matchId && !mp.isDefeated)
+                        .OrderByDescending(mp => mp.points)
+                        .ThenByDescending(mp => mp.isWinner)
+                        .ToList();
+
+                    if (!participants.Any())
+                    {
+                        logger.LogWarning($"GetMatchStatistics: No participants found for match {matchId}");
+                        return null;
+                    }
+
+                    var playerStats = new List<PlayerMatchStatsDTO>();
+                    int currentPosition = 1;
+                    int previousPoints = participants.First().points;
+
+                    for (int i = 0; i < participants.Count; i++)
+                    {
+                        var participant = participants[i];
+
+                        if (participant.points != previousPoints)
+                        {
+                            currentPosition = i + 1;
+                            previousPoints = participant.points;
+                        }
+
+                        playerStats.Add(new PlayerMatchStatsDTO
+                        {
+                            UserId = participant.idPlayer,
+                            Username = GetUsername(context, participant.idPlayer),
+                            Position = currentPosition,
+                            Points = participant.points,
+                            IsWinner = participant.isWinner,
+                            ArchaeologistsEliminated = participant.archaeologistsEliminated,
+                            SupremeBossesEliminated = participant.supremeBossesEliminated
+                        });
+                    }
+
+                    return new GameStatisticsDTO
+                    {
+                        MatchId = matchId,
+                        MatchDate = match.date,
+                        PlayerStats = playerStats.ToArray()
+                    };
+                }
+                catch (NullReferenceException ex)
+                {
+                    logger.LogError($"GetMatchStatistics: Null reference for match {matchId} - {ex.Message}", ex);
+                    return null;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    logger.LogError($"GetMatchStatistics: Invalid operation for match {matchId} - {ex.Message}", ex);
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"GetMatchStatistics: Error getting stats for match {matchId} - {ex.Message}", ex);
+                    return null;
+                }
+            }
+        }
+
+        private string GetUsername(IDbContext context, int playerId)
+        {
+            try
+            {
+                var player = context.Player.FirstOrDefault(p => p.idPlayer == playerId);
+                if (player == null)
+                {
+                    return "Unknown";
+                }
+
+                var userAccount = player.UserAccount.FirstOrDefault();
+                return userAccount?.username ?? "Unknown";
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogWarning($"GetUsername: Multiple UserAccounts for player {playerId} - {ex.Message}");
+                return "Unknown";
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"GetUsername: Error getting username for player {playerId} - {ex.Message}");
+                return "Unknown";
             }
         }
     }

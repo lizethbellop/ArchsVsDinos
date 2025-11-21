@@ -17,9 +17,11 @@
   <xs:element name="ArrayOfPlayerMatchResult" nillable="true" type="tns:ArrayOfPlayerMatchResult" />
   <xs:complexType name="PlayerMatchResult">
     <xs:sequence>
+      <xs:element minOccurs="0" name="ArchaeologistsEliminated" type="xs:int" />
       <xs:element minOccurs="0" name="IsWinner" type="xs:boolean" />
       <xs:element minOccurs="0" name="Points" type="xs:int" />
       <xs:element minOccurs="0" name="Position" type="xs:int" />
+      <xs:element minOccurs="0" name="SupremeBossesEliminated" type="xs:int" />
       <xs:element minOccurs="0" name="UserId" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
@@ -69,4 +71,30 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="MatchHistoryDTO" nillable="true" type="tns:MatchHistoryDTO" />
+  <xs:complexType name="GameStatisticsDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MatchDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="MatchId" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerStats" nillable="true" type="tns:ArrayOfPlayerMatchStatsDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GameStatisticsDTO" nillable="true" type="tns:GameStatisticsDTO" />
+  <xs:complexType name="ArrayOfPlayerMatchStatsDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerMatchStatsDTO" nillable="true" type="tns:PlayerMatchStatsDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerMatchStatsDTO" nillable="true" type="tns:ArrayOfPlayerMatchStatsDTO" />
+  <xs:complexType name="PlayerMatchStatsDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ArchaeologistsEliminated" type="xs:int" />
+      <xs:element minOccurs="0" name="IsWinner" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Points" type="xs:int" />
+      <xs:element minOccurs="0" name="Position" type="xs:int" />
+      <xs:element minOccurs="0" name="SupremeBossesEliminated" type="xs:int" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerMatchStatsDTO" nillable="true" type="tns:PlayerMatchStatsDTO" />
 </xs:schema>

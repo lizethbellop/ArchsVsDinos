@@ -159,10 +159,8 @@ namespace ArchsVsDinosServer.Services
 
         public GameStatisticsDTO GetMatchStatistics(int matchId)
         {
-            throw new NotImplementedException();
-            
-            //var processor = new MatchResultProcessor(dependencies);
-            //return processor.GetMatchStatistics(matchId);
+            var processor = new MatchResultProcessor(dependencies);
+            return processor.GetMatchStatistics(matchId);
         }
     }
 }

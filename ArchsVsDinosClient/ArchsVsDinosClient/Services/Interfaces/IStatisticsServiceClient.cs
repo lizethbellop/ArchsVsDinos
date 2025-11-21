@@ -15,5 +15,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         Task<PlayerStatisticsDTO> GetPlayerStatisticsAsync(int userId);
         Task<LeaderboardEntryDTO[]> GetLeaderboardAsync(int topN);
         Task<MatchHistoryDTO[]> GetPlayerMatchHistoryAsync(int userId, int count);
+        Task<GameStatisticsDTO> GetMatchStatisticsAsync(int matchId);
+
     }
 }

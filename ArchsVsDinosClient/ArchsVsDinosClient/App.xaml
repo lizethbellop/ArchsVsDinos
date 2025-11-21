@@ -2,9 +2,20 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ArchsVsDinosClient"
+             xmlns:converters="clr-namespace:ArchsVsDinosClient.Converters"
              StartupUri="Views/Login.xaml">
     <Application.Resources>
         <FontFamily x:Key="Ouroboros">Resources/Fonts/#Ouroboros</FontFamily>
         <FontFamily x:Key="Volcanic Dungeon">Resources/Fonts/#Volcanic Dungeon</FontFamily>
+
+        <!-- Converters -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+        <converters:PositionToColorConverter x:Key="PositionToColorConverter"/>
+        <converters:PositionToFontSizeConverter x:Key="PositionToFontSizeConverter"/>
+        <converters:PositionToHeightConverter x:Key="PositionToHeightConverter"/>
+        <converters:PositionToBorderConverter x:Key="PositionToBorderConverter"/>
+        <converters:PositionToBorderThicknessConverter x:Key="PositionToBorderThicknessConverter"/>
+        <converters:PositionToStatsBorderThicknessConverter x:Key="PositionToStatsBorderThicknessConverter"/>
     </Application.Resources>
 </Application>
