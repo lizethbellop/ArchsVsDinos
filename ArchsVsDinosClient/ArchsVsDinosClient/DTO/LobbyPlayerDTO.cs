@@ -14,5 +14,7 @@ namespace ArchsVsDinosClient.DTO
         public string ProfilePicture { get; set; }
         public int TotalWins { get; set; }
         public int TotalLosses { get; set; }
+
+        public bool IsHost { get; set; }
     }
 }

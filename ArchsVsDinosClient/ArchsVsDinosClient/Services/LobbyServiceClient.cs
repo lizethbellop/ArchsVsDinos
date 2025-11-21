@@ -4,6 +4,7 @@ using ArchsVsDinosClient.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,34 +13,51 @@ namespace ArchsVsDinosClient.Services
 {
     public class LobbyServiceClient : ILobbyServiceClient
     {
-        private readonly LobbyManagerClient client;
+        private readonly LobbyManagerClient lobbyManagerClient;
+        private readonly LobbyCallbackManager callbackManager;
 
         public event Action<LobbyPlayerDTO, string> LobbyCreated;
+        public event Action<LobbyPlayerDTO> PlayerJoined;
+        public event Action<LobbyPlayerDTO> PlayerLeft;
+        public event Action<LobbyPlayerDTO> PlayerExpelled;
+        public event Action<string> LobbyCancelled;
 
         public LobbyServiceClient()
-        {
-            var callback = new LobbyCallbackManager();
-            callback.OnCreatedMatch += (player, lobbyId) =>
-            {
-                LobbyCreated?.Invoke(player, lobbyId);
-            };
+        { 
+            callbackManager = new LobbyCallbackManager();
 
-            var context = new InstanceContext(callback);
-            client = new LobbyManagerClient(context);
+            callbackManager.OnCreatedLobby += (player, code) => LobbyCreated?.Invoke(player, code);
+            callbackManager.OnJoinedLobby += (player) => PlayerJoined?.Invoke(player);
+            callbackManager.OnPlayerLeftLobby += (player) => PlayerLeft?.Invoke(player);
+            callbackManager.OnPlayerExpelled += (player) => PlayerExpelled?.Invoke(player);
+            callbackManager.OnLobbyCancelled += (code) => LobbyCancelled?.Invoke(code);
+
+            var context = new InstanceContext(callbackManager);
+            lobbyManagerClient = new LobbyManagerClient(context);
         }
 
         public void CreateLobby(UserAccountDTO userAccount)
         {
-            client.CreateLobby(userAccount);
+            lobbyManagerClient.CreateLobby(userAccount);
         }
 
-        private PlayerDTO GetPlayerById(int idPlayer)
+        public void JoinLobby(UserAccountDTO userAccount, string matchCode)
         {
-            return new PlayerDTO
-            {
-                IdPlayer = idPlayer,
-                ProfilePicture = "default.png"
-            };
+            lobbyManagerClient.JoinLobby(userAccount, matchCode);
+        }
+
+        public void LeaveLobby(string username)
+        {
+            lobbyManagerClient.LeaveLobby(username);
+        }
+
+        public void ExpelPlayer(string hostUsername, string targetUsername)
+        {
+            lobbyManagerClient.ExpelPlayerLobby(hostUsername, targetUsername);
+        }
+        public void CancellLobby(string matchCode, string usernameRequester)
+        {
+            lobbyManagerClient.CancelLobby(matchCode, usernameRequester);
         }
 
     }

@@ -70,7 +70,66 @@ namespace ArchsVsDinosServer.Services
         }
         public void LobbyCancelled(string matchCode)
         {
+            try
+            {
+                loggerHelper.LogInfo($"Lobby {matchCode} was cancelled.");
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError("Communication error while notifying lobby cancellation", ex);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError("Unexpected error in LobbyCancelled notification.", ex);
+            }
+        }
 
+        public void LeftLobby(LobbyPlayerDTO playerWhoLeft)
+        {
+            try
+            {
+                if (playerWhoLeft == null)
+                {
+                    loggerHelper.LogWarning("Invalid player leaving lobby.");
+                    return;
+                }
+
+                loggerHelper.LogInfo(
+                    $"Player {playerWhoLeft.Username} left the lobby."
+                );
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError("Communication error while notifying player leaving lobby", ex);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError("Unexpected error in LeftLobby notification.", ex);
+            }
+        }
+
+        public void ExpelledFromLobby(LobbyPlayerDTO expelledPlayer)
+        {
+            try
+            {
+                if (expelledPlayer == null)
+                {
+                    loggerHelper.LogWarning("Invalid expelled player.");
+                    return;
+                }
+
+                loggerHelper.LogInfo(
+                    $"Player {expelledPlayer.Username} was expelled from the lobby."
+                );
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError("Communication error while notifying expelled player", ex);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError("Unexpected error in ExpelledPlayerFromLobby notification.", ex);
+            }
         }
 
     }

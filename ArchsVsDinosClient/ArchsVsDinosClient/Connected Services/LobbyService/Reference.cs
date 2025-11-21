@@ -172,6 +172,30 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Lobby_ConnectionError = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_NotExist = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_NotHost = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_LobbyCancelled = 7,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_LobbyCancelationError = 8,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_LobbyLeft = 9,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_LobbyLeftError = 10,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_PlayerExpelled = 11,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_PlayerExpelledError = 12,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -292,6 +316,30 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CreateLobby", ReplyAction="http://tempuri.org/ILobbyManager/CreateLobbyResponse")]
         System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/JoinLobby", ReplyAction="http://tempuri.org/ILobbyManager/JoinLobbyResponse")]
+        ArchsVsDinosClient.LobbyService.LobbyResultCode JoinLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/JoinLobby", ReplyAction="http://tempuri.org/ILobbyManager/JoinLobbyResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> JoinLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CancelLobby", ReplyAction="http://tempuri.org/ILobbyManager/CancelLobbyResponse")]
+        ArchsVsDinosClient.LobbyService.LobbyResultCode CancelLobby(string matchCode, string usernameRequester);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CancelLobby", ReplyAction="http://tempuri.org/ILobbyManager/CancelLobbyResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CancelLobbyAsync(string matchCode, string usernameRequester);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/LeaveLobby", ReplyAction="http://tempuri.org/ILobbyManager/LeaveLobbyResponse")]
+        ArchsVsDinosClient.LobbyService.LobbyResultCode LeaveLobby(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/LeaveLobby", ReplyAction="http://tempuri.org/ILobbyManager/LeaveLobbyResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> LeaveLobbyAsync(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/ExpelPlayerLobby", ReplyAction="http://tempuri.org/ILobbyManager/ExpelPlayerLobbyResponse")]
+        ArchsVsDinosClient.LobbyService.LobbyResultCode ExpelPlayerLobby(string username, string hostUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/ExpelPlayerLobby", ReplyAction="http://tempuri.org/ILobbyManager/ExpelPlayerLobbyResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> ExpelPlayerLobbyAsync(string username, string hostUsername);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -302,6 +350,15 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/JoinedLobby")]
         void JoinedLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO userAccountDTO);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/LobbyCancelled")]
+        void LobbyCancelled(string matchCode);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/LeftLobby")]
+        void LeftLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO playerWhoLeft);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/ExpelledFromLobby")]
+        void ExpelledFromLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO expelledPlayer);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -338,6 +395,38 @@ namespace ArchsVsDinosClient.LobbyService {
         
         public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO) {
             return base.Channel.CreateLobbyAsync(hostUserAccountDTO);
+        }
+        
+        public ArchsVsDinosClient.LobbyService.LobbyResultCode JoinLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode) {
+            return base.Channel.JoinLobby(userAccountDTO, matchCode);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> JoinLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode) {
+            return base.Channel.JoinLobbyAsync(userAccountDTO, matchCode);
+        }
+        
+        public ArchsVsDinosClient.LobbyService.LobbyResultCode CancelLobby(string matchCode, string usernameRequester) {
+            return base.Channel.CancelLobby(matchCode, usernameRequester);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CancelLobbyAsync(string matchCode, string usernameRequester) {
+            return base.Channel.CancelLobbyAsync(matchCode, usernameRequester);
+        }
+        
+        public ArchsVsDinosClient.LobbyService.LobbyResultCode LeaveLobby(string username) {
+            return base.Channel.LeaveLobby(username);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> LeaveLobbyAsync(string username) {
+            return base.Channel.LeaveLobbyAsync(username);
+        }
+        
+        public ArchsVsDinosClient.LobbyService.LobbyResultCode ExpelPlayerLobby(string username, string hostUsername) {
+            return base.Channel.ExpelPlayerLobby(username, hostUsername);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> ExpelPlayerLobbyAsync(string username, string hostUsername) {
+            return base.Channel.ExpelPlayerLobbyAsync(username, hostUsername);
         }
     }
 }

@@ -18,9 +18,11 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Lobby_NotExist,
         [EnumMember] Lobby_NotHost,
         [EnumMember] Lobby_LobbyCancelled,
-        [EnumMember] Lobby_LobbyCancelationError
-
-
+        [EnumMember] Lobby_LobbyCancelationError,
+        [EnumMember] Lobby_LobbyLeft,
+        [EnumMember] Lobby_LobbyLeftError,
+        [EnumMember] Lobby_PlayerExpelled,
+        [EnumMember] Lobby_PlayerExpelledError
     }
 
 }

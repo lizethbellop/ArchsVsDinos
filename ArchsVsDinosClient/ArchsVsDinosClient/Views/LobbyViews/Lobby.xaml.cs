@@ -20,66 +20,76 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ArchsVsDinosClient.Views
+namespace ArchsVsDinosClient.Views.LobbyViews
 {
     public partial class Lobby : Window
     {
 
         private readonly LobbyViewModel viewModel;
-        private readonly Label[] usernameLabels;
-        private readonly Label[] nicknameLabels;
 
         public Lobby()
         {
             InitializeComponent();
             viewModel = new LobbyViewModel();
             DataContext = viewModel;
-
-            usernameLabels = new Label[] { Lb_P2Username, Lb_P3Username, Lb_P4Username };
-            nicknameLabels = new Label[] { Lb_P2Nickname, Lb_P3Nickname, Lb_P4Nickname };
-
-            Lb_P1Username.Content = viewModel.Players[0].Username;
-            Lb_P1Nickname.Content = viewModel.Players[0].Nickname;
-
-            viewModel.Players.CollectionChanged += Players_CollectionChanged;
-        }
-
-        private void Players_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
+            viewModel.MatchCodeReceived += code =>
             {
-                foreach (LobbyService.LobbyPlayerDTO player in e.NewItems)
-                {
-                    if (player.Username == UserSession.Instance.CurrentUser.Username)
-                        continue;
-
-                    for (int i = 0; i < usernameLabels.Length; i++)
-                    {
-                        if (string.IsNullOrEmpty(usernameLabels[i].Content.ToString()))
-                        {
-                            usernameLabels[i].Content = player.Username;
-                            nicknameLabels[i].Content = player.Nickname;
-                            break;
-                        }
-                    }
-                }
-            }
+                Lb_MatchCode.Content = code;
+            };
         }
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)
         {
+            if (!viewModel.CurrentClientIsHost())
+            {
+                MessageBox.Show(Lang.Lobby_LobbyBeginHost);
+                return;
+            }
+
             SoundButton.PlayDestroyingRockSound();
             var match = new MainMatch(UserSession.Instance.CurrentUser.Username);
             match.Show();
             this.Close();
         }
 
+
         private void Click_BtnCancelMatch(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
+
+            if (viewModel.CurrentClientIsHost())
+            {
+                var result = MessageBox.Show(Lang.Lobby_CancellationLobbyConfirmation, Lang.GlobalAcceptText, MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    viewModel.CancellLobby(UserSession.Instance.CurrentUser.Username, viewModel.MatchCode);
+                }
+            }
+            else
+            {
+                viewModel.LeaveLobby(UserSession.Instance.CurrentUser.Username);
+            }
+
             var main = new MainWindow();
             main.Show();
             this.Close();
+        }
+
+        private void Click_BtnExpelPlayer(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            var usernameToExpel = (string)button.Tag;
+
+            if (!viewModel.CurrentClientIsHost())
+            {
+                MessageBox.Show(Lang.Lobby_OnlyHostCanKick);
+                return;
+            }
+
+            var confirm = MessageBox.Show($"{Lang.Lobby_QuestKick} {usernameToExpel}?", Lang.GlobalAcceptText, MessageBoxButton.YesNo);
+            if (confirm != MessageBoxResult.Yes) return;
+
+            viewModel.ExpelPlayer(UserSession.Instance.CurrentUser.Username, usernameToExpel);
         }
 
         private void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
@@ -105,7 +115,6 @@ namespace ArchsVsDinosClient.Views
             SoundButton.PlayDestroyingRockSound();
             Gr_InviteByEmail.Visibility = Visibility.Collapsed;
         }
-
 
     }
 }

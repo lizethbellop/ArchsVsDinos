@@ -31,6 +31,7 @@ namespace ArchsVsDinosClient
             viewModel = new LoginViewModel();
             DataContext = viewModel;
             viewModel.RequestClose += OnRequestClose;
+            MusicPlayer.Instance.StopBackgroundMusic();
         }
 
         private void Click_BtnRegister(object sender, RoutedEventArgs e)

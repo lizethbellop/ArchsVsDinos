@@ -22,16 +22,65 @@
   <wsdl:message name="ILobbyManager_CreateLobby_OutputMessage">
     <wsdl:part name="parameters" element="tns:CreateLobbyResponse" />
   </wsdl:message>
+  <wsdl:message name="ILobbyManager_JoinLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:JoinLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_JoinLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:JoinLobbyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_CancelLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:CancelLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_CancelLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CancelLobbyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_LeaveLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:LeaveLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_LeaveLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LeaveLobbyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_ExpelPlayerLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExpelPlayerLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_ExpelPlayerLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExpelPlayerLobbyResponse" />
+  </wsdl:message>
   <wsdl:message name="ILobbyManager_CreatedLobby_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:CreatedLobby" />
   </wsdl:message>
   <wsdl:message name="ILobbyManager_JoinedLobby_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:JoinedLobby" />
   </wsdl:message>
+  <wsdl:message name="ILobbyManager_LobbyCancelled_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:LobbyCancelled" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_LeftLobby_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:LeftLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_ExpelledFromLobby_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:ExpelledFromLobby" />
+  </wsdl:message>
   <wsdl:portType name="ILobbyManager">
     <wsdl:operation name="CreateLobby">
       <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/CreateLobby" message="tns:ILobbyManager_CreateLobby_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/CreateLobbyResponse" message="tns:ILobbyManager_CreateLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="JoinLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/JoinLobby" message="tns:ILobbyManager_JoinLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/JoinLobbyResponse" message="tns:ILobbyManager_JoinLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/CancelLobby" message="tns:ILobbyManager_CancelLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/CancelLobbyResponse" message="tns:ILobbyManager_CancelLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LeaveLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/LeaveLobby" message="tns:ILobbyManager_LeaveLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/LeaveLobbyResponse" message="tns:ILobbyManager_LeaveLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExpelPlayerLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/ExpelPlayerLobby" message="tns:ILobbyManager_ExpelPlayerLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/ExpelPlayerLobbyResponse" message="tns:ILobbyManager_ExpelPlayerLobby_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="CreatedLobby">
       <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/CreatedLobby" message="tns:ILobbyManager_CreatedLobby_OutputCallbackMessage" />
@@ -39,12 +88,57 @@
     <wsdl:operation name="JoinedLobby">
       <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/JoinedLobby" message="tns:ILobbyManager_JoinedLobby_OutputCallbackMessage" />
     </wsdl:operation>
+    <wsdl:operation name="LobbyCancelled">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/LobbyCancelled" message="tns:ILobbyManager_LobbyCancelled_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LeftLobby">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/LeftLobby" message="tns:ILobbyManager_LeftLobby_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExpelledFromLobby">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/ExpelledFromLobby" message="tns:ILobbyManager_ExpelledFromLobby_OutputCallbackMessage" />
+    </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetTcpBinding_ILobbyManager" type="tns:ILobbyManager">
     <wsp:PolicyReference URI="#NetTcpBinding_ILobbyManager_policy" />
     <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
     <wsdl:operation name="CreateLobby">
       <soap12:operation soapAction="http://tempuri.org/ILobbyManager/CreateLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JoinLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/JoinLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/CancelLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeaveLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/LeaveLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExpelPlayerLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/ExpelPlayerLobby" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -60,6 +154,24 @@
     </wsdl:operation>
     <wsdl:operation name="JoinedLobby">
       <soap12:operation soapAction="http://tempuri.org/ILobbyManager/JoinedLobby" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LobbyCancelled">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/LobbyCancelled" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LeftLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/LeftLobby" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ExpelledFromLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/ExpelledFromLobby" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views;
+using ArchsVsDinosClient.Views.LobbyViews;
 using ArchsVsDinosClient.Views.MatchViews;
 using System;
 using System.Collections.Generic;

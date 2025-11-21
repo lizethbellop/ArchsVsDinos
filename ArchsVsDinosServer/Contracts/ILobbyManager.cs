@@ -22,6 +22,12 @@ namespace Contracts
         [OperationContract]
         LobbyResultCode CancelLobby(string matchCode, string usernameRequester);
 
+        [OperationContract]
+        LobbyResultCode LeaveLobby(string username);
+
+        [OperationContract]
+        LobbyResultCode ExpelPlayerLobby(string username, string hostUsername);
+
         /*
 
         [OperationContract]
@@ -30,13 +36,7 @@ namespace Contracts
         [OperationContract]
         void InviteByEmailToLobby(string email, string matchCode);
 
-        [OperationContract]
-        void ExpelPlayerFromLobby(string username);
-
-        [OperationContract]
-        void LeaveLobby(string username);
-
-*/
+        */
 
     }
 
