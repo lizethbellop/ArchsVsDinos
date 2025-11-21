@@ -41,9 +41,9 @@ namespace ArchsVsDinosClient.Services
             lobbyManagerClient.CreateLobby(userAccount);
         }
 
-        public void JoinLobby(UserAccountDTO userAccount, string matchCode)
+        public LobbyResultCode JoinLobby(UserAccountDTO userAccount, string matchCode)
         {
-            lobbyManagerClient.JoinLobby(userAccount, matchCode);
+            return lobbyManagerClient.JoinLobby(userAccount, matchCode);
         }
 
         public void LeaveLobby(string username)

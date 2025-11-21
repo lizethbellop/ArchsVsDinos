@@ -31,11 +31,11 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             InitializeComponent();
             viewModel = new LobbyViewModel();
-            DataContext = viewModel;
             viewModel.MatchCodeReceived += code =>
             {
                 Lb_MatchCode.Content = code;
             };
+            DataContext = viewModel;
         }
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)

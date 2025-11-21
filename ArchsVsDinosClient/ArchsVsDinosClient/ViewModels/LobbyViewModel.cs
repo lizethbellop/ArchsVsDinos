@@ -106,6 +106,7 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void OnLobbyCreated(LobbyPlayerDTO createdPlayer, string code)
         {
+            System.Diagnostics.Debug.WriteLine("Código recibido: " + code);
             MatchCode = code;
             UpdateSlots();
 

@@ -1,13 +1,14 @@
-﻿<Window x:Class="ArchsVsDinosClient.Views.ConfirmCode"
+﻿<Window x:Class="ArchsVsDinosClient.Views.LobbyViews.JoinCode"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
+        xmlns:local="clr-namespace:ArchsVsDinosClient.Views.LobbyViews"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="VerificationCode" Height="300" Width="500"
+        Title="JoinCode" Height="300" Width="500"
         WindowStartupLocation="CenterScreen" WindowStyle="None">
+
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF84E9FF" Offset="0.003"/>
@@ -31,12 +32,12 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="0,10,0,10">
             <StackPanel>
-                <Label Content="{x:Static language:Lang.VerificationC_VerificationCode}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Label Content="{x:Static language:Lang.JoinLobby_LobbyCode}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </StackPanel>
 
             <StackPanel>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox Name ="TxtB_Code" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox Name ="TxtB_MatchCode" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Border>
             </StackPanel>
         </StackPanel>
@@ -101,4 +102,3 @@
 
     </Grid>
 </Window>
-

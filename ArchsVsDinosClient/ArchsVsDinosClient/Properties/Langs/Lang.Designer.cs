@@ -601,6 +601,33 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Código de partida inválido, intente de nuevo.
+        /// </summary>
+        public static string JoinCode_Invalid {
+            get {
+                return ResourceManager.GetString("JoinCode_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese el código de partida.
+        /// </summary>
+        public static string JoinLobby_LobbyCode {
+            get {
+                return ResourceManager.GetString("JoinLobby_LobbyCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error intentando entrar a partida, intente de nuevo.
+        /// </summary>
+        public static string JoinMatch_ErrorJoinMatch {
+            get {
+                return ResourceManager.GetString("JoinMatch_ErrorJoinMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Inglés.
         /// </summary>
         public static string Language_English {
