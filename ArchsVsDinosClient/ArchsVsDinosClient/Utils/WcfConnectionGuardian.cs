@@ -17,11 +17,6 @@ namespace ArchsVsDinosClient.Utils
         public bool IsServerAvailable { get; private set; } = true;
         public event EventHandler<ServerStateChangedEventArgs> ServerStateChanged;
 
-        /// <summary>
-        /// Constructor con logger
-        /// </summary>
-        /// <param name="onError">Callback cuando hay error (título i18n, mensaje i18n)</param>
-        /// <param name="logger">Logger para registrar errores (opcional)</param>
         public WcfConnectionGuardian(Action<string, string> onError, ILogger logger = null)
         {
             this.onError = onError ?? throw new ArgumentNullException(nameof(onError));

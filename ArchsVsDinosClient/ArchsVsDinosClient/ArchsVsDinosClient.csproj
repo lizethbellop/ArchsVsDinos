@@ -103,6 +103,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\PositionToBorderConverter.cs" />
+    <Compile Include="Converters\PositionToBorderThicknessConverter.cs" />
+    <Compile Include="Converters\PositionToColorConverter.cs" />
+    <Compile Include="Converters\PositionToFontSizeConverter.cs" />
+    <Compile Include="Converters\PositionToHeightConverter.cs" />
+    <Compile Include="Converters\PositionToStatsBorderThicknessConverter.cs" />
     <Compile Include="DTO\Configuration.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
@@ -161,10 +168,12 @@
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
     <Compile Include="ViewModels\GameManagerViewModel.cs" />
+    <Compile Include="ViewModels\GameStatisticsViewModel.cs" />
     <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MatchViewModel.cs" />
+    <Compile Include="ViewModels\PersonalStatisticsViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />
     <Compile Include="ViewModels\UpdateInstagramViewModel.cs" />
@@ -555,6 +564,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\RegisterService\RegisterManager.wsdl" />
+    <None Include="Connected Services\StatisticsService\ArchsVsDinosClient.StatisticsService.GameStatisticsDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\StatisticsService\ArchsVsDinosClient.StatisticsService.LeaderboardEntryDTO.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

@@ -4,10 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views"
-        mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="GameStatistics" Height="680" Width="900"
-        WindowStartupLocation="CenterScreen" WindowStyle="None">
+        mc:Ignorable="d"
+        Title="GameStatistics" 
+        Height="680" Width="900"
+        WindowStartupLocation="CenterScreen" 
+        WindowStyle="None">
 
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -19,129 +21,154 @@
     <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- TÍTULO -->
+        <Label Grid.Row="0" 
+               Content="{x:Static language:Lang.Statistics_Title}" 
+               FontFamily="{StaticResource Ouroboros}" 
+               FontSize="32" FontWeight="Bold" 
+               Foreground="#FF671414" 
+               Margin="0,10,0,15"/>
 
-        <Label Grid.Row="0" Content="{x:Static language:Lang.Statistics_Title}" FontFamily="{StaticResource Ouroboros}" FontSize="32" 
-               FontWeight="Bold" Foreground="#FF671414" Margin="0,10,0,15"/>
+        <!-- FECHA -->
+        <Label Grid.Row="1" 
+               Content="{Binding MatchDateText}" 
+               FontFamily="Tw Cen MT Condensed Extra Bold" 
+               FontSize="18" HorizontalAlignment="Center"
+               Margin="0,0,0,20"/>
 
-        <UniformGrid Grid.Row="1" Columns="4" Rows="1" Margin="0,0,0,20">
-            <StackPanel Margin="10">
-                <Label Content="{x:Static language:Lang.Statistics_2nd}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" 
-                       HorizontalAlignment="Center" FontWeight="Bold"/>
+        <!-- LOADING -->
+        <Grid Grid.Row="2"
+              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Label Content="Cargando estadísticas..." 
+                   FontSize="20" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"/>
+        </Grid>
 
-                <Label Content="Player 1" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                       HorizontalAlignment="Center" Margin="0,5,0,10"/>
-
-                <Border Width="140" Height="180" Background="White" BorderBrush="Gray" BorderThickness="2" 
-                        CornerRadius="5" Margin="0,0,0,10">
-                    <Label Content="📷" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-
-                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5">
-                    <StackPanel>
-                        <Label Content="{x:Static language:Lang.Statistics_EliminatedArchs}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center"/>
-                        <Label Content="1" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                                HorizontalAlignment="Center" FontWeight="Bold"/>
-                        <Label Content="{x:Static language:Lang.Statistics_SupremeBoss}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                        <Label Content="2" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                               HorizontalAlignment="Center" FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
+        <!-- ERROR -->
+        <Grid Grid.Row="2"
+              Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label Content="{Binding ErrorMessage}" 
+                       FontSize="16" Foreground="Red"
+                       HorizontalAlignment="Center"/>
             </StackPanel>
+        </Grid>
 
-            <StackPanel Margin="10">
-                <Label Content="{x:Static language:Lang.Statistics_1stPlace}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="24" 
-                       HorizontalAlignment="Center" FontWeight="Bold" Foreground="#FFD4AF37"/>
-                <Label Content="Player 2" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                       HorizontalAlignment="Center" Margin="0,5,0,10"/>
+        <!-- LISTA DINÁMICA DE JUGADORES -->
+        <ItemsControl Grid.Row="2" 
+                      ItemsSource="{Binding PlayerStats}"
+                      Visibility="{Binding IsLoading, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
 
-                <Border Width="140" Height="200" Background="White" BorderBrush="#FFD4AF37" BorderThickness="3" 
-                        CornerRadius="5" Margin="0,0,0,10">
-                    <Label Content="👑" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="4" Rows="1"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-                <Border Background="White" BorderBrush="#FFD4AF37" BorderThickness="2" Padding="10" CornerRadius="5">
-                    <StackPanel>
-                        <Label Content="{x:Static language:Lang.Statistics_EliminatedArchs}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center"/>
-                        <Label Content="2" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                                HorizontalAlignment="Center" FontWeight="Bold"/>
-                        <Label Content="{x:Static language:Lang.Statistics_SupremeBoss}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                        <Label Content="2" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                               HorizontalAlignment="Center" FontWeight="Bold"/>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="10">
+
+                        <!-- POSICIÓN -->
+                        <Label Content="{Binding Position, StringFormat='{}{0}°'}"
+                               FontFamily="Tw Cen MT Condensed Extra Bold"
+                               FontSize="{Binding Position, Converter={StaticResource PositionToFontSizeConverter}}"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="{Binding Position, Converter={StaticResource PositionToColorConverter}}"/>
+
+                        <!-- NOMBRE DEL JUGADOR -->
+                        <Label Content="{Binding Username}" 
+                               FontFamily="Tw Cen MT Condensed Extra Bold" 
+                               FontSize="16" 
+                               HorizontalAlignment="Center" 
+                               Margin="0,5,0,10"/>
+
+                        <!-- ÍCONO DEL JUGADOR (NO IMAGEN) -->
+                        <Border Width="140"
+                                Height="{Binding Position, Converter={StaticResource PositionToHeightConverter}}"
+                                Background="White"
+                                BorderBrush="{Binding Position, Converter={StaticResource PositionToBorderConverter}}"
+                                BorderThickness="{Binding Position, Converter={StaticResource PositionToBorderThicknessConverter}}"
+                                CornerRadius="5" 
+                                Margin="0,0,0,10">
+
+                            <Label Content="{Binding Icon}" 
+                                   FontSize="60"
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- ESTADÍSTICAS -->
+                        <Border Background="White"
+                                BorderBrush="{Binding Position, Converter={StaticResource PositionToBorderConverter}}"
+                                BorderThickness="{Binding Position, Converter={StaticResource PositionToStatsBorderThicknessConverter}}"
+                                Padding="10" 
+                                CornerRadius="5">
+
+                            <StackPanel>
+                                <Label Content="{x:Static language:Lang.Statistics_EliminatedArchs}"
+                                       FontFamily="Trebuchet MS" 
+                                       FontSize="12" 
+                                       HorizontalAlignment="Center"/>
+
+                                <Label Content="{Binding EnemiesEliminated}" 
+                                       FontFamily="Tw Cen MT Condensed Extra Bold" 
+                                       FontSize="16" 
+                                       HorizontalAlignment="Center" 
+                                       FontWeight="Bold"/>
+
+                                <Label Content="{x:Static language:Lang.Statistics_SupremeBoss}"
+                                       FontFamily="Trebuchet MS" 
+                                       FontSize="12" 
+                                       HorizontalAlignment="Center"
+                                       Margin="0,5,0,0"/>
+
+                                <Label Content="{Binding BossesDefeated}" 
+                                       FontFamily="Tw Cen MT Condensed Extra Bold" 
+                                       FontSize="16" 
+                                       HorizontalAlignment="Center" 
+                                       FontWeight="Bold"/>
+                            </StackPanel>
+
+                        </Border>
+
                     </StackPanel>
-                </Border>
-            </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
-            <StackPanel Margin="10">
-                <Label Content="{x:Static language:Lang.Statistics_3rd}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" 
-                       HorizontalAlignment="Center" FontWeight="Bold"/>
-                <Label Content="Player 3" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                       HorizontalAlignment="Center" Margin="0,5,0,10"/>
+        <!-- BOTÓN SALIR -->
+        <Button Grid.Row="3" 
+                Content="{x:Static language:Lang.GlobalExitText}"
+                Command="{Binding ExitCommand}"
+                Height="60" Width="200" 
+                Foreground="White" 
+                FontWeight="Bold"
+                FontFamily="Tw Cen MT Condensed Extra Bold" 
+                FontSize="20"
+                HorizontalAlignment="Right" 
+                Margin="0,5,0,0" 
+                BorderBrush="{x:Null}">
 
-                <Border Width="140" Height="180" Background="White" BorderBrush="Gray" BorderThickness="2" 
-                        CornerRadius="5" Margin="0,0,0,10">
-                    <Label Content="📷" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-
-                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5">
-                    <StackPanel>
-                        <Label Content="{x:Static language:Lang.Statistics_EliminatedArchs}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center"/>
-                        <Label Content="1" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                                HorizontalAlignment="Center" FontWeight="Bold"/>
-                        <Label Content="{x:Static language:Lang.Statistics_SupremeBoss}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                        <Label Content="1" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                               HorizontalAlignment="Center" FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-            <StackPanel Margin="10">
-                <Label Content="{x:Static language:Lang.Statistics_4th}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" 
-                       HorizontalAlignment="Center" FontWeight="Bold"/>
-                <Label Content="Player 4" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                       HorizontalAlignment="Center" Margin="0,5,0,10"/>
-
-                <Border Width="140" Height="180" Background="White" BorderBrush="Gray" BorderThickness="2" 
-                        CornerRadius="5" Margin="0,0,0,10">
-                    <Label Content="📷" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-
-                <Border Background="White" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5">
-                    <StackPanel>
-                        <Label Content="{x:Static language:Lang.Statistics_EliminatedArchs}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center"/>
-                        <Label Content="0" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                                HorizontalAlignment="Center" FontWeight="Bold"/>
-                        <Label Content="{x:Static language:Lang.Statistics_SupremeBoss}" FontFamily="Trebuchet MS" FontSize="12" 
-                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
-                        <Label Content="1" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" 
-                               HorizontalAlignment="Center" FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-
-        </UniformGrid>
-
-        <Button Grid.Row="2" Content="{x:Static language:Lang.GlobalExitText}" Height="60" Width="200" Foreground="White" FontWeight="Bold" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20"
-                HorizontalAlignment="Right" Margin="0,5,0,0" BorderBrush="{x:Null}">
             <Button.Background>
                 <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
             </Button.Background>
+
             <Button.Template>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="border" Background="{TemplateBinding Background}" 
+                    <Border x:Name="border" 
+                            Background="{TemplateBinding Background}" 
                             CornerRadius="5" BorderThickness="0">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
+
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="border" Property="Opacity" Value="0.8"/>
@@ -152,6 +179,9 @@
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Button.Template>
+
         </Button>
+
     </Grid>
 </Window>
+

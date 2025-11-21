@@ -624,6 +624,33 @@
   <data name="WcfInfoConnectionRestored" xml:space="preserve">
     <value>Connection restored</value>
   </data>
+  <data name="Statistics_Leaderboard" xml:space="preserve">
+    <value>Leaderboard</value>
+  </data>
+  <data name="Statistics_History" xml:space="preserve">
+    <value>Game History</value>
+  </data>
+  <data name="Statistics_StatsNotFound" xml:space="preserve">
+    <value>Player Statistics not found</value>
+  </data>
+  <data name="Statistics_StatsLogError" xml:space="preserve">
+    <value>Error loading statistics: {0}</value>
+  </data>
+  <data name="Statistics_TotalMatchesLabel" xml:space="preserve">
+    <value>Total matches: {0}</value>
+  </data>
+  <data name="Statistics_WinRateLabel" xml:space="preserve">
+    <value>Win rate: {0:F1}%</value>
+  </data>
+  <data name="Statistics_TotalPoints" xml:space="preserve">
+    <value>Total Points: {0}</value>
+  </data>
+  <data name="Statistics_WinsLosses" xml:space="preserve">
+    <value>Wins: {0} | Losses: {1}</value>
+  </data>
+  <data name="Statistics_Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
   <data name="Lobby_LobbyCancelled" xml:space="preserve">
     <value>The host has cancelled the match . Returning to the main window...</value>
   </data>

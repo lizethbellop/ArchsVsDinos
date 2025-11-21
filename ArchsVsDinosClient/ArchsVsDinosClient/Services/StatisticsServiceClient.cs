@@ -30,10 +30,6 @@ namespace ArchsVsDinosClient.Services
             guardian.MonitorClientState(client);
         }
 
-        // ═══════════════════════════════════════════════════════════════
-        // MÉTODOS PÚBLICOS
-        // ═══════════════════════════════════════════════════════════════
-
         public async Task<SaveMatchResultCode> SaveMatchStatisticsAsync(MatchResultDTO matchResult)
         {
             return await guardian.ExecuteAsync(
@@ -63,6 +59,14 @@ namespace ArchsVsDinosClient.Services
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.GetPlayerMatchHistory(userId, count)),
                 operationName: "obtener historial de partidas"
+            );
+        }
+
+        public async Task<GameStatisticsDTO> GetMatchStatisticsAsync(int matchId)
+        {
+            return await guardian.ExecuteAsync(
+                async () => await Task.Run(() => client.GetMatchStatistics(matchId)),
+                operationName: "obtener estadísticas de partida"
             );
         }
 

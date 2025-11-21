@@ -59,4 +59,18 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="GetMatchStatistics">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMatchStatisticsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics" minOccurs="0" name="GetMatchStatisticsResult" nillable="true" type="q6:GameStatisticsDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>

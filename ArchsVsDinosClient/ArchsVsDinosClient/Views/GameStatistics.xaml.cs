@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArchsVsDinosClient.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,9 +17,19 @@ namespace ArchsVsDinosClient.Views
 {
     public partial class GameStatistics : Window
     {
-        public GameStatistics()
+        private readonly GameStatisticsViewModel viewModel;
+
+        public GameStatistics(int matchId)
         {
             InitializeComponent();
+            viewModel = new GameStatisticsViewModel(matchId);
+            DataContext = viewModel;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            viewModel?.Dispose();
         }
     }
 }

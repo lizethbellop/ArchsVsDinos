@@ -61,6 +61,12 @@
   <wsdl:message name="IStatisticsManager_GetPlayerMatchHistory_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetPlayerMatchHistoryResponse" />
   </wsdl:message>
+  <wsdl:message name="IStatisticsManager_GetMatchStatistics_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMatchStatistics" />
+  </wsdl:message>
+  <wsdl:message name="IStatisticsManager_GetMatchStatistics_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMatchStatisticsResponse" />
+  </wsdl:message>
   <wsdl:portType name="IStatisticsManager">
     <wsdl:operation name="SaveMatchStatistics">
       <wsdl:input wsaw:Action="http://tempuri.org/IStatisticsManager/SaveMatchStatistics" message="tns:IStatisticsManager_SaveMatchStatistics_InputMessage" />
@@ -77,6 +83,10 @@
     <wsdl:operation name="GetPlayerMatchHistory">
       <wsdl:input wsaw:Action="http://tempuri.org/IStatisticsManager/GetPlayerMatchHistory" message="tns:IStatisticsManager_GetPlayerMatchHistory_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IStatisticsManager/GetPlayerMatchHistoryResponse" message="tns:IStatisticsManager_GetPlayerMatchHistory_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMatchStatistics">
+      <wsdl:input wsaw:Action="http://tempuri.org/IStatisticsManager/GetMatchStatistics" message="tns:IStatisticsManager_GetMatchStatistics_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IStatisticsManager/GetMatchStatisticsResponse" message="tns:IStatisticsManager_GetMatchStatistics_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetTcpBinding_IStatisticsManager" type="tns:IStatisticsManager">
@@ -111,6 +121,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetPlayerMatchHistory">
       <soap12:operation soapAction="http://tempuri.org/IStatisticsManager/GetPlayerMatchHistory" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMatchStatistics">
+      <soap12:operation soapAction="http://tempuri.org/IStatisticsManager/GetMatchStatistics" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

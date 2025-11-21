@@ -1492,6 +1492,51 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Historial de partidas.
+        /// </summary>
+        public static string Statistics_History {
+            get {
+                return ResourceManager.GetString("Statistics_History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tabla de líderes.
+        /// </summary>
+        public static string Statistics_Leaderboard {
+            get {
+                return ResourceManager.GetString("Statistics_Leaderboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cargando.
+        /// </summary>
+        public static string Statistics_Loading {
+            get {
+                return ResourceManager.GetString("Statistics_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error al cargar las estadísticas: {0}.
+        /// </summary>
+        public static string Statistics_StatsLogError {
+            get {
+                return ResourceManager.GetString("Statistics_StatsLogError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se encontraron estadísticas del jugador.
+        /// </summary>
+        public static string Statistics_StatsNotFound {
+            get {
+                return ResourceManager.GetString("Statistics_StatsNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Jefes Supremos eliminados.
         /// </summary>
         public static string Statistics_SupremeBoss {
@@ -1506,6 +1551,42 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Statistics_Title {
             get {
                 return ResourceManager.GetString("Statistics_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Total de partidas: {0}.
+        /// </summary>
+        public static string Statistics_TotalMatchesLabel {
+            get {
+                return ResourceManager.GetString("Statistics_TotalMatchesLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Puntos totales: {0}.
+        /// </summary>
+        public static string Statistics_TotalPoints {
+            get {
+                return ResourceManager.GetString("Statistics_TotalPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Porcentaje de victorias: {0:F1}%.
+        /// </summary>
+        public static string Statistics_WinRateLabel {
+            get {
+                return ResourceManager.GetString("Statistics_WinRateLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Victorias: {0} | Derrotas: {1}.
+        /// </summary>
+        public static string Statistics_WinsLosses {
+            get {
+                return ResourceManager.GetString("Statistics_WinsLosses", resourceCulture);
             }
         }
         
