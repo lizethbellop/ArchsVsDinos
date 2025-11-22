@@ -16,11 +16,10 @@ namespace ArchsVsDinosClient.ViewModels
     public class LobbyViewModel : INotifyPropertyChanged
     {
         private readonly ILobbyServiceClient lobbyServiceClient;
-
+        private string matchCode;
         public ObservableCollection<LobbyPlayerDTO> Players { get; private set; } = new ObservableCollection<LobbyPlayerDTO>();
         public ObservableCollection<SlotLobby> Slots { get; private set; } = new ObservableCollection<SlotLobby>();
 
-        private string matchCode;
         public string MatchCode
         {
             get => matchCode;
@@ -34,13 +33,9 @@ namespace ArchsVsDinosClient.ViewModels
             }
         }
 
-        public event Action<string> MatchCodeReceived;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public event Action<string> MatchCodeReceived;
 
         public LobbyViewModel()
         {
@@ -55,6 +50,11 @@ namespace ArchsVsDinosClient.ViewModels
             for (int i = 0; i < 4; i++)
                 Slots.Add(new SlotLobby());
 
+            if (!string.IsNullOrEmpty(UserSession.Instance.CurrentMatchCode))
+            {
+                MatchCode = UserSession.Instance.CurrentMatchCode;
+            }
+
             var localPlayer = new LobbyPlayerDTO
             {
                 Username = UserSession.Instance.CurrentUser.Username,
@@ -64,54 +64,47 @@ namespace ArchsVsDinosClient.ViewModels
 
             Players.Add(localPlayer);
             UpdateSlots();
+
         }
 
-        private void UpdateSlots()
+        public void InitializeLobby()
         {
-            var localUsername = UserSession.Instance.CurrentUser.Username;
-
-            var localPlayer = Players.FirstOrDefault(player => player.Username == localUsername);
-            var otherPlayers = Players.Where(player => player.Username != localUsername).ToList();
-
-            var orderedPlayers = new List<LobbyPlayerDTO>();
-            if (localPlayer != null) orderedPlayers.Add(localPlayer);
-            orderedPlayers.AddRange(otherPlayers);
-
-            for (int i = 0; i < Slots.Count; i++)
+            var userAccount = new UserAccountDTO
             {
-                if (i < orderedPlayers.Count)
-                {
-                    var player = orderedPlayers[i];
-                    Slots[i].Username = player.Username;
-                    Slots[i].Nickname = player.Nickname;
-                    Slots[i].IsFriend = false; 
-                    Slots[i].CanKick = CurrentClientIsHost() && player.Username != localUsername;
-                    Slots[i].IsLocalPlayer = player.Username == localUsername;
-                }
-                else
-                {
-                    Slots[i].Username = string.Empty;
-                    Slots[i].Nickname = string.Empty;
-                    Slots[i].IsFriend = false;
-                    Slots[i].CanKick = false;
-                }
-            }
+                Username = UserSession.Instance.CurrentUser.Username,
+                Nickname = UserSession.Instance.CurrentUser.Nickname
+            };
+
+            lobbyServiceClient.CreateLobby(userAccount);
         }
 
-        public void ExpelPlayer(string hostUsername, string targetUsername) => lobbyServiceClient.ExpelPlayer(hostUsername, targetUsername);
-        
-        public void LeaveLobby(string username) => lobbyServiceClient.LeaveLobby(username);
+        public void ExpelPlayer(string hostUsername, string targetUsername)
+        {
+            lobbyServiceClient.ExpelPlayer(hostUsername, targetUsername);
+        }
 
+        public void LeaveLobby(string username)
+        {
+            lobbyServiceClient.LeaveLobby(username);
+        }
+
+        public void CancellLobby(string matchCode, string usernameRequester)
+        {
+            lobbyServiceClient.CancellLobby(matchCode, usernameRequester);
+        }
         public bool CurrentClientIsHost() => Players.FirstOrDefault(player => player.IsHost)?.Username == UserSession.Instance.CurrentUser.Username;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private void OnLobbyCreated(LobbyPlayerDTO createdPlayer, string code)
         {
-            System.Diagnostics.Debug.WriteLine("Código recibido: " + code);
-            MatchCode = code;
-            UpdateSlots();
-
             Application.Current.Dispatcher.Invoke(() =>
             {
+                UserSession.Instance.CurrentMatchCode = code;
+                MatchCode = code;
                 var existing = Players.FirstOrDefault(player => player.Username == createdPlayer.Username);
                 if (existing == null)
                 {
@@ -124,6 +117,7 @@ namespace ArchsVsDinosClient.ViewModels
                 UpdateSlots();
                 MatchCodeReceived?.Invoke(code);
             });
+
         }
 
         private void OnPlayerJoined(LobbyPlayerDTO joiningPlayer)
@@ -146,6 +140,15 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
+        private void OnLobbyCancelled(string code)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(Lang.Lobby_LobbyCancelled);
+                NavigationUtils.GoToMainMenu();
+            });
+        }
+
         private void OnPlayerExpelled(LobbyPlayerDTO expelledPlayer)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -162,18 +165,36 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        private void OnLobbyCancelled(string code)
+        private void UpdateSlots()
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                MessageBox.Show(Lang.Lobby_LobbyCancelled);
-                NavigationUtils.GoToMainMenu();
-            });
-        }
+            var localUsername = UserSession.Instance.CurrentUser.Username;
 
-        public void CancellLobby(string matchCode, string usernameRequester)
-        {
-            lobbyServiceClient.CancellLobby(matchCode, usernameRequester);
+            var localPlayer = Players.FirstOrDefault(player => player.Username == localUsername);
+            var otherPlayers = Players.Where(player => player.Username != localUsername).ToList();
+
+            var orderedPlayers = new List<LobbyPlayerDTO>();
+            if (localPlayer != null) orderedPlayers.Add(localPlayer);
+            orderedPlayers.AddRange(otherPlayers);
+
+            for (int i = 0; i < Slots.Count; i++)
+            {
+                if (i < orderedPlayers.Count)
+                {
+                    var player = orderedPlayers[i];
+                    Slots[i].Username = player.Username;
+                    Slots[i].Nickname = player.Nickname;
+                    Slots[i].IsFriend = false;
+                    Slots[i].CanKick = CurrentClientIsHost() && player.Username != localUsername;
+                    Slots[i].IsLocalPlayer = player.Username == localUsername;
+                }
+                else
+                {
+                    Slots[i].Username = string.Empty;
+                    Slots[i].Nickname = string.Empty;
+                    Slots[i].IsFriend = false;
+                    Slots[i].CanKick = false;
+                }
+            }
         }
     }
 }

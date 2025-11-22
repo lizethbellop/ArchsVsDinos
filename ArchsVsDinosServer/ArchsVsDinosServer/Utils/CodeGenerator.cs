@@ -30,7 +30,7 @@ namespace ArchsVsDinosServer.Utils
 
         public static string GenerateMatchCode()
         {
-            return GenerateCode(4);
+            return GenerateCode(5);
         }
 
     }

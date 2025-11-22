@@ -15,13 +15,13 @@ namespace ArchsVsDinosClient.Models
         public UserDTO CurrentUser { get; private set; }
         public PlayerDTO CurrentPlayer { get; private set; }
         public bool IsGuest { get; private set; }
-        
+        public string CurrentMatchCode { get; set; }
+
         private UserSession()
         {
             IsGuest = false;
         }
-
-        
+ 
         public static UserSession Instance
         {
             get
@@ -62,11 +62,12 @@ namespace ArchsVsDinosClient.Models
         }
 
         
-        public string GetUsername() => CurrentUser?.Username ?? string.Empty;
+        public string GetUsername() =>CurrentUser?.Username ?? string.Empty;
         public string GetNickname() => CurrentUser?.Nickname ?? string.Empty;
         public string GetName() => CurrentUser?.Name ?? string.Empty;
         public int GetUserId() => CurrentUser?.IdUser ?? 0;
         public bool HasPlayer() => CurrentPlayer != null;
         public int GetPlayerId() => CurrentPlayer?.IdPlayer ?? 0;
+
     }
 }

@@ -37,7 +37,6 @@ namespace ArchsVsDinosClient.Views
             TxtNickname.Text = user.Nickname;
             TxtEmail.Text = user.Email;
             TxtName.Text = user.Name;
-            MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Main);
         }
 
         private void RefreshUserData()

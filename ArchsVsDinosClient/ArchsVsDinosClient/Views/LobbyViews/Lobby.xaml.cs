@@ -31,11 +31,9 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             InitializeComponent();
             viewModel = new LobbyViewModel();
-            viewModel.MatchCodeReceived += code =>
-            {
-                Lb_MatchCode.Content = code;
-            };
             DataContext = viewModel;
+
+            viewModel.InitializeLobby();
         }
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)
@@ -62,7 +60,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 var result = MessageBox.Show(Lang.Lobby_CancellationLobbyConfirmation, Lang.GlobalAcceptText, MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    viewModel.CancellLobby(UserSession.Instance.CurrentUser.Username, viewModel.MatchCode);
+                    viewModel.CancellLobby(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
                 }
             }
             else
