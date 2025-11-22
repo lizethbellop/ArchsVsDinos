@@ -678,4 +678,19 @@
   <data name="JoinMatch_ErrorJoinMatch" xml:space="preserve">
     <value>Error intentando entrar a partida, intente de nuevo</value>
   </data>
+  <data name="Avatar_SelectTitle" xml:space="preserve">
+    <value>Selecciona tu avatar</value>
+  </data>
+  <data name="Avatar_NoSelection" xml:space="preserve">
+    <value>Por favor, selecciona un avatar</value>
+  </data>
+  <data name="Avatar_FileNotFound" xml:space="preserve">
+    <value>No se pudo encontrar el archivo del avatar</value>
+  </data>
+  <data name="Avatar_FIleEmpty" xml:space="preserve">
+    <value>El archivo del avatar está vacío</value>
+  </data>
+  <data name="Avatar_UnexpectedError" xml:space="preserve">
+    <value>Error inesperado al procesar el avatar</value>
+  </data>
 </root>

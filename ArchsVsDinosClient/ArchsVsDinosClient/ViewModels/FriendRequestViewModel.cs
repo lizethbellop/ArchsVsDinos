@@ -189,7 +189,7 @@ namespace ArchsVsDinosClient.ViewModels
                 friendRequestService.FriendRequestRejected -= OnFriendRequestRejected;
                 friendRequestService.PendingRequestsReceived -= OnPendingRequestsReceived;
                 friendRequestService.FriendRequestReceived -= OnFriendRequestReceived;
-                friendRequestService.ConnectionError -= OnConnectionError; // 🆕 AGREGAR
+                friendRequestService.ConnectionError -= OnConnectionError;
                 friendRequestService.Dispose();
             }
         }

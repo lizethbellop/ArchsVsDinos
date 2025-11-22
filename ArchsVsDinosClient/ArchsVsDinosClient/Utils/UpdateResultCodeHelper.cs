@@ -74,6 +74,7 @@ namespace ArchsVsDinosClient.Utils
                 case UpdateResultCode.Profile_UnexpectedError:
                     return Lang.Profile_UnexpectedError;
 
+
                 default:
                     return Lang.Profile_UnexpectedError;
             }
