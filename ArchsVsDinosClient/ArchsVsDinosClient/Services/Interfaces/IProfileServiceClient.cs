@@ -17,6 +17,8 @@ namespace ArchsVsDinosClient.Services.Interfaces
         Task<UpdateResponse> UpdateInstagramAsync(string currentUsername, string newInstagramLink);
         Task<UpdateResponse> UpdateXAsync(string currentUsername, string newXLink);
         Task<UpdateResponse> UpdateTikTokAsync(string currentUsername, string newTikTokLink);
+        Task<UpdateResponse> ChangeProfilePictureAsync(string username, byte[] profilePicture, string fileExtension);
+        Task<byte[]> GetProfilePictureAsync(string username);
 
     }
 }

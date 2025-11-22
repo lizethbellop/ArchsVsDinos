@@ -196,11 +196,47 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El archivo del avatar está vacío.
+        /// </summary>
+        public static string Avatar_FIleEmpty {
+            get {
+                return ResourceManager.GetString("Avatar_FIleEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo encontrar el archivo del avatar.
+        /// </summary>
+        public static string Avatar_FileNotFound {
+            get {
+                return ResourceManager.GetString("Avatar_FileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Por favor, selecciona un avatar.
+        /// </summary>
+        public static string Avatar_NoSelection {
+            get {
+                return ResourceManager.GetString("Avatar_NoSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Selecciona tu avatar.
         /// </summary>
         public static string Avatar_SelectTitle {
             get {
                 return ResourceManager.GetString("Avatar_SelectTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error inesperado al procesar el avatar.
+        /// </summary>
+        public static string Avatar_UnexpectedError {
+            get {
+                return ResourceManager.GetString("Avatar_UnexpectedError", resourceCulture);
             }
         }
         

@@ -681,4 +681,16 @@
   <data name="Avatar_SelectTitle" xml:space="preserve">
     <value>Select your avatar</value>
   </data>
+  <data name="Avatar_NoSelection" xml:space="preserve">
+    <value>Please choose an avatar</value>
+  </data>
+  <data name="Avatar_FileNotFound" xml:space="preserve">
+    <value>Avatar file not found</value>
+  </data>
+  <data name="Avatar_FIleEmpty" xml:space="preserve">
+    <value>The avatar file is empty</value>
+  </data>
+  <data name="Avatar_UnexpectedError" xml:space="preserve">
+    <value>Unexpected error while processing the avatar</value>
+  </data>
 </root>

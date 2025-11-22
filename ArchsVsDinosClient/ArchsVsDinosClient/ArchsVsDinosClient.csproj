@@ -37,6 +37,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.10.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
@@ -149,6 +153,7 @@
     <Compile Include="Services\ProfileServiceClient.cs" />
     <Compile Include="Services\StatisticsServiceClient.cs" />
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
+    <Compile Include="Utils\ImageCompressor.cs" />
     <Compile Include="Utils\LoginResultCodeHelper.cs" />
     <Compile Include="Utils\MappingHelper.cs" />
     <Compile Include="Utils\MusicPlayer.cs" />
@@ -600,6 +605,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\StatisticsService\StatisticsManager.wsdl" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -81,5 +81,11 @@ namespace ArchsVsDinosClient.Views
             new EditAccountViews.EditNickname().ShowDialog();
         }
 
+        private void Click_BtnEditAvatar(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayMovingRockSound();
+            new AvatarSelection().ShowDialog();
+        }
+
     }
 }

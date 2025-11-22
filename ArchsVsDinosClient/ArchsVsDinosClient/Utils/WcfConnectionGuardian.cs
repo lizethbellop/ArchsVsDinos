@@ -20,7 +20,7 @@ namespace ArchsVsDinosClient.Utils
         public WcfConnectionGuardian(Action<string, string> onError, ILogger logger = null)
         {
             this.onError = onError ?? throw new ArgumentNullException(nameof(onError));
-            this.logger = logger ?? new Logger(); 
+            this.logger = logger ?? new Logger();
         }
 
         public async Task<bool> ExecuteAsync(Func<Task> operation, string operationName = "Operación")
@@ -31,8 +31,31 @@ namespace ArchsVsDinosClient.Utils
                 UpdateServerState(true);
                 return true;
             }
+            catch (ObjectDisposedException ex)
+            {
+                logger.LogError($"[{operationName}] Cliente desechado: {ex.ObjectName}", ex);
+                HandleWcfError(
+                    Lang.WcfErrorConnectionLost,
+                    Lang.WcfNoConnection,
+                    ex,
+                    operationName
+                );
+                return false;
+            }
+            catch (EndpointNotFoundException ex)
+            {
+                logger.LogError($"[{operationName}] Servidor no encontrado: {ex.Message}", ex);
+                HandleWcfError(
+                    Lang.WcfNoConnection,
+                    "No se pudo conectar al servidor. Verifique que esté en ejecución.",
+                    ex,
+                    operationName
+                );
+                return false;
+            }
             catch (FaultException ex)
             {
+                logger.LogError($"[{operationName}] Error del servicio: {ex.Message}", ex);
                 HandleWcfError(
                     Lang.WcfErrorService,
                     ex.Message,
@@ -43,6 +66,7 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (CommunicationException ex)
             {
+                logger.LogError($"[{operationName}] Error de comunicación: {ex.Message}", ex);
                 HandleWcfError(
                     Lang.WcfNoConnection,
                     string.Format(Lang.WcfErrorOperationFailed, operationName),
@@ -53,6 +77,7 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (TimeoutException ex)
             {
+                logger.LogError($"[{operationName}] Tiempo de espera agotado", ex);
                 HandleWcfError(
                     Lang.WcfErrorTimeout,
                     string.Format(Lang.WcfErrorOperationTimeout, operationName),
@@ -63,6 +88,7 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (Exception ex)
             {
+                logger.LogError($"[{operationName}] Error inesperado ({ex.GetType().Name}): {ex.Message}", ex);
                 HandleWcfError(
                     Lang.WcfErrorUnexpected,
                     ex.Message,
@@ -81,8 +107,31 @@ namespace ArchsVsDinosClient.Utils
                 UpdateServerState(true);
                 return result;
             }
+            catch (ObjectDisposedException ex)
+            {
+                logger.LogError($"[{operationName}] Cliente desechado: {ex.ObjectName}", ex);
+                HandleWcfError(
+                    Lang.WcfErrorConnectionLost,
+                    Lang.WcfNoConnection,
+                    ex,
+                    operationName
+                );
+                return defaultValue;
+            }
+            catch (EndpointNotFoundException ex)
+            {
+                logger.LogError($"[{operationName}] Servidor no encontrado: {ex.Message}", ex);
+                HandleWcfError(
+                    Lang.WcfNoConnection,
+                    "No se pudo conectar al servidor. Verifique que esté en ejecución.",
+                    ex,
+                    operationName
+                );
+                return defaultValue;
+            }
             catch (FaultException ex)
             {
+                logger.LogError($"[{operationName}] Error del servicio: {ex.Message}", ex);
                 HandleWcfError(
                     Lang.WcfErrorService,
                     ex.Message,
@@ -93,6 +142,7 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (CommunicationException ex)
             {
+                logger.LogError($"[{operationName}] Error de comunicación: {ex.Message}", ex);
                 HandleWcfError(
                     Lang.WcfNoConnection,
                     string.Format(Lang.WcfErrorOperationFailed, operationName),
@@ -103,6 +153,7 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (TimeoutException ex)
             {
+                logger.LogError($"[{operationName}] Tiempo de espera agotado", ex);
                 HandleWcfError(
                     Lang.WcfErrorTimeout,
                     string.Format(Lang.WcfErrorOperationTimeout, operationName),
@@ -113,6 +164,7 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (Exception ex)
             {
+                logger.LogError($"[{operationName}] Error inesperado ({ex.GetType().Name}): {ex.Message}", ex);
                 HandleWcfError(
                     Lang.WcfErrorUnexpected,
                     ex.Message,
@@ -145,7 +197,14 @@ namespace ArchsVsDinosClient.Utils
         {
             UpdateServerState(false);
 
-            logger.LogError($"WCF Error in operation '{operationName}': {title} - {message}", ex);
+            string logMessage = $"WCF Error en '{operationName}': {title} - {message}";
+
+            if (ex.InnerException != null)
+            {
+                logMessage += $" | Inner: {ex.InnerException.Message}";
+            }
+
+            logger.LogError(logMessage, ex);
 
             onError(title, message);
         }
