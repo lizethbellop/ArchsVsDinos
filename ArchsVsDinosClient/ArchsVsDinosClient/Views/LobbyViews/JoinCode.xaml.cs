@@ -6,10 +6,12 @@ using ArchsVsDinosClient.RegisterService;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
+using LobbyPlayerDTO = ArchsVsDinosClient.LobbyService.LobbyPlayerDTO;
 using UserAccountDTO = ArchsVsDinosClient.LobbyService.UserAccountDTO;
 
 namespace ArchsVsDinosClient.Views.LobbyViews
@@ -23,6 +25,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         public JoinCode()
         {
             InitializeComponent();
+            lobbyServiceClient = new LobbyServiceClient();
         }
 
         private async void Click_BtnAccept(object sender, RoutedEventArgs e)
@@ -39,17 +42,23 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             try
             {
                 var userAccount = BuildUserAccount();
-                var tempClient = new LobbyServiceClient();
-                var result = await Task.Run(() => tempClient.JoinLobby(userAccount, code));
+                var lobbyWindow = new Lobby(false, lobbyServiceClient);
+                var lobbyViewModel = (LobbyViewModel)lobbyWindow.DataContext;
 
+                UserSession.Instance.CurrentMatchCode = code;
+
+                var result = await Task.Run(() => lobbyServiceClient.JoinLobby(userAccount, code));
 
                 if (result == LobbyResultCode.Lobby_LobbyJoined)
                 {
-                    UserSession.Instance.CurrentMatchCode = code; var lobby = new Lobby(false); lobby.Show(); IsCancelled = false; this.Close();
+                    lobbyWindow.Show();
+                    IsCancelled = false;
+                    this.Close();
                 }
                 else
                 {
-                    MessageBox.Show(Lang.JoinCode_Invalid);
+                    lobbyWindow.Close();
+                    MessageBox.Show(Lang.JoinCode_InvalidOrFull);
                 }
             }
             catch (TimeoutException)

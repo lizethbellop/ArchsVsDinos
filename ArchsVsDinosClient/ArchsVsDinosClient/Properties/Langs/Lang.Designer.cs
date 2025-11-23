@@ -682,11 +682,20 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Código de partida inválido, intente de nuevo.
+        ///   Busca una cadena traducida similar a Código de partida vacío, intente de nuevo.
         /// </summary>
         public static string JoinCode_Invalid {
             get {
                 return ResourceManager.GetString("JoinCode_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Código de partida inválido o lleno, intente de nuevo.
+        /// </summary>
+        public static string JoinCode_InvalidOrFull {
+            get {
+                return ResourceManager.GetString("JoinCode_InvalidOrFull", resourceCulture);
             }
         }
         
@@ -763,7 +772,7 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Error crando sala, intente de nuevo.
+        ///   Busca una cadena traducida similar a Error creando sala, intente de nuevo.
         /// </summary>
         public static string Lobby_ErrorCreatingLobby {
             get {

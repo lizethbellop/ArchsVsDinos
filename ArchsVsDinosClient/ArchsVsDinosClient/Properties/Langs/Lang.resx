@@ -598,7 +598,7 @@
     <value>Sala creada con éxito</value>
   </data>
   <data name="Lobby_ErrorCreatingLobby" xml:space="preserve">
-    <value>Error crando sala, intente de nuevo</value>
+    <value>Error creando sala, intente de nuevo</value>
   </data>
   <data name="WcfErrorConnectionLost" xml:space="preserve">
     <value>Se perdió la conexión con el servidor</value>
@@ -672,8 +672,8 @@
   <data name="JoinLobby_LobbyCode" xml:space="preserve">
     <value>Ingrese el código de partida</value>
   </data>
-  <data name="JoinCode_Invalid" xml:space="preserve">
-    <value>Código de partida inválido, intente de nuevo</value>
+  <data name="JoinCode_InvalidOrFull" xml:space="preserve">
+    <value>Código de partida inválido o lleno, intente de nuevo</value>
   </data>
   <data name="JoinMatch_ErrorJoinMatch" xml:space="preserve">
     <value>Error intentando entrar a partida, intente de nuevo</value>
@@ -704,5 +704,8 @@
   </data>
   <data name="Friends_UserFound" xml:space="preserve">
     <value>Usuario encontrado</value>
+  </data>
+  <data name="JoinCode_Invalid" xml:space="preserve">
+    <value>Código de partida vacío, intente de nuevo</value>
   </data>
 </root>

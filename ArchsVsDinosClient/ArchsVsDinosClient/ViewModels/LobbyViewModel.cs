@@ -39,9 +39,9 @@ namespace ArchsVsDinosClient.ViewModels
 
         public LobbyViewModel() : this(false) { }
 
-        public LobbyViewModel(bool isHost)
+        public LobbyViewModel(bool isHost, ILobbyServiceClient existingClient = null)
         {
-            lobbyServiceClient = new LobbyServiceClient();
+            lobbyServiceClient = existingClient ?? new LobbyServiceClient();
 
             lobbyServiceClient.LobbyCreated += OnLobbyCreated;
             lobbyServiceClient.PlayerJoined += OnPlayerJoined;
@@ -153,8 +153,18 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(Lang.Lobby_LobbyCancelled);
-                NavigationUtils.GoToMainMenu();
+                if (!CurrentClientIsHost())
+                {
+                    MessageBox.Show(Lang.Lobby_LobbyCancelled);
+
+                    var currentWindow = Application.Current.Windows
+                        .OfType<Window>()
+                        .FirstOrDefault(window => window is Views.LobbyViews.Lobby);
+
+                    currentWindow?.Close();
+
+                    NavigationUtils.GoToMainMenu();
+                }
             });
         }
 

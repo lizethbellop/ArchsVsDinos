@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.LobbyService;
 using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views.MatchViews;
@@ -29,10 +30,10 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
         public Lobby() : this(true) { }
 
-        public Lobby(bool isHost)
+        public Lobby(bool isHost, ILobbyServiceClient client = null)
         {
             InitializeComponent();
-            viewModel = new LobbyViewModel(isHost);
+            viewModel = new LobbyViewModel(isHost, client);
             DataContext = viewModel;
 
             if (isHost)

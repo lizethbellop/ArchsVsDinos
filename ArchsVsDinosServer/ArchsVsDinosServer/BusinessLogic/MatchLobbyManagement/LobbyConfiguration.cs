@@ -138,25 +138,21 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 LobbyPlayerDTO newJoiningPlayer = CreatePlayer(joiningUser, false);
                 targetLobby.AddCallback(joiningCallback);
 
-                List<ILobbyManagerCallback> failedOnInitialSend =
-                    BroadcastToCallbacks(new ILobbyManagerCallback[] { joiningCallback }, callback =>
-                    {
-                        foreach (var existingPlayer in targetLobby.Players)
-                        {
-                            callback.JoinedLobby(existingPlayer);
-                        }
-                    });
-
-                if (failedOnInitialSend.Count > 0)
+                var hostPlayer = targetLobby.Players.FirstOrDefault(player => player.IsHost);
+                if (hostPlayer != null)
                 {
-                    targetLobby.Callbacks.Remove(joiningCallback);
-                    return LobbyResultCode.Lobby_ConnectionError;
+                    joiningCallback.CreatedLobby(hostPlayer, targetLobby.MatchCode);
+                }
+
+                foreach (var existingPlayer in targetLobby.Players)
+                {
+                    joiningCallback.JoinedLobby(existingPlayer);
                 }
 
                 targetLobby.AddPlayer(newJoiningPlayer);
 
-                List<ILobbyManagerCallback> failedOnBroadcast = 
-                    BroadcastToCallbacks(targetLobby.Callbacks, callback => callback.JoinedLobby(newJoiningPlayer));
+                var failedOnBroadcast = BroadcastToCallbacks(targetLobby.Callbacks,
+                    callback => callback.JoinedLobby(newJoiningPlayer));
 
                 foreach (var failed in failedOnBroadcast)
                 {
