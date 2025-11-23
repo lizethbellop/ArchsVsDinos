@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Properties.Langs;
+﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using System;
@@ -45,8 +46,8 @@ namespace ArchsVsDinosClient.Views
             friendRequestViewModel.RequestRejected += OnRequestRejected;
             friendRequestViewModel.NewRequestReceived += OnNewRequestReceived;
 
-            BtnSearchFriend.Click += BtnSearchFriend_Click;
-            BtnSendRequest.Click += BtnSendRequest_Click;
+            BtnSearchFriend.Click += Click_BtnSearchFriend;
+            BtnSendRequest.Click += Click_BtnSendRequest;
         }
 
         private void InitializeData()
@@ -70,7 +71,7 @@ namespace ArchsVsDinosClient.Views
 
         private void OnRequestSent(object sender, EventArgs e)
         {
-            TxtB_SearchUsername.Clear();
+            TxtBSearchUsername.Clear();
             SearchResultPanel.Visibility = Visibility.Collapsed;
         }
 
@@ -90,11 +91,11 @@ namespace ArchsVsDinosClient.Views
             friendRequestViewModel.LoadPendingRequests(currentUsername);
         }
 
-        private async void BtnSearchFriend_Click(object sender, RoutedEventArgs e)
+        private async void Click_BtnSearchFriend(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
 
-            string searchUsername = TxtB_SearchUsername.Text.Trim();
+            string searchUsername = TxtBSearchUsername.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(searchUsername))
             {
@@ -130,7 +131,7 @@ namespace ArchsVsDinosClient.Views
             SearchResultPanel.Visibility = Visibility.Visible;
         }
 
-        private void BtnSendRequest_Click(object sender, RoutedEventArgs e)
+        private void Click_BtnSendRequest(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
 
@@ -144,7 +145,7 @@ namespace ArchsVsDinosClient.Views
             friendRequestViewModel.SendFriendRequest(currentUsername, receiverUsername);
         }
 
-        private void BtnAcceptRequest_Click(object sender, RoutedEventArgs e)
+        private void Click_BtnAcceptRequest(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
 
@@ -163,7 +164,7 @@ namespace ArchsVsDinosClient.Views
             friendRequestViewModel.AcceptFriendRequest(senderUsername, currentUsername);
         }
 
-        private void BtnRejectRequest_Click(object sender, RoutedEventArgs e)
+        private void Click_BtnRejectRequest(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
 
@@ -180,6 +181,27 @@ namespace ArchsVsDinosClient.Views
             }
 
             friendRequestViewModel.RejectFriendRequest(senderUsername, currentUsername);
+        }
+
+        private async void Click_BtnRemoveFriend(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+
+            if (sender is Button button && button.Tag is string friendUsername)
+            {
+                var result = MessageBox.Show(
+                    Lang.Friends_RemoveConfirmation,
+                    "",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    string currentUsername = UserSession.Instance.CurrentUser.Username;
+                    await friendsViewModel.RemoveFriendAsync(currentUsername, friendUsername);
+                }
+            }
         }
 
         private void Click_BtnClose(object sender, RoutedEventArgs e)

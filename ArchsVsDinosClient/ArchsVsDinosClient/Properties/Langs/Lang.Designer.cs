@@ -457,6 +457,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¿Son amigos?.
+        /// </summary>
+        public static string Friends_AreFriends {
+            get {
+                return ResourceManager.GetString("Friends_AreFriends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Invitar.
         /// </summary>
         public static string Friends_Invite {
@@ -493,6 +502,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Eliminar.
+        /// </summary>
+        public static string Friends_Remove {
+            get {
+                return ResourceManager.GetString("Friends_Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¿Estás seguro que deseas eliminarlo(a)?.
+        /// </summary>
+        public static string Friends_RemoveConfirmation {
+            get {
+                return ResourceManager.GetString("Friends_RemoveConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Buscar.
         /// </summary>
         public static string Friends_Search {
@@ -525,6 +552,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Friends_SendRequest {
             get {
                 return ResourceManager.GetString("Friends_SendRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Usuario encontrado.
+        /// </summary>
+        public static string Friends_UserFound {
+            get {
+                return ResourceManager.GetString("Friends_UserFound", resourceCulture);
             }
         }
         

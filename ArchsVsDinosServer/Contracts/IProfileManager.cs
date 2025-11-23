@@ -32,10 +32,10 @@ namespace Contracts
         UpdateResponse UpdateTikTok(string username, string newTikTok);
 
         [OperationContract]
-        UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto, string fileExtension);
+        UpdateResponse ChangeProfilePicture(string username, string avatarPath);
 
         [OperationContract]
-        byte[] GetProfilePicture(string username);
+        string GetProfilePicture(string username);
 
         [OperationContract]
         UpdateResponse ChangePassword(string username, string currentPassword, string newPassword);

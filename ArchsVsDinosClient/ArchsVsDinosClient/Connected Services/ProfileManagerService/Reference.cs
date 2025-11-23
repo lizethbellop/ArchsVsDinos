@@ -180,16 +180,16 @@ namespace ArchsVsDinosClient.ProfileManagerService {
         System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> UpdateTikTokAsync(string username, string newTikTok);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangeProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/ChangeProfilePictureResponse")]
-        ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto, string fileExtension);
+        ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangeProfilePicture(string username, string avatarPath);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangeProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/ChangeProfilePictureResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangeProfilePictureAsync(string username, byte[] profilePhoto, string fileExtension);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangeProfilePictureAsync(string username, string avatarPath);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/GetProfilePictureResponse")]
-        byte[] GetProfilePicture(string username);
+        string GetProfilePicture(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/GetProfilePicture", ReplyAction="http://tempuri.org/IProfileManager/GetProfilePictureResponse")]
-        System.Threading.Tasks.Task<byte[]> GetProfilePictureAsync(string username);
+        System.Threading.Tasks.Task<string> GetProfilePictureAsync(string username);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProfileManager/ChangePassword", ReplyAction="http://tempuri.org/IProfileManager/ChangePasswordResponse")]
         ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangePassword(string username, string currentPassword, string newPassword);
@@ -273,19 +273,19 @@ namespace ArchsVsDinosClient.ProfileManagerService {
             return base.Channel.UpdateTikTokAsync(username, newTikTok);
         }
         
-        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangeProfilePicture(string username, byte[] profilePhoto, string fileExtension) {
-            return base.Channel.ChangeProfilePicture(username, profilePhoto, fileExtension);
+        public ArchsVsDinosClient.ProfileManagerService.UpdateResponse ChangeProfilePicture(string username, string avatarPath) {
+            return base.Channel.ChangeProfilePicture(username, avatarPath);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangeProfilePictureAsync(string username, byte[] profilePhoto, string fileExtension) {
-            return base.Channel.ChangeProfilePictureAsync(username, profilePhoto, fileExtension);
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.ProfileManagerService.UpdateResponse> ChangeProfilePictureAsync(string username, string avatarPath) {
+            return base.Channel.ChangeProfilePictureAsync(username, avatarPath);
         }
         
-        public byte[] GetProfilePicture(string username) {
+        public string GetProfilePicture(string username) {
             return base.Channel.GetProfilePicture(username);
         }
         
-        public System.Threading.Tasks.Task<byte[]> GetProfilePictureAsync(string username) {
+        public System.Threading.Tasks.Task<string> GetProfilePictureAsync(string username) {
             return base.Channel.GetProfilePictureAsync(username);
         }
         

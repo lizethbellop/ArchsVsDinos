@@ -693,4 +693,16 @@
   <data name="Avatar_UnexpectedError" xml:space="preserve">
     <value>Error inesperado al procesar el avatar</value>
   </data>
+  <data name="Friends_Remove" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Friends_RemoveConfirmation" xml:space="preserve">
+    <value>¿Estás seguro que deseas eliminarlo(a)?</value>
+  </data>
+  <data name="Friends_AreFriends" xml:space="preserve">
+    <value>¿Son amigos?</value>
+  </data>
+  <data name="Friends_UserFound" xml:space="preserve">
+    <value>Usuario encontrado</value>
+  </data>
 </root>

@@ -1,9 +1,11 @@
 ﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,14 +31,39 @@ namespace ArchsVsDinosClient.Views
             UserProfileObserver.Instance.OnProfileUpdated += RefreshUserData;
         }
 
-        private void LoadUserData()
+        private async void LoadUserData()
         {
             var user = UserSession.Instance.CurrentUser;
-
             TxtUsername.Text = user.Username;
             TxtNickname.Text = user.Nickname;
             TxtEmail.Text = user.Email;
             TxtName.Text = user.Name;
+
+            await LoadUserAvatar();
+        }
+
+        private async Task LoadUserAvatar()
+        {
+            try
+            {
+                var profileService = new ProfileServiceClient();
+                string avatarPath = await profileService.GetProfilePictureAsync(UserSession.Instance.CurrentUser.Username);
+
+                if (!string.IsNullOrEmpty(avatarPath))
+                {
+                    ImgAvatar.Source = new BitmapImage(new Uri(avatarPath, UriKind.Relative));
+                }
+            }
+            catch (CommunicationException ex)
+            {
+                Console.WriteLine($"Error de comunicación al obtener avatar: {ex.Message}");
+                ImgAvatar.Source = new BitmapImage(new Uri("/Resources/Images/Avatars/default_avatar_01.png", UriKind.Relative));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al cargar avatar: {ex.Message}");
+                ImgAvatar.Source = new BitmapImage(new Uri("/Resources/Images/Avatars/default_avatar_01.png", UriKind.Relative));
+            }
         }
 
         private void RefreshUserData()

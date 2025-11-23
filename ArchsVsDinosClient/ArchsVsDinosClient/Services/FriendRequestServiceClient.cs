@@ -25,8 +25,8 @@ namespace ArchsVsDinosClient.Services
         private string currentUsername;
         private Timer reconnectionTimer;
         private int reconnectionAttempts = 0;
-        private const int MAX_RECONNECTION_ATTEMPTS = 5;
-        private const int RECONNECTION_INTERVAL_MS = 5000;
+        private const int MaxReconnectionAttempts = 5;
+        private const int ReconnectionIntervalMs = 5000;
 
         public event Action<bool> FriendRequestSent;
         public event Action<bool> FriendRequestAccepted;
@@ -84,6 +84,26 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
+        private void EnsureClientIsUsable()
+        {
+            lock (clientLock)
+            {
+                if (client == null ||
+                    client.State == CommunicationState.Closed ||
+                    client.State == CommunicationState.Faulted)
+                {
+                    try
+                    {
+                        client?.Abort();
+                    }
+                    catch { }
+
+                    InitializeClient();
+                    guardian.MonitorClientState(client);
+                }
+            }
+        }
+
         private void OnServerStateChanged(object sender, ServerStateChangedEventArgs e)
         {
             if (!e.IsAvailable)
@@ -105,8 +125,8 @@ namespace ArchsVsDinosClient.Services
             reconnectionTimer = new Timer(
                 TryReconnect,
                 null,
-                RECONNECTION_INTERVAL_MS,
-                RECONNECTION_INTERVAL_MS
+                ReconnectionIntervalMs,
+                ReconnectionIntervalMs
             );
         }
 
@@ -118,7 +138,7 @@ namespace ArchsVsDinosClient.Services
 
         private async void TryReconnect(object state)
         {
-            if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS)
+            if (reconnectionAttempts >= MaxReconnectionAttempts)
             {
                 StopReconnectionTimer();
                 Console.WriteLine("Máximo de intentos de reconexión alcanzado");
@@ -126,7 +146,7 @@ namespace ArchsVsDinosClient.Services
             }
 
             reconnectionAttempts++;
-            Console.WriteLine($"Intento de reconexión {reconnectionAttempts}/{MAX_RECONNECTION_ATTEMPTS}");
+            Console.WriteLine($"Intento de reconexión {reconnectionAttempts}/{MaxReconnectionAttempts}");
 
             lock (clientLock)
             {
@@ -175,10 +195,7 @@ namespace ArchsVsDinosClient.Services
             _ = guardian.ExecuteAsync(
                 async () =>
                 {
-                    if (!IsClientUsable())
-                    {
-                        throw new CommunicationException("Cliente no disponible");
-                    }
+                    EnsureClientIsUsable();
                     await Task.Run(() => client.SendFriendRequest(fromUser, toUser));
                 },
                 operationName: "enviar solicitud de amistad"
@@ -190,10 +207,7 @@ namespace ArchsVsDinosClient.Services
             _ = guardian.ExecuteAsync(
                 async () =>
                 {
-                    if (!IsClientUsable())
-                    {
-                        throw new CommunicationException("Cliente no disponible");
-                    }
+                    EnsureClientIsUsable();
                     await Task.Run(() => client.AcceptFriendRequest(fromUser, toUser));
                 },
                 operationName: "aceptar solicitud de amistad"
@@ -205,10 +219,7 @@ namespace ArchsVsDinosClient.Services
             _ = guardian.ExecuteAsync(
                 async () =>
                 {
-                    if (!IsClientUsable())
-                    {
-                        throw new CommunicationException("Cliente no disponible");
-                    }
+                    EnsureClientIsUsable();
                     await Task.Run(() => client.RejectFriendRequest(fromUser, toUser));
                 },
                 operationName: "rechazar solicitud de amistad"
@@ -220,10 +231,7 @@ namespace ArchsVsDinosClient.Services
             _ = guardian.ExecuteAsync(
                 async () =>
                 {
-                    if (!IsClientUsable())
-                    {
-                        throw new CommunicationException("Cliente no disponible");
-                    }
+                    EnsureClientIsUsable();
                     await Task.Run(() => client.GetPendingRequests(username));
                 },
                 operationName: "obtener solicitudes pendientes"
@@ -237,10 +245,7 @@ namespace ArchsVsDinosClient.Services
             _ = guardian.ExecuteAsync(
                 async () =>
                 {
-                    if (!IsClientUsable())
-                    {
-                        throw new CommunicationException("Cliente no disponible");
-                    }
+                    EnsureClientIsUsable();
                     await Task.Run(() => client.Subscribe(username));
                 },
                 operationName: "suscribir a notificaciones"
@@ -249,23 +254,40 @@ namespace ArchsVsDinosClient.Services
 
         public void Unsubscribe(string username)
         {
+            // Si el cliente no está usable, no hacer nada
             if (!IsClientUsable())
             {
                 currentUsername = null;
                 return;
             }
 
-            _ = guardian.ExecuteAsync(
-                async () =>
+            // Hacerlo directo con try-catch, sin guardián ni async
+            try
+            {
+                lock (clientLock)
                 {
                     if (IsClientUsable())
                     {
-                        await Task.Run(() => client.Unsubscribe(username));
+                        client.Unsubscribe(username);
                         currentUsername = null;
                     }
-                },
-                operationName: "desuscribir de notificaciones"
-            );
+                }
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Console.WriteLine($"Cliente ya desechado al desuscribir: {ex.Message}");
+                currentUsername = null;
+            }
+            catch (CommunicationException ex)
+            {
+                Console.WriteLine($"Error de comunicación al desuscribir: {ex.Message}");
+                currentUsername = null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al desuscribir: {ex.Message}");
+                currentUsername = null;
+            }
         }
 
         private void OnFriendRequestSent(bool success)

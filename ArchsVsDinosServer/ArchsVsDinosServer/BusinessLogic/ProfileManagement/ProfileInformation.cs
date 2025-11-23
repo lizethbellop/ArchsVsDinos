@@ -18,6 +18,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 {
     public class ProfileInformation : BaseProfileService
     {
+
+        private const string DefaultAvatarPath = "/Resources/Images/Avatars/default_avatar_01.png";
         public ProfileInformation(ServiceDependencies dependencies)
         : base(dependencies)
         {
@@ -122,21 +124,10 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             }
         }
 
-        public UpdateResponse ChangeProfilePicture(string username, byte[] profilePicture, string fileExtension)
+        public UpdateResponse ChangeProfilePicture(string username, string avatarPath)
         {
             try
             {
-                string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProfilePictures");
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                string fileName = $"{username}_{Guid.NewGuid()}{fileExtension}";
-                string filePath = Path.Combine(folderPath, fileName);
-
-                File.WriteAllBytes(filePath, profilePicture);
-
                 using (var context = GetContext())
                 {
                     UpdateResponse response = new UpdateResponse();
@@ -157,24 +148,18 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         return response;
                     }
 
-                    player.profilePicture = fileName;
+                    player.profilePicture = avatarPath;
                     context.SaveChanges();
 
                     response.Success = true;
                     response.ResultCode = UpdateResultCode.Profile_Success;
                     return response;
-
                 }
             }
             catch (EntityException ex)
             {
                 loggerHelper.LogError($"Database connection error at Change Profile Picture", ex);
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
-            }
-            catch (IOException ex)
-            {
-                loggerHelper.LogError($"An error with the file happened", ex);
-                return new UpdateResponse { Success = false, ResultCode =UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
@@ -183,49 +168,50 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             }
         }
 
-        public byte[] GetProfilePicture(string username)
+        public string GetProfilePicture(string username)
         {
             try
             {
                 using (var context = GetContext())
                 {
                     var user = context.UserAccount.FirstOrDefault(u => u.username == username);
-
                     if (user == null)
-                        return null;
+                    {
+                        loggerHelper.LogWarning($"User not found: {username}");
+                        return DefaultAvatarPath;
+                    }
 
                     var player = context.Player.FirstOrDefault(p => p.idPlayer == user.idPlayer);
+                    if (player == null)
+                    {
+                        loggerHelper.LogWarning($"Player not found for user: {username}");
+                        return DefaultAvatarPath;
+                    }
 
-                    if (player == null || string.IsNullOrEmpty(player.profilePicture))
-                        return null;
+                    // Si no tiene avatar configurado, devolver el por defecto
+                    if (string.IsNullOrEmpty(player.profilePicture))
+                    {
+                        return DefaultAvatarPath;
+                    }
 
-
-                    string folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ProfilePictures");
-                    string filePath = Path.Combine(folderPath, player.profilePicture);
-
-                    if (!File.Exists(filePath))
-                        return null;
-
-                    return File.ReadAllBytes(filePath);
+                    // Devolver la ruta guardada en la BD
+                    return player.profilePicture;
                 }
             }
-            catch (IOException ex)
+            catch (EntityException ex)
             {
-                loggerHelper.LogError($"An error with the file happened", ex);
-                return null;
+                loggerHelper.LogError($"Database error getting profile picture for {username}", ex);
+                return DefaultAvatarPath;
             }
-            catch (UnauthorizedAccessException ex)
+            catch (InvalidOperationException ex)
             {
-                loggerHelper.LogError($"An authorization error happened", ex);
-                return null;
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
+                loggerHelper.LogError($"Invalid operation getting profile picture for {username}", ex);
+                return DefaultAvatarPath;
             }
             catch (Exception ex)
             {
-                return null;
+                loggerHelper.LogError($"Unexpected error getting profile picture for {username}", ex);
+                return DefaultAvatarPath;
             }
         }
 
