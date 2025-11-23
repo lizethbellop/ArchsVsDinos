@@ -94,20 +94,20 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
-        public async Task<UpdateResponse> ChangeProfilePictureAsync(string username, byte[] profilePicture, string fileExtension)
+        public async Task<UpdateResponse> ChangeProfilePictureAsync(string username, string avatarPath)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.ChangeProfilePicture(username, profilePicture, fileExtension)),
+                async () => await Task.Run(() => client.ChangeProfilePicture(username, avatarPath)),
                 defaultValue: new UpdateResponse { Success = false },
                 operationName: "cambiar avatar"
             );
         }
 
-        public async Task<byte[]> GetProfilePictureAsync(string username)
+        public async Task<string> GetProfilePictureAsync(string username)
         {
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.GetProfilePicture(username)),
-                defaultValue: null,
+                defaultValue: "/Resources/Images/Avatars/default_avatar_01.png",
                 operationName: "obtener avatar"
             );
         }

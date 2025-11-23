@@ -23,7 +23,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Main Title -->
         <StackPanel Grid.Row="0" Margin="0,10,0,15" HorizontalAlignment="Center">
             <Label Content="{x:Static language:Lang.FriendsMainMenu_FriendsTitle}" 
                    FontFamily="{StaticResource Volcanic Dungeon}" 
@@ -32,7 +31,6 @@
                    Foreground="#FF295B07"/>
         </StackPanel>
 
-        <!-- Main Content: 3 Columns -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -42,7 +40,6 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- COLUMN 1: Friends List -->
             <Border Grid.Column="0" CornerRadius="10" BorderBrush="#FF196572" BorderThickness="2" Background="White">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -52,17 +49,17 @@
 
                     <Border Grid.Row="0" Background="#FF6ABA2A" CornerRadius="8,8,0,0" Padding="10,5">
                         <Label Content="{x:Static language:Lang.Friends_MyFriends}" 
-                               FontFamily="Tw Cen MT Condensed Extra Bold" 
-                               FontSize="18" 
-                               Foreground="White" 
-                               HorizontalAlignment="Center"/>
+                        FontFamily="Tw Cen MT Condensed Extra Bold" 
+                        FontSize="18" 
+                        Foreground="White" 
+                        HorizontalAlignment="Center"/>
                     </Border>
 
                     <ListBox Grid.Row="1" x:Name="LbFriends" 
-                             BorderThickness="0" 
-                             Background="Transparent" 
-                             ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                             Margin="5">
+                        BorderThickness="0" 
+                        Background="Transparent" 
+                        ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                        Margin="5">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Border Margin="5" Padding="10" CornerRadius="8" Background="White" BorderBrush="#FFE0E0E0" BorderThickness="1">
@@ -84,21 +81,57 @@
                                     </Border.Style>
 
                                     <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
 
-                                        <Border Grid.Column="0" Width="35" Height="35" CornerRadius="17.5" Background="#FF6ABA2A" Margin="0,0,10,0">
-                                            <Label Content="👤" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
-                                        </Border>
+                                        <Grid Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="1" Text="{Binding}" 
-                                                   FontFamily="Trebuchet MS" 
-                                                   FontSize="16" 
-                                                   VerticalAlignment="Center" 
-                                                   Foreground="#FF196572" 
-                                                   FontWeight="Bold"/>
+                                            <Border Grid.Column="0" Width="35" Height="35" CornerRadius="17.5" Background="#FF6ABA2A" Margin="0,0,10,0">
+                                                <Label Content="👤" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0"/>
+                                            </Border>
+
+                                            <TextBlock Grid.Column="1" Text="{Binding}" 
+                                           FontFamily="Trebuchet MS" 
+                                           FontSize="16" 
+                                           VerticalAlignment="Center" 
+                                           Foreground="#FF196572" 
+                                           FontWeight="Bold"/>
+                                        </Grid>
+
+                                        <Button Grid.Row="1" 
+                                            Click="Click_BtnRemoveFriend"
+                                            Tag="{Binding}"
+                                            Content="{x:Static language:Lang.Friends_Remove}" 
+                                            Height="30" 
+                                            Margin="0,5,0,0"
+                                            FontSize="12" 
+                                            FontWeight="Bold"
+                                            Background="#FFFF5252" 
+                                            Foreground="White" 
+                                            BorderBrush="Transparent" 
+                                            FontFamily="Tw Cen MT Condensed Extra Bold">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="0">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="Background" Value="#FFE53935"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="border" Property="Background" Value="#FFC62828"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -159,7 +192,7 @@
 
                                         <!-- Accept/Reject buttons -->
                                         <UniformGrid Grid.Row="1" Columns="2" Margin="0,5,0,0">
-                                            <Button Click="BtnAcceptRequest_Click"
+                                            <Button Click="Click_BtnAcceptRequest"
                                                     Tag="{Binding}"
                                                     Content="{x:Static language:Lang.Friends_Accept}" 
                                                     Height="30" 
@@ -187,7 +220,7 @@
                                                 </Button.Template>
                                             </Button>
 
-                                            <Button Click="BtnRejectRequest_Click"
+                                            <Button Click="Click_BtnRejectRequest"
                                                     Tag="{Binding}"
                                                     Content="{x:Static language:Lang.Friends_Reject}" 
                                                     Height="30" 
@@ -250,7 +283,7 @@
                                Foreground="#FF196572"/>
 
                         <Border CornerRadius="8" Background="White" BorderBrush="Gray" BorderThickness="1" Height="35" Margin="0,5,0,0">
-                            <TextBox x:Name="TxtB_SearchUsername" 
+                            <TextBox x:Name="TxtBSearchUsername" 
                                      TextWrapping="NoWrap" 
                                      FontFamily="Trebuchet MS" 
                                      BorderThickness="0" 
@@ -260,7 +293,7 @@
                         </Border>
 
                         <Button x:Name="BtnSearchFriend"
-                                Click="BtnSearchFriend_Click"
+                                Click="Click_BtnSearchFriend"
                                 Content="{x:Static language:Lang.Friends_Search}" 
                                 Height="40" 
                                 Margin="0,10,0,0"
@@ -313,7 +346,7 @@
                             <!-- Username found -->
                             <TextBlock Grid.Row="0" 
                                        x:Name="TxtSearchResult"
-                                       Text="Usuario encontrado" 
+                                       Text="{x:Static language:Lang.Friends_UserFound}" 
                                        FontFamily="Trebuchet MS" 
                                        FontSize="14" 
                                        FontWeight="Bold"
@@ -324,7 +357,7 @@
                             <!-- Friendship status -->
                             <TextBlock Grid.Row="1" 
                                        x:Name="TxtFriendshipStatus"
-                                       Text="¿Son amigos?" 
+                                       Text="{x:Static language:Lang.Friends_AreFriends}" 
                                        FontFamily="Trebuchet MS" 
                                        FontSize="12" 
                                        Foreground="#FF666666" 
@@ -334,7 +367,7 @@
                             <!-- Send request button -->
                             <Button Grid.Row="2" 
                                     x:Name="BtnSendRequest"
-                                    Click="BtnSendRequest_Click"
+                                    Click="Click_BtnSendRequest"
                                     Content="{x:Static language:Lang.Friends_SendRequest}" 
                                     Height="35" 
                                     Background="#FF9C27B0" 

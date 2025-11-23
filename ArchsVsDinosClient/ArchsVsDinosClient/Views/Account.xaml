@@ -195,11 +195,14 @@
                 <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20,0,0,0">
                     <Grid>
                         <Border Width="250" Height="250" CornerRadius="150" BorderBrush="#FF196572" BorderThickness="3" Background="White">
-                            <Ellipse Width="230" Height="230">
-                                <Ellipse.Fill>
-                                    <SolidColorBrush Color="#FFE0E0E0"/>
-                                </Ellipse.Fill>
-                            </Ellipse>
+                            <Image x:Name="ImgAvatar" 
+                                    Width="230" 
+                                    Height="230" 
+                                    Stretch="UniformToFill">
+                                <Image.Clip>
+                                    <EllipseGeometry Center="115,115" RadiusX="115" RadiusY="115"/>
+                                </Image.Clip>
+                            </Image>
                         </Border>
                         <Image Source="/Resources/Images/garra.png" Margin="5,-60,0,0" Stretch="Uniform" HorizontalAlignment="Right" VerticalAlignment="Top" Height="200" Width="260" RenderTransformOrigin="0.5,0.5"/>
                     </Grid>

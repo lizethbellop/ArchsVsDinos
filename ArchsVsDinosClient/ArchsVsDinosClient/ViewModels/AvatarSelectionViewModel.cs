@@ -30,13 +30,13 @@ namespace ArchsVsDinosClient.ViewModels
             this.profileService.ConnectionError += OnConnectionError;
 
             avatarPaths = new Dictionary<int, string>
-            {
-                { 1, "/Resources/Images/Avatars/default_avatar_01.png" },
-                { 2, "/Resources/Images/Avatars/default_avatar_02.png" },
-                { 3, "/Resources/Images/Avatars/default_avatar_03.png" },
-                { 4, "/Resources/Images/Avatars/default_avatar_04.png" },
-                { 5, "/Resources/Images/Avatars/default_avatar_05.png" }
-            };
+        {
+            { 1, "/Resources/Images/Avatars/default_avatar_01.png" },
+            { 2, "/Resources/Images/Avatars/default_avatar_02.png" },
+            { 3, "/Resources/Images/Avatars/default_avatar_03.png" },
+            { 4, "/Resources/Images/Avatars/default_avatar_04.png" },
+            { 5, "/Resources/Images/Avatars/default_avatar_05.png" }
+        };
         }
 
         public void SelectAvatar(int avatarId)
@@ -57,29 +57,11 @@ namespace ArchsVsDinosClient.ViewModels
 
             try
             {
-                string physicalPath = GetPhysicalPathFromResourcePath(SelectedAvatarPath);
-
-                if (string.IsNullOrEmpty(physicalPath) || !File.Exists(physicalPath))
-                {
-                    messageService.ShowMessage(Lang.Avatar_FileNotFound);
-                    return;
-                }
-
-                byte[] imageBytes = File.ReadAllBytes(physicalPath);
-
-                if (imageBytes == null || imageBytes.Length == 0)
-                {
-                    messageService.ShowMessage(Lang.Avatar_FIleEmpty);
-                    return;
-                }
-
-                string fileExtension = Path.GetExtension(physicalPath);
                 string currentUsername = UserSession.Instance.CurrentUser.Username;
 
                 UpdateResponse response = await profileService.ChangeProfilePictureAsync(
                     currentUsername,
-                    imageBytes,
-                    fileExtension
+                    SelectedAvatarPath
                 );
 
                 if (response == null || !response.Success)
@@ -95,6 +77,8 @@ namespace ArchsVsDinosClient.ViewModels
                 string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
                 messageService.ShowMessage(successMessage);
 
+                UserSession.Instance.CurrentPlayer.ProfilePicture = SelectedAvatarPath;
+
                 UserProfileObserver.Instance.NotifyProfileUpdated();
 
                 RequestClose?.Invoke(this, EventArgs.Empty);
@@ -108,29 +92,6 @@ namespace ArchsVsDinosClient.ViewModels
         private bool HasSelectedAvatar()
         {
             return !string.IsNullOrEmpty(SelectedAvatarPath);
-        }
-
-        private string GetPhysicalPathFromResourcePath(string resourcePath)
-        {
-            if (string.IsNullOrWhiteSpace(resourcePath))
-            {
-                return null;
-            }
-
-            try
-            {
-                if (resourcePath.StartsWith("/Resources/"))
-                {
-                    string relativePath = resourcePath.TrimStart('/');
-                    return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
-                }
-
-                return resourcePath;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         private void OnConnectionError(string title, string message)
