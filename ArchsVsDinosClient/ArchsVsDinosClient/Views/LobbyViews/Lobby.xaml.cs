@@ -27,13 +27,19 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
         private readonly LobbyViewModel viewModel;
 
-        public Lobby()
+        public Lobby() : this(true) { }
+
+        public Lobby(bool isHost)
         {
             InitializeComponent();
-            viewModel = new LobbyViewModel();
+            viewModel = new LobbyViewModel(isHost);
             DataContext = viewModel;
 
-            viewModel.InitializeLobby();
+            if (isHost)
+            {
+                viewModel.InitializeLobby();
+            }
+                
         }
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)

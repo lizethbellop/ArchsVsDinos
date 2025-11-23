@@ -23,7 +23,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         public JoinCode()
         {
             InitializeComponent();
-            lobbyServiceClient = new LobbyServiceClient();
         }
 
         private async void Click_BtnAccept(object sender, RoutedEventArgs e)
@@ -34,41 +33,36 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             if (string.IsNullOrEmpty(code))
             {
                 MessageBox.Show(Lang.JoinCode_Invalid);
+                return;
             }
-            else
+
+            try
             {
-                try
-                {
+                var userAccount = BuildUserAccount();
+                var tempClient = new LobbyServiceClient();
+                var result = await Task.Run(() => tempClient.JoinLobby(userAccount, code));
 
-                    UserAccountDTO userAccount = BuildUserAccount();
 
-                    var result = lobbyServiceClient.JoinLobby(userAccount, code);
-
-                    if (result == LobbyResultCode.Lobby_LobbyJoined)
-                    {
-                        var lobby = new Lobby();
-                        lobby.Show();
-
-                        IsCancelled = false;
-                        this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show(Lang.JoinCode_Invalid);
-                    }
-                }
-                catch (TimeoutException)
+                if (result == LobbyResultCode.Lobby_LobbyJoined)
                 {
-                    MessageBox.Show(Lang.JoinMatch_ErrorJoinMatch);
+                    UserSession.Instance.CurrentMatchCode = code; var lobby = new Lobby(false); lobby.Show(); IsCancelled = false; this.Close();
                 }
-                catch (CommunicationException)
+                else
                 {
-                    MessageBox.Show(Lang.JoinMatch_ErrorJoinMatch);
+                    MessageBox.Show(Lang.JoinCode_Invalid);
                 }
-                catch (Exception)
-                {
-                    MessageBox.Show(Lang.JoinMatch_ErrorJoinMatch);
-                }
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show(Lang.JoinMatch_ErrorJoinMatch);
+            }
+            catch (CommunicationException)
+            {
+                MessageBox.Show(Lang.JoinMatch_ErrorJoinMatch);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(Lang.JoinMatch_ErrorJoinMatch);
             }
         }
 

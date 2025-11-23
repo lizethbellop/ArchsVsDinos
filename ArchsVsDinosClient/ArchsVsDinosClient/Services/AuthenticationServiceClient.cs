@@ -34,8 +34,7 @@ namespace ArchsVsDinosClient.Services
         {
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.Login(username, password)),
-                defaultValue: new LoginResponse { Success = false },
-                operationName: "inicio de sesión"
+                defaultValue: new LoginResponse { Success = false }
             );
         }
 

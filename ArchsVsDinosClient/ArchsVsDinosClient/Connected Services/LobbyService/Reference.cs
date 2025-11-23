@@ -196,6 +196,9 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Lobby_PlayerExpelledError = 12,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_FullLobby = 13,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]

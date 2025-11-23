@@ -37,7 +37,9 @@ namespace ArchsVsDinosClient.ViewModels
 
         public event Action<string> MatchCodeReceived;
 
-        public LobbyViewModel()
+        public LobbyViewModel() : this(false) { }
+
+        public LobbyViewModel(bool isHost)
         {
             lobbyServiceClient = new LobbyServiceClient();
 
@@ -50,19 +52,18 @@ namespace ArchsVsDinosClient.ViewModels
             for (int i = 0; i < 4; i++)
                 Slots.Add(new SlotLobby());
 
-            if (!string.IsNullOrEmpty(UserSession.Instance.CurrentMatchCode))
+            if (isHost)
             {
-                MatchCode = UserSession.Instance.CurrentMatchCode;
+                var localPlayer = new LobbyPlayerDTO
+                {
+                    Username = UserSession.Instance.CurrentUser.Username,
+                    Nickname = UserSession.Instance.CurrentUser.Nickname,
+                    IsHost = true
+                };
+
+                Players.Add(localPlayer);
             }
 
-            var localPlayer = new LobbyPlayerDTO
-            {
-                Username = UserSession.Instance.CurrentUser.Username,
-                Nickname = UserSession.Instance.CurrentUser.Nickname,
-                IsHost = true
-            };
-
-            Players.Add(localPlayer);
             UpdateSlots();
 
         }
@@ -77,6 +78,7 @@ namespace ArchsVsDinosClient.ViewModels
 
             lobbyServiceClient.CreateLobby(userAccount);
         }
+
 
         public void ExpelPlayer(string hostUsername, string targetUsername)
         {
@@ -105,28 +107,32 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 UserSession.Instance.CurrentMatchCode = code;
                 MatchCode = code;
-                var existing = Players.FirstOrDefault(player => player.Username == createdPlayer.Username);
-                if (existing == null)
+
+                var existingPlayer = Players.FirstOrDefault(player => player.Username == createdPlayer.Username);
+                if (existingPlayer == null)
                 {
                     Players.Add(createdPlayer);
                 }
                 else
                 {
-                    existing.IsHost = createdPlayer.IsHost;
+                    existingPlayer.IsHost = createdPlayer.IsHost;
                 }
+
                 UpdateSlots();
                 MatchCodeReceived?.Invoke(code);
             });
-
         }
 
         private void OnPlayerJoined(LobbyPlayerDTO joiningPlayer)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (Players.All(player => player.Username != joiningPlayer.Username))
+                var existingPlayer = Players.FirstOrDefault(player => player.Username == joiningPlayer.Username);
+                if (existingPlayer == null)
+                {
                     Players.Add(joiningPlayer);
-                UpdateSlots();
+                    UpdateSlots();
+                }
             });
         }
 
@@ -135,7 +141,10 @@ namespace ArchsVsDinosClient.ViewModels
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var existing = Players.FirstOrDefault(player => player.Username == leavingPlayer.Username);
-                if (existing != null) Players.Remove(existing);
+                if (existing != null)
+                {
+                    Players.Remove(existing);
+                }
                 UpdateSlots();
             });
         }
@@ -154,7 +163,10 @@ namespace ArchsVsDinosClient.ViewModels
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var existing = Players.FirstOrDefault(player => player.Username == expelledPlayer.Username);
-                if (existing != null) Players.Remove(existing);
+                if (existing != null)
+                {
+                    Players.Remove(existing);
+                }
 
                 if (expelledPlayer.Username == UserSession.Instance.CurrentUser.Username)
                 {
@@ -173,7 +185,10 @@ namespace ArchsVsDinosClient.ViewModels
             var otherPlayers = Players.Where(player => player.Username != localUsername).ToList();
 
             var orderedPlayers = new List<LobbyPlayerDTO>();
-            if (localPlayer != null) orderedPlayers.Add(localPlayer);
+            if (localPlayer != null)
+            {
+                orderedPlayers.Add(localPlayer);
+            }
             orderedPlayers.AddRange(otherPlayers);
 
             for (int i = 0; i < Slots.Count; i++)
