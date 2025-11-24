@@ -209,6 +209,8 @@
     <Compile Include="Services\ChatManager.cs" />
     <Compile Include="Services\FriendManager.cs" />
     <Compile Include="Services\GameManager.cs" />
+    <Compile Include="Services\Interfaces\IGameNotifier.cs" />
+    <Compile Include="Services\Interfaces\ILobbyNotifier.cs" />
     <Compile Include="Services\LobbyCallbackManager.cs" />
     <Compile Include="Services\StatisticsManager.cs" />
     <Compile Include="Services\StrikeManager.cs" />
