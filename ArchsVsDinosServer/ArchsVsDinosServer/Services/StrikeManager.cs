@@ -331,6 +331,33 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
+        public int GetUserStrikes(int userId)
+        {
+            try
+            {
+                using (var context = contextFactory())
+                {
+                    return context.UserHasStrike
+                        .Count(s => s.idUser == userId);
+                }
+            }
+            catch (SqlException ex)
+            {
+                loggerHelper.LogError($"SQL Server error getting strikes for user {userId}", ex);
+                return 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                loggerHelper.LogError($"EF Core database update error getting strikes for user {userId}", ex);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Unexpected error getting strikes for user {userId}", ex);
+                return 0;
+            }
+        }
+
         private bool HandleProfanityCheck(IDbContext context, UserAccount user, string message)
         {
             if (!profanityFilter.ContainsProfanity(message, out var badWords))

@@ -19,5 +19,14 @@ namespace Contracts
 
         [OperationContract(IsOneWay = true)]
         void UpdateUserList(List<string> users);
+
+        [OperationContract(IsOneWay = true)]
+        void UserBannedFromChat(string username, int strikes);
+
+        [OperationContract(IsOneWay = true)]
+        void UserExpelledFromLobby(string username, string reason);
+
+        [OperationContract(IsOneWay = true)]
+        void LobbyClosedDueToInsufficientPlayers(string reason);
     }
 }

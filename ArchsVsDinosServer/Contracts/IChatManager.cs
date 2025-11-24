@@ -1,4 +1,5 @@
-﻿using Contracts.DTO.Result_Codes;
+﻿using Contracts.DTO;
+using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace Contracts
     [ServiceContract(CallbackContract =typeof(IChatManagerCallback))]
     public interface IChatManager
     {
-        [OperationContract]
-        void Connect(string username);
-        
+        [OperationContract(IsOneWay = true)]
+        void Connect(ChatConnectionRequest request);
+
         [OperationContract(IsOneWay = true)]
         void Disconnect(string username);
         

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\ChatConnectionRequest.cs" />
     <Compile Include="DTO\ConfigurationDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchAddedToBoardDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchArmyDTO.cs" />
