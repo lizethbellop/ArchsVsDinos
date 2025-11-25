@@ -337,8 +337,15 @@ namespace ArchsVsDinosServer.Services
             {
                 using (var context = contextFactory())
                 {
+                    var now = DateTime.UtcNow;
+
                     return context.UserHasStrike
-                        .Count(s => s.idUser == userId);
+                        .Where(uhs => uhs.idUser == userId)
+                        .Join(context.Strike,
+                              uhs => uhs.idStrike,
+                              s => s.idStrike,
+                              (uhs, s) => s)
+                        .Count(s => s.endDate > now);
                 }
             }
             catch (SqlException ex)

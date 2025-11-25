@@ -23,6 +23,7 @@ namespace ArchsVsDinosServer
         public int idGeneralMatch { get; set; }
         public System.DateTime date { get; set; }
         public System.TimeSpan gameTime { get; set; }
+        public string matchCode { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatchParticipants> MatchParticipants { get; set; }

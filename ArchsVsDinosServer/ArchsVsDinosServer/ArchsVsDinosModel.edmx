@@ -61,6 +61,7 @@
           <Property Name="idGeneralMatch" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="datetime" Nullable="false" />
           <Property Name="gameTime" Type="time" Precision="7" Nullable="false" />
+          <Property Name="matchCode" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="MatchParticipants">
           <Key>
@@ -395,6 +396,7 @@
 					<Property Name="date" Type="DateTime" Nullable="false" Precision="3" />
 					<Property Name="gameTime" Type="Time" Nullable="false" Precision="7" />
 					<NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idGen__59FA5E80" FromRole="GeneralMatch" ToRole="MatchParticipants" />
+          <Property Name="matchCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="MatchParticipants">
 					<Key>
@@ -742,7 +744,8 @@
 					<EntitySetMapping Name="GeneralMatch">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.GeneralMatch">
 							<MappingFragment StoreEntitySet="GeneralMatch">
-								<ScalarProperty Name="idGeneralMatch" ColumnName="idGeneralMatch" />
+								<ScalarProperty Name="matchCode" ColumnName="matchCode" />
+                <ScalarProperty Name="idGeneralMatch" ColumnName="idGeneralMatch" />
 								<ScalarProperty Name="date" ColumnName="date" />
 								<ScalarProperty Name="gameTime" ColumnName="gameTime" />
 							</MappingFragment>
