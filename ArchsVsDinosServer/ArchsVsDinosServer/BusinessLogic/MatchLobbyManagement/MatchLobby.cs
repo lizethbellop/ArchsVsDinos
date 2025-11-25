@@ -1,14 +1,18 @@
-﻿using Contracts;
+﻿using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Utils;
+using ArchsVsDinosServer.Wrappers;
+using Contracts;
 using Contracts.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
 {
-    internal class Lobby
+    public class Lobby
     {
         public string MatchCode { get; set; }
         public List<LobbyPlayerDTO> Players { get; set; } = new List<LobbyPlayerDTO>();
@@ -38,5 +42,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             }
 
         }
+
+
     }
 }

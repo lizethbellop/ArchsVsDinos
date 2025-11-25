@@ -15,6 +15,7 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Chat_UserAlreadyConnected,
         [EnumMember] Chat_ConnectionError,
         [EnumMember] Chat_MessageBlocked,
+        [EnumMember] Chat_UserBanned,
         [EnumMember] Chat_Error
     }
 }

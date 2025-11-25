@@ -1,8 +1,10 @@
 ﻿using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Services;
+using ArchsVsDinosServer.Services.Interfaces;
 using ArchsVsDinosServer.Utils;
 using ArchsVsDinosServer.Wrappers;
 using Contracts;
+using Contracts.DTO;
 using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Concurrent;
@@ -18,22 +20,39 @@ namespace ArchsVsDinosServer.BusinessLogic
 
     public class Chat
     {
+        public enum ChatContext
+        {
+            Lobby,
+            InGame
+        }
+
         private class UserConnection
         {
             public int UserId { get; set; }
             public IChatManagerCallback Callback { get; set; }
+            public ChatContext Context { get; set; }
+            public string MatchCode { get; set; }
         }
 
         private static readonly ConcurrentDictionary<string, UserConnection> ConnectedUsers = new ConcurrentDictionary<string, UserConnection>();
         private const string DefaultRoom = "Lobby";
+        private const int MinimumPlayersRequired = 2;
         private readonly ILoggerHelper loggerHelper;
         private readonly StrikeManager strikeManager;
         private readonly Func<IDbContext> contextFactory;
+        private readonly ILobbyNotifier lobbyNotifier;
+        private readonly IGameNotifier gameNotifier;
 
-        public Chat(ILoggerHelper loggerHelper, Func<IDbContext> contextFactory)
+        public Chat(
+            ILoggerHelper loggerHelper,
+            Func<IDbContext> contextFactory,
+            ILobbyNotifier lobbyNotifier,
+            IGameNotifier gameNotifier)
         {
             this.loggerHelper = loggerHelper;
             this.contextFactory = contextFactory;
+            this.lobbyNotifier = lobbyNotifier;
+            this.gameNotifier = gameNotifier;
 
             var dependencies = new ServiceDependencies(
                 new Wrappers.SecurityHelperWrapper(),
@@ -42,24 +61,19 @@ namespace ArchsVsDinosServer.BusinessLogic
                 contextFactory
             );
 
-            const string DATA_FOLDER = "Data";
-            const string BANNED_WORDS_FILE = "bannedWords.txt";
+            const string DataFolder = "Data";
+            const string BannedWordsFile = "bannedWords.txt";
             string bannedWordsPath = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
-                DATA_FOLDER,
-                BANNED_WORDS_FILE
+                DataFolder,
+                BannedWordsFile
             );
 
             var profanityFilter = new ProfanityFilter(loggerHelper, bannedWordsPath);
             this.strikeManager = new StrikeManager(dependencies, profanityFilter);
         }
 
-        public Chat(ILoggerHelper loggerHelper)
-            : this(loggerHelper, () => new DbContextWrapper())
-        {
-        }
-
-        public void Connect(string username)
+        public void Connect(ChatConnectionRequest request)
         {
             IChatManagerCallback callback;
             try
@@ -72,7 +86,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return;
             }
 
-            int userId = GetUserIdFromUsername(username);
+            int userId = GetUserIdFromUsername(request.Username);
             if (userId == 0)
             {
                 try
@@ -81,30 +95,34 @@ namespace ArchsVsDinosServer.BusinessLogic
                 }
                 catch (CommunicationObjectAbortedException ex)
                 {
-                    loggerHelper.LogWarning($"Communication object aborted for {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Communication object aborted for {request.Username}: {ex.Message}");
                 }
                 catch (CommunicationException ex)
                 {
-                    loggerHelper.LogWarning($"Communication error sending notification to {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Communication error sending notification to {request.Username}: {ex.Message}");
                 }
                 catch (TimeoutException ex)
                 {
-                    loggerHelper.LogWarning($"Timeout sending notification to {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Timeout sending notification to {request.Username}: {ex.Message}");
                 }
                 catch (ObjectDisposedException ex)
                 {
-                    loggerHelper.LogWarning($"Object disposed for {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Object disposed for {request.Username}: {ex.Message}");
                 }
                 return;
             }
 
+            var context = (ChatContext)request.Context;
+
             var userConnection = new UserConnection
             {
                 UserId = userId,
-                Callback = callback
+                Callback = callback,
+                Context = context,
+                MatchCode = request.MatchCode
             };
 
-            if (!ConnectedUsers.TryAdd(username, userConnection))
+            if (!ConnectedUsers.TryAdd(request.Username, userConnection))
             {
                 try
                 {
@@ -112,33 +130,42 @@ namespace ArchsVsDinosServer.BusinessLogic
                 }
                 catch (CommunicationObjectAbortedException ex)
                 {
-                    loggerHelper.LogWarning($"Communication object aborted for {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Communication object aborted for {request.Username}: {ex.Message}");
                 }
                 catch (CommunicationException ex)
                 {
-                    loggerHelper.LogWarning($"Communication error sending notification to {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Communication error sending notification to {request.Username}: {ex.Message}");
                 }
                 catch (TimeoutException ex)
                 {
-                    loggerHelper.LogWarning($"Timeout sending notification to {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Timeout sending notification to {request.Username}: {ex.Message}");
                 }
                 catch (ObjectDisposedException ex)
                 {
-                    loggerHelper.LogWarning($"Object disposed for {username}: {ex.Message}");
+                    loggerHelper.LogWarning($"Object disposed for {request.Username}: {ex.Message}");
                 }
                 return;
             }
 
-            BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserConnected, $"{username} has joined");
+            BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserConnected, $"{request.Username} has joined");
             UpdateUserList();
         }
 
         public void Disconnect(string username)
         {
-            if (ConnectedUsers.TryRemove(username, out _))
+            if (ConnectedUsers.TryRemove(username, out var userConnection))
             {
-                BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserDisconnected, $"{username} has left the lobby");
+                BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserDisconnected, $"{username} has left");
                 UpdateUserList();
+
+                if (userConnection.Context == ChatContext.Lobby)
+                {
+                    CheckMinimumPlayersInLobby();
+                }
+                else if (userConnection.Context == ChatContext.InGame)
+                {
+                    CheckMinimumPlayersInGame(userConnection.MatchCode);
+                }
             }
         }
 
@@ -161,8 +188,18 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 if (!canSend)
                 {
-                    NotifyUserMessageBlocked(username);
-                    loggerHelper.LogInfo($"Message from {username} blocked due to profanity or ban");
+                    int currentStrikes = strikeManager.GetUserStrikes(userConnection.UserId);
+
+                    if (currentStrikes >= 3)
+                    {
+                        ExpelUserForStrikes(username, currentStrikes, userConnection.Context, userConnection.MatchCode);
+                    }
+                    else
+                    {
+                        NotifyUserMessageBlocked(username, currentStrikes);
+                    }
+
+                    loggerHelper.LogInfo($"Message from {username} blocked. Strikes: {currentStrikes}/3");
                     return;
                 }
 
@@ -171,6 +208,127 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (Exception ex)
             {
                 loggerHelper.LogError($"Error sending message from {username}: {ex.Message}", ex);
+            }
+        }
+
+        private void ExpelUserForStrikes(string username, int strikes, ChatContext context, string matchCode)
+        {
+            loggerHelper.LogWarning($"Expelling user {username} from {context} for reaching {strikes} strikes");
+
+            if (ConnectedUsers.TryGetValue(username, out var userConnection))
+            {
+                SafeCallbackInvoke(username, () =>
+                {
+                    userConnection.Callback.UserBannedFromChat(username, strikes);
+                });
+            }
+
+            BroadcastSystemNotificationWithEnum(
+                ChatResultCode.Chat_UserBanned,
+                $"{username} has been expelled for inappropriate behavior"
+            );
+
+            if (context == ChatContext.Lobby)
+            {
+                lobbyNotifier?.NotifyPlayerExpelled(username, "Inappropriate language");
+            }
+            else if (context == ChatContext.InGame)
+            {
+                gameNotifier?.NotifyPlayerExpelled(matchCode, username, "Inappropriate language");
+            }
+
+            ConnectedUsers.TryRemove(username, out _);
+
+            NotifyUserExpelledFromLobby(username, "Expelled for inappropriate language");
+
+            UpdateUserList();
+
+            if (context == ChatContext.Lobby)
+            {
+                CheckMinimumPlayersInLobby();
+            }
+            else if (context == ChatContext.InGame)
+            {
+                CheckMinimumPlayersInGame(matchCode);
+            }
+        }
+
+        private void CheckMinimumPlayersInLobby()
+        {
+            int lobbyPlayers = ConnectedUsers.Count(u => u.Value.Context == ChatContext.Lobby);
+
+            if (lobbyPlayers < MinimumPlayersRequired)
+            {
+                loggerHelper.LogWarning($"Insufficient players in lobby. Current: {lobbyPlayers}");
+
+                NotifyLobbyClosing("Insufficient players. Minimum required: 2 players");
+
+                lobbyNotifier?.NotifyLobbyClosure("Insufficient players");
+
+                DisconnectLobbyUsers();
+            }
+        }
+
+        private void CheckMinimumPlayersInGame(string matchCode)
+        {
+            int gamePlayers = ConnectedUsers.Count(u =>
+                u.Value.Context == ChatContext.InGame &&
+                u.Value.MatchCode == matchCode);
+
+            if (gamePlayers < MinimumPlayersRequired)
+            {
+                loggerHelper.LogWarning($"Insufficient players in game {matchCode}. Current: {gamePlayers}");
+
+                NotifyGameClosing(matchCode, "Insufficient players to continue");
+
+                gameNotifier?.NotifyGameClosure(matchCode, "Insufficient players");
+
+                DisconnectGameUsers(matchCode);
+            }
+        }
+
+        private void NotifyGameClosing(string matchCode, string reason)
+        {
+            foreach (var user in ConnectedUsers.Where(u => u.Value.MatchCode == matchCode).ToArray())
+            {
+                SafeCallbackInvoke(user.Key, () =>
+                {
+                    user.Value.Callback.LobbyClosedDueToInsufficientPlayers(reason);
+                });
+            }
+        }
+
+        private void NotifyLobbyClosing(string reason)
+        {
+            foreach (var user in ConnectedUsers.Where(u => u.Value.Context == ChatContext.Lobby).ToArray())
+            {
+                SafeCallbackInvoke(user.Key, () =>
+                {
+                    user.Value.Callback.LobbyClosedDueToInsufficientPlayers(reason);
+                });
+            }
+        }
+
+        private void DisconnectLobbyUsers()
+        {
+            var lobbyUsers = ConnectedUsers.Where(u => u.Value.Context == ChatContext.Lobby).Select(u => u.Key).ToList();
+
+            foreach (var username in lobbyUsers)
+            {
+                ConnectedUsers.TryRemove(username, out _);
+            }
+        }
+
+        private void DisconnectGameUsers(string matchCode)
+        {
+            var gameUsers = ConnectedUsers
+                .Where(u => u.Value.Context == ChatContext.InGame && u.Value.MatchCode == matchCode)
+                .Select(u => u.Key)
+                .ToList();
+
+            foreach (var username in gameUsers)
+            {
+                ConnectedUsers.TryRemove(username, out _);
             }
         }
 
@@ -191,7 +349,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private void NotifyUserMessageBlocked(string username)
+        private void NotifyUserMessageBlocked(string username, int currentStrikes)
         {
             if (ConnectedUsers.TryGetValue(username, out var userConnection))
             {
@@ -199,8 +357,19 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     userConnection.Callback.ReceiveSystemNotification(
                         ChatResultCode.Chat_MessageBlocked,
-                        "Your message contains inappropriate language and was blocked"
+                        $"Warning {currentStrikes}/3. At 3 warnings you will be expelled."
                     );
+                });
+            }
+        }
+
+        private void NotifyUserExpelledFromLobby(string username, string reason)
+        {
+            foreach (var user in ConnectedUsers.ToArray())
+            {
+                SafeCallbackInvoke(user.Key, () =>
+                {
+                    user.Value.Callback.UserExpelledFromLobby(username, reason);
                 });
             }
         }
@@ -250,14 +419,14 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 ConnectedUsers.TryRemove(username, out _);
             }
-            catch (CommunicationException)
+            catch (CommunicationException ex)
             {
-                loggerHelper.LogWarning($"Communication error with user {username}");
+                loggerHelper.LogWarning($"Communication error with user {username}: {ex.Message}");
                 ConnectedUsers.TryRemove(username, out _);
             }
-            catch (TimeoutException)
+            catch (TimeoutException ex)
             {
-                loggerHelper.LogWarning($"Timeout communicating with user {username}");
+                loggerHelper.LogWarning($"Timeout communicating with user {username}: {ex.Message}");
                 ConnectedUsers.TryRemove(username, out _);
             }
             catch (ObjectDisposedException)
@@ -266,4 +435,5 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
     }
+
 }

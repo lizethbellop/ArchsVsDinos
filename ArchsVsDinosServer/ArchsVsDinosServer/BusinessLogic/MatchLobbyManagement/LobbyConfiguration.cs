@@ -16,6 +16,12 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
     public class LobbyConfiguration
     {
         private readonly ConcurrentDictionary<string, Lobby> ActiveMatches = new ConcurrentDictionary<string, Lobby>();
+        private readonly ILoggerHelper loggerHelper;
+
+        public LobbyConfiguration()
+        {
+            loggerHelper = new Wrappers.LoggerHelperWrapper();
+        }
 
         private bool TryGetCallback(out ILobbyManagerCallback lobbyCallback)
         {
@@ -270,6 +276,117 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 }
 
                 return LobbyResultCode.Lobby_PlayerExpelled;
+            }
+        }
+
+        /*public void ExpelPlayerByStrike(string username, string reason)
+        {
+            try
+            {
+                Lobby targetLobby = FindLobbyByUsername(username);
+
+                if (targetLobby == null)
+                {
+                    LoggerHelper.LogInfo($"No se encontró lobby para el usuario {username}");
+                    return;
+                }
+
+                lock (targetLobby)
+                {
+                    LobbyPlayerDTO expelledPlayer = targetLobby.Players
+                        .FirstOrDefault(player => player.Username == username);
+
+                    if (expelledPlayer == null)
+                    {
+                        LoggerHelper.LogInfo($"Jugador {username} no encontrado en el lobby");
+                        return;
+                    }
+
+                    // Remover del lobby
+                    targetLobby.Players.Remove(expelledPlayer);
+
+                    // Notificar a todos
+                    List<ILobbyManagerCallback> failedCallbacks = BroadcastToCallbacks(
+                        targetLobby.Callbacks,
+                        callback => callback.PlayerExpelledBySystem(expelledPlayer, reason)
+                    );
+
+                    foreach (var failed in failedCallbacks)
+                    {
+                        targetLobby.Callbacks.Remove(failed);
+                    }
+
+                    LoggerHelper.LogInfo($"Jugador {username} expulsado del lobby {targetLobby.MatchCode}: {reason}");
+
+                    if (targetLobby.Players.Count < 2)
+                    {
+                        CloseLobbiesByInsufficientPlayers(targetLobby.MatchCode, "Jugadores insuficientes para continuar");
+                    }
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                LoggerHelper.LogError($"Operación inválida al expulsar a {username}", ex);
+            }
+            catch (CommunicationException ex)
+            {
+                LoggerHelper.LogError($"Error de comunicación al expulsar a {username}", ex);
+            }
+            catch (Exception ex)
+            {
+                LoggerHelper.LogError($"Error inesperado al expulsar a {username}", ex);
+            }
+        }*/
+
+        public void CloseLobbiesByInsufficientPlayers(string matchCode, string reason)
+        {
+            try
+            {
+                Lobby targetLobby;
+
+                if (!ActiveMatches.TryGetValue(matchCode, out targetLobby))
+                {
+                    return;
+                }
+
+                lock (targetLobby)
+                {
+                    if (targetLobby.Players.Count < 2)
+                    {
+                        try
+                        {
+                            List<ILobbyManagerCallback> failedCallbacks = BroadcastToCallbacks(
+                                targetLobby.Callbacks,
+                                callback => callback.LobbyCancelled(matchCode)
+                            );
+
+                            foreach (var failed in failedCallbacks)
+                            {
+                                targetLobby.Callbacks.Remove(failed);
+                            }
+
+                            ActiveMatches.TryRemove(matchCode, out _);
+
+                            LoggerHelper.LogInfo($"Lobby {matchCode} cerrado: {reason}");
+                        }
+                        catch (CommunicationException ex)
+                        {
+                            LoggerHelper.LogError($"Error de comunicación al cerrar lobby {matchCode}", ex);
+                        }
+                        catch (TimeoutException ex)
+                        {
+                            LoggerHelper.LogError($"Timeout al cerrar lobby {matchCode}", ex);
+                        }
+                    }
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                LoggerHelper.LogError($"Operación inválida al cerrar lobby {matchCode}", ex);
+            }
+            catch (Exception ex)
+            {
+                LoggerHelper.LogError($"Error inesperado al cerrar lobby {matchCode}", ex);
             }
         }
     }

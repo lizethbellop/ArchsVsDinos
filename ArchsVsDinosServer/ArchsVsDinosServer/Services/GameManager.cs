@@ -2,6 +2,7 @@
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Services.Interfaces;
 using ArchsVsDinosServer.Utils;
 using Contracts;
 using Contracts.DTO.Game_DTO;
@@ -18,7 +19,7 @@ using System.Threading.Tasks;
 namespace ArchsVsDinosServer.Services
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
-    public class GameManager : IGameManager
+    public class GameManager : IGameManager, IGameNotifier
     {
         private readonly GameSessionManager sessionManager;
         private readonly GameSetupHandler setupHandler;
@@ -885,6 +886,16 @@ namespace ArchsVsDinosServer.Services
                     logger.LogInfo($"Failed to notify player {player.UserId}: {ex.Message}");
                 }
             }
+        }
+
+        public void NotifyPlayerExpelled(string matchCode, string username, string reason)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void NotifyGameClosure(string matchCode, string reason)
+        {
+            throw new NotImplementedException();
         }
     }
 }

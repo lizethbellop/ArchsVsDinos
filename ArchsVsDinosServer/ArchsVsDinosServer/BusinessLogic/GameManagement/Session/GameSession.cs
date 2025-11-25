@@ -1,7 +1,10 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
+using ArchsVsDinosServer.Interfaces;
+using log4net.Repository.Hierarchy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +16,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         private readonly List<PlayerSession> players = new List<PlayerSession>();
         private readonly List<List<string>> drawPiles = new List<List<string>>();
         private readonly List<string> discardPile = new List<string>();
+        private readonly ILoggerHelper loggerHelper;
 
         public int MatchId { get; private set; }
         public int CurrentTurn { get; private set; }
@@ -32,6 +36,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             MatchId = matchId;
             CentralBoard = board ?? new CentralBoard();
+            loggerHelper = new Wrappers.LoggerHelperWrapper();
         }
 
         public void AddPlayer(PlayerSession player)
@@ -153,6 +158,55 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
                     return drawPiles[pileIndex].Count;
                 }
                 return 0;
+            }
+        }
+
+        public void RemovePlayer(string username)
+        {
+            try
+            {
+                var player = players.FirstOrDefault(p => p.Username == username);
+                if (player != null)
+                {
+                    players.Remove(player);
+                    NotifyPlayersInGame($"{username} fue removido del juego");
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                loggerHelper.LogError($"Invalid operation removing player {username}", ex);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Unexpected error removing player {username}", ex);
+            }
+        }
+
+        private void NotifyPlayersInGame(string message)
+        {
+            foreach (var player in players.ToList())
+            {
+                try
+                {
+                    player.Callback.NotifySystemMessage(string.Format("", MatchId), "System_PlayerExpelled");
+
+                }
+                catch (CommunicationObjectAbortedException ex)
+                {
+                    loggerHelper.LogWarning($"Connection aborted for {player.Username}: {ex.Message}");
+                }
+                catch (CommunicationException ex)
+                {
+                    loggerHelper.LogWarning($"Communication error with {player.Username}: {ex.Message}");
+                }
+                catch (TimeoutException ex)
+                {
+                    loggerHelper.LogWarning($"Timeout notifying {player.Username}: {ex.Message}");
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    loggerHelper.LogWarning($"Object disposed for {player.Username}: {ex.Message}");
+                }
             }
         }
 

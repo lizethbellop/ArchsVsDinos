@@ -39,5 +39,8 @@ namespace Contracts
 
         [OperationContract(IsOneWay = true)]
         void OnGameEnded(GameEndedDTO data);
+
+        [OperationContract(IsOneWay = true)]
+        void NotifySystemMessage(string matchCode, string message);
     }
 }

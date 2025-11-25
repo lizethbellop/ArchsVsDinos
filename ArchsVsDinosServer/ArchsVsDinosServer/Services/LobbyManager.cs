@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosServer.BusinessLogic;
 using ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Services.Interfaces;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Result_Codes;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 namespace ArchsVsDinosServer.Services
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class LobbyManager : ILobbyManager
+    public class LobbyManager : ILobbyManager, ILobbyNotifier
     {
 
         private readonly LobbyConfiguration lobbyBusinessLogic;
@@ -50,17 +51,27 @@ namespace ArchsVsDinosServer.Services
         {
             return lobbyBusinessLogic.ExpelThePlayer(username, hostUsername);
         }
+
+        public void NotifyPlayerExpelled(string username, string reason)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void NotifyLobbyClosure(string reason)
+        {
+            throw new NotImplementedException();
+        }
         /*
-        public InviteFriendToMatch(string username, string friendUsername, string matchCode)
-        {
+public InviteFriendToMatch(string username, string friendUsername, string matchCode)
+{
 
-        }
+}
 
-        public InviteByEmailToMatch(string email, string matchCode)
-        {
+public InviteByEmailToMatch(string email, string matchCode)
+{
 
-        }
-        */
+}
+*/
         /*
 
 
