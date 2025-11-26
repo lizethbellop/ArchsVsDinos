@@ -646,6 +646,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Cargando.
+        /// </summary>
+        public static string GlobalLoadingText {
+            get {
+                return ResourceManager.GetString("GlobalLoadingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Regresar.
         /// </summary>
         public static string GlobalReturnText {

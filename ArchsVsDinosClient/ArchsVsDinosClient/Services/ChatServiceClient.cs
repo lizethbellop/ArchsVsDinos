@@ -25,8 +25,6 @@ namespace ArchsVsDinosClient.Services
         public event Action<ChatResultCode, string> SystemNotificationReceived;
         public event Action<List<string>> UserListUpdated;
         public event Action<string, string> ConnectionError;
-
-        // ✅ AGREGAR ESTOS EVENTOS
         public event Action<string, int> UserBanned;
         public event Action<string, string> UserExpelled;
         public event Action<string> LobbyClosed;
@@ -39,8 +37,6 @@ namespace ArchsVsDinosClient.Services
             callback.MessageReceived += OnMessageReceived;
             callback.SystemNotificationReceived += OnSystemNotificationReceived;
             callback.UserListUpdated += OnUserListUpdated;
-
-            // ✅ SUSCRIBIRSE A LOS NUEVOS EVENTOS
             callback.UserBanned += OnUserBanned;
             callback.UserExpelled += OnUserExpelled;
             callback.LobbyClosed += OnLobbyClosed;
@@ -57,7 +53,8 @@ namespace ArchsVsDinosClient.Services
             guardian.MonitorClientState(client);
         }
 
-        public async Task ConnectAsync(string username)
+        // ✅ REEMPLAZAR TODO ESTE MÉTODO
+        public async Task ConnectAsync(string username, int context = 0, string matchCode = null)
         {
             await guardian.ExecuteAsync(
                 async () => await Task.Run(() =>
@@ -65,8 +62,8 @@ namespace ArchsVsDinosClient.Services
                     var request = new ChatConnectionRequest
                     {
                         Username = username,
-                        Context = 0,
-                        MatchCode = null
+                        Context = context,     // 0 = Lobby, 1 = InGame
+                        MatchCode = matchCode  // null si es lobby, "MATCH-XXX" si es juego
                     };
                     client.Connect(request);
                 }),
@@ -105,7 +102,6 @@ namespace ArchsVsDinosClient.Services
             UserListUpdated?.Invoke(users);
         }
 
-        // ✅ AGREGAR ESTOS MÉTODOS PRIVADOS
         private void OnUserBanned(string username, int strikes)
         {
             UserBanned?.Invoke(username, strikes);
@@ -130,8 +126,6 @@ namespace ArchsVsDinosClient.Services
                 callback.MessageReceived -= OnMessageReceived;
                 callback.SystemNotificationReceived -= OnSystemNotificationReceived;
                 callback.UserListUpdated -= OnUserListUpdated;
-
-                // ✅ DESUSCRIBIRSE DE LOS NUEVOS EVENTOS
                 callback.UserBanned -= OnUserBanned;
                 callback.UserExpelled -= OnUserExpelled;
                 callback.LobbyClosed -= OnLobbyClosed;

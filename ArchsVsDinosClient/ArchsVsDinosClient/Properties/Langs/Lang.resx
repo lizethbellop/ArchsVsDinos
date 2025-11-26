@@ -708,4 +708,7 @@
   <data name="JoinCode_Invalid" xml:space="preserve">
     <value>Código de partida vacío, intente de nuevo</value>
   </data>
+  <data name="GlobalLoadingText" xml:space="preserve">
+    <value>Cargando</value>
+  </data>
 </root>

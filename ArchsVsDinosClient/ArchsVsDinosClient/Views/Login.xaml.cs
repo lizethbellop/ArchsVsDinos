@@ -49,7 +49,11 @@ namespace ArchsVsDinosClient
             viewModel.Username = username;
             viewModel.Password = password;
 
+            ShowLoading();
+
             await viewModel.LoginAsync();
+
+            HideLoading();
 
         }
 
@@ -95,6 +99,16 @@ namespace ArchsVsDinosClient
             var main = new MainWindow();
             main.Show();
             this.Close();
+        }
+
+        private void ShowLoading()
+        {
+            LoadingOverlay.Visibility = Visibility.Visible;
+        }
+
+        private void HideLoading()
+        {
+            LoadingOverlay.Visibility = Visibility.Collapsed;
         }
 
     }

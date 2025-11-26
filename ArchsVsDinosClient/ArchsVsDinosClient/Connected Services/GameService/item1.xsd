@@ -225,14 +225,6 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="NotifySystemMessage">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
   <xs:element name="OnPlayerExpelled">
     <xs:complexType>
       <xs:sequence>

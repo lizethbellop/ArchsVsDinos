@@ -21,6 +21,8 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<GameEndedDTO> GameEnded;
         event Action<string, string> ConnectionError;
 
+        event Action<PlayerExpelledDTO> PlayerExpelled;
+
         Task<GameSetupResultCode> InitializeGameAsync(int matchId);
         Task<GameSetupResultCode> StartGameAsync(int matchId);
         Task<DrawCardResultCode> DrawCardAsync(int matchId, int userId, int drawPileNumber);

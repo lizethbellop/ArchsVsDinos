@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
+    [ServiceContract]
     public interface IGameManagerCallback
     {
         [OperationContract(IsOneWay = true)]
@@ -40,9 +41,6 @@ namespace Contracts
 
         [OperationContract(IsOneWay = true)]
         void OnGameEnded(GameEndedDTO data);
-
-        [OperationContract(IsOneWay = true)]
-        void NotifySystemMessage(string matchCode, string message);
 
         [OperationContract(IsOneWay = true)]
         void OnPlayerExpelled(PlayerExpelledDTO dto);

@@ -20,6 +20,8 @@ namespace ArchsVsDinosClient.Services
         public event Action<BattleResultDTO> BattleResolved;
         public event Action<GameEndedDTO> GameEnded;
 
+        public event Action<PlayerExpelledDTO> PlayerExpelled;
+
         public void OnGameInitialized(GameInitializedDTO data)
         {
             GameInitialized?.Invoke(data);
@@ -68,6 +70,11 @@ namespace ArchsVsDinosClient.Services
         public void OnGameEnded(GameEndedDTO data)
         {
             GameEnded?.Invoke(data);
+        }
+
+        public void OnPlayerExpelled(PlayerExpelledDTO data)
+        {
+            PlayerExpelled?.Invoke(data);
         }
     }
 }

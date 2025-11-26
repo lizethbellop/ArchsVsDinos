@@ -32,6 +32,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<BattleResultDTO> BattleResolved;
         public event Action<GameEndedDTO> GameEnded;
         public event Action<string, string> ConnectionError;
+        public event Action<PlayerExpelledDTO> PlayerExpelled;
 
         public GameServiceClient()
         {
@@ -49,6 +50,7 @@ namespace ArchsVsDinosClient.Services
             callback.ArchArmyProvoked += OnArchArmyProvoked;
             callback.BattleResolved += OnBattleResolved;
             callback.GameEnded += OnGameEnded;
+            callback.PlayerExpelled += OnPlayerExpelled;
 
             context = new InstanceContext(callback);
             context.SynchronizationContext = syncContext;
@@ -61,45 +63,20 @@ namespace ArchsVsDinosClient.Services
             guardian.MonitorClientState(client);
         }
 
-        public async Task<PlayCardResultCode> AttachBodyPartToDinoAsync(int matchId, int userId, int cardId, int dinoHeadCardId)
+        public async Task<GameSetupResultCode> InitializeGameAsync(int matchId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.AttachBodyPartToDino(matchId, userId, cardId, dinoHeadCardId)),
-                operationName: "adjuntar parte del cuerpo"
+                async () => await Task.Run(() => client.InitializeGame(matchId)),
+                operationName: "inicialización de juego"
             );
         }
 
-        public void Dispose()
+        public async Task<GameSetupResultCode> StartGameAsync(int matchId)
         {
-            if (isDisposed) return;
-
-            if (callback != null)
-            {
-                callback.GameInitialized -= OnGameInitialized;
-                callback.GameStarted -= OnGameStarted;
-                callback.TurnChanged -= OnTurnChanged;
-                callback.CardDrawn -= OnCardDrawn;
-                callback.DinoHeadPlayed -= OnDinoHeadPlayed;
-                callback.BodyPartAttached -= OnBodyPartAttached;
-                callback.ArchAddedToBoard -= OnArchAddedToBoard;
-                callback.ArchArmyProvoked -= OnArchArmyProvoked;
-                callback.BattleResolved -= OnBattleResolved;
-                callback.GameEnded -= OnGameEnded;
-            }
-
-            try
-            {
-                if (client?.State == CommunicationState.Opened)
-                    client.Close();
-                else if (client?.State == CommunicationState.Faulted)
-                    client.Abort();
-            }
-            catch
-            {
-                client?.Abort();
-            }
-
-            isDisposed = true;
+            return await guardian.ExecuteAsync(
+                async () => await Task.Run(() => client.StartGame(matchId)),
+                operationName: "inicio de juego"
+            );
         }
 
         public async Task<DrawCardResultCode> DrawCardAsync(int matchId, int userId, int drawPileNumber)
@@ -110,19 +87,35 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
+        public async Task<PlayCardResultCode> PlayDinoHeadAsync(int matchId, int userId, int cardId)
+        {
+            return await guardian.ExecuteAsync(
+                async () => await Task.Run(() => client.PlayDinoHead(matchId, userId, cardId)),
+                operationName: "jugar cabeza de dino"
+            );
+        }
+
+        public async Task<PlayCardResultCode> AttachBodyPartToDinoAsync(int matchId, int userId, int cardId, int dinoHeadCardId)
+        {
+            return await guardian.ExecuteAsync(
+                async () => await Task.Run(() => client.AttachBodyPartToDino(matchId, userId, cardId, dinoHeadCardId)),
+                operationName: "adjuntar parte del cuerpo"
+            );
+        }
+
+        public async Task<ProvokeResultCode> ProvokeArchArmyAsync(int matchId, int userId, string armyType)
+        {
+            return await guardian.ExecuteAsync(
+                async () => await Task.Run(() => client.ProvokeArchArmy(matchId, userId, armyType)),
+                operationName: "provocar ejército"
+            );
+        }
+
         public async Task<EndTurnResultCode> EndTurnAsync(int matchId, int userId)
         {
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.EndTurn(matchId, userId)),
                 operationName: "terminar turno"
-            );
-        }
-
-        public async Task<CentralBoardDTO> GetCentralBoardAsync(int matchId)
-        {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetCentralBoard(matchId)),
-                operationName: "obtener tablero central"
             );
         }
 
@@ -142,35 +135,11 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
-        public async Task<GameSetupResultCode> InitializeGameAsync(int matchId)
+        public async Task<CentralBoardDTO> GetCentralBoardAsync(int matchId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.InitializeGame(matchId)),
-                operationName: "inicialización de juego"
-            );
-        }
-
-        public async Task<PlayCardResultCode> PlayDinoHeadAsync(int matchId, int userId, int cardId)
-        {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.PlayDinoHead(matchId, userId, cardId)),
-                operationName: "jugar cabeza de dino"
-            );
-        }
-
-        public async Task<ProvokeResultCode> ProvokeArchArmyAsync(int matchId, int userId, string armyType)
-        {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.ProvokeArchArmy(matchId, userId, armyType)),
-                operationName: "provocar ejército"
-            );
-        }
-
-        public async Task<GameSetupResultCode> StartGameAsync(int matchId)
-        {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.StartGame(matchId)),
-                operationName: "inicio de juego"
+                async () => await Task.Run(() => client.GetCentralBoard(matchId)),
+                operationName: "obtener tablero central"
             );
         }
 
@@ -222,6 +191,45 @@ namespace ArchsVsDinosClient.Services
         private void OnGameEnded(GameEndedDTO data)
         {
             GameEnded?.Invoke(data);
+        }
+
+        private void OnPlayerExpelled(PlayerExpelledDTO data)
+        {
+            PlayerExpelled?.Invoke(data);
+        }
+
+        public void Dispose()
+        {
+            if (isDisposed) return;
+
+            if (callback != null)
+            {
+                callback.GameInitialized -= OnGameInitialized;
+                callback.GameStarted -= OnGameStarted;
+                callback.TurnChanged -= OnTurnChanged;
+                callback.CardDrawn -= OnCardDrawn;
+                callback.DinoHeadPlayed -= OnDinoHeadPlayed;
+                callback.BodyPartAttached -= OnBodyPartAttached;
+                callback.ArchAddedToBoard -= OnArchAddedToBoard;
+                callback.ArchArmyProvoked -= OnArchArmyProvoked;
+                callback.BattleResolved -= OnBattleResolved;
+                callback.GameEnded -= OnGameEnded;
+                callback.PlayerExpelled -= OnPlayerExpelled;
+            }
+
+            try
+            {
+                if (client?.State == CommunicationState.Opened)
+                    client.Close();
+                else if (client?.State == CommunicationState.Faulted)
+                    client.Abort();
+            }
+            catch
+            {
+                client?.Abort();
+            }
+
+            isDisposed = true;
         }
     }
 }

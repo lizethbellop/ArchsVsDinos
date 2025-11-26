@@ -109,9 +109,6 @@
   <wsdl:message name="IGameManager_OnGameEnded_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:OnGameEnded" />
   </wsdl:message>
-  <wsdl:message name="IGameManager_NotifySystemMessage_OutputCallbackMessage">
-    <wsdl:part name="parameters" element="tns:NotifySystemMessage" />
-  </wsdl:message>
   <wsdl:message name="IGameManager_OnPlayerExpelled_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:OnPlayerExpelled" />
   </wsdl:message>
@@ -185,9 +182,6 @@
     </wsdl:operation>
     <wsdl:operation name="OnGameEnded">
       <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnGameEnded" message="tns:IGameManager_OnGameEnded_OutputCallbackMessage" />
-    </wsdl:operation>
-    <wsdl:operation name="NotifySystemMessage">
-      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/NotifySystemMessage" message="tns:IGameManager_NotifySystemMessage_OutputCallbackMessage" />
     </wsdl:operation>
     <wsdl:operation name="OnPlayerExpelled">
       <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnPlayerExpelled" message="tns:IGameManager_OnPlayerExpelled_OutputCallbackMessage" />
@@ -342,12 +336,6 @@
     </wsdl:operation>
     <wsdl:operation name="OnGameEnded">
       <soap12:operation soapAction="http://tempuri.org/IGameManager/OnGameEnded" style="document" />
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="NotifySystemMessage">
-      <soap12:operation soapAction="http://tempuri.org/IGameManager/NotifySystemMessage" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

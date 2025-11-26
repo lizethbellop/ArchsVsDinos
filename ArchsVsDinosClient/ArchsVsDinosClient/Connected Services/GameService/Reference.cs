@@ -2305,9 +2305,6 @@ namespace ArchsVsDinosClient.GameService {
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnGameEnded")]
         void OnGameEnded(ArchsVsDinosClient.GameService.GameEndedDTO data);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/NotifySystemMessage")]
-        void NotifySystemMessage(string matchCode, string message);
-        
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnPlayerExpelled")]
         void OnPlayerExpelled(ArchsVsDinosClient.GameService.PlayerExpelledDTO dto);
     }
