@@ -2114,6 +2114,99 @@ namespace ArchsVsDinosClient.GameService {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PlayerExpelledDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.SerializableAttribute()]
+    public partial class PlayerExpelledDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int ExpelledUserIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ExpelledUsernameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int MatchIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ReasonField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int ExpelledUserId {
+            get {
+                return this.ExpelledUserIdField;
+            }
+            set {
+                if ((this.ExpelledUserIdField.Equals(value) != true)) {
+                    this.ExpelledUserIdField = value;
+                    this.RaisePropertyChanged("ExpelledUserId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ExpelledUsername {
+            get {
+                return this.ExpelledUsernameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ExpelledUsernameField, value) != true)) {
+                    this.ExpelledUsernameField = value;
+                    this.RaisePropertyChanged("ExpelledUsername");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int MatchId {
+            get {
+                return this.MatchIdField;
+            }
+            set {
+                if ((this.MatchIdField.Equals(value) != true)) {
+                    this.MatchIdField = value;
+                    this.RaisePropertyChanged("MatchId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Reason {
+            get {
+                return this.ReasonField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ReasonField, value) != true)) {
+                    this.ReasonField = value;
+                    this.RaisePropertyChanged("Reason");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="GameService.IGameManager", CallbackContract=typeof(ArchsVsDinosClient.GameService.IGameManagerCallback))]
     public interface IGameManager {
@@ -2211,6 +2304,12 @@ namespace ArchsVsDinosClient.GameService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnGameEnded")]
         void OnGameEnded(ArchsVsDinosClient.GameService.GameEndedDTO data);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/NotifySystemMessage")]
+        void NotifySystemMessage(string matchCode, string message);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnPlayerExpelled")]
+        void OnPlayerExpelled(ArchsVsDinosClient.GameService.PlayerExpelledDTO dto);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]

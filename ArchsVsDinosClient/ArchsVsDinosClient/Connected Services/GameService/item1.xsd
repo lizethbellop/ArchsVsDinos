@@ -3,6 +3,7 @@
   <xs:import schemaLocation="http://localhost:8087/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
   <xs:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" />
   <xs:import schemaLocation="http://localhost:8087/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
   <xs:element name="InitializeGame">
     <xs:complexType>
       <xs:sequence>
@@ -221,6 +222,21 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q20:GameEndedDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="NotifySystemMessage">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="message" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnPlayerExpelled">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q21="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="dto" nillable="true" type="q21:PlayerExpelledDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

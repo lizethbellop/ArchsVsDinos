@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Contracts.DTO;
+using Contracts.DTO.Game_DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Game_DTO;
 
 namespace Contracts
 {
@@ -42,5 +43,8 @@ namespace Contracts
 
         [OperationContract(IsOneWay = true)]
         void NotifySystemMessage(string matchCode, string message);
+
+        [OperationContract(IsOneWay = true)]
+        void OnPlayerExpelled(PlayerExpelledDTO dto);
     }
 }

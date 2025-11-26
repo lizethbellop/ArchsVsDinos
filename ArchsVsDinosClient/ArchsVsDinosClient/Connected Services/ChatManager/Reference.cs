@@ -10,7 +10,85 @@
 
 namespace ArchsVsDinosClient.ChatManager {
     using System.Runtime.Serialization;
+    using System;
     
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ChatConnectionRequest", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.SerializableAttribute()]
+    public partial class ChatConnectionRequest : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int ContextField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string MatchCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UsernameField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int Context {
+            get {
+                return this.ContextField;
+            }
+            set {
+                if ((this.ContextField.Equals(value) != true)) {
+                    this.ContextField = value;
+                    this.RaisePropertyChanged("Context");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string MatchCode {
+            get {
+                return this.MatchCodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MatchCodeField, value) != true)) {
+                    this.MatchCodeField = value;
+                    this.RaisePropertyChanged("MatchCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Username {
+            get {
+                return this.UsernameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
+                    this.UsernameField = value;
+                    this.RaisePropertyChanged("Username");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ChatResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
@@ -32,18 +110,21 @@ namespace ArchsVsDinosClient.ChatManager {
         Chat_MessageBlocked = 4,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Chat_Error = 5,
+        Chat_UserBanned = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Chat_Error = 6,
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ChatManager.IChatManager", CallbackContract=typeof(ArchsVsDinosClient.ChatManager.IChatManagerCallback))]
     public interface IChatManager {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManager/Connect", ReplyAction="http://tempuri.org/IChatManager/ConnectResponse")]
-        void Connect(string username);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/Connect")]
+        void Connect(ArchsVsDinosClient.ChatManager.ChatConnectionRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IChatManager/Connect", ReplyAction="http://tempuri.org/IChatManager/ConnectResponse")]
-        System.Threading.Tasks.Task ConnectAsync(string username);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/Connect")]
+        System.Threading.Tasks.Task ConnectAsync(ArchsVsDinosClient.ChatManager.ChatConnectionRequest request);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/Disconnect")]
         void Disconnect(string username);
@@ -69,6 +150,15 @@ namespace ArchsVsDinosClient.ChatManager {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/UpdateUserList")]
         void UpdateUserList(string[] users);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/UserBannedFromChat")]
+        void UserBannedFromChat(string username, int strikes);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/UserExpelledFromLobby")]
+        void UserExpelledFromLobby(string username, string reason);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IChatManager/LobbyClosedDueToInsufficientPlayers")]
+        void LobbyClosedDueToInsufficientPlayers(string reason);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -99,12 +189,12 @@ namespace ArchsVsDinosClient.ChatManager {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public void Connect(string username) {
-            base.Channel.Connect(username);
+        public void Connect(ArchsVsDinosClient.ChatManager.ChatConnectionRequest request) {
+            base.Channel.Connect(request);
         }
         
-        public System.Threading.Tasks.Task ConnectAsync(string username) {
-            return base.Channel.ConnectAsync(username);
+        public System.Threading.Tasks.Task ConnectAsync(ArchsVsDinosClient.ChatManager.ChatConnectionRequest request) {
+            return base.Channel.ConnectAsync(request);
         }
         
         public void Disconnect(string username) {

@@ -22,8 +22,8 @@ namespace ArchsVsDinosServer.Services
 
         private const int StrikeLimit = 3;
         private const int StrikeExpirationDays = 30;
-        private const int SpamMessageThreshold = 5; 
-        private const int SpamTimeWindowSeconds = 10; 
+        private const int SpamMessageThreshold = 5;
+        private const int SpamTimeWindowSeconds = 10;
 
         private readonly ConcurrentDictionary<int, List<DateTime>> userMessageTimestamps;
 
@@ -39,6 +39,8 @@ namespace ArchsVsDinosServer.Services
         {
         }
 
+        #region Public Methods
+
         public bool CanSendMessage(int userId, string message)
         {
             if (string.IsNullOrWhiteSpace(message))
@@ -51,70 +53,28 @@ namespace ArchsVsDinosServer.Services
                 using (var context = contextFactory())
                 {
                     var user = context.UserAccount.FirstOrDefault(u => u.idUser == userId);
-
                     if (user == null)
                     {
                         loggerHelper.LogWarning($"CanSendMessage: User with ID {userId} not found");
                         return false;
                     }
 
-                    int activeCount = GetActiveStrikeCount(context, user);
-                    if (activeCount >= StrikeLimit)
+                    if (!ProcessUserBanStatus(context, user))
                     {
-                        loggerHelper.LogInfo($"User {user.username} is banned ({activeCount} active strikes)");
-
-                        if (!user.isBanned)
-                        {
-                            user.isBanned = true;
-                            context.SaveChanges();
-                        }
-
                         return false;
                     }
-                    else
-                    {
-                        if (user.isBanned)
-                        {
-                            user.isBanned = false;
-                            context.SaveChanges();
-                            loggerHelper.LogInfo($"User {user.username} unbanned (strikes expired)");
-                        }
-                    }
 
-                    if (IsSpamming(userId))
+                    if (DetectAndHandleSpam(context, user, userId))
                     {
-                        AddStrikeByType(context, user, "Spam", "Sending messages too quickly");
-                        loggerHelper.LogWarning($"User {user.username} detected spamming");
                         return false;
                     }
 
                     return HandleProfanityCheck(context, user, message);
                 }
             }
-            catch (ArgumentNullException ex)
-            {
-                loggerHelper.LogError($"CanSendMessage: Null argument for userId {userId}", ex);
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"CanSendMessage: Invalid operation for userId {userId}", ex);
-                return false;
-            }
-            catch (DbUpdateException ex)
-            {
-                loggerHelper.LogError($"CanSendMessage: Database update error for userId {userId}", ex);
-                return false;
-            }
-            catch (DataException ex)
-            {
-                loggerHelper.LogError($"CanSendMessage: Data access error for userId {userId}", ex);
-                return false;
-            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"CanSendMessage: Unexpected error for userId {userId} - {ex.Message}", ex);
-                return false;
+                return HandleDatabaseError("CanSendMessage", userId, ex);
             }
         }
 
@@ -125,7 +85,6 @@ namespace ArchsVsDinosServer.Services
                 using (var context = contextFactory())
                 {
                     var user = context.UserAccount.FirstOrDefault(u => u.idUser == userId);
-
                     if (user == null)
                     {
                         loggerHelper.LogWarning($"AddManualStrike: User {userId} not found");
@@ -133,45 +92,18 @@ namespace ArchsVsDinosServer.Services
                     }
 
                     var success = AddStrikeByType(context, user, strikeTypeName, reason);
-
                     if (success)
                     {
-                        int activeCount = GetActiveStrikeCount(context, user);
-                        if (activeCount >= StrikeLimit)
-                        {
-                            BanUser(context, user);
-                        }
-
+                        CheckAndApplyBan(context, user);
                         loggerHelper.LogInfo($"Manual strike added to {user.username}: {strikeTypeName} - {reason}");
                     }
 
                     return success;
                 }
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                loggerHelper.LogWarning($"AddManualStrike: Concurrency conflict for userId {userId}");
-                return false;
-            }
-            catch (DbUpdateException ex)
-            {
-                loggerHelper.LogError($"AddManualStrike: Database update error for userId {userId}", ex);
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"AddManualStrike: Invalid operation for userId {userId}", ex);
-                return false;
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"CanSendMessage: SQL Server error for userId {userId}", ex);
-                return false;
-            }
-            catch (Exception)
-            {
-                loggerHelper.LogInfo($"AddManualStrike: Unexpected error for userId {userId}");
-                return false;
+                return HandleDatabaseError("AddManualStrike", userId, ex);
             }
         }
 
@@ -188,43 +120,12 @@ namespace ArchsVsDinosServer.Services
                         return false;
                     }
 
-                    int activeCount = GetActiveStrikeCount(context, user);
-                    bool isBanned = activeCount >= StrikeLimit;
-
-                    if (user.isBanned != isBanned)
-                    {
-                        user.isBanned = isBanned;
-                        context.SaveChanges();
-                        loggerHelper.LogInfo($"Updated ban status for user {user.username}: {isBanned}");
-                    }
-
-                    return isBanned;
+                    return SyncUserBanStatus(context, user);
                 }
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                loggerHelper.LogWarning($"IsUserBanned: Concurrency conflict for userId {userId}");
-                return false;
-            }
-            catch (DbUpdateException ex)
-            {
-                loggerHelper.LogError($"IsUserBanned: Database update error for userId {userId}", ex);
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"IsUserBanned: Invalid operation for userId {userId}", ex);
-                return false;
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"IsUserBanned: SQL Server error for userId {userId}", ex);
-                return false;
-            }
-            catch (Exception)
-            {
-                loggerHelper.LogInfo($"IsUserBanned: Error checking ban status for userId {userId}");
-                return false;
+                return HandleDatabaseError("IsUserBanned", userId, ex);
             }
         }
 
@@ -244,24 +145,9 @@ namespace ArchsVsDinosServer.Services
                     return Math.Max(0, StrikeLimit - activeCount);
                 }
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-                loggerHelper.LogError($"GetRemainingStrikes: Invalid operation for userId {userId}", ex);
-                return 0;
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"GetRemainingStrikes: SQL Server error for userId {userId}", ex);
-                return 0;
-            }
-            catch (EntityException ex)
-            {
-                loggerHelper.LogError($"GetRemainingStrikes: Entity Framework connection error for userId {userId}", ex);
-                return 0;
-            }
-            catch (Exception)
-            {
-                loggerHelper.LogInfo($"GetRemainingStrikes: Error for userId {userId}");
+                HandleDatabaseError("GetRemainingStrikes", userId, ex);
                 return 0;
             }
         }
@@ -273,56 +159,9 @@ namespace ArchsVsDinosServer.Services
                 using (var context = contextFactory())
                 {
                     var now = DateTime.UtcNow;
-
-                    var rawStrikes = context.UserHasStrike
-                        .Where(uhs => uhs.idUser == userId)
-                        .Join(context.Strike,
-                              uhs => uhs.idStrike,
-                              s => s.idStrike,
-                              (uhs, s) => new { uhs, s })
-                        .Join(context.StrikeKind,
-                              combined => combined.s.idStrikeKind,
-                              sk => sk.idStrikeKind,
-                              (combined, sk) => new
-                              {
-                                  StrikeId = combined.s.idStrike,
-                                  StrikeType = sk.name,
-                                  StrikeDate = combined.uhs.strikeDate,
-                                  ExpirationDate = combined.s.endDate
-                              })
-                        .ToList();
-
-                    var strikes = new List<StrikeInfo>();
-
-                    foreach (var s in rawStrikes)
-                    {
-                        strikes.Add(new StrikeInfo
-                        {
-                            StrikeId = s.StrikeId,
-                            StrikeType = s.StrikeType,
-                            StrikeDate = s.StrikeDate.HasValue ? s.StrikeDate.Value : DateTime.MinValue,
-                            ExpirationDate = s.ExpirationDate,
-                            IsActive = s.ExpirationDate > now
-                        });
-                    }
-
-                    return strikes.OrderByDescending(s => s.StrikeDate).ToList();
+                    var rawStrikes = FetchUserStrikes(context, userId);
+                    return MapToStrikeInfoList(rawStrikes, now);
                 }
-            }
-            catch (ArgumentNullException ex)
-            {
-                loggerHelper.LogError($"GetUserStrikeHistory: Null argument for userId {userId}", ex);
-                return new List<StrikeInfo>();
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"GetUserStrikeHistory: Invalid operation for userId {userId}", ex);
-                return new List<StrikeInfo>();
-            }
-            catch (DbUpdateException ex)
-            {
-                loggerHelper.LogError($"GetUserStrikeHistory: Database update error for userId {userId}", ex);
-                return new List<StrikeInfo>();
             }
             catch (Exception ex)
             {
@@ -331,206 +170,93 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
-        public int GetUserStrikes(int userId)
+        public BanResult ProcessStrike(int userId, string message)
         {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return new BanResult { CanSendMessage = true };
+            }
+
             try
             {
                 using (var context = contextFactory())
                 {
-                    var now = DateTime.UtcNow;
+                    var user = context.UserAccount.FirstOrDefault(u => u.idUser == userId);
+                    if (user == null)
+                    {
+                        loggerHelper.LogWarning($"ProcessStrike: User {userId} not found");
+                        return new BanResult { CanSendMessage = false };
+                    }
 
-                    return context.UserHasStrike
-                        .Where(uhs => uhs.idUser == userId)
-                        .Join(context.Strike,
-                              uhs => uhs.idStrike,
-                              s => s.idStrike,
-                              (uhs, s) => s)
-                        .Count(s => s.endDate > now);
+                    return ProcessUserStrike(context, user, userId, message);
                 }
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"SQL Server error getting strikes for user {userId}", ex);
-                return 0;
-            }
-            catch (DbUpdateException ex)
-            {
-                loggerHelper.LogError($"EF Core database update error getting strikes for user {userId}", ex);
-                return 0;
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Unexpected error getting strikes for user {userId}", ex);
-                return 0;
+                loggerHelper.LogError($"ProcessStrike: Error for userId {userId}", ex);
+                return new BanResult { CanSendMessage = false };
             }
         }
 
-        private bool HandleProfanityCheck(IDbContext context, UserAccount user, string message)
+        #endregion
+
+        #region Ban Status Management
+
+        private bool ProcessUserBanStatus(IDbContext context, UserAccount user)
         {
-            if (!profanityFilter.ContainsProfanity(message, out var badWords))
+            int activeCount = GetActiveStrikeCount(context, user);
+
+            if (activeCount >= StrikeLimit)
             {
-                return true;
+                ApplyBanIfNeeded(context, user, activeCount);
+                return false;
             }
 
-            try
-            {
-                var reason = $"Used prohibited words: {string.Join(", ", badWords)}";
-                AddStrikeByType(context, user, "Offensive Language", reason);
-
-                int activeCount = GetActiveStrikeCount(context, user);
-                if (activeCount >= StrikeLimit)
-                {
-                    BanUser(context, user);
-                    loggerHelper.LogInfo($"User {user.username} reached {activeCount} strikes and was banned");
-                }
-                else
-                {
-                    loggerHelper.LogInfo($"User {user.username} received strike ({activeCount}/{StrikeLimit}). Words: {string.Join(", ", badWords)}");
-                }
-
-                return false;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                loggerHelper.LogWarning($"HandleProfanityCheck: Concurrency conflict for user {user.username}");
-                return false;
-            }
-            catch (DbUpdateException ex)
-            {
-                loggerHelper.LogError($"HandleProfanityCheck: Database update error for user {user.username}", ex);
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"HandleProfanityCheck: Invalid operation for user {user.username}", ex);
-                return false;
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"HandleProfanityCheck: SQL Server error for user {user.username}", ex);
-                return false;
-            }
-            catch (Exception)
-            {
-                loggerHelper.LogInfo($"HandleProfanityCheck: Error processing strike for user {user.username}");
-                return false;
-            }
+            RemoveBanIfNeeded(context, user);
+            return true;
         }
 
-        private bool IsSpamming(int userId)
+        private void ApplyBanIfNeeded(IDbContext context, UserAccount user, int activeCount)
         {
-            try
+            loggerHelper.LogInfo($"User {user.username} is banned ({activeCount} active strikes)");
+            if (!user.isBanned)
             {
-                var now = DateTime.UtcNow;
-
-                var timestamps = userMessageTimestamps.GetOrAdd(userId, _ => new List<DateTime>());
-
-                lock (timestamps)
-                {
-                    timestamps.RemoveAll(t => (now - t).TotalSeconds > SpamTimeWindowSeconds);
-
-                    timestamps.Add(now);
-
-                    return timestamps.Count > SpamMessageThreshold;
-                }
-            }
-            catch (ArgumentNullException ex)
-            {
-                loggerHelper.LogError($"IsSpamming: Null argument for userId {userId}", ex);
-                return false;
-            }
-            catch (ArgumentException ex)
-            {
-                loggerHelper.LogError($"IsSpamming: Invalid argument for userId {userId}", ex);
-                return false;
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"IsSpamming: Invalid operation for userId {userId}", ex);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                loggerHelper.LogError($"IsSpamming: Error checking spam for userId {userId}", ex);
-                return false;
-            }
-        }
-
-        private bool AddStrikeByType(IDbContext context, UserAccount user, string strikeTypeName, string reason)
-        {
-            try
-            {
-                var strikeKind = context.StrikeKind.FirstOrDefault(sk => sk.name == strikeTypeName);
-
-                if (strikeKind == null)
-                {
-                    loggerHelper.LogInfo($"StrikeKind '{strikeTypeName}' not found in database. Cannot add strike.");
-                    return false;
-                }
-
-                var strike = new Strike
-                {
-                    startDate = DateTime.UtcNow,
-                    endDate = DateTime.UtcNow.AddDays(StrikeExpirationDays),
-                    idStrikeKind = strikeKind.idStrikeKind
-                };
-
-                context.Strike.Add(strike);
+                user.isBanned = true;
                 context.SaveChanges();
-
-                var userHasStrike = new UserHasStrike
-                {
-                    idUser = user.idUser,
-                    idStrike = strike.idStrike,
-                    strikeDate = DateTime.UtcNow
-                };
-
-                context.UserHasStrike.Add(userHasStrike);
-                context.SaveChanges();
-
-                loggerHelper.LogInfo($"Strike added for user {user.username}: {strikeTypeName} - {reason}");
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                loggerHelper.LogError($"AddStrikeByType: Database update error for user {user.username}", ex);
-                return false;
-            }
-            catch (Exception)
-            {
-                loggerHelper.LogInfo($"AddStrikeByType: Error for user {user.username}");
-                return false;
             }
         }
 
-        private int GetActiveStrikeCount(IDbContext context, UserAccount user)
+        private void RemoveBanIfNeeded(IDbContext context, UserAccount user)
         {
-            try
+            if (user.isBanned)
             {
-                var now = DateTime.UtcNow;
+                user.isBanned = false;
+                context.SaveChanges();
+                loggerHelper.LogInfo($"User {user.username} unbanned (strikes expired)");
+            }
+        }
 
-                return context.UserHasStrike
-                    .Where(uhs => uhs.idUser == user.idUser)
-                    .Join(context.Strike,
-                          uhs => uhs.idStrike,
-                          s => s.idStrike,
-                          (uhs, s) => s)
-                    .Count(s => s.endDate > now);
-            }
-            catch (InvalidOperationException ex)
+        private bool SyncUserBanStatus(IDbContext context, UserAccount user)
+        {
+            int activeCount = GetActiveStrikeCount(context, user);
+            bool shouldBeBanned = activeCount >= StrikeLimit;
+
+            if (user.isBanned != shouldBeBanned)
             {
-                loggerHelper.LogError($"GetActiveStrikeCount: Invalid operation for user {user.username}", ex);
-                return 0;
+                user.isBanned = shouldBeBanned;
+                context.SaveChanges();
+                loggerHelper.LogInfo($"Updated ban status for user {user.username}: {shouldBeBanned}");
             }
-            catch (SqlException ex)
+
+            return shouldBeBanned;
+        }
+
+        private void CheckAndApplyBan(IDbContext context, UserAccount user)
+        {
+            int activeCount = GetActiveStrikeCount(context, user);
+            if (activeCount >= StrikeLimit)
             {
-                loggerHelper.LogError($"GetActiveStrikeCount: SQL Server error for user {user.username}", ex);
-                return 0;
-            }
-            catch (Exception)
-            {
-                loggerHelper.LogInfo($"GetActiveStrikeCount: Error counting strikes for user {user.username}");
-                return 0;
+                BanUser(context, user);
             }
         }
 
@@ -548,5 +274,338 @@ namespace ArchsVsDinosServer.Services
                 throw;
             }
         }
+
+        #endregion
+
+        #region Strike Processing
+
+        private BanResult ProcessUserStrike(IDbContext context, UserAccount user, int userId, string message)
+        {
+            int activeCount = GetActiveStrikeCount(context, user);
+
+            if (activeCount >= StrikeLimit)
+            {
+                return HandleAlreadyBanned(context, user, activeCount);
+            }
+
+            UnbanIfNeeded(context, user, activeCount);
+
+            if (IsSpamming(userId))
+            {
+                return HandleSpamStrike(context, user, userId);
+            }
+
+            if (profanityFilter.ContainsProfanity(message, out var badWords))
+            {
+                return HandleProfanityStrike(context, user, badWords);
+            }
+
+            return new BanResult { CanSendMessage = true };
+        }
+
+        private BanResult HandleAlreadyBanned(IDbContext context, UserAccount user, int activeCount)
+        {
+            if (!user.isBanned)
+            {
+                BanUser(context, user);
+            }
+
+            return new BanResult
+            {
+                CanSendMessage = false,
+                CurrentStrikes = activeCount,
+                ShouldBan = true
+            };
+        }
+
+        private void UnbanIfNeeded(IDbContext context, UserAccount user, int activeCount)
+        {
+            if (user.isBanned && activeCount < StrikeLimit)
+            {
+                user.isBanned = false;
+                context.SaveChanges();
+                loggerHelper.LogInfo($"User {user.username} unbanned (strikes expired)");
+            }
+        }
+
+        private BanResult HandleSpamStrike(IDbContext context, UserAccount user, int userId)
+        {
+            AddStrikeByType(context, user, "Spam", "Sending messages too quickly");
+            int activeCount = GetActiveStrikeCount(context, user);
+            bool shouldBan = activeCount >= StrikeLimit;
+
+            if (shouldBan)
+            {
+                BanUser(context, user);
+            }
+
+            return new BanResult
+            {
+                CanSendMessage = false,
+                CurrentStrikes = activeCount,
+                ShouldBan = shouldBan
+            };
+        }
+
+        private BanResult HandleProfanityStrike(IDbContext context, UserAccount user, List<string> badWords)
+        {
+            var reason = $"Used prohibited words: {string.Join(", ", badWords)}";
+            AddStrikeByType(context, user, "Offensive Language", reason);
+
+            int activeCount = GetActiveStrikeCount(context, user);
+            bool shouldBan = activeCount >= StrikeLimit;
+
+            if (shouldBan)
+            {
+                BanUser(context, user);
+            }
+
+            loggerHelper.LogInfo($"User {user.username} strike ({activeCount}/{StrikeLimit}). Words: {string.Join(", ", badWords)}");
+
+            return new BanResult
+            {
+                CanSendMessage = false,
+                CurrentStrikes = activeCount,
+                ShouldBan = shouldBan
+            };
+        }
+
+        #endregion
+
+        #region Profanity & Spam Detection
+
+        private bool HandleProfanityCheck(IDbContext context, UserAccount user, string message)
+        {
+            if (!profanityFilter.ContainsProfanity(message, out var badWords))
+            {
+                return true;
+            }
+
+            try
+            {
+                ApplyProfanityStrike(context, user, badWords);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"HandleProfanityCheck: Error for user {user.username}", ex);
+                return false;
+            }
+        }
+
+        private void ApplyProfanityStrike(IDbContext context, UserAccount user, List<string> badWords)
+        {
+            var reason = $"Used prohibited words: {string.Join(", ", badWords)}";
+            AddStrikeByType(context, user, "Offensive Language", reason);
+
+            int activeCount = GetActiveStrikeCount(context, user);
+
+            if (activeCount >= StrikeLimit)
+            {
+                BanUser(context, user);
+                loggerHelper.LogInfo($"User {user.username} reached {activeCount} strikes and was banned");
+            }
+            else
+            {
+                loggerHelper.LogInfo($"User {user.username} received strike ({activeCount}/{StrikeLimit}). Words: {string.Join(", ", badWords)}");
+            }
+        }
+
+        private bool DetectAndHandleSpam(IDbContext context, UserAccount user, int userId)
+        {
+            if (!IsSpamming(userId))
+            {
+                return false;
+            }
+
+            AddStrikeByType(context, user, "Spam", "Sending messages too quickly");
+            loggerHelper.LogWarning($"User {user.username} detected spamming");
+            return true;
+        }
+
+        private bool IsSpamming(int userId)
+        {
+            try
+            {
+                var now = DateTime.UtcNow;
+                var timestamps = userMessageTimestamps.GetOrAdd(userId, _ => new List<DateTime>());
+
+                lock (timestamps)
+                {
+                    timestamps.RemoveAll(t => (now - t).TotalSeconds > SpamTimeWindowSeconds);
+                    timestamps.Add(now);
+                    return timestamps.Count > SpamMessageThreshold;
+                }
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"IsSpamming: Error checking spam for userId {userId}", ex);
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Strike Management
+
+        private bool AddStrikeByType(IDbContext context, UserAccount user, string strikeTypeName, string reason)
+        {
+            try
+            {
+                var strikeKind = context.StrikeKind.FirstOrDefault(sk => sk.name == strikeTypeName);
+                if (strikeKind == null)
+                {
+                    loggerHelper.LogInfo($"StrikeKind '{strikeTypeName}' not found in database. Cannot add strike.");
+                    return false;
+                }
+
+                CreateAndSaveStrike(context, user, strikeKind, reason);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"AddStrikeByType: Error for user {user.username}", ex);
+                return false;
+            }
+        }
+
+        private void CreateAndSaveStrike(IDbContext context, UserAccount user, StrikeKind strikeKind, string reason)
+        {
+            var strike = new Strike
+            {
+                startDate = DateTime.UtcNow,
+                endDate = DateTime.UtcNow.AddDays(StrikeExpirationDays),
+                idStrikeKind = strikeKind.idStrikeKind
+            };
+
+            context.Strike.Add(strike);
+            context.SaveChanges();
+
+            var userHasStrike = new UserHasStrike
+            {
+                idUser = user.idUser,
+                idStrike = strike.idStrike,
+                strikeDate = DateTime.UtcNow
+            };
+
+            context.UserHasStrike.Add(userHasStrike);
+            context.SaveChanges();
+
+            loggerHelper.LogInfo($"Strike added for user {user.username}: {strikeKind.name} - {reason}");
+        }
+
+        public int GetActiveStrikeCount(IDbContext context, UserAccount user)
+        {
+            try
+            {
+                var now = DateTime.UtcNow;
+                return context.UserHasStrike
+                    .Where(uhs => uhs.idUser == user.idUser)
+                    .Join(context.Strike,
+                          uhs => uhs.idStrike,
+                          s => s.idStrike,
+                          (uhs, s) => s)
+                    .Count(s => s.endDate > now);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"GetActiveStrikeCount: Error for user {user.username}", ex);
+                return 0;
+            }
+        }
+
+        #endregion
+
+        #region Strike History
+
+        private List<dynamic> FetchUserStrikes(IDbContext context, int userId)
+        {
+            return context.UserHasStrike
+                .Where(uhs => uhs.idUser == userId)
+                .Join(context.Strike,
+                      uhs => uhs.idStrike,
+                      s => s.idStrike,
+                      (uhs, s) => new { uhs, s })
+                .Join(context.StrikeKind,
+                      combined => combined.s.idStrikeKind,
+                      sk => sk.idStrikeKind,
+                      (combined, sk) => new
+                      {
+                          StrikeId = combined.s.idStrike,
+                          StrikeType = sk.name,
+                          StrikeDate = combined.uhs.strikeDate,
+                          ExpirationDate = combined.s.endDate
+                      })
+                .ToList<dynamic>();
+        }
+
+        private List<StrikeInfo> MapToStrikeInfoList(List<dynamic> rawStrikes, DateTime now)
+        {
+            var strikes = new List<StrikeInfo>();
+
+            foreach (var s in rawStrikes)
+            {
+                strikes.Add(new StrikeInfo
+                {
+                    StrikeId = s.StrikeId,
+                    StrikeType = s.StrikeType,
+                    StrikeDate = s.StrikeDate.HasValue ? s.StrikeDate.Value : DateTime.MinValue,
+                    ExpirationDate = s.ExpirationDate,
+                    IsActive = s.ExpirationDate > now
+                });
+            }
+
+            return strikes.OrderByDescending(s => s.StrikeDate).ToList();
+        }
+
+        #endregion
+
+        #region Error Handling
+
+        private bool HandleDatabaseError(string methodName, int userId, Exception ex)
+        {
+            string errorType = GetErrorType(ex);
+            loggerHelper.LogError($"{methodName}: {errorType} for userId {userId}", ex);
+            return false;
+        }
+
+        private string GetErrorType(Exception ex)
+        {
+            if (ex is ArgumentNullException)
+            {
+                return "Null argument";
+            }
+            if (ex is DbUpdateConcurrencyException)
+            {
+                return "Concurrency conflict";
+            }
+            if (ex is DbUpdateException)
+            {
+                return "Database update error";
+            }
+            if (ex is InvalidOperationException)
+            {
+                return "Invalid operation";
+            }
+            if (ex is SqlException)
+            {
+                return "SQL Server error";
+            }
+            if (ex is DataException)
+            {
+                return "Data access error";
+            }
+            if (ex is EntityException)
+            {
+                return "Entity Framework connection error";
+            }
+            if (ex is TimeoutException)
+            {
+                return "Timeout";
+            }
+            return $"Unexpected error - {ex.Message}";
+        }
+
+        #endregion
     }
 }

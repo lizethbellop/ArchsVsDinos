@@ -13,6 +13,11 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<ChatResultCode, string> SystemNotificationReceived;
         event Action<List<string>> UserListUpdated;
         event Action<string, string> ConnectionError;
+
+        event Action<string, int> UserBanned;
+        event Action<string, string> UserExpelled;
+        event Action<string> LobbyClosed;
+
         Task ConnectAsync(string username);
         Task SendMessageAsync(string message, string username);
         Task DisconnectAsync(string username);

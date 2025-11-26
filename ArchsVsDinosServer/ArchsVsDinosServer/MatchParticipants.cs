@@ -22,6 +22,9 @@ namespace ArchsVsDinosServer
         public bool isDefeated { get; set; }
         public int archaeologistsEliminated { get; set; }
         public int supremeBossesEliminated { get; set; }
+        public bool wasExpelled { get; set; }
+        public string expulsionReason { get; set; }
+        public Nullable<System.DateTime> expulsionDate { get; set; }
     
         public virtual GeneralMatch GeneralMatch { get; set; }
         public virtual Player Player { get; set; }

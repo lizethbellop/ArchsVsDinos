@@ -13,6 +13,10 @@ namespace ArchsVsDinosClient.Services
         public event Action<ChatResultCode, string> SystemNotificationReceived;
         public event Action<List<string>> UserListUpdated;
 
+        public event Action<string, int> UserBanned;
+        public event Action<string, string> UserExpelled;
+        public event Action<string> LobbyClosed;
+
         public void ReceiveMessage(string roomId, string fromUser, string message)
         {
             MessageReceived?.Invoke(roomId, fromUser, message);
@@ -31,6 +35,21 @@ namespace ArchsVsDinosClient.Services
         public void UpdateUserList(string[] users)
         {
             UserListUpdated?.Invoke(users?.ToList() ?? new List<string>());
+        }
+
+        public void UserBannedFromChat(string username, int strikes)
+        {
+            UserBanned?.Invoke(username, strikes);
+        }
+
+        public void UserExpelledFromLobby(string username, string reason)
+        {
+            UserExpelled?.Invoke(username, reason);
+        }
+
+        public void LobbyClosedDueToInsufficientPlayers(string reason)
+        {
+            LobbyClosed?.Invoke(reason);
         }
     }
 }

@@ -75,6 +75,9 @@
           <Property Name="isDefeated" Type="bit" Nullable="false" />
           <Property Name="archaeologistsEliminated" Type="int" Nullable="false" />
           <Property Name="supremeBossesEliminated" Type="int" Nullable="false" />
+          <Property Name="wasExpelled" Type="bit" Nullable="false" />
+          <Property Name="expulsionReason" Type="nvarchar" MaxLength="200" />
+          <Property Name="expulsionDate" Type="datetime" />
         </EntityType>
         <EntityType Name="Music">
           <Key>
@@ -412,6 +415,9 @@
 					<NavigationProperty Name="Player" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="MatchParticipants" ToRole="Player" />
           <Property Name="archaeologistsEliminated" Type="Int32" Nullable="false" />
           <Property Name="supremeBossesEliminated" Type="Int32" Nullable="false" />
+          <Property Name="wasExpelled" Type="Boolean" Nullable="false" />
+          <Property Name="expulsionReason" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="expulsionDate" Type="DateTime" Precision="3" />
 				</EntityType>
 				<EntityType Name="Music">
 					<Key>
@@ -754,7 +760,10 @@
 					<EntitySetMapping Name="MatchParticipants">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.MatchParticipants">
 							<MappingFragment StoreEntitySet="MatchParticipants">
-								<ScalarProperty Name="supremeBossesEliminated" ColumnName="supremeBossesEliminated" />
+								<ScalarProperty Name="expulsionDate" ColumnName="expulsionDate" />
+                <ScalarProperty Name="expulsionReason" ColumnName="expulsionReason" />
+                <ScalarProperty Name="wasExpelled" ColumnName="wasExpelled" />
+                <ScalarProperty Name="supremeBossesEliminated" ColumnName="supremeBossesEliminated" />
                 <ScalarProperty Name="archaeologistsEliminated" ColumnName="archaeologistsEliminated" />
                 <ScalarProperty Name="idMatchParticipant" ColumnName="idMatchParticipant" />
 								<ScalarProperty Name="idGeneralMatch" ColumnName="idGeneralMatch" />

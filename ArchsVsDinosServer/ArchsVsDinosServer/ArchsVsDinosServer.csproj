@@ -142,6 +142,7 @@
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="BusinessLogic\Authentication.cs" />
+    <Compile Include="BusinessLogic\BanResult.cs" />
     <Compile Include="BusinessLogic\Chat.cs" />
     <Compile Include="BusinessLogic\Friend.cs" />
     <Compile Include="BusinessLogic\FriendRequestLogic.cs" />
@@ -209,6 +210,11 @@
     <Compile Include="Services\ChatManager.cs" />
     <Compile Include="Services\FriendManager.cs" />
     <Compile Include="Services\GameManager.cs" />
+    <Compile Include="Services\GameService\GameActionService.cs" />
+    <Compile Include="Services\GameService\GameExpulsionHandler.cs" />
+    <Compile Include="Services\GameService\GameNotificationService.cs" />
+    <Compile Include="Services\GameService\GameQueryService.cs" />
+    <Compile Include="Services\GameService\GameValidationService.cs" />
     <Compile Include="Services\Interfaces\IGameNotifier.cs" />
     <Compile Include="Services\Interfaces\ILobbyNotifier.cs" />
     <Compile Include="Services\LobbyCallbackManager.cs" />
@@ -274,6 +280,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="BusinessLogic\DTO\" />
     <Folder Include="Models\Response\" />
   </ItemGroup>
   <ItemGroup>

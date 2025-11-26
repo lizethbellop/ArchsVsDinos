@@ -146,6 +146,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             lock (SyncRoot)
             {
                 IsStarted = true;
+                StartTime = DateTime.UtcNow;
             }
         }
 
@@ -161,54 +162,62 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             }
         }
 
-        public void RemovePlayer(string username)
+        public bool RemovePlayer(string username)
         {
-            try
-            {
-                var player = players.FirstOrDefault(p => p.Username == username);
-                if (player != null)
-                {
-                    players.Remove(player);
-                    NotifyPlayersInGame($"{username} fue removido del juego");
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"Invalid operation removing player {username}", ex);
-            }
-            catch (Exception ex)
-            {
-                loggerHelper.LogError($"Unexpected error removing player {username}", ex);
-            }
-        }
-
-        private void NotifyPlayersInGame(string message)
-        {
-            foreach (var player in players.ToList())
+            lock (SyncRoot)
             {
                 try
                 {
-                    player.Callback.NotifySystemMessage(string.Format("", MatchId), "System_PlayerExpelled");
-
+                    var player = players.FirstOrDefault(p => p.Username == username);
+                    if (player != null)
+                    {
+                        bool removed = players.Remove(player);
+                        if (removed)
+                        {
+                            loggerHelper.LogInfo($"Player {username} removed from session {MatchId}");
+                        }
+                        return removed;
+                    }
+                    return false;
                 }
-                catch (CommunicationObjectAbortedException ex)
+                catch (InvalidOperationException ex)
                 {
-                    loggerHelper.LogWarning($"Connection aborted for {player.Username}: {ex.Message}");
+                    loggerHelper.LogError($"Invalid operation removing player {username}", ex);
+                    return false;
                 }
-                catch (CommunicationException ex)
+                catch (Exception ex)
                 {
-                    loggerHelper.LogWarning($"Communication error with {player.Username}: {ex.Message}");
-                }
-                catch (TimeoutException ex)
-                {
-                    loggerHelper.LogWarning($"Timeout notifying {player.Username}: {ex.Message}");
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    loggerHelper.LogWarning($"Object disposed for {player.Username}: {ex.Message}");
+                    loggerHelper.LogError($"Unexpected error removing player {username}", ex);
+                    return false;
                 }
             }
         }
 
+        // AGREGAR SOBRECARGA POR USERID (opcional pero útil)
+        public bool RemovePlayer(int userId)
+        {
+            lock (SyncRoot)
+            {
+                try
+                {
+                    var player = players.FirstOrDefault(p => p.UserId == userId);
+                    if (player != null)
+                    {
+                        bool removed = players.Remove(player);
+                        if (removed)
+                        {
+                            loggerHelper.LogInfo($"Player {player.Username} (ID: {userId}) removed from session {MatchId}");
+                        }
+                        return removed;
+                    }
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    loggerHelper.LogError($"Unexpected error removing player {userId}", ex);
+                    return false;
+                }
+            }
+        }
     }
 }

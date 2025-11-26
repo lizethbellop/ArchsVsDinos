@@ -16,6 +16,7 @@
       <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" />
       <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
       <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://localhost:8087/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IGameManager_InitializeGame_InputMessage">
@@ -108,6 +109,12 @@
   <wsdl:message name="IGameManager_OnGameEnded_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:OnGameEnded" />
   </wsdl:message>
+  <wsdl:message name="IGameManager_NotifySystemMessage_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:NotifySystemMessage" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_OnPlayerExpelled_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnPlayerExpelled" />
+  </wsdl:message>
   <wsdl:portType name="IGameManager">
     <wsdl:operation name="InitializeGame">
       <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/InitializeGame" message="tns:IGameManager_InitializeGame_InputMessage" />
@@ -178,6 +185,12 @@
     </wsdl:operation>
     <wsdl:operation name="OnGameEnded">
       <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnGameEnded" message="tns:IGameManager_OnGameEnded_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="NotifySystemMessage">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/NotifySystemMessage" message="tns:IGameManager_NotifySystemMessage_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnPlayerExpelled">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnPlayerExpelled" message="tns:IGameManager_OnPlayerExpelled_OutputCallbackMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetTcpBinding_IGameManager" type="tns:IGameManager">
@@ -329,6 +342,18 @@
     </wsdl:operation>
     <wsdl:operation name="OnGameEnded">
       <soap12:operation soapAction="http://tempuri.org/IGameManager/OnGameEnded" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NotifySystemMessage">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/NotifySystemMessage" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnPlayerExpelled">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnPlayerExpelled" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

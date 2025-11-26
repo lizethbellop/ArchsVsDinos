@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using Contracts.DTO;
 
 namespace Contracts
 {
@@ -28,5 +29,6 @@ namespace Contracts
 
         [OperationContract(IsOneWay = true)]
         void LobbyClosedDueToInsufficientPlayers(string reason);
+
     }
 }

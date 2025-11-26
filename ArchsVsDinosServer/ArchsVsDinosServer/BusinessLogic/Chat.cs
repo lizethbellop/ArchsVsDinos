@@ -89,26 +89,10 @@ namespace ArchsVsDinosServer.BusinessLogic
             int userId = GetUserIdFromUsername(request.Username);
             if (userId == 0)
             {
-                try
+                SafeCallbackInvoke(request.Username, () =>
                 {
                     callback.ReceiveSystemNotification(ChatResultCode.Chat_Error, "User not found");
-                }
-                catch (CommunicationObjectAbortedException ex)
-                {
-                    loggerHelper.LogWarning($"Communication object aborted for {request.Username}: {ex.Message}");
-                }
-                catch (CommunicationException ex)
-                {
-                    loggerHelper.LogWarning($"Communication error sending notification to {request.Username}: {ex.Message}");
-                }
-                catch (TimeoutException ex)
-                {
-                    loggerHelper.LogWarning($"Timeout sending notification to {request.Username}: {ex.Message}");
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    loggerHelper.LogWarning($"Object disposed for {request.Username}: {ex.Message}");
-                }
+                });
                 return;
             }
 
@@ -124,26 +108,10 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             if (!ConnectedUsers.TryAdd(request.Username, userConnection))
             {
-                try
+                SafeCallbackInvoke(request.Username, () =>
                 {
                     callback.ReceiveSystemNotification(ChatResultCode.Chat_UserAlreadyConnected, "User already connected");
-                }
-                catch (CommunicationObjectAbortedException ex)
-                {
-                    loggerHelper.LogWarning($"Communication object aborted for {request.Username}: {ex.Message}");
-                }
-                catch (CommunicationException ex)
-                {
-                    loggerHelper.LogWarning($"Communication error sending notification to {request.Username}: {ex.Message}");
-                }
-                catch (TimeoutException ex)
-                {
-                    loggerHelper.LogWarning($"Timeout sending notification to {request.Username}: {ex.Message}");
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    loggerHelper.LogWarning($"Object disposed for {request.Username}: {ex.Message}");
-                }
+                });
                 return;
             }
 
@@ -184,22 +152,22 @@ namespace ArchsVsDinosServer.BusinessLogic
                     return;
                 }
 
-                bool canSend = strikeManager.CanSendMessage(userConnection.UserId, message);
+                // USAR EL NUEVO ProcessStrike
+                var banResult = strikeManager.ProcessStrike(userConnection.UserId, message);
 
-                if (!canSend)
+                if (!banResult.CanSendMessage)
                 {
-                    int currentStrikes = strikeManager.GetUserStrikes(userConnection.UserId);
-
-                    if (currentStrikes >= 3)
+                    if (banResult.ShouldBan)
                     {
-                        ExpelUserForStrikes(username, currentStrikes, userConnection.Context, userConnection.MatchCode);
+                        // Usuario alcanzó 3 strikes - EXPULSAR
+                        HandleUserBan(username, banResult.CurrentStrikes, userConnection.Context, userConnection.MatchCode);
                     }
                     else
                     {
-                        NotifyUserMessageBlocked(username, currentStrikes);
+                        NotifyUserMessageBlocked(username, banResult.CurrentStrikes);
                     }
 
-                    loggerHelper.LogInfo($"Message from {username} blocked. Strikes: {currentStrikes}/3");
+                    loggerHelper.LogInfo($"Message from {username} blocked. Strikes: {banResult.CurrentStrikes}/3");
                     return;
                 }
 
@@ -211,9 +179,9 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private void ExpelUserForStrikes(string username, int strikes, ChatContext context, string matchCode)
+        private void HandleUserBan(string username, int strikes, ChatContext context, string matchCode)
         {
-            loggerHelper.LogWarning($"Expelling user {username} from {context} for reaching {strikes} strikes");
+            loggerHelper.LogWarning($"User {username} reached {strikes} strikes in {context}");
 
             if (ConnectedUsers.TryGetValue(username, out var userConnection))
             {
@@ -238,9 +206,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
 
             ConnectedUsers.TryRemove(username, out _);
-
-            NotifyUserExpelledFromLobby(username, "Expelled for inappropriate language");
-
             UpdateUserList();
 
             if (context == ChatContext.Lobby)
@@ -359,17 +324,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                         ChatResultCode.Chat_MessageBlocked,
                         $"Warning {currentStrikes}/3. At 3 warnings you will be expelled."
                     );
-                });
-            }
-        }
-
-        private void NotifyUserExpelledFromLobby(string username, string reason)
-        {
-            foreach (var user in ConnectedUsers.ToArray())
-            {
-                SafeCallbackInvoke(user.Key, () =>
-                {
-                    user.Value.Callback.UserExpelledFromLobby(username, reason);
                 });
             }
         }

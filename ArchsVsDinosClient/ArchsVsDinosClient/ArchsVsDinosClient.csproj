@@ -526,6 +526,9 @@
     <None Include="Connected Services\GameService\item5.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\GameService\item6.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.LobbyResultCode.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -831,19 +834,19 @@
     <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power2\ChestArms_Power2_1.png" />
     <Resource Include="Resources\Images\provokeBackground.png" />
     <Resource Include="Resources\Images\seeDeckHorizontalBackground.png" />
-    <None Include="Connected Services\GameService\item.disco" />
-    <None Include="Connected Services\GameService\configuration91.svcinfo" />
-    <None Include="Connected Services\GameService\configuration.svcinfo" />
-    <None Include="Connected Services\GameService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Resource Include="Resources\Images\teethDino.png" />
     <Resource Include="Resources\Images\bondDinoUser.png" />
     <None Include="Connected Services\StatisticsService\item.disco" />
     <None Include="Connected Services\StatisticsService\configuration91.svcinfo" />
     <None Include="Connected Services\StatisticsService\configuration.svcinfo" />
     <None Include="Connected Services\StatisticsService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\GameService\item.disco" />
+    <None Include="Connected Services\GameService\configuration91.svcinfo" />
+    <None Include="Connected Services\GameService\configuration.svcinfo" />
+    <None Include="Connected Services\GameService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

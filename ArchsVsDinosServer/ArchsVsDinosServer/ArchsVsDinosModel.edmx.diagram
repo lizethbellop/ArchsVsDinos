@@ -13,9 +13,9 @@
         <EntityTypeShape EntityType="ArchsVsDinosModel.GeneralMatch" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.MatchParticipants" Width="1.75" PointX="3" PointY="4.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.Music" Width="1.5" PointX="11.625" PointY="10" IsExpanded="true" />
-        <EntityTypeShape EntityType="ArchsVsDinosModel.Player" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="ArchsVsDinosModel.Strike" Width="1.5" PointX="3.75" PointY="7.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="ArchsVsDinosModel.StrikeKind" Width="1.5" PointX="1.5" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="ArchsVsDinosModel.Player" Width="1.5" PointX="0.5" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ArchsVsDinosModel.Strike" Width="1.5" PointX="3.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ArchsVsDinosModel.StrikeKind" Width="1.5" PointX="1.125" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchsVsDinosModel.UserAccount" Width="1.5" PointX="6" PointY="3.75" IsExpanded="true" />
         <AssociationConnector Association="ArchsVsDinosModel.FK__UserAccou__idCon__440B1D61" ManuallyRouted="false" />
         <AssociationConnector Association="ArchsVsDinosModel.FK__FriendReq__idRec__4CA06362" ManuallyRouted="false" />
