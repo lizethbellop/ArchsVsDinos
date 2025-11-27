@@ -95,7 +95,9 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                         if (confirmation == MessageBoxResult.Yes)
                         {
                             string currentUsername = UserSession.Instance.CurrentUser.Username;
+
                             ViewModel.ExpelThePlayer(targetUsername, currentUsername);
+
                         }
                     }
                     else

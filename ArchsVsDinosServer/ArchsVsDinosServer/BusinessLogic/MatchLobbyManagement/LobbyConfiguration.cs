@@ -303,6 +303,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             }
         }
 
+
         public LobbyResultCode StartTheGame(string matchCode, string hostUsername)
         {
             Lobby targetLobby;
@@ -343,6 +344,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 return LobbyResultCode.Lobby_NotHost;
             }
         }
+
 
         /*public void ExpelPlayerByStrike(string username, string reason)
         {
