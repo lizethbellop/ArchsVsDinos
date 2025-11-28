@@ -53,6 +53,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     lobbyWindow.Show();
                     IsCancelled = false;
+                    Application.Current.MainWindow?.Close();
                     this.Close();
                 }
                 else
