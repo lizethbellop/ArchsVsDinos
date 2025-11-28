@@ -114,7 +114,7 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="f" Width="50" Height="50" FontSize="20" FontWeight="Bold" Margin="0,0,10,0"
+                        <Button Content="f" Width="50" Height="50" FontSize="20" Click="Click_BtnFacebook" FontWeight="Bold" Margin="0,0,10,0"
                                 Background="#FF3B5998" Foreground="White" BorderBrush="Transparent"
                                 FontFamily="Arial" ToolTip="Facebook">
                             <Button.Template>
@@ -134,7 +134,7 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Content="📷" Width="50" Height="50" FontSize="18" Margin="0,0,10,0"
+                        <Button Content="📷" Width="50" Height="50" Click="Click_BtnInstagram" FontSize="18" Margin="0,0,10,0"
                                 Background="#FFC13584" Foreground="White" BorderBrush="Transparent" 
                                 ToolTip="Instagram">
                             <Button.Template>
@@ -152,7 +152,7 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Content="𝕏" Width="50" Height="50" FontSize="18" FontWeight="Bold" Margin="0,0,10,0"
+                        <Button Content="𝕏" Width="50" Height="50" FontSize="18" Click="Click_BtnX" FontWeight="Bold" Margin="0,0,10,0"
                                 Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
                                 FontFamily="Arial" ToolTip="X (Twitter)">
                             <Button.Template>
@@ -170,7 +170,7 @@
                             </Button.Template>
                         </Button>
 
-                        <Button Content="♪" Width="50" Height="50" FontSize="18" Margin="0,0,10,0"
+                        <Button Content="♪" Width="50" Height="50" FontSize="18" Click="Click_BtnTiktok" Margin="0,0,10,0"
                                 Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
                                 ToolTip="TikTok">
                             <Button.Template>

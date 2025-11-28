@@ -741,4 +741,10 @@
   <data name="SocialMedia_InvalidLink" xml:space="preserve">
     <value>Enter a valid link</value>
   </data>
+  <data name="SocialMedia_ErrorOpeningLink" xml:space="preserve">
+    <value>The link couldn't be opened. Verify you have a default browser</value>
+  </data>
+  <data name="GlobalSystemError" xml:space="preserve">
+    <value>An error with a system occurred</value>
+  </data>
 </root>

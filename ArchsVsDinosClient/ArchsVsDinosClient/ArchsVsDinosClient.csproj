@@ -168,6 +168,7 @@
     <Compile Include="Utils\NavigationUtils.cs" />
     <Compile Include="Utils\ServerStateChangedEventArgs.cs" />
     <Compile Include="Utils\ServiceOperationHelper.cs" />
+    <Compile Include="Utils\SocialMediaHelper.cs" />
     <Compile Include="Utils\SocialMediaPlatform.cs" />
     <Compile Include="Utils\SocialMediaValidator.cs" />
     <Compile Include="Utils\SoundButton.cs">

@@ -691,6 +691,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡Ocurrió un error con el sistema!.
+        /// </summary>
+        public static string GlobalSystemError {
+            get {
+                return ResourceManager.GetString("GlobalSystemError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Código de partida vacío, intente de nuevo.
         /// </summary>
         public static string JoinCode_Invalid {
@@ -1542,6 +1551,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Settings_SoundTitle {
             get {
                 return ResourceManager.GetString("Settings_SoundTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo abrir el enlace. Verifica que tengas un navegador predeterminado configurado..
+        /// </summary>
+        public static string SocialMedia_ErrorOpeningLink {
+            get {
+                return ResourceManager.GetString("SocialMedia_ErrorOpeningLink", resourceCulture);
             }
         }
         

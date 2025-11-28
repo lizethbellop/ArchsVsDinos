@@ -113,5 +113,30 @@ namespace ArchsVsDinosClient.Views
             new AvatarSelection().ShowDialog();
         }
 
+        private void Click_BtnFacebook(object sender, RoutedEventArgs e)
+        {
+            string facebookUrl = UserSession.Instance.CurrentPlayer.Facebook;
+            SocialMediaHelper.TryOpenSocialMediaLink(facebookUrl, SocialMediaPlatform.Facebook);
+        }
+
+        private void Click_BtnInstagram(object sender, RoutedEventArgs e)
+        {
+            string instagramUrl = UserSession.Instance.CurrentPlayer.Instagram;
+            SocialMediaHelper.TryOpenSocialMediaLink(instagramUrl, SocialMediaPlatform.Instagram);
+        }
+
+        private void Click_BtnX(object sender, RoutedEventArgs e)
+        {
+            string xUrl = UserSession.Instance.CurrentPlayer.X;
+            SocialMediaHelper.TryOpenSocialMediaLink(xUrl, SocialMediaPlatform.X);
+        }
+
+        private void Click_BtnTiktok(object sender, RoutedEventArgs e)
+        {
+            string tiktokUrl = UserSession.Instance.CurrentPlayer.Tiktok;
+            SocialMediaHelper.TryOpenSocialMediaLink(tiktokUrl, SocialMediaPlatform.TikTok);
+
+        }
+
     }
 }
