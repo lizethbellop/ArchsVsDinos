@@ -747,4 +747,7 @@
   <data name="GlobalSystemError" xml:space="preserve">
     <value>¡Ocurrió un error con el sistema!</value>
   </data>
+  <data name="Account_EditSocialMedia" xml:space="preserve">
+    <value>Editar enlace</value>
+  </data>
 </root>

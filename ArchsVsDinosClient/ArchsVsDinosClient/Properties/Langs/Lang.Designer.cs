@@ -79,6 +79,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Editar enlace.
+        /// </summary>
+        public static string Account_EditSocialMedia {
+            get {
+                return ResourceManager.GetString("Account_EditSocialMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Editar.
         /// </summary>
         public static string Account_EditText {

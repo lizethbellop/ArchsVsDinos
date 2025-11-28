@@ -57,6 +57,8 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         return response;
                     }
 
+                    loggerHelper.LogDebug($"[SocialMediaManager] Actualizando campo {platform} en base de datos");
+
                     switch (platform)
                     {
                         case "Facebook":
@@ -73,7 +75,9 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                             break;
                     }
 
+                    
                     context.SaveChanges();
+
                     response.Success = true;
                     response.ResultCode = successCode;
                     return response;
@@ -82,10 +86,12 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             catch (DbEntityValidationException ex)
             {
                 loggerHelper.LogError($"Database validation error at Update {platform}", ex);
+
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
+                loggerHelper.LogInfo($"[SocialMediaManager] Error inesperado al actualizar {platform} para {username}");
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }

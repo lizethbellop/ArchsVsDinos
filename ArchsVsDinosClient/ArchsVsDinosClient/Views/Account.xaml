@@ -97,7 +97,7 @@
                     <StackPanel>
                         <UniformGrid>
                             <Label Content="{x:Static language:Lang.Register_Email}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="30" Foreground="#FF196572" Margin="0,0,0,5"/>
-                        
+
                         </UniformGrid>
                         <TextBlock x:Name="TxtEmail" FontFamily="Trebuchet MS" FontSize="25" Foreground="Black" Margin="0,0,0,0"/>
                     </StackPanel>
@@ -114,79 +114,201 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="f" Width="50" Height="50" FontSize="20" Click="Click_BtnFacebook" FontWeight="Bold" Margin="0,0,10,0"
-                                Background="#FF3B5998" Foreground="White" BorderBrush="Transparent"
-                                FontFamily="Arial" ToolTip="Facebook">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border" Background="{TemplateBinding Background}"
-                                            CornerRadius="30" BorderThickness="0">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
+                        <!-- Facebook -->
+                        <StackPanel Margin="0,0,10,0">
+                            <Button Content="f" Width="50" Height="50" FontSize="20" Click="Click_BtnFacebook" FontWeight="Bold"
+                                    Background="#FF3B5998" Foreground="White" BorderBrush="Transparent"
+                                    FontFamily="Arial" ToolTip="Facebook">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}"
+                                                CornerRadius="30" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
 
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
+                            <Button Click="Click_BtnEditFacebook"
+                                    Width="25" Height="25" Margin="0,5,0,0"
+                                    Background="Transparent" BorderBrush="Transparent"
+                                    Cursor="Hand" HorizontalAlignment="Center"
+                                    ToolTip="{x:Static language:Lang.Account_EditSocialMedia}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="12.5" BorderThickness="0">
+                                            <Viewbox Width="14" Height="14">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Fill="#FF196572" 
+                                                          Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#20196572"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#40196572"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
 
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                        <!-- Instagram -->
+                        <StackPanel Margin="0,0,10,0">
+                            <Button Content="📷" Width="50" Height="50" Click="Click_BtnInstagram" FontSize="18"
+                                    Background="#FFC13584" Foreground="White" BorderBrush="Transparent" 
+                                    ToolTip="Instagram">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="30" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
 
-                        <Button Content="📷" Width="50" Height="50" Click="Click_BtnInstagram" FontSize="18" Margin="0,0,10,0"
-                                Background="#FFC13584" Foreground="White" BorderBrush="Transparent" 
-                                ToolTip="Instagram">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                            CornerRadius="30" BorderThickness="0">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                            <Button Click="Click_BtnEditInstagram"
+                                    Width="25" Height="25" Margin="0,5,0,0"
+                                    Background="Transparent" BorderBrush="Transparent"
+                                    Cursor="Hand" HorizontalAlignment="Center"
+                                    ToolTip="{x:Static language:Lang.Account_EditSocialMedia}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="12.5" BorderThickness="0">
+                                            <Viewbox Width="14" Height="14">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Fill="#FF196572" 
+                                                          Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#20196572"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#40196572"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
 
-                        <Button Content="𝕏" Width="50" Height="50" FontSize="18" Click="Click_BtnX" FontWeight="Bold" Margin="0,0,10,0"
-                                Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
-                                FontFamily="Arial" ToolTip="X (Twitter)">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                            CornerRadius="30" BorderThickness="0">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                        <!-- X (Twitter) -->
+                        <StackPanel Margin="0,0,10,0">
+                            <Button Content="𝕏" Width="50" Height="50" FontSize="18" Click="Click_BtnX" FontWeight="Bold"
+                                    Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
+                                    FontFamily="Arial" ToolTip="X (Twitter)">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="30" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
 
-                        <Button Content="♪" Width="50" Height="50" FontSize="18" Click="Click_BtnTiktok" Margin="0,0,10,0"
-                                Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
-                                ToolTip="TikTok">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                            CornerRadius="30" BorderThickness="0">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                            <Button Click="Click_BtnEditX"
+                                    Width="25" Height="25" Margin="0,5,0,0"
+                                    Background="Transparent" BorderBrush="Transparent"
+                                    Cursor="Hand" HorizontalAlignment="Center"
+                                    ToolTip="{x:Static language:Lang.Account_EditSocialMedia}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="12.5" BorderThickness="0">
+                                            <Viewbox Width="14" Height="14">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Fill="#FF196572" 
+                                                          Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#20196572"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#40196572"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+
+                        <!-- TikTok -->
+                        <StackPanel Margin="0,0,10,0">
+                            <Button Content="♪" Width="50" Height="50" FontSize="18" Click="Click_BtnTiktok"
+                                    Background="#FF000000" Foreground="White" BorderBrush="Transparent" 
+                                    ToolTip="TikTok">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="30" BorderThickness="0">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <Button Click="Click_BtnEditTiktok"
+                                    Width="25" Height="25" Margin="0,5,0,0"
+                                    Background="Transparent" BorderBrush="Transparent"
+                                    Cursor="Hand" HorizontalAlignment="Center"
+                                    ToolTip="{x:Static language:Lang.Account_EditSocialMedia}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                                CornerRadius="12.5" BorderThickness="0">
+                                            <Viewbox Width="14" Height="14">
+                                                <Canvas Width="24" Height="24">
+                                                    <Path Fill="#FF196572" 
+                                                          Data="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/>
+                                                </Canvas>
+                                            </Viewbox>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#20196572"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#40196572"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -231,7 +353,7 @@
                     </Button>
                 </StackPanel>
             </Grid>
-            
+
         </Grid>
 
         <Grid Grid.Row="2">
@@ -306,7 +428,7 @@
                 </Button>
             </UniformGrid>
         </Grid>
-        
+
     </Grid>
 
 </Window>
