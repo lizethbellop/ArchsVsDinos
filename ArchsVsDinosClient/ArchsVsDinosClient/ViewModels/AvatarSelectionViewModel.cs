@@ -17,6 +17,7 @@ namespace ArchsVsDinosClient.ViewModels
     {
         private readonly IProfileServiceClient profileService;
         private readonly IMessageService messageService;
+        private readonly ServiceOperationHelper serviceHelper;
 
         public string SelectedAvatarPath { get; private set; }
         private readonly Dictionary<int, string> avatarPaths;
@@ -27,15 +28,16 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            this.serviceHelper = new ServiceOperationHelper(messageService);
 
             avatarPaths = new Dictionary<int, string>
-        {
-            { 1, "/Resources/Images/Avatars/default_avatar_01.png" },
-            { 2, "/Resources/Images/Avatars/default_avatar_02.png" },
-            { 3, "/Resources/Images/Avatars/default_avatar_03.png" },
-            { 4, "/Resources/Images/Avatars/default_avatar_04.png" },
-            { 5, "/Resources/Images/Avatars/default_avatar_05.png" }
-        };
+            {
+                { 1, "/Resources/Images/Avatars/default_avatar_01.png" },
+                { 2, "/Resources/Images/Avatars/default_avatar_02.png" },
+                { 3, "/Resources/Images/Avatars/default_avatar_03.png" },
+                { 4, "/Resources/Images/Avatars/default_avatar_04.png" },
+                { 5, "/Resources/Images/Avatars/default_avatar_05.png" }
+            };
         }
 
         public void SelectAvatar(int avatarId)
@@ -54,38 +56,38 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            try
+            string currentUsername = UserSession.Instance.CurrentUser.Username;
+
+            UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
+                profileService,
+                () => profileService.ChangeProfilePictureAsync(currentUsername,SelectedAvatarPath)
+            );
+
+            if (response == null)
             {
-                string currentUsername = UserSession.Instance.CurrentUser.Username;
-
-                UpdateResponse response = await profileService.ChangeProfilePictureAsync(
-                    currentUsername,
-                    SelectedAvatarPath
-                );
-
-                if (response == null || !response.Success)
-                {
-                    if (response != null)
-                    {
-                        string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                        messageService.ShowMessage(message);
-                    }
-                    return;
-                }
-
-                string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                messageService.ShowMessage(successMessage);
-
-                UserSession.Instance.CurrentPlayer.ProfilePicture = SelectedAvatarPath;
-
-                UserProfileObserver.Instance.NotifyProfileUpdated();
-
-                RequestClose?.Invoke(this, EventArgs.Empty);
+                return;
             }
-            catch (Exception ex)
+
+            if (!response.Success)
             {
-                messageService.ShowMessage($"{Lang.Avatar_UnexpectedError}: {ex.Message}");
+                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+                messageService.ShowMessage(message);
+                return;
             }
+
+            HandleSuccess(response);
+        }
+
+        private void HandleSuccess(UpdateResponse response)
+        {
+            string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+            messageService.ShowMessage(successMessage);
+
+            UserSession.Instance.CurrentPlayer.ProfilePicture = SelectedAvatarPath;
+
+            UserProfileObserver.Instance.NotifyProfileUpdated();
+
+            RequestClose?.Invoke(this, EventArgs.Empty);
         }
 
         private bool HasSelectedAvatar()

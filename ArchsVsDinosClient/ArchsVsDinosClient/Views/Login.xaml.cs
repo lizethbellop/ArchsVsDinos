@@ -55,6 +55,7 @@ namespace ArchsVsDinosClient
 
             LoadingDisplayHelper.ShowLoading(LoadingOverlay);
             BtnEnter.IsEnabled = false;
+            await Task.Yield();
 
             try
             {

@@ -17,6 +17,7 @@ namespace ArchsVsDinosClient.ViewModels
     {
         private readonly IProfileServiceClient profileService;
         private readonly IMessageService messageService;
+        private readonly ServiceOperationHelper serviceHelper;
 
         public string NewXLink { get; set; }
         public event EventHandler RequestClose;
@@ -25,37 +26,44 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            this.serviceHelper = new ServiceOperationHelper(messageService);
         }
 
         public async Task SaveXLink()
         {
-            if (!IsValidXLink(NewXLink))
+            if (!SocialMediaValidator.IsValidXLink(NewXLink))
             {
-                messageService.ShowMessage(Lang.GlobalEmptyField);
+                messageService.ShowMessage(SocialMediaValidator.GetValidationErrorMessage(SocialMediaPlatform.X));
                 return;
             }
 
             string currentUsername = UserSession.Instance.CurrentUser.Username;
-            UpdateResponse response = await profileService.UpdateXAsync(currentUsername, NewXLink);
+            UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
+                profileService,
+                () => profileService.UpdateXAsync(currentUsername, NewXLink)
+            );
 
-            if (response == null || !response.Success)
+            if (response == null)
             {
-                if (response != null)
-                {
-                    string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                    messageService.ShowMessage(message);
-                }
                 return;
             }
 
+            if (!response.Success)
+            {
+                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+                messageService.ShowMessage(message);
+                return;
+            }
+
+            HandleSuccess(response);
+        }
+
+        private void HandleSuccess(UpdateResponse response)
+        {
             string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
             RequestClose?.Invoke(this, EventArgs.Empty);
         }
 
-        private static bool IsValidXLink(string xLink)
-        {
-            return !string.IsNullOrWhiteSpace(xLink);
-        }
     }
 }

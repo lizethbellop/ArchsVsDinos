@@ -17,6 +17,7 @@ namespace ArchsVsDinosClient.ViewModels
     {
         private readonly IProfileServiceClient profileService;
         private readonly IMessageService messageService;
+        private readonly ServiceOperationHelper serviceHelper;
 
         public string NewInstagramLink { get; set; }
         public event EventHandler RequestClose;
@@ -25,37 +26,44 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
+            this.serviceHelper = new ServiceOperationHelper(messageService);
         }
 
         public async Task SaveInstagramLink()
         {
-            if (!IsValidInstagramLink(NewInstagramLink))
+            if (!SocialMediaValidator.IsValidInstagramLink(NewInstagramLink))
             {
-                messageService.ShowMessage(Lang.GlobalEmptyField);
+                messageService.ShowMessage(SocialMediaValidator.GetValidationErrorMessage(SocialMediaPlatform.Instagram));
                 return;
             }
 
             string currentUsername = UserSession.Instance.CurrentUser.Username;
-            UpdateResponse response = await profileService.UpdateInstagramAsync(currentUsername, NewInstagramLink);
+            UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
+                profileService,
+                () => profileService.UpdateInstagramAsync(currentUsername, NewInstagramLink)
+            );
 
-            if (response == null || !response.Success)
+            if (response == null)
             {
-                if (response != null)
-                {
-                    string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                    messageService.ShowMessage(message);
-                }
                 return;
             }
 
+            if (response == null || !response.Success)
+            {
+                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+                messageService.ShowMessage(message);
+                return;
+            }
+
+            HandleSuccess(response);
+        }
+
+        private void HandleSuccess(UpdateResponse response)
+        {
             string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
             RequestClose?.Invoke(this, EventArgs.Empty);
         }
 
-        private static bool IsValidInstagramLink(string instagramLink)
-        {
-            return !string.IsNullOrWhiteSpace(instagramLink);
-        }
     }
 }

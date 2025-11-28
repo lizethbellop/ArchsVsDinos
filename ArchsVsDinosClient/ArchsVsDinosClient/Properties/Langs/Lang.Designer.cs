@@ -1546,6 +1546,87 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese un enlace válido de Facebook (ej: https://facebook.com/tuperfil).
+        /// </summary>
+        public static string SocialMedia_InvalidFacebookLink {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidFacebookLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de Facebook no válido.
+        /// </summary>
+        public static string SocialMEdia_InvalidFAcebookLinkTitle {
+            get {
+                return ResourceManager.GetString("SocialMEdia_InvalidFAcebookLinkTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese un enlace válido de Instagram (ej: https://instagram.com/tuperfil).
+        /// </summary>
+        public static string SocialMedia_InvalidInstagramLink {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidInstagramLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de Instagram no válido.
+        /// </summary>
+        public static string SocialMedia_InvalidInstagramLinkTitle {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidInstagramLinkTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese un enlace válido.
+        /// </summary>
+        public static string SocialMedia_InvalidLink {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese un enlace válido de Tiktok (ej: https://tiktok.com/tuperfil).
+        /// </summary>
+        public static string SocialMedia_InvalidTiktokLink {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidTiktokLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de TikTok no válido.
+        /// </summary>
+        public static string SocialMedia_InvalidTiktokLinkTitle {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidTiktokLinkTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese un enlace válido de X (antes Twitter) (ej: https://x.com/tuperfil).
+        /// </summary>
+        public static string SocialMedia_InvalidXLink {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidXLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Link de X no válido.
+        /// </summary>
+        public static string SocialMedia_InvalidXLinkTitle {
+            get {
+                return ResourceManager.GetString("SocialMedia_InvalidXLinkTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a 1ro.
         /// </summary>
         public static string Statistics_1stPlace {

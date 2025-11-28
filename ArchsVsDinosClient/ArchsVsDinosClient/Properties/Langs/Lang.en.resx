@@ -714,4 +714,31 @@
   <data name="WcfServerConnectionError" xml:space="preserve">
     <value>Couldn't connect to server, verify its execution</value>
   </data>
+  <data name="SocialMedia_InvalidFacebookLink" xml:space="preserve">
+    <value>Enter a valid Facebook link (ej: https://facebook.com/yourProfile)</value>
+  </data>
+  <data name="SocialMEdia_InvalidFAcebookLinkTitle" xml:space="preserve">
+    <value>Facebook link not valid</value>
+  </data>
+  <data name="SocialMedia_InvalidInstagramLink" xml:space="preserve">
+    <value>Enter a valid Instagram link (ex: https://instagram.com/yourprofile)</value>
+  </data>
+  <data name="SocialMedia_InvalidInstagramLinkTitle" xml:space="preserve">
+    <value>Instagram Link not valid</value>
+  </data>
+  <data name="SocialMedia_InvalidTiktokLink" xml:space="preserve">
+    <value>Enter a valid TikTok link (ex: https://tiktok.com/yourprofile)</value>
+  </data>
+  <data name="SocialMedia_InvalidTiktokLinkTitle" xml:space="preserve">
+    <value>TikTok Link not valid</value>
+  </data>
+  <data name="SocialMedia_InvalidXLink" xml:space="preserve">
+    <value>Enter a valid X (used to be Twitter) (ex: https://x.com/yourProfile)</value>
+  </data>
+  <data name="SocialMedia_InvalidXLinkTitle" xml:space="preserve">
+    <value>X Link not valid</value>
+  </data>
+  <data name="SocialMedia_InvalidLink" xml:space="preserve">
+    <value>Enter a valid link</value>
+  </data>
 </root>
