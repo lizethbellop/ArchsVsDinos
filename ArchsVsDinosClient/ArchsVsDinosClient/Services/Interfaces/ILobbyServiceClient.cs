@@ -14,12 +14,14 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<LobbyPlayerDTO> PlayerLeft;
         event Action<LobbyPlayerDTO> PlayerExpelled;
         event Action<string> LobbyCancelled;
+        event Action<string, List<LobbyPlayerDTO>> GameStartedEvent;
 
         void CreateLobby(UserAccountDTO userAccount);
         LobbyResultCode JoinLobby(UserAccountDTO userAccount, string matchCode);
         void LeaveLobby(string username);
-        void ExpelPlayer(string hostUsername, string targetUsername);
+        void ExpelPlayer(string targetUsername, string hostUsername);
         void CancellLobby(string matchCode, string usernameRequester);
+        void StartGame(string matchCode, string hostUsername);
 
     }
 }

@@ -31,7 +31,7 @@ namespace ArchsVsDinosClient
         {
             InitializeComponent();
             ConfigureForTypeSession();
-            MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Main);
+            //MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Main);
         }
 
         private void ConfigureForTypeSession()

@@ -80,16 +80,16 @@
 
             <UniformGrid Grid.Row="2" Columns="2" Rows="2" Margin="10">
                 <!-- Player 1: jugador local -->
-                <local:PlayerSlot x:Name="PlayerSlot1" DataContext="{Binding Slots[0]}"/>
+                <local:PlayerSlot x:Name="PlayerSlot1" DataContext="{Binding Slots[0]}" ViewModel="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
 
                 <!-- Player 2 -->
-                <local:PlayerSlot x:Name="PlayerSlot2" DataContext="{Binding Slots[1]}"/>
+                <local:PlayerSlot x:Name="PlayerSlot2" DataContext="{Binding Slots[1]}" ViewModel="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
 
                 <!-- Player 3 -->
-                <local:PlayerSlot x:Name="PlayerSlot3" DataContext="{Binding Slots[2]}"/>
+                <local:PlayerSlot x:Name="PlayerSlot3" DataContext="{Binding Slots[2]}" ViewModel="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
 
                 <!-- Player 4 -->
-                <local:PlayerSlot x:Name="PlayerSlot4" DataContext="{Binding Slots[3]}"/>
+                <local:PlayerSlot x:Name="PlayerSlot4" DataContext="{Binding Slots[3]}" ViewModel="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext}"/>
 
             </UniformGrid>
         </Grid>

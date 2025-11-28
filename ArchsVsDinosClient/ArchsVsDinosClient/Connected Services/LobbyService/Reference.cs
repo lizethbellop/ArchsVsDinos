@@ -199,6 +199,15 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Lobby_FullLobby = 13,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_GameStarted = 14,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_IncompleteLobby = 15,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_ErrorGame = 16,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -343,6 +352,12 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/ExpelPlayerLobby", ReplyAction="http://tempuri.org/ILobbyManager/ExpelPlayerLobbyResponse")]
         System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> ExpelPlayerLobbyAsync(string username, string hostUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
+        ArchsVsDinosClient.LobbyService.LobbyResultCode StartGame(string matchCode, string hostUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> StartGameAsync(string matchCode, string hostUsername);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -362,6 +377,9 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/ExpelledFromLobby")]
         void ExpelledFromLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO expelledPlayer);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/GameStarted")]
+        void GameStarted(string matchCode, ArchsVsDinosClient.LobbyService.LobbyPlayerDTO[] players);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -430,6 +448,14 @@ namespace ArchsVsDinosClient.LobbyService {
         
         public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> ExpelPlayerLobbyAsync(string username, string hostUsername) {
             return base.Channel.ExpelPlayerLobbyAsync(username, hostUsername);
+        }
+        
+        public ArchsVsDinosClient.LobbyService.LobbyResultCode StartGame(string matchCode, string hostUsername) {
+            return base.Channel.StartGame(matchCode, hostUsername);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> StartGameAsync(string matchCode, string hostUsername) {
+            return base.Channel.StartGameAsync(matchCode, hostUsername);
         }
     }
 }

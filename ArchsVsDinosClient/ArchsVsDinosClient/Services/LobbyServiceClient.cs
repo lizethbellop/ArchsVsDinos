@@ -3,6 +3,7 @@ using ArchsVsDinosClient.Logging;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<LobbyPlayerDTO> PlayerLeft;
         public event Action<LobbyPlayerDTO> PlayerExpelled;
         public event Action<string> LobbyCancelled;
+        public event Action<string, List<LobbyPlayerDTO>> GameStartedEvent;
         public event Action<string, string> ConnectionError;
 
         public LobbyServiceClient()
@@ -35,6 +37,7 @@ namespace ArchsVsDinosClient.Services
             lobbyCallbackManager.OnPlayerLeftLobby += (player) => PlayerLeft?.Invoke(player);
             lobbyCallbackManager.OnPlayerExpelled += (player) => PlayerExpelled?.Invoke(player);
             lobbyCallbackManager.OnLobbyCancelled += (code) => LobbyCancelled?.Invoke(code);
+            lobbyCallbackManager.OnGameStarted += (matchCode, players) => GameStartedEvent?.Invoke(matchCode, players);
 
             var instanceContext = new InstanceContext(lobbyCallbackManager);
             instanceContext.SynchronizationContext = synchronizationContext;
@@ -67,7 +70,7 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
-        public void ExpelPlayer(string hostUsername, string targetUsername)
+        public void ExpelPlayer(string targetUsername, string hostUsername)
         {
             Task ignoredTask = connectionGuardian.ExecuteAsync(
                 async () => await Task.Run(() => lobbyManagerClient.ExpelPlayerLobby(hostUsername, targetUsername))
@@ -78,6 +81,13 @@ namespace ArchsVsDinosClient.Services
         {
             Task ignoredTask = connectionGuardian.ExecuteAsync(
                 async () => await Task.Run(() => lobbyManagerClient.CancelLobby(matchCode, usernameRequester))
+            );
+        }
+
+        public void StartGame(string matchCode, string hostUsername)
+        {
+            Task ignoredTask = connectionGuardian.ExecuteAsync(
+                async () => await Task.Run(() => lobbyManagerClient.StartGame(matchCode, hostUsername))
             );
         }
 

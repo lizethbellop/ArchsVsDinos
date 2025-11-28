@@ -14,7 +14,17 @@ namespace ArchsVsDinosClient.Utils
         private readonly Action<string, string> onError;
         private readonly ILogger logger;
 
+        private string lastErrorTitle;
+        private string lastErrorMessage;
+
+        private bool errorAlreadyReported = false;
+        private bool operationInProgress = false;
+
         public bool IsServerAvailable { get; private set; } = true;
+
+        public string LastErrorTitle => lastErrorTitle;
+        public string LastErrorMessage => lastErrorMessage;
+
         public event EventHandler<ServerStateChangedEventArgs> ServerStateChanged;
 
         public WcfConnectionGuardian(Action<string, string> onError, ILogger logger = null)
@@ -25,153 +35,47 @@ namespace ArchsVsDinosClient.Utils
 
         public async Task<bool> ExecuteAsync(Func<Task> operation, string operationName = "Operación")
         {
+            operationInProgress = true;
+
             try
             {
+                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
                 await operation();
                 UpdateServerState(true);
+                errorAlreadyReported = false;
                 return true;
-            }
-            catch (ObjectDisposedException ex)
-            {
-                logger.LogError($"[{operationName}] Cliente desechado: {ex.ObjectName}", ex);
-                HandleWcfError(
-                    Lang.WcfErrorConnectionLost,
-                    Lang.WcfNoConnection,
-                    ex,
-                    operationName
-                );
-                return false;
-            }
-            catch (EndpointNotFoundException ex)
-            {
-                logger.LogError($"[{operationName}] Servidor no encontrado: {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfNoConnection,
-                    "No se pudo conectar al servidor. Verifique que esté en ejecución.",
-                    ex,
-                    operationName
-                );
-                return false;
-            }
-            catch (FaultException ex)
-            {
-                logger.LogError($"[{operationName}] Error del servicio: {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfErrorService,
-                    ex.Message,
-                    ex,
-                    operationName
-                );
-                return false;
-            }
-            catch (CommunicationException ex)
-            {
-                logger.LogError($"[{operationName}] Error de comunicación: {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfNoConnection,
-                    string.Format(Lang.WcfErrorOperationFailed, operationName),
-                    ex,
-                    operationName
-                );
-                return false;
-            }
-            catch (TimeoutException ex)
-            {
-                logger.LogError($"[{operationName}] Tiempo de espera agotado", ex);
-                HandleWcfError(
-                    Lang.WcfErrorTimeout,
-                    string.Format(Lang.WcfErrorOperationTimeout, operationName),
-                    ex,
-                    operationName
-                );
-                return false;
             }
             catch (Exception ex)
             {
-                logger.LogError($"[{operationName}] Error inesperado ({ex.GetType().Name}): {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfErrorUnexpected,
-                    ex.Message,
-                    ex,
-                    operationName
-                );
+                HandleException(ex, operationName);
                 return false;
+            }
+            finally
+            {
+                operationInProgress = false;
             }
         }
 
         public async Task<T> ExecuteAsync<T>(Func<Task<T>> operation, T defaultValue = default(T), string operationName = "Operación")
         {
+            operationInProgress = true;
+
             try
             {
+                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
                 var result = await operation();
                 UpdateServerState(true);
+                errorAlreadyReported = false;
                 return result;
-            }
-            catch (ObjectDisposedException ex)
-            {
-                logger.LogError($"[{operationName}] Cliente desechado: {ex.ObjectName}", ex);
-                HandleWcfError(
-                    Lang.WcfErrorConnectionLost,
-                    Lang.WcfNoConnection,
-                    ex,
-                    operationName
-                );
-                return defaultValue;
-            }
-            catch (EndpointNotFoundException ex)
-            {
-                logger.LogError($"[{operationName}] Servidor no encontrado: {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfNoConnection,
-                    "No se pudo conectar al servidor. Verifique que esté en ejecución.",
-                    ex,
-                    operationName
-                );
-                return defaultValue;
-            }
-            catch (FaultException ex)
-            {
-                logger.LogError($"[{operationName}] Error del servicio: {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfErrorService,
-                    ex.Message,
-                    ex,
-                    operationName
-                );
-                return defaultValue;
-            }
-            catch (CommunicationException ex)
-            {
-                logger.LogError($"[{operationName}] Error de comunicación: {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfNoConnection,
-                    string.Format(Lang.WcfErrorOperationFailed, operationName),
-                    ex,
-                    operationName
-                );
-                return defaultValue;
-            }
-            catch (TimeoutException ex)
-            {
-                logger.LogError($"[{operationName}] Tiempo de espera agotado", ex);
-                HandleWcfError(
-                    Lang.WcfErrorTimeout,
-                    string.Format(Lang.WcfErrorOperationTimeout, operationName),
-                    ex,
-                    operationName
-                );
-                return defaultValue;
             }
             catch (Exception ex)
             {
-                logger.LogError($"[{operationName}] Error inesperado ({ex.GetType().Name}): {ex.Message}", ex);
-                HandleWcfError(
-                    Lang.WcfErrorUnexpected,
-                    ex.Message,
-                    ex,
-                    operationName
-                );
+                HandleException(ex, operationName);
                 return defaultValue;
+            }
+            finally
+            {
+                operationInProgress = false;
             }
         }
 
@@ -182,8 +86,18 @@ namespace ArchsVsDinosClient.Utils
             client.Faulted += (s, e) =>
             {
                 UpdateServerState(false);
-                logger.LogError($"WCF client faulted. State: {client.State}");
-                onError(Lang.WcfErrorConnectionLost, Lang.WcfErrorConnectionLost);
+                logger.LogError($"⚠️ WCF client faulted. State: {client.State}");
+
+                if (!operationInProgress && !errorAlreadyReported)
+                {
+                    errorAlreadyReported = true;
+                    logger.LogWarning("🔶 [MONITOR] Disparando evento de error porque no hay operación activa");
+                    onError(lastErrorTitle ?? "Error de conexión", lastErrorMessage ?? "El cliente WCF falló inesperadamente");
+                }
+                else
+                {
+                    logger.LogDebug("🔷 [MONITOR] No disparando evento - hay operación activa que lo manejará");
+                }
             };
 
             client.Closed += (s, e) =>
@@ -193,20 +107,54 @@ namespace ArchsVsDinosClient.Utils
             };
         }
 
+        private void HandleException(Exception ex, string operationName)
+        {
+            switch (ex)
+            {
+                case ObjectDisposedException ode:
+                    logger.LogError($"[{operationName}] Cliente desechado: {ode.ObjectName}", ode);
+                    HandleWcfError("Conexión perdida", "No hay conexión con el servidor", ode, operationName);
+                    break;
+
+                case EndpointNotFoundException enfe:
+                    logger.LogError($"[{operationName}] Servidor no encontrado: {enfe.Message}", enfe);
+                    HandleWcfError("Conexión perdida", "No se pudo conectar al servidor. Verifique que esté en ejecución", enfe, operationName);
+                    break;
+
+                case FaultException fe:
+                    logger.LogError($"[{operationName}] Error del servicio: {fe.Message}", fe);
+                    HandleWcfError("Error de servicio", fe.Message, fe, operationName);
+                    break;
+
+                case CommunicationException ce:
+                    logger.LogError($"[{operationName}] Error de comunicación: {ce.Message}", ce);
+                    HandleWcfError("Conexión perdida", $"La operación '{operationName}' falló", ce, operationName);
+                    break;
+
+                case TimeoutException te:
+                    logger.LogError($"[{operationName}] Tiempo de espera agotado", te);
+                    HandleWcfError("Timeout", $"Tiempo de espera agotado para '{operationName}'", te, operationName);
+                    break;
+
+                default:
+                    logger.LogError($"[{operationName}] Error inesperado ({ex.GetType().Name}): {ex.Message}", ex);
+                    HandleWcfError("Error inesperado", ex.Message, ex, operationName);
+                    break;
+            }
+        }
+
         private void HandleWcfError(string title, string message, Exception ex, string operationName)
         {
             UpdateServerState(false);
 
-            string logMessage = $"WCF Error en '{operationName}': {title} - {message}";
+            lastErrorTitle = title;
+            lastErrorMessage = message;
 
+            string logMessage = $"WCF Error en '{operationName}': {title} - {message}";
             if (ex.InnerException != null)
-            {
                 logMessage += $" | Inner: {ex.InnerException.Message}";
-            }
 
             logger.LogError(logMessage, ex);
-
-            onError(title, message);
         }
 
         private void UpdateServerState(bool isAvailable)
@@ -216,13 +164,9 @@ namespace ArchsVsDinosClient.Utils
                 IsServerAvailable = isAvailable;
 
                 if (isAvailable)
-                {
                     logger.LogInfo("Server connection restored");
-                }
                 else
-                {
                     logger.LogWarning("Server connection lost");
-                }
 
                 ServerStateChanged?.Invoke(this, new ServerStateChangedEventArgs(isAvailable));
             }
@@ -231,18 +175,9 @@ namespace ArchsVsDinosClient.Utils
         public void RestoreNormalMode()
         {
             UpdateServerState(true);
+            errorAlreadyReported = false;
+            operationInProgress = false;
         }
     }
 
-    public class ServerStateChangedEventArgs : EventArgs
-    {
-        public bool IsAvailable { get; }
-        public DateTime Timestamp { get; }
-
-        public ServerStateChangedEventArgs(bool isAvailable)
-        {
-            IsAvailable = isAvailable;
-            Timestamp = DateTime.Now;
-        }
-    }
 }

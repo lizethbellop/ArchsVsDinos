@@ -76,11 +76,20 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             return null;
         }
 
-
         private bool IsUserHost(Lobby lobby, string username)
         {
             var hostPlayer = lobby.Players.FirstOrDefault(player => player.IsHost);
             return hostPlayer != null && hostPlayer.Username == username;
+        }
+
+        private string GenerateUniqueMatchCode()
+        {
+            string code;
+            do
+            {
+                code = CodeGenerator.GenerateMatchCode();
+            } while (ActiveMatches.ContainsKey(code));
+            return code;
         }
 
         public LobbyResultCode CreateANewMatch(UserAccountDTO hostUser)
@@ -94,7 +103,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 
             try
             {
-                string matchCode = CodeGenerator.GenerateMatchCode();
+                string matchCode = GenerateUniqueMatchCode();
                 LobbyPlayerDTO hostPlayer = CreatePlayer(hostUser, true);
 
                 Lobby newLobby = new Lobby();
@@ -248,7 +257,6 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 return LobbyResultCode.Lobby_NotExist;
             }
                 
-
             if (!IsUserHost(targetLobby, hostUsername))
             {
                 return LobbyResultCode.Lobby_NotHost;
@@ -256,26 +264,83 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 
             lock (targetLobby)
             {
-                LobbyPlayerDTO expelledPlayer =
-                    targetLobby.Players.FirstOrDefault(player => player.Username == usernameToExpel);
-
-                if (expelledPlayer == null)
+                LobbyPlayerDTO playerToExpel = targetLobby.Players.FirstOrDefault(player => player.Username == usernameToExpel);
+                if (playerToExpel == null)
                 {
                     return LobbyResultCode.Lobby_PlayerExpelledError;
                 }
-                   
-                targetLobby.Players.Remove(expelledPlayer);
+                    
+                targetLobby.Players.Remove(playerToExpel);
 
-                List<ILobbyManagerCallback> failedCallbacks =
-                    BroadcastToCallbacks(targetLobby.Callbacks, callback =>
-                        callback.ExpelledFromLobby(expelledPlayer));
+                var failedPlayerCallbacks = BroadcastToCallbacks(
+                    targetLobby.Callbacks.Where(callback => callback != OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>()),
+                    callback => callback.LeftLobby(playerToExpel)
+                );
 
-                foreach (var failed in failedCallbacks)
-                {
-                    targetLobby.Callbacks.Remove(failed);
-                }
+                foreach (var failedCallback in failedPlayerCallbacks)
+                    targetLobby.Callbacks.Remove(failedCallback);
+
+                NotifyPlayerExpelled(playerToExpel);
 
                 return LobbyResultCode.Lobby_PlayerExpelled;
+            }
+        }
+
+        private void NotifyPlayerExpelled(LobbyPlayerDTO expelledPlayer)
+        {
+            try
+            {
+                var expelledPlayerCallback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
+                expelledPlayerCallback.ExpelledFromLobby(expelledPlayer);
+            }
+            catch (CommunicationException communicationError)
+            {
+                loggerHelper.LogError($"Communication error while expelling player {expelledPlayer.Username}", communicationError);
+            }
+            catch (Exception unexpectedError)
+            {
+                loggerHelper.LogError($"Unexpected error while expelling player {expelledPlayer.Username}", unexpectedError);
+            }
+        }
+
+        public LobbyResultCode StartTheGame(string matchCode, string hostUsername)
+        {
+            Lobby targetLobby;
+
+            if (!ActiveMatches.TryGetValue(matchCode, out targetLobby))
+            {
+                return LobbyResultCode.Lobby_NotExist;
+            }
+
+            if (IsUserHost(targetLobby, hostUsername))
+            {
+                lock (targetLobby)
+                {
+
+                    if (targetLobby.Players.Count < 2)
+                    {
+                        return LobbyResultCode.Lobby_IncompleteLobby;
+                    }
+
+                    var failedCallbacks = BroadcastToCallbacks(
+                        targetLobby.Callbacks,
+                        callback => callback.GameStarted(matchCode, targetLobby.Players)
+                    );
+
+                    foreach (var failed in failedCallbacks)
+                    {
+                        targetLobby.Callbacks.Remove(failed);
+                    }
+
+                    ActiveMatches.TryRemove(matchCode, out targetLobby);
+
+                    return LobbyResultCode.Lobby_GameStarted;
+
+                }
+            }
+            else
+            {
+                return LobbyResultCode.Lobby_NotHost;
             }
         }
 
@@ -318,10 +383,6 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
 
                     LoggerHelper.LogInfo($"Jugador {username} expulsado del lobby {targetLobby.MatchCode}: {reason}");
 
-                    if (targetLobby.Players.Count < 2)
-                    {
-                        CloseLobbiesByInsufficientPlayers(targetLobby.MatchCode, "Jugadores insuficientes para continuar");
-                    }
                 }
             }
             catch (InvalidOperationException ex)
@@ -338,56 +399,5 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             }
         }*/
 
-        public void CloseLobbiesByInsufficientPlayers(string matchCode, string reason)
-        {
-            try
-            {
-                Lobby targetLobby;
-
-                if (!ActiveMatches.TryGetValue(matchCode, out targetLobby))
-                {
-                    return;
-                }
-
-                lock (targetLobby)
-                {
-                    if (targetLobby.Players.Count < 2)
-                    {
-                        try
-                        {
-                            List<ILobbyManagerCallback> failedCallbacks = BroadcastToCallbacks(
-                                targetLobby.Callbacks,
-                                callback => callback.LobbyCancelled(matchCode)
-                            );
-
-                            foreach (var failed in failedCallbacks)
-                            {
-                                targetLobby.Callbacks.Remove(failed);
-                            }
-
-                            ActiveMatches.TryRemove(matchCode, out _);
-
-                            LoggerHelper.LogInfo($"Lobby {matchCode} cerrado: {reason}");
-                        }
-                        catch (CommunicationException ex)
-                        {
-                            LoggerHelper.LogError($"Error de comunicación al cerrar lobby {matchCode}", ex);
-                        }
-                        catch (TimeoutException ex)
-                        {
-                            LoggerHelper.LogError($"Timeout al cerrar lobby {matchCode}", ex);
-                        }
-                    }
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                LoggerHelper.LogError($"Operación inválida al cerrar lobby {matchCode}", ex);
-            }
-            catch (Exception ex)
-            {
-                LoggerHelper.LogError($"Error inesperado al cerrar lobby {matchCode}", ex);
-            }
-        }
     }
 }

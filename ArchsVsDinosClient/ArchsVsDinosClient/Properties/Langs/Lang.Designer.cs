@@ -889,7 +889,7 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a ¿Quieres es pulsar a .
+        ///   Busca una cadena traducida similar a ¿Quieres expulsar a .
         /// </summary>
         public static string Lobby_QuestKick {
             get {
@@ -1839,6 +1839,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string WcfNoConnection {
             get {
                 return ResourceManager.GetString("WcfNoConnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo conectar al servidor, verifique que esté en ejecución.
+        /// </summary>
+        public static string WcfServerConnectionError {
+            get {
+                return ResourceManager.GetString("WcfServerConnectionError", resourceCulture);
             }
         }
     }

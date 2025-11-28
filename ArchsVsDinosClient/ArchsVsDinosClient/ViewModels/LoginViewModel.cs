@@ -1,10 +1,12 @@
 ﻿using ArchsVsDinosClient.AuthenticationService;
 using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.Logging;
 using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
+using log4net.Repository.Hierarchy;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ClientDTO = ArchsVsDinosClient.DTO;
+using Logger = ArchsVsDinosClient.Logging.Logger;
 using ServiceDTO = ArchsVsDinosClient.AuthenticationService;
 
 
@@ -24,8 +27,11 @@ namespace ArchsVsDinosClient.ViewModels
     {
         private readonly IAuthenticationServiceClient authenticationService;
         private readonly IMessageService messageService;
+        private readonly ILogger log;
+
         private string username;
         private string password;
+
         public string Username
         {
             get => username;
@@ -43,6 +49,7 @@ namespace ArchsVsDinosClient.ViewModels
 
         public LoginViewModel()
         {
+            log = new Logger(typeof(AuthenticationServiceClient));
             authenticationService = new AuthenticationServiceClient();
             messageService = new MessageService();
 
@@ -59,9 +66,20 @@ namespace ArchsVsDinosClient.ViewModels
 
             var response = await authenticationService.LoginAsync(Username, Password);
 
+            if (!authenticationService.IsServerAvailable)
+            {
+                messageService.ShowMessage(
+                    authenticationService.LastErrorTitle + "\n" +
+                    authenticationService.LastErrorMessage
+                );
+                return;
+            }
+
             if (response == null || !response.Success)
             {
-                string message = LoginResultCodeHelper.GetMessage(response?.ResultCode ?? LoginResultCode.Authentication_UnexpectedError);
+                string message = LoginResultCodeHelper.GetMessage(
+                    response?.ResultCode ?? LoginResultCode.Authentication_UnexpectedError
+                );
                 messageService.ShowMessage(message);
                 return;
             }
@@ -69,29 +87,27 @@ namespace ArchsVsDinosClient.ViewModels
             string successMessage = LoginResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
 
-            ClientDTO.UserDTO user = response.UserSession.ToUserDTO();
-            ClientDTO.PlayerDTO player = response.AssociatedPlayer.ToPlayerDTO();
+            var user = response.UserSession.ToUserDTO();
+            var player = response.AssociatedPlayer.ToPlayerDTO();
+
             UserSession.Instance.Login(user, player);
             RequestClose?.Invoke(this, EventArgs.Empty);
-
         }
 
         private void OnConnectionError(string title, string message)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                messageService.ShowMessage($"{title}: {message}");
+                messageService.ShowMessage(title + ": " + message);
             });
         }
 
         private bool ValidateInputs(string username, string password)
         {
-            if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username) || (ValidationHelper.IsEmpty(password) || ValidationHelper.IsWhiteSpace(password)))
-            {
-                return false;
-            }
-
-            return true;
+            return !(ValidationHelper.IsEmpty(username) ||
+                     ValidationHelper.IsWhiteSpace(username) ||
+                     ValidationHelper.IsEmpty(password) ||
+                     ValidationHelper.IsWhiteSpace(password));
         }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -99,4 +115,6 @@ namespace ArchsVsDinosClient.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
+
 }

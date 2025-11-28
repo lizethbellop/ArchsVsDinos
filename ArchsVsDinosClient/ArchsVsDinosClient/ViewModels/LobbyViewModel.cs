@@ -4,6 +4,8 @@ using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.Views.LobbyViews;
+using ArchsVsDinosClient.Views.MatchViews;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,6 +50,7 @@ namespace ArchsVsDinosClient.ViewModels
             lobbyServiceClient.PlayerLeft += OnPlayerLeft;
             lobbyServiceClient.PlayerExpelled += OnPlayerExpelled;
             lobbyServiceClient.LobbyCancelled += OnLobbyCancelled;
+            lobbyServiceClient.GameStartedEvent += OnGameStarted;
 
             for (int i = 0; i < 4; i++)
                 Slots.Add(new SlotLobby());
@@ -79,21 +82,26 @@ namespace ArchsVsDinosClient.ViewModels
             lobbyServiceClient.CreateLobby(userAccount);
         }
 
-
-        public void ExpelPlayer(string hostUsername, string targetUsername)
+        public void ExpelThePlayer(string targetUsername, string hostUsername)
         {
-            lobbyServiceClient.ExpelPlayer(hostUsername, targetUsername);
+            lobbyServiceClient.ExpelPlayer(targetUsername, hostUsername);
         }
 
-        public void LeaveLobby(string username)
+        public void LeaveOfTheLobby(string username)
         {
             lobbyServiceClient.LeaveLobby(username);
         }
 
-        public void CancellLobby(string matchCode, string usernameRequester)
+        public void CancellTheLobby(string matchCode, string usernameRequester)
         {
             lobbyServiceClient.CancellLobby(matchCode, usernameRequester);
         }
+
+        public void StartTheGame(string matchCode, string hostUsername)
+        {
+            lobbyServiceClient.StartGame(matchCode, hostUsername);
+        }
+
         public bool CurrentClientIsHost() => Players.FirstOrDefault(player => player.IsHost)?.Username == UserSession.Instance.CurrentUser.Username;
 
         protected void OnPropertyChanged(string propertyName)
@@ -187,6 +195,24 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
+        private void OnGameStarted(string matchCode, List<LobbyPlayerDTO> player)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var match = new MainMatch(UserSession.Instance.CurrentUser.Username);
+                match.Show();
+
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window is Lobby)
+                    {
+                        window.Close();
+                        break;
+                    }
+                }
+            });
+        }
+
         private void UpdateSlots()
         {
             var localUsername = UserSession.Instance.CurrentUser.Username;
@@ -211,6 +237,7 @@ namespace ArchsVsDinosClient.ViewModels
                     Slots[i].IsFriend = false;
                     Slots[i].CanKick = CurrentClientIsHost() && player.Username != localUsername;
                     Slots[i].IsLocalPlayer = player.Username == localUsername;
+                    Slots[i].IsFriend = false;
                 }
                 else
                 {
@@ -218,6 +245,7 @@ namespace ArchsVsDinosClient.ViewModels
                     Slots[i].Nickname = string.Empty;
                     Slots[i].IsFriend = false;
                     Slots[i].CanKick = false;
+                    Slots[i].IsLocalPlayer = false;
                 }
             }
         }

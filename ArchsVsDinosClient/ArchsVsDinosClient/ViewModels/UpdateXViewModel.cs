@@ -25,8 +25,6 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
-
-            this.profileService.ConnectionError += OnConnectionError;
         }
 
         public async Task SaveXLink()
@@ -53,14 +51,6 @@ namespace ArchsVsDinosClient.ViewModels
             string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
             RequestClose?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void OnConnectionError(string title, string message)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                messageService.ShowMessage($"{title}: {message}");
-            });
         }
 
         private static bool IsValidXLink(string xLink)

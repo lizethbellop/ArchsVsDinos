@@ -27,7 +27,6 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
-            this.profileService.ConnectionError += OnConnectionError;
 
             avatarPaths = new Dictionary<int, string>
         {
@@ -94,12 +93,5 @@ namespace ArchsVsDinosClient.ViewModels
             return !string.IsNullOrEmpty(SelectedAvatarPath);
         }
 
-        private void OnConnectionError(string title, string message)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                messageService.ShowMessage($"{title}: {message}");
-            });
-        }
     }
 }

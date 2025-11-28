@@ -89,8 +89,8 @@
             <Button Content="{x:Static language:Lang.Login_RegisterHereText}" Click="Click_BtnRegister" Background="{x:Null}" Foreground="#FF0A46B5" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" RenderTransformOrigin="0.531,0.268"/>
         </UniformGrid>
         <StackPanel Grid.Row="5" Margin="0,5" HorizontalAlignment="Center" >
-            <Button Content="{x:Static language:Lang.Login_EnterText}" Click="Click_BtnLogin" Margin="0,0,0,10" HorizontalAlignment="Center" Height="31" VerticalAlignment="Top" Width="202" Background="#FF6ABA2A" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold"  FontSize="18"/>
-            <Button Content="{x:Static language:Lang.Login_PlayAsGuest}" Click="Click_BtnPlayAsGuest" HorizontalAlignment="Center" Height="32"  VerticalAlignment="Top" Width="200" Background="#FF4877C2" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18"/>
+            <Button Name ="BtnEnter" Content="{x:Static language:Lang.Login_EnterText}" Click="Click_BtnLogin" Margin="0,0,0,10" HorizontalAlignment="Center" Height="31" VerticalAlignment="Top" Width="202" Background="#FF6ABA2A" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold"  FontSize="18"/>
+            <Button Name ="BtnPlayAsGuest" Content="{x:Static language:Lang.Login_PlayAsGuest}" Click="Click_BtnPlayAsGuest" HorizontalAlignment="Center" Height="32"  VerticalAlignment="Top" Width="200" Background="#FF4877C2" Foreground="White" FontWeight="Bold" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18"/>
         </StackPanel>
 
         <Grid x:Name="LoadingOverlay"

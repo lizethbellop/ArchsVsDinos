@@ -22,4 +22,10 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="LobbyPlayerDTO" nillable="true" type="tns:LobbyPlayerDTO" />
+  <xs:complexType name="ArrayOfLobbyPlayerDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LobbyPlayerDTO" nillable="true" type="tns:LobbyPlayerDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLobbyPlayerDTO" nillable="true" type="tns:ArrayOfLobbyPlayerDTO" />
 </xs:schema>

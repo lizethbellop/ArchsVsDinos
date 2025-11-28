@@ -19,7 +19,6 @@ namespace ArchsVsDinosClient.Services
         public event Action<ArchArmyProvokedDTO> ArchArmyProvoked;
         public event Action<BattleResultDTO> BattleResolved;
         public event Action<GameEndedDTO> GameEnded;
-
         public event Action<PlayerExpelledDTO> PlayerExpelled;
 
         public void OnGameInitialized(GameInitializedDTO data)
@@ -70,6 +69,11 @@ namespace ArchsVsDinosClient.Services
         public void OnGameEnded(GameEndedDTO data)
         {
             GameEnded?.Invoke(data);
+        }
+        public void NotifySystemMessage(string title, string message)
+        {
+            // si quieres luego agregar un evento, aquí lo puedes manejar
+            Console.WriteLine($"[SYSTEM MESSAGE] {title}: {message}");
         }
 
         public void OnPlayerExpelled(PlayerExpelledDTO data)

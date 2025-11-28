@@ -61,6 +61,11 @@ namespace ArchsVsDinosServer.Services
         {
             throw new NotImplementedException();
         }
+
+        public LobbyResultCode StartGame(string matchCode, string hostUsername)
+        {
+            return lobbyBusinessLogic.StartTheGame(matchCode, hostUsername);
+        }
         /*
 public InviteFriendToMatch(string username, string friendUsername, string matchCode)
 {

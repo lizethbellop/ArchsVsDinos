@@ -1,5 +1,10 @@
-﻿using ArchsVsDinosClient.Models;
+﻿using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.Logging;
+using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
+using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views;
 using System;
 using System.Collections.Generic;
@@ -14,10 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using ArchsVsDinosClient.DTO;
-using ArchsVsDinosClient.Utils;
 using AuthenticationService = ArchsVsDinosClient.AuthenticationService;
-using ArchsVsDinosClient.ViewModels;
 
 namespace ArchsVsDinosClient
 {
@@ -25,6 +27,7 @@ namespace ArchsVsDinosClient
     {
 
         private readonly LoginViewModel viewModel;
+        private readonly ILogger logger;
         public Login()
         {
             InitializeComponent();
@@ -32,6 +35,7 @@ namespace ArchsVsDinosClient
             DataContext = viewModel;
             viewModel.RequestClose += OnRequestClose;
             MusicPlayer.Instance.StopBackgroundMusic();
+            logger = new Logger(typeof(AuthenticationServiceClient));
         }
 
         private void Click_BtnRegister(object sender, RoutedEventArgs e)
@@ -49,11 +53,18 @@ namespace ArchsVsDinosClient
             viewModel.Username = username;
             viewModel.Password = password;
 
-            ShowLoading();
+            LoadingDisplayHelper.ShowLoading(LoadingOverlay);
+            BtnEnter.IsEnabled = false;
 
-            await viewModel.LoginAsync();
-
-            HideLoading();
+            try
+            {
+                await viewModel.LoginAsync();
+            }
+            finally
+            {
+                LoadingDisplayHelper.HideLoading(LoadingOverlay);
+                BtnEnter.IsEnabled = true;
+            }
 
         }
 
@@ -101,15 +112,7 @@ namespace ArchsVsDinosClient
             this.Close();
         }
 
-        private void ShowLoading()
-        {
-            LoadingOverlay.Visibility = Visibility.Visible;
-        }
-
-        private void HideLoading()
-        {
-            LoadingOverlay.Visibility = Visibility.Collapsed;
-        }
+        
 
     }
 }

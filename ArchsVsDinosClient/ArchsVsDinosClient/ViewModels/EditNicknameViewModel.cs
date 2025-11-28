@@ -19,6 +19,7 @@ namespace ArchsVsDinosClient.ViewModels
     {
         private readonly IProfileServiceClient profileService;
         private readonly IMessageService messageService;
+        private readonly ServiceOperationHelper serviceHelper;
 
         public string NewNickname { get; set; }
         public event EventHandler RequestClose;
@@ -27,7 +28,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
-            this.profileService.ConnectionError += OnConnectionError;
+            this.serviceHelper = new ServiceOperationHelper(messageService);
         }
 
         public async Task SaveEditNickname()
@@ -39,31 +40,33 @@ namespace ArchsVsDinosClient.ViewModels
             }
 
             string currentUsername = UserSession.Instance.CurrentUser.Username;
-            UpdateResponse response = await profileService.UpdateNicknameAsync(currentUsername, NewNickname);
+            UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
+                profileService,
+                () => profileService.UpdateNicknameAsync(currentUsername, NewNickname)
+            );
 
-            if (response == null || !response.Success)
+            if (response == null)
             {
-                if (response != null) 
-                {
-                    string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                    messageService.ShowMessage(message);
-                }
                 return;
             }
 
+            if (!response.Success)
+            {
+                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
+                messageService.ShowMessage(message);
+                return;
+            }
+
+            HandleSuccess(response);
+        }
+
+        private void HandleSuccess(UpdateResponse response)
+        {
             string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
             UserSession.Instance.CurrentUser.Nickname = NewNickname;
             UserProfileObserver.Instance.NotifyProfileUpdated();
             RequestClose?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void OnConnectionError(string title, string message)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                messageService.ShowMessage($"{title}: {message}");
-            });
         }
 
         private static bool IsValidNickname(string nickname)

@@ -13,6 +13,8 @@ namespace ArchsVsDinosServer.Services
     {
 
         public event Action<LobbyPlayerDTO, string> OnCreatedMatch;
+        public event Action<LobbyPlayerDTO> OnPlayerExpelled;
+        public event Action<LobbyPlayerDTO> OnLeftLobby;
         private readonly ILoggerHelper loggerHelper;
 
         public LobbyCallbackManager(ILoggerHelper loggerHelper)
@@ -94,6 +96,7 @@ namespace ArchsVsDinosServer.Services
                     return;
                 }
 
+                OnLeftLobby?.Invoke(playerWhoLeft);
                 loggerHelper.LogInfo(
                     $"Player {playerWhoLeft.Username} left the lobby."
                 );
@@ -118,6 +121,7 @@ namespace ArchsVsDinosServer.Services
                     return;
                 }
 
+                OnPlayerExpelled?.Invoke(expelledPlayer);
                 loggerHelper.LogInfo(
                     $"Player {expelledPlayer.Username} was expelled from the lobby."
                 );
@@ -129,6 +133,34 @@ namespace ArchsVsDinosServer.Services
             catch (Exception ex)
             {
                 loggerHelper.LogError("Unexpected error in ExpelledPlayerFromLobby notification.", ex);
+            }
+        }
+
+        public void GameStarted(string matchCode, List<LobbyPlayerDTO> players)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(matchCode))
+                {
+                    loggerHelper.LogWarning("Invalid match code while starting the game.");
+                    return;
+                }
+
+                if (players == null || players.Count == 0)
+                {
+                    loggerHelper.LogWarning("There aren't enough players in lobby.");
+                    return;
+                }
+
+                string playerList = string.Join(", ", players.Select(player => player.Username));
+            }
+            catch (CommunicationException ex)
+            {
+                loggerHelper.LogError("Communication error while starting the game.", ex);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError("Unexpected error in GameStarted notification.", ex);
             }
         }
 

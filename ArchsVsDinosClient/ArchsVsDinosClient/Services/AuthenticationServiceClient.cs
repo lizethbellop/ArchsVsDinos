@@ -14,33 +14,47 @@ namespace ArchsVsDinosClient.Services
     public class AuthenticationServiceClient : IAuthenticationServiceClient
     {
         private readonly AuthenticationManagerClient client;
-        private readonly WcfConnectionGuardian guardian; 
+        private readonly WcfConnectionGuardian guardian;
+        private readonly ILogger logger;
         private bool isDisposed;
 
         public event Action<string, string> ConnectionError;
 
+        public bool IsServerAvailable => guardian.IsServerAvailable;
+        public string LastErrorTitle => guardian.LastErrorTitle;
+        public string LastErrorMessage => guardian.LastErrorMessage;
+
         public AuthenticationServiceClient()
         {
+            logger = new Logger(typeof(AuthenticationServiceClient));
+
             client = new AuthenticationManagerClient();
 
             guardian = new WcfConnectionGuardian(
-                onError: (title, msg) => ConnectionError?.Invoke(title, msg),
-                logger: new Logger()
+                onError: (title, msg) =>
+                {
+                    logger.LogError($"🔴 Guardian reportó error: {title} - {msg}");
+                    ConnectionError?.Invoke(title, msg);
+                },
+                logger: logger
             );
+
             guardian.MonitorClientState(client);
         }
 
         public async Task<LoginResponse> LoginAsync(string username, string password)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.Login(username, password)),
-                defaultValue: new LoginResponse { Success = false }
+                () => Task.FromResult(client.Login(username, password)),
+                defaultValue: new LoginResponse { Success = false, ResultCode = LoginResultCode.Authentication_UnexpectedError },
+                operationName: "Login"
             );
         }
 
         public void Dispose()
         {
             if (isDisposed) return;
+
             try
             {
                 if (client?.State == CommunicationState.Opened)
@@ -49,7 +63,10 @@ namespace ArchsVsDinosClient.Services
                     client.Abort();
             }
             catch { client?.Abort(); }
+
             isDisposed = true;
         }
     }
+
+
 }

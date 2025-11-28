@@ -711,4 +711,7 @@
   <data name="GlobalLoadingText" xml:space="preserve">
     <value>Loading</value>
   </data>
+  <data name="WcfServerConnectionError" xml:space="preserve">
+    <value>Couldn't connect to server, verify its execution</value>
+  </data>
 </root>

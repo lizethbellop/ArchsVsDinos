@@ -46,7 +46,20 @@ namespace ArchsVsDinosClient.Views
             viewModel.Password = TxtB_Password.Text;
             viewModel.Nickname = TxtB_Nickname.Text;
 
-            await viewModel.RegisterAsync();
+            LoadingDisplayHelper.ShowLoading(LoadingOverlay);
+            BtnRegister.IsEnabled = false;
+            BtnCancel.IsEnabled = false;
+
+            try
+            {
+                await viewModel.RegisterAsync();
+            }
+            finally
+            {
+                LoadingDisplayHelper.HideLoading(LoadingOverlay);
+                BtnRegister.IsEnabled = true;
+                BtnCancel.IsEnabled = true;
+            }
         }
 
         private void Click_BtnCancel(object sender, RoutedEventArgs e)

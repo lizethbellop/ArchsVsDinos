@@ -14,6 +14,7 @@ namespace ArchsVsDinosClient.Models
         private string nickname;
         private bool isFriend;
         private bool canKick;
+        private bool isLocalPlayer;
 
         public string Username
         {
@@ -39,12 +40,16 @@ namespace ArchsVsDinosClient.Models
             set { canKick = value; OnPropertyChanged(nameof(CanKick)); }
         }
 
+        public bool IsLocalPlayer
+        {
+            get => isLocalPlayer;
+            set { isLocalPlayer = value; OnPropertyChanged(nameof(IsLocalPlayer)); }
+        }
+
         public bool IsOccupied => !string.IsNullOrWhiteSpace(Username);
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-        public bool IsLocalPlayer { get; set; }
 
     }
 }

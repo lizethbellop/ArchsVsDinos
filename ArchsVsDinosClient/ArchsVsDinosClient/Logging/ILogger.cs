@@ -8,8 +8,9 @@ namespace ArchsVsDinosClient.Logging
 {
     public interface ILogger
     {
-        void LogError(string message, Exception exception = null);
-        void LogWarning(string message);
         void LogInfo(string message);
+        void LogWarning(string message);
+        void LogError(string message, Exception ex = null);
+        void LogDebug(string message);
     }
 }

@@ -15,6 +15,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<LobbyPlayerDTO> OnPlayerLeftLobby;
         public event Action<LobbyPlayerDTO> OnPlayerExpelled;
         public event Action<string> OnLobbyCancelled;
+        public event Action<string, List<LobbyPlayerDTO>> OnGameStarted;
 
         public void CreatedLobby(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode)
         {
@@ -39,6 +40,11 @@ namespace ArchsVsDinosClient.Services
         public void LobbyCancelled(string matchCode)
         {
             OnLobbyCancelled?.Invoke(matchCode);
+        }
+        
+        public void GameStarted(string matchCode, LobbyPlayerDTO[] players)
+        {
+            OnGameStarted?.Invoke(matchCode, players.ToList());
         }
     }
 }

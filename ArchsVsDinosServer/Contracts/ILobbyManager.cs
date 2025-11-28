@@ -28,6 +28,9 @@ namespace Contracts
         [OperationContract]
         LobbyResultCode ExpelPlayerLobby(string username, string hostUsername);
 
+        [OperationContract]
+        LobbyResultCode StartGame(string matchCode, string hostUsername);
+
         /*
 
         [OperationContract]

@@ -35,7 +35,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=3.2.0.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.3.2.0\lib\net462\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -43,6 +47,7 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -146,6 +151,7 @@
     <Compile Include="Services\Interfaces\ILobbyServiceClient.cs" />
     <Compile Include="Services\Interfaces\IMessageService.cs" />
     <Compile Include="Services\Interfaces\IProfileServiceClient.cs" />
+    <Compile Include="Services\Interfaces\IServiceClient.cs" />
     <Compile Include="Services\Interfaces\IStatisticsServiceClient.cs" />
     <Compile Include="Services\LobbyCallbackManager.cs" />
     <Compile Include="Services\LobbyServiceClient.cs" />
@@ -154,17 +160,21 @@
     <Compile Include="Services\StatisticsServiceClient.cs" />
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
     <Compile Include="Utils\ImageCompressor.cs" />
+    <Compile Include="Utils\LoadingDisplayHelper.cs" />
     <Compile Include="Utils\LoginResultCodeHelper.cs" />
     <Compile Include="Utils\MappingHelper.cs" />
     <Compile Include="Utils\MusicPlayer.cs" />
     <Compile Include="Utils\MusicTracks.cs" />
     <Compile Include="Utils\NavigationUtils.cs" />
+    <Compile Include="Utils\ServerStateChangedEventArgs.cs" />
+    <Compile Include="Utils\ServiceOperationHelper.cs" />
     <Compile Include="Utils\SoundButton.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Utils\UserProfileObserver.cs" />
     <Compile Include="Utils\WcfConnectionGuardian.cs" />
+    <Compile Include="Utils\WcfErrorInfo.cs" />
     <Compile Include="ViewModels\AvatarSelectionViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\DeckViewModel.cs" />

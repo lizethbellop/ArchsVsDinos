@@ -40,7 +40,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             {
                 viewModel.InitializeLobby();
             }
-                
+
         }
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)
@@ -52,9 +52,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
 
             SoundButton.PlayDestroyingRockSound();
-            var match = new MainMatch(UserSession.Instance.CurrentUser.Username);
-            match.Show();
-            this.Close();
+            viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
         }
 
 
@@ -67,34 +65,17 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 var result = MessageBox.Show(Lang.Lobby_CancellationLobbyConfirmation, Lang.GlobalAcceptText, MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    viewModel.CancellLobby(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
+                    viewModel.CancellTheLobby(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
                 }
             }
             else
             {
-                viewModel.LeaveLobby(UserSession.Instance.CurrentUser.Username);
+                viewModel.LeaveOfTheLobby(UserSession.Instance.CurrentUser.Username);
             }
 
             var main = new MainWindow();
             main.Show();
             this.Close();
-        }
-
-        private void Click_BtnExpelPlayer(object sender, RoutedEventArgs e)
-        {
-            var button = (Button)sender;
-            var usernameToExpel = (string)button.Tag;
-
-            if (!viewModel.CurrentClientIsHost())
-            {
-                MessageBox.Show(Lang.Lobby_OnlyHostCanKick);
-                return;
-            }
-
-            var confirm = MessageBox.Show($"{Lang.Lobby_QuestKick} {usernameToExpel}?", Lang.GlobalAcceptText, MessageBoxButton.YesNo);
-            if (confirm != MessageBoxResult.Yes) return;
-
-            viewModel.ExpelPlayer(UserSession.Instance.CurrentUser.Username, usernameToExpel);
         }
 
         private void Click_BtnInviteFriends(object sender, RoutedEventArgs e)

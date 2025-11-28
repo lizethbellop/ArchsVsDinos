@@ -667,7 +667,7 @@
     <value>Sólo el host puede expulsar jugadores</value>
   </data>
   <data name="Lobby_QuestKick" xml:space="preserve">
-    <value>¿Quieres es pulsar a </value>
+    <value>¿Quieres expulsar a </value>
   </data>
   <data name="JoinLobby_LobbyCode" xml:space="preserve">
     <value>Ingrese el código de partida</value>
@@ -710,5 +710,8 @@
   </data>
   <data name="GlobalLoadingText" xml:space="preserve">
     <value>Cargando</value>
+  </data>
+  <data name="WcfServerConnectionError" xml:space="preserve">
+    <value>No se pudo conectar al servidor, verifique que esté en ejecución</value>
   </data>
 </root>

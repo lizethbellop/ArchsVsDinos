@@ -26,6 +26,9 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void ExpelledFromLobby(LobbyPlayerDTO expelledPlayer);
 
+        [OperationContract(IsOneWay = true)]
+        void GameStarted(string matchCode, List<LobbyPlayerDTO> players);
+
         /*
         [OperationContract]
         void InvitedFriendToLobby(string username, string matchCode);

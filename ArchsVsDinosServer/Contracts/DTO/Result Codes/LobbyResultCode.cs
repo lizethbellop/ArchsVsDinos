@@ -23,7 +23,10 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Lobby_LobbyLeftError,
         [EnumMember] Lobby_PlayerExpelled,
         [EnumMember] Lobby_PlayerExpelledError,
-        [EnumMember] Lobby_FullLobby
+        [EnumMember] Lobby_FullLobby,
+        [EnumMember] Lobby_GameStarted,
+        [EnumMember] Lobby_IncompleteLobby,
+        [EnumMember] Lobby_ErrorGame
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,29 +9,38 @@ namespace ArchsVsDinosClient.Logging
 {
     public class Logger : ILogger
     {
-        public void LogError(string message, Exception exception = null)
-        {
-            System.Diagnostics.Debug.WriteLine($"[ERROR] {message}");
-            if (exception != null)
-            {
-                System.Diagnostics.Debug.WriteLine($"Exception: {exception.Message}");
-                System.Diagnostics.Debug.WriteLine($"StackTrace: {exception.StackTrace}");
-            }
-        }
+        private readonly ILog log;
 
-        public void LogWarning(string message)
+        public Logger(Type type = null)
         {
-            System.Diagnostics.Debug.WriteLine($"[WARNING] {message}");
+            log = LogManager.GetLogger(type ?? typeof(Logger));
         }
 
         public void LogInfo(string message)
         {
-            System.Diagnostics.Debug.WriteLine($"[INFO] {message}");
+            log.Info(message);
+        }
+
+        public void LogWarning(string message)
+        {
+            log.Warn(message);
+        }
+
+        public void LogError(string message, Exception ex = null)
+        {
+            if (ex != null)
+            {
+                log.Error(message, ex);
+            }
+            else
+            {
+                log.Error(message);
+            }
         }
 
         public void LogDebug(string message)
         {
-            System.Diagnostics.Debug.WriteLine($"[DEBUG] {message}");
+            log.Debug(message);
         }
     }
 }
