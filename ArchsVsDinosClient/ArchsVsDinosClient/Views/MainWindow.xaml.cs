@@ -22,9 +22,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient
 {
-    /// <summary>
-    /// Lógica de interacción para MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -57,7 +54,6 @@ namespace ArchsVsDinosClient
             SoundButton.PlayMovingRockSound();
             var lobby = new Lobby();
             lobby.Show();
-            this.Close();
         }
 
         private void Click_BtnJoinToMatch(object sender, RoutedEventArgs e)
@@ -65,6 +61,7 @@ namespace ArchsVsDinosClient
             SoundButton.PlayMovingRockSound();
             var joinCode = new JoinCode();
             joinCode.Show();
+            this.Close();
         }
 
         private void Click_BtnHowToPlay(object sender, RoutedEventArgs e)
