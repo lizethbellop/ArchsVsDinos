@@ -31,11 +31,12 @@ namespace Contracts
         [OperationContract]
         LobbyResultCode StartGame(string matchCode, string hostUsername);
         
+        /*
         [OperationContract]
         void InviteByEmailToLobby(string email, string matchCode);
 
 
-        /*
+        
         [OperationContract]
         void InviteFriendToLobby(string username, string friendUsername, string matchCode);
 
