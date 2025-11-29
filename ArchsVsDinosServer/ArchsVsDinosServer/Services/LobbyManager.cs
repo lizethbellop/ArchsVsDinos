@@ -66,7 +66,6 @@ namespace ArchsVsDinosServer.Services
         {
             return lobbyBusinessLogic.StartTheGame(matchCode, hostUsername);
         }
-
         /*
         public LobbyResultCode InviteByEmailToMatch(string email, string matchCode)
         {

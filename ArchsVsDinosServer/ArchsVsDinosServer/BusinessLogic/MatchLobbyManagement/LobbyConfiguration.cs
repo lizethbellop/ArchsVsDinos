@@ -342,13 +342,12 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 return LobbyResultCode.Lobby_NotHost;
             }
         }
-
         /*
         public LobbyResultCode InvitByAnEmailToMatch(string email, string matchCode)
         {
 
         }
-
+        
         public void ExpelPlayerByStrike(string username, string reason)
         {
             try
