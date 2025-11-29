@@ -109,6 +109,11 @@ namespace ArchsVsDinosClient.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public int GetPlayersCount()
+        {
+            return Players?.Count ?? 0;
+        }
+
         private void OnLobbyCreated(LobbyPlayerDTO createdPlayer, string code)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -195,11 +200,19 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        private void OnGameStarted(string matchCode, List<LobbyPlayerDTO> player)
+        private void OnGameStarted(string matchCode, List<LobbyPlayerDTO> players)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var match = new MainMatch(UserSession.Instance.CurrentUser.Username);
+                var myUsername = UserSession.Instance.CurrentUser.Username;
+                var convertedPlayers = players.Select(player => new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+                {
+                    Username = player.Username,
+                    Nickname = player.Nickname,
+                    IsHost = player.IsHost
+                }).ToList();
+
+                var match = new MainMatch(convertedPlayers, myUsername);
                 match.Show();
 
                 foreach (Window window in Application.Current.Windows)

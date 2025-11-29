@@ -48,11 +48,21 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             if (!viewModel.CurrentClientIsHost())
             {
                 MessageBox.Show(Lang.Lobby_LobbyBeginHost);
-                return;
             }
+            else
+            {
+                int totalPlayers = viewModel.GetPlayersCount(); 
 
-            SoundButton.PlayDestroyingRockSound();
-            viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
+                if (totalPlayers < 2)
+                {
+                    MessageBox.Show("Necesitas al menos 2 jugadores para comenzar la partida.");
+                }
+                else
+                {
+                    SoundButton.PlayDestroyingRockSound();
+                    viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
+                }
+            }
         }
 
 

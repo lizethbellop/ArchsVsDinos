@@ -54,6 +54,7 @@ namespace ArchsVsDinosClient
             SoundButton.PlayMovingRockSound();
             var lobby = new Lobby();
             lobby.Show();
+            this.Close();
         }
 
         private void Click_BtnJoinToMatch(object sender, RoutedEventArgs e)
@@ -61,7 +62,6 @@ namespace ArchsVsDinosClient
             SoundButton.PlayMovingRockSound();
             var joinCode = new JoinCode();
             joinCode.Show();
-            this.Close();
         }
 
         private void Click_BtnHowToPlay(object sender, RoutedEventArgs e)

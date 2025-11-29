@@ -541,6 +541,9 @@
     <None Include="Connected Services\GameService\item6.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\GameService\item61.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.LobbyResultCode.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>

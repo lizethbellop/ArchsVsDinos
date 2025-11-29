@@ -44,7 +44,6 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             return PlayerCreator.FromLogin(userAccount, playerProfile, isHost);
         }
 
-
         private List<ILobbyManagerCallback> BroadcastToCallbacks(IEnumerable<ILobbyManagerCallback> callbackList, Action<ILobbyManagerCallback> notifyAction)
         {
             var failedCallbacks = new List<ILobbyManagerCallback>();
@@ -293,13 +292,13 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 var expelledPlayerCallback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
                 expelledPlayerCallback.ExpelledFromLobby(expelledPlayer);
             }
-            catch (CommunicationException communicationError)
+            catch (CommunicationException ex)
             {
-                loggerHelper.LogError($"Communication error while expelling player {expelledPlayer.Username}", communicationError);
+                loggerHelper.LogError($"Communication error while expelling player {expelledPlayer.Username}", ex);
             }
-            catch (Exception unexpectedError)
+            catch (Exception ex)
             {
-                loggerHelper.LogError($"Unexpected error while expelling player {expelledPlayer.Username}", unexpectedError);
+                loggerHelper.LogError($"Unexpected error while expelling player {expelledPlayer.Username}", ex);
             }
         }
 

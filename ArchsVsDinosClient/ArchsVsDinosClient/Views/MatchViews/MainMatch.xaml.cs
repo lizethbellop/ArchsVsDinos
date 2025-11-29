@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Models;
+﻿using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
@@ -26,17 +27,14 @@ namespace ArchsVsDinosClient.Views.MatchViews
     {
         private readonly ChatViewModel chatViewModel;
         private readonly string currentUsername;
+        private readonly List<LobbyPlayerDTO> playersInMatch;
 
-        public MainMatch(string username)
+        public MainMatch(List<LobbyPlayerDTO> players, string myUsername)
         {
             InitializeComponent();
 
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                throw new ArgumentException("Username cannot be null or empty", nameof(username));
-            }
-
-            currentUsername = username;
+            currentUsername = myUsername;
+            playersInMatch = players;
 
             try
             {
@@ -54,6 +52,23 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 MessageBox.Show("Failed to initialize chat service. The game will continue without chat functionality.",
                     "Chat Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+
+            InitializePlayers(playersInMatch, currentUsername);
+        }
+
+        private void InitializePlayers(List<LobbyPlayerDTO> players, string myUsername)
+        {
+            var others = players.Where(player => player.Username != myUsername).ToList();
+
+            if (others.Count > 0)
+                Lb_TopPlayerName.Content = others[0].Username;
+
+            if (others.Count > 1)
+                Lb_LeftPlayerName.Content = others[1].Username;
+
+            if (others.Count > 2)
+                Lb_RightPlayerName.Content = others[2].Username;
+
         }
 
         private async void Match_Loaded(object sender, RoutedEventArgs e)
