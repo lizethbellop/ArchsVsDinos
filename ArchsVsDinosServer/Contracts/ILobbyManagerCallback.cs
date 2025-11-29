@@ -33,12 +33,6 @@ namespace Contracts
         [OperationContract]
         void InvitedFriendToLobby(string username, string matchCode);
 
-        [OperationContract(IsOneWay = true)]
-        void InvitedByEmailToLobby(string email, string matchCode);
-
-
-
-
 
         */
 

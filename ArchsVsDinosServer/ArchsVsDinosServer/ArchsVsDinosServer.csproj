@@ -244,6 +244,8 @@
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Utils\CodeGenerator.cs" />
+    <Compile Include="Utils\EmailService.cs" />
+    <Compile Include="Utils\EnvLoader.cs" />
     <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\ProfanityFilter.cs" />
     <Compile Include="Utils\RegisterServiceDependencies.cs" />
@@ -255,6 +257,7 @@
     <Compile Include="Utils\VerificationCodeManager.cs" />
     <Compile Include="Wrappers\CodeGeneratorWrapper.cs" />
     <Compile Include="Wrappers\DbContextWrapper.cs" />
+    <Compile Include="Wrappers\EmailServiceWrapper.cs" />
     <Compile Include="Wrappers\LoggerHelperWrapper.cs" />
     <Compile Include="Wrappers\SecurityHelperWrapper.cs" />
     <Compile Include="Wrappers\ValidationHelperWrapper.cs" />
@@ -267,6 +270,9 @@
     </EntityDeploy>
     <None Include="ArchsVsDinosModel.edmx.diagram">
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
+    </None>
+    <None Include="Utils\email.env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

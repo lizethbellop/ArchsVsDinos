@@ -67,3 +67,7 @@ logs/
 *.user
 *.userosscache
 *.sln.docstates
+
+# Environment files (private config)
+email.env
+*.env

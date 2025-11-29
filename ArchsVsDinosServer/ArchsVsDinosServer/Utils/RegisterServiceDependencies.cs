@@ -23,7 +23,7 @@ namespace ArchsVsDinosServer.Utils
         {
             securityHelper = new Wrappers.SecurityHelperWrapper();
             loggerHelper = new Wrappers.LoggerHelperWrapper();
-            emailService = new EmailService();
+            emailService = new Wrappers.EmailServiceWrapper();
             codeGenerator = new Wrappers.CodeGeneratorWrapper();
             codeManager = new VerificationCodeManager();
             contextFactory = () => new Wrappers.DbContextWrapper();

@@ -26,7 +26,9 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Lobby_FullLobby,
         [EnumMember] Lobby_GameStarted,
         [EnumMember] Lobby_IncompleteLobby,
-        [EnumMember] Lobby_ErrorGame
+        [EnumMember] Lobby_ErrorGame,
+        [EnumMember] Lobby_EmailSended,
+        [EnumMember] Lobby_EmailSendError
     }
 
 }

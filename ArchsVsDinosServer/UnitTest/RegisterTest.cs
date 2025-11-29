@@ -41,6 +41,7 @@ namespace UnitTest
             mockCodeManager = new Mock<IVerificationCodeManager>();
             mockConfigurationSet = new Mock<DbSet<Configuration>>();
 
+
             RegisterServiceDependencies dependencies = new RegisterServiceDependencies
             {
                 securityHelper = mockSecurityHelper.Object,
@@ -52,8 +53,8 @@ namespace UnitTest
             };
 
             register = new Register(dependencies);
-        }
 
+        }
 
         [TestMethod]
         public void TestValidateUsernameAndNicknameBothAvailable()

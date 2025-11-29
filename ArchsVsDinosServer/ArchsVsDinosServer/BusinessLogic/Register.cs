@@ -132,18 +132,12 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 return false;
             }
-            catch (SmtpException ex)
-            {
-                LoggerHelper.LogError($"Smtp error at sending email", ex);
-                return false;
-            }
             catch (Exception ex)
             {
-                LoggerHelper.LogError($"Unexpected error at sending email", ex);
+                loggerHelper.LogError($"Unexpected error at sending email", ex);
                 return false;
             }
         }
-
 
         public bool CheckCode(string email, string code)
         {
