@@ -209,13 +209,15 @@ namespace ArchsVsDinosClient.ViewModels
                 {
                     MessageBox.Show(Lang.Lobby_LobbyCancelled);
 
+                    var mainWindow = new MainWindow();
+                    mainWindow.Show();
+
                     var currentWindow = Application.Current.Windows
                         .OfType<Window>()
                         .FirstOrDefault(window => window is Views.LobbyViews.Lobby);
 
                     currentWindow?.Close();
 
-                    NavigationUtils.GoToMainMenu();
                 }
             });
         }
@@ -298,6 +300,7 @@ namespace ArchsVsDinosClient.ViewModels
                     Slots[i].IsFriend = false;
                     Slots[i].CanKick = false;
                     Slots[i].IsLocalPlayer = false;
+
                 }
             }
         }

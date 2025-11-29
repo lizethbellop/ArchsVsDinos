@@ -108,7 +108,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 Lobby newLobby = new Lobby();
                 newLobby.MatchCode = matchCode;
                 newLobby.AddPlayer(hostPlayer);
-                newLobby.AddCallback(hostCallback);
+                newLobby.AddCallback(hostCallback, hostUser.Username);
 
                 if (!ActiveMatches.TryAdd(matchCode, newLobby))
                 {
@@ -150,7 +150,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 }
                     
                 LobbyPlayerDTO newJoiningPlayer = CreatePlayer(joiningUser, false);
-                targetLobby.AddCallback(joiningCallback);
+                targetLobby.AddCallback(joiningCallback, joiningUser.Username);
 
                 var hostPlayer = targetLobby.Players.FirstOrDefault(player => player.IsHost);
                 if (hostPlayer != null)
@@ -252,53 +252,59 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             Lobby targetLobby = FindLobbyByUsername(usernameToExpel);
 
             if (targetLobby == null)
-            {
                 return LobbyResultCode.Lobby_NotExist;
-            }
-                
+
             if (!IsUserHost(targetLobby, hostUsername))
-            {
                 return LobbyResultCode.Lobby_NotHost;
-            }
-                
+
             lock (targetLobby)
             {
-                LobbyPlayerDTO playerToExpel = targetLobby.Players.FirstOrDefault(player => player.Username == usernameToExpel);
+                LobbyPlayerDTO playerToExpel = targetLobby.Players
+                    .FirstOrDefault(player => player.Username == usernameToExpel);
+
                 if (playerToExpel == null)
-                {
                     return LobbyResultCode.Lobby_PlayerExpelledError;
-                }
-                    
+
                 targetLobby.Players.Remove(playerToExpel);
 
-                var failedPlayerCallbacks = BroadcastToCallbacks(
-                    targetLobby.Callbacks.Where(callback => callback != OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>()),
+                var failedLeftCallbacks = BroadcastToCallbacks(
+                    targetLobby.Callbacks,
                     callback => callback.LeftLobby(playerToExpel)
                 );
 
-                foreach (var failedCallback in failedPlayerCallbacks)
-                    targetLobby.Callbacks.Remove(failedCallback);
+                foreach (var failed in failedLeftCallbacks)
+                    targetLobby.Callbacks.Remove(failed);
 
-                NotifyPlayerExpelled(playerToExpel);
+                NotifyPlayerExpelled(targetLobby, playerToExpel);
 
                 return LobbyResultCode.Lobby_PlayerExpelled;
             }
         }
 
-        private void NotifyPlayerExpelled(LobbyPlayerDTO expelledPlayer)
+        private void NotifyPlayerExpelled(Lobby lobby, LobbyPlayerDTO expelledPlayer)
         {
             try
             {
-                var expelledPlayerCallback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
-                expelledPlayerCallback.ExpelledFromLobby(expelledPlayer);
-            }
-            catch (CommunicationException ex)
-            {
-                loggerHelper.LogError($"Communication error while expelling player {expelledPlayer.Username}", ex);
+                var callback = lobby.CallbackOwners
+                    .FirstOrDefault(pair => pair.Value == expelledPlayer.Username)
+                    .Key;
+
+                if (callback != null)
+                {
+                    try
+                    {
+                        callback.ExpelledFromLobby(expelledPlayer);
+                    }
+                    catch
+                    {
+                        lobby.Callbacks.Remove(callback);
+                        lobby.CallbackOwners.Remove(callback);
+                    }
+                }
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Unexpected error while expelling player {expelledPlayer.Username}", ex);
+                loggerHelper.LogError($"Error notifying expelled player. ", ex);
             }
         }
 
