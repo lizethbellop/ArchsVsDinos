@@ -260,9 +260,9 @@
     <None Include="ArchsVsDinosModel.edmx.diagram">
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
     </None>
-    <None Include="Utils\email.env">
+    <Content Include="Utils\email.env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

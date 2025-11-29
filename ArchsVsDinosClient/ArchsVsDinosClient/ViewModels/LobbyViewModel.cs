@@ -102,6 +102,45 @@ namespace ArchsVsDinosClient.ViewModels
             lobbyServiceClient.StartGame(matchCode, hostUsername);
         }
 
+        public void InvitePlayerByEmail(string email)
+        {
+            var senderUsername = UserSession.Instance.CurrentUser.Username; 
+
+            if (ValidationHelper.IsEmpty(email) || ValidationHelper.IsWhiteSpace(email))
+            {
+                MessageBox.Show(Lang.GlobalEmptyField);
+            }
+            else if (!ValidationHelper.IsAValidEmail(email))
+            {
+                MessageBox.Show(Lang.Register_InvalidEmail);
+            }
+            else
+            {
+                try
+                {
+                    var resultCode = lobbyServiceClient.SendLobbyInviteByEmail(email, MatchCode, senderUsername);
+
+                    switch (resultCode)
+                    {
+                        case LobbyResultCode.Lobby_EmailSended:
+                            MessageBox.Show(Lang.Lobby_EmailSended);
+                            break;
+                        case LobbyResultCode.Lobby_EmailSendError:
+                            MessageBox.Show(Lang.Lobby_ErrorSendingEmail);
+                            break;
+                        default:
+                            MessageBox.Show(Lang.GlobalServerError);
+                            break;
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show(Lang.GlobalServerError);
+                }
+            }
+
+        }
+
         public bool CurrentClientIsHost() => Players.FirstOrDefault(player => player.IsHost)?.Username == UserSession.Instance.CurrentUser.Username;
 
         protected void OnPropertyChanged(string propertyName)

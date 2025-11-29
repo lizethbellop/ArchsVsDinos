@@ -22,6 +22,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         void ExpelPlayer(string targetUsername, string hostUsername);
         void CancellLobby(string matchCode, string usernameRequester);
         void StartGame(string matchCode, string hostUsername);
+        LobbyResultCode SendLobbyInviteByEmail(string email, string matchCode, string senderUsername);
 
     }
 }

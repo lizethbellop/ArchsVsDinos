@@ -12,29 +12,37 @@ namespace ArchsVsDinosServer.Utils
 
         public static Dictionary<string, string> LoadEnv(string fileName)
         {
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(basePath, fileName);
 
+            if (File.Exists(filePath))
+                return ParseEnvFile(filePath);
+
+            string utilsPath = Path.Combine(basePath, @"..\..\..\ArchsVsDinosServer\Utils", fileName);
+            utilsPath = Path.GetFullPath(utilsPath);
+
+            if (File.Exists(utilsPath))
+                return ParseEnvFile(utilsPath);
+
+            throw new FileNotFoundException($"Environment file not found in: \n{filePath}\n{utilsPath}");
+        }
+
+        private static Dictionary<string, string> ParseEnvFile(string path)
+        {
             var values = new Dictionary<string, string>();
 
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException($"Environment file not found: {filePath}");
-            }
-
-            foreach (string line in File.ReadAllLines(filePath))
+            foreach (string line in File.ReadAllLines(path))
             {
                 if (line.Contains("="))
                 {
                     string[] parts = line.Split('=');
-                    string key = parts[0].Trim();
-                    string value = parts[1].Trim();
-
-                    values[key] = value;
+                    values[parts[0].Trim()] = parts[1].Trim();
                 }
             }
 
             return values;
         }
+
 
     }
 }

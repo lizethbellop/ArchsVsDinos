@@ -52,6 +52,12 @@
   <wsdl:message name="ILobbyManager_StartGame_OutputMessage">
     <wsdl:part name="parameters" element="tns:StartGameResponse" />
   </wsdl:message>
+  <wsdl:message name="ILobbyManager_InviteByEmailToLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:InviteByEmailToLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_InviteByEmailToLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InviteByEmailToLobbyResponse" />
+  </wsdl:message>
   <wsdl:message name="ILobbyManager_CreatedLobby_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:CreatedLobby" />
   </wsdl:message>
@@ -94,6 +100,10 @@
     <wsdl:operation name="StartGame">
       <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/StartGame" message="tns:ILobbyManager_StartGame_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/StartGameResponse" message="tns:ILobbyManager_StartGame_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="InviteByEmailToLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/InviteByEmailToLobby" message="tns:ILobbyManager_InviteByEmailToLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/InviteByEmailToLobbyResponse" message="tns:ILobbyManager_InviteByEmailToLobby_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="CreatedLobby">
       <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/CreatedLobby" message="tns:ILobbyManager_CreatedLobby_OutputCallbackMessage" />
@@ -164,6 +174,15 @@
     </wsdl:operation>
     <wsdl:operation name="StartGame">
       <soap12:operation soapAction="http://tempuri.org/ILobbyManager/StartGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InviteByEmailToLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/InviteByEmailToLobby" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

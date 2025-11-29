@@ -19,6 +19,8 @@
       <xs:enumeration value="Lobby_GameStarted" />
       <xs:enumeration value="Lobby_IncompleteLobby" />
       <xs:enumeration value="Lobby_ErrorGame" />
+      <xs:enumeration value="Lobby_EmailSended" />
+      <xs:enumeration value="Lobby_EmailSendError" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="LobbyResultCode" nillable="true" type="tns:LobbyResultCode" />

@@ -753,4 +753,10 @@
   <data name="SocialMedia_NoLinkConfigured" xml:space="preserve">
     <value>No link configured</value>
   </data>
+  <data name="Lobby_ErrorSendingEmail" xml:space="preserve">
+    <value>Error sending the mail to the email adress,  try again later</value>
+  </data>
+  <data name="Lobby_EmailSended" xml:space="preserve">
+    <value>Invitation mail sended</value>
+  </data>
 </root>

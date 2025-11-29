@@ -34,16 +34,24 @@ namespace ArchsVsDinosServer.Utils
 
         private static void SendEmail(string to, string subject, string bodyHtml)
         {
-            using (var client = BuildClient())
-            using (var message = new MailMessage())
+            try
             {
-                message.From = new MailAddress(senderEmail, "Archs Vs Dinos");
-                message.To.Add(to);
-                message.Subject = subject;
-                message.Body = bodyHtml;
-                message.IsBodyHtml = true;
+                using (var client = BuildClient())
+                using (var message = new MailMessage())
+                {
+                    message.From = new MailAddress(senderEmail, "Archs Vs Dinos");
+                    message.To.Add(to);
+                    message.Subject = subject;
+                    message.Body = bodyHtml;
+                    message.IsBodyHtml = true;
 
-                client.Send(message);
+                    client.Send(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro sending email: " + ex.Message);
+                throw; 
             }
         }
 
@@ -80,7 +88,7 @@ namespace ArchsVsDinosServer.Utils
             SendEmail(email, subject, body);
         }
 
-        public static void SendLobbyInvitation(string email, string inviterUsername, string lobbyCode)
+        public static void SendLobbyInvitation(string email, string lobbyCode, string inviterUsername)
         {
             string subject = "You're Invited! - Archs Vs Dinos";
 

@@ -66,13 +66,13 @@ namespace ArchsVsDinosServer.Services
         {
             return lobbyBusinessLogic.StartTheGame(matchCode, hostUsername);
         }
-        /*
-        public LobbyResultCode InviteByEmailToMatch(string email, string matchCode)
+        
+        public LobbyResultCode InviteByEmailToLobby(string email, string matchCode, string inviterUsername)
         {
-
+            return lobbyBusinessLogic.InvitByAnEmailToMatch(email, matchCode, inviterUsername);
         }
 
-
+        /*
         
         public InviteFriendToMatch(string username, string friendUsername, string matchCode)
         {

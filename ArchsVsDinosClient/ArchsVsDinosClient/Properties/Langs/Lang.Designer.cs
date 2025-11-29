@@ -799,11 +799,29 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Correo de invitación enviado .
+        /// </summary>
+        public static string Lobby_EmailSended {
+            get {
+                return ResourceManager.GetString("Lobby_EmailSended", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Error creando sala, intente de nuevo.
         /// </summary>
         public static string Lobby_ErrorCreatingLobby {
             get {
                 return ResourceManager.GetString("Lobby_ErrorCreatingLobby", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error enviando correo a la dirección de correo ingresada,intente más tarde.
+        /// </summary>
+        public static string Lobby_ErrorSendingEmail {
+            get {
+                return ResourceManager.GetString("Lobby_ErrorSendingEmail", resourceCulture);
             }
         }
         

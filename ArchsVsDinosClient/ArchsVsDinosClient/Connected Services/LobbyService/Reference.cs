@@ -208,6 +208,12 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Lobby_ErrorGame = 16,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_EmailSended = 17,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Lobby_EmailSendError = 18,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -358,6 +364,12 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
         System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> StartGameAsync(string matchCode, string hostUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/InviteByEmailToLobby", ReplyAction="http://tempuri.org/ILobbyManager/InviteByEmailToLobbyResponse")]
+        ArchsVsDinosClient.LobbyService.LobbyResultCode InviteByEmailToLobby(string email, string matchCode, string inviterUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/InviteByEmailToLobby", ReplyAction="http://tempuri.org/ILobbyManager/InviteByEmailToLobbyResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> InviteByEmailToLobbyAsync(string email, string matchCode, string inviterUsername);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -456,6 +468,14 @@ namespace ArchsVsDinosClient.LobbyService {
         
         public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> StartGameAsync(string matchCode, string hostUsername) {
             return base.Channel.StartGameAsync(matchCode, hostUsername);
+        }
+        
+        public ArchsVsDinosClient.LobbyService.LobbyResultCode InviteByEmailToLobby(string email, string matchCode, string inviterUsername) {
+            return base.Channel.InviteByEmailToLobby(email, matchCode, inviterUsername);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> InviteByEmailToLobbyAsync(string email, string matchCode, string inviterUsername) {
+            return base.Channel.InviteByEmailToLobbyAsync(email, matchCode, inviterUsername);
         }
     }
 }

@@ -234,12 +234,12 @@
 
                 <StackPanel Grid.Row="1">
                     <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="29" HorizontalAlignment="Center">
-                        <TextBox Name = "TxtB_InviteByEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                        <TextBox Name="TxtB_InviteByEmail" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                     </Border>
                 </StackPanel>
 
                 <StackPanel Margin="12,-530,0,0" Grid.Row="2">
-                    <Button Content="{x:Static language:Lang.Lobby_Invite}" Click="Click_BtnInvitePlayerByEmail" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}">
+                    <Button Content="{x:Static language:Lang.Lobby_Invite}" Click="Click_BtnInviteAPlayerByEmail" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
                         </Button.Background>

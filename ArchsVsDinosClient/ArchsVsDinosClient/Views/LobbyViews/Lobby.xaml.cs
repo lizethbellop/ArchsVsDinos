@@ -106,6 +106,12 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             Gr_InviteByEmail.Visibility = Visibility.Visible;
         }
 
+        private void Click_BtnInviteAPlayerByEmail(object sender, RoutedEventArgs e)
+        {
+            var email = TxtB_InviteByEmail.Text.Trim();
+            viewModel.InvitePlayerByEmail(email);
+        }
+
         private void Click_BtnCancelInviteByEmail(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();

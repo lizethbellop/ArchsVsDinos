@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.ServiceModel;
 
 namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
@@ -342,11 +343,27 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 return LobbyResultCode.Lobby_NotHost;
             }
         }
-        /*
-        public LobbyResultCode InvitByAnEmailToMatch(string email, string matchCode)
+        
+        public LobbyResultCode InvitByAnEmailToMatch(string email, string matchCode, string inviterUsername)
         {
-
+            try
+            {
+                EmailService.SendLobbyInvitation(email, matchCode, inviterUsername);
+                return LobbyResultCode.Lobby_EmailSended;
+            }
+            catch (SmtpException ex)
+            {
+                loggerHelper.LogError($"Error sending email invitation", ex);
+                return LobbyResultCode.Lobby_EmailSendError;
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Unexpected error sending email", ex);
+                return LobbyResultCode.Lobby_EmailSendError;
+            }
         }
+
+        /*
         
         public void ExpelPlayerByStrike(string username, string reason)
         {

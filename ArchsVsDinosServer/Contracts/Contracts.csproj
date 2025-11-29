@@ -72,6 +72,7 @@
     <Compile Include="DTO\Response\FriendRequestListResponse.cs" />
     <Compile Include="DTO\Response\FriendRequestResponse.cs" />
     <Compile Include="DTO\Response\FriendResponse.cs" />
+    <Compile Include="DTO\Response\LobbyResponse.cs" />
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\Response\RegisterResponse.cs" />

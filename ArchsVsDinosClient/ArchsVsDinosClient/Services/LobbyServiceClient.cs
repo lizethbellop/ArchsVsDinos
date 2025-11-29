@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosClient.LobbyService;
 using ArchsVsDinosClient.Logging;
+using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
@@ -89,6 +90,21 @@ namespace ArchsVsDinosClient.Services
             Task ignoredTask = connectionGuardian.ExecuteAsync(
                 async () => await Task.Run(() => lobbyManagerClient.StartGame(matchCode, hostUsername))
             );
+        }
+
+        public LobbyResultCode SendLobbyInviteByEmail(string email, string matchCode, string senderUsername)
+        {
+            try
+            {
+                return lobbyManagerClient.InviteByEmailToLobby(email, matchCode, senderUsername);
+            }
+            catch (CommunicationException ex) 
+            {
+                var logger = new Logger();
+                logger.LogError(Lang.Lobby_ErrorSendingEmail);
+
+                return LobbyResultCode.Lobby_ConnectionError;
+            }
         }
 
         public void Dispose()
