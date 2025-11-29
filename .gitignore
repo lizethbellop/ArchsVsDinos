@@ -70,3 +70,4 @@ logs/
 
 # Environment files (private config)
 email.env
+*.env
