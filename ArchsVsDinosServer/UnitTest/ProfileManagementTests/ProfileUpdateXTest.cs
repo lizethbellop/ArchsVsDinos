@@ -23,12 +23,17 @@ namespace UnitTest.ProfileManagementTests
         [TestInitialize]
         public void Setup()
         {
-            ServiceDependencies dependencies = new ServiceDependencies(
+            CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
-                mockLoggerHelper.Object,
+                mockLoggerHelper.Object
+            );
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                coreDeps,
                 () => mockDbContext.Object
             );
+            ;
 
             socialMediaManager = new SocialMediaManager(dependencies);
         }
@@ -133,6 +138,62 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse result = socialMediaManager.UpdateX(username, newX);
 
             Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateXUpdatesPlayerX()
+        {
+            string username = "user123";
+            string newX = "x.com/newuser";
+            
+            Player player = new Player
+            {
+                idPlayer = 1,
+                x = "x.com/olduser"
+            };
+            
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+            socialMediaManager.UpdateX(username, newX);
+            
+            Assert.AreEqual(newX, player.x);
+
+        }
+
+        [TestMethod]
+        public void TestUpdateXCallsSaveChanges()
+        {
+            string username = "user123";
+            string newX = "x.com/newuser";
+
+            Player player = new Player
+            {
+                idPlayer = 1,
+                x = "x.com/olduser"
+            };
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            socialMediaManager.UpdateX(username, newX);
+            mockDbContext.Verify(c => c.SaveChanges(), Times.Once);
         }
 
         [TestMethod]

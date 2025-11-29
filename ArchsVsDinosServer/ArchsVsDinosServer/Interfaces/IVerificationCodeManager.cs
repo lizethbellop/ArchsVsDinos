@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.Interfaces
 {
-    public interface ISecurityHelper
+    public interface IVerificationCodeManager
     {
-        string HashPassword(string password);
-        bool VerifyPassword(string plainPassword, string hashedPasswordFromDB);
+        void AddCode(string email, string code, DateTime expiration);
+        bool ValidateCode(string email, string code);
     }
-
 }

@@ -44,22 +44,22 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly IGameNotifier gameNotifier;
 
         public Chat(
-            ILoggerHelper loggerHelper,
-            Func<IDbContext> contextFactory,
-            ILobbyNotifier lobbyNotifier,
-            IGameNotifier gameNotifier)
+        BasicServiceDependencies dependencies,
+        ILobbyNotifier lobbyNotifier,
+        IGameNotifier gameNotifier)
         {
-            this.loggerHelper = loggerHelper;
-            this.contextFactory = contextFactory;
+            this.loggerHelper = dependencies.loggerHelper;
+            this.contextFactory = dependencies.contextFactory;
             this.lobbyNotifier = lobbyNotifier;
             this.gameNotifier = gameNotifier;
 
-            var dependencies = new ServiceDependencies(
-                new Wrappers.SecurityHelperWrapper(),
-                new Wrappers.ValidationHelperWrapper(),
-                loggerHelper,
-                contextFactory
-            );
+            var serviceDeps = new ServiceDependencies
+            {
+                securityHelper = new Wrappers.SecurityHelperWrapper(),
+                validationHelper = new Wrappers.ValidationHelperWrapper(),
+                loggerHelper = dependencies.loggerHelper,
+                contextFactory = dependencies.contextFactory
+            };
 
             const string DataFolder = "Data";
             const string BannedWordsFile = "bannedWords.txt";
@@ -69,8 +69,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 BannedWordsFile
             );
 
-            var profanityFilter = new ProfanityFilter(loggerHelper, bannedWordsPath);
-            this.strikeManager = new StrikeManager(dependencies, profanityFilter);
+            var profanityFilter = new ProfanityFilter(dependencies.loggerHelper, bannedWordsPath);
+            this.strikeManager = new StrikeManager(serviceDeps, profanityFilter);
         }
 
         public void Connect(ChatConnectionRequest request)

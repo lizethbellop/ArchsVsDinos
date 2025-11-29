@@ -22,6 +22,7 @@ namespace ArchsVsDinosServer.Utils
             contextFactory = () => new Wrappers.DbContextWrapper();
         }
 
+
         public ServiceDependencies(
             ISecurityHelper securityHelper,
             IValidationHelper validationHelper,
@@ -31,6 +32,14 @@ namespace ArchsVsDinosServer.Utils
             this.securityHelper = securityHelper;
             this.validationHelper = validationHelper;
             this.loggerHelper = loggerHelper;
+            this.contextFactory = contextFactory;
+        }
+
+        public ServiceDependencies(CoreDependencies coreDeps, Func<IDbContext> contextFactory)
+        {
+            this.securityHelper = coreDeps.securityHelper;
+            this.validationHelper = coreDeps.validationHelper;
+            this.loggerHelper = coreDeps.loggerHelper;
             this.contextFactory = contextFactory;
         }
     }

@@ -33,6 +33,8 @@ namespace ArchsVsDinosServer.Wrappers
 
         public Database Database => context.Database;
 
+        public DbSet<Configuration> Configuration => context.Configuration;
+
         public void Dispose()
         {
             context.Dispose();

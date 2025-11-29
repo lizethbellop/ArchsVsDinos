@@ -21,12 +21,17 @@ namespace UnitTest.ProfileManagementTests
         [TestInitialize]
         public void Setup()
         {
-            ServiceDependencies dependencies = new ServiceDependencies(
+            CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
-                mockLoggerHelper.Object,
+                mockLoggerHelper.Object
+            );
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                coreDeps,
                 () => mockDbContext.Object
             );
+
 
             socialMediaManager = new SocialMediaManager(dependencies);
         }
@@ -131,6 +136,62 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse result = socialMediaManager.UpdateTikTok(username, newTikTok);
 
             Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateTiktokUpdatesPlayerTiktok()
+        {
+            string username = "user123";
+            string newTikTok = "tiktok.com/@newuser";
+            
+            Player player = new Player
+            {
+                idPlayer = 1,
+                tiktok = "tiktok.com/@olduser"
+            };
+            
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+            
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+            socialMediaManager.UpdateTikTok(username, newTikTok);
+            
+            Assert.AreEqual(newTikTok, player.tiktok);
+        }
+
+        [TestMethod]
+        public void TestUpdateTiktokCallsSaveChanges()
+        {
+            string username = "user123";
+            string newTikTok = "tiktok.com/@newuser";
+            
+            Player player = new Player
+            {
+                idPlayer = 1,
+                tiktok = "tiktok.com/@olduser"
+            };
+            
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+            
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+            socialMediaManager.UpdateTikTok(username, newTikTok);
+            
+            mockDbContext.Verify(c => c.SaveChanges(), Times.Once);
         }
 
         [TestMethod]

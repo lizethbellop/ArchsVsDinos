@@ -21,6 +21,8 @@ namespace ArchsVsDinosServer.Interfaces
 
         DbSet<GeneralMatch> GeneralMatch { get; }
         DbSet<MatchParticipants> MatchParticipants { get; }
+
+        DbSet<Configuration> Configuration { get; }
         Database Database { get; }
         int SaveChanges();
     }

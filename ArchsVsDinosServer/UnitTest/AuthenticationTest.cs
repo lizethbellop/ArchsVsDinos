@@ -36,12 +36,17 @@ namespace UnitTest
             mockDbContext = new Mock<IDbContext>();
             mockUserSet = new Mock<DbSet<UserAccount>>();
 
-            var dependencies = new ServiceDependencies(
+            CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
-                mockLoggerHelper.Object,
+                mockLoggerHelper.Object
+            );
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                coreDeps,
                 () => mockDbContext.Object
             );
+
 
             authentication = new Authentication(dependencies);
         }
