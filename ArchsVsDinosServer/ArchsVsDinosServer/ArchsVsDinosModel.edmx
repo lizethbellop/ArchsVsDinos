@@ -92,13 +92,13 @@
             <PropertyRef Name="idPlayer" />
           </Key>
           <Property Name="idPlayer" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="facebook" Type="varchar" MaxLength="45" />
-          <Property Name="instagram" Type="varchar" MaxLength="45" />
-          <Property Name="x" Type="varchar" MaxLength="45" />
+          <Property Name="facebook" Type="varchar" MaxLength="150" />
+          <Property Name="instagram" Type="varchar" MaxLength="150" />
+          <Property Name="x" Type="varchar" MaxLength="150" />
           <Property Name="totalWins" Type="int" Nullable="false" />
           <Property Name="totalLosses" Type="int" Nullable="false" />
           <Property Name="totalPoints" Type="int" Nullable="false" />
-          <Property Name="tiktok" Type="varchar" MaxLength="45" />
+          <Property Name="tiktok" Type="varchar" MaxLength="150" />
           <Property Name="profilePicture" Type="varchar" MaxLength="255" />
           <Property Name="totalMatches" Type="int" Nullable="false" />
         </EntityType>
@@ -432,13 +432,13 @@
 						<PropertyRef Name="idPlayer" />
 					</Key>
 					<Property Name="idPlayer" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-					<Property Name="facebook" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-					<Property Name="instagram" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
-					<Property Name="x" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+					<Property Name="facebook" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+					<Property Name="instagram" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+					<Property Name="x" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
 					<Property Name="totalWins" Type="Int32" Nullable="false" />
 					<Property Name="totalLosses" Type="Int32" Nullable="false" />
 					<Property Name="totalPoints" Type="Int32" Nullable="false" />
-					<Property Name="tiktok" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+					<Property Name="tiktok" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
 					<Property Name="profilePicture" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
 					<NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="Player" ToRole="MatchParticipants" />
 					<NavigationProperty Name="UserAccount" Relationship="Self.FK__UserAccou__idPla__44FF419A" FromRole="Player" ToRole="UserAccount" />

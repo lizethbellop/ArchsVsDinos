@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.Views;
+using ArchsVsDinosClient.Views.EditAccountViews;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,6 +112,52 @@ namespace ArchsVsDinosClient.Views
         {
             SoundButton.PlayMovingRockSound();
             new AvatarSelection().ShowDialog();
+        }
+
+        private void Click_BtnFacebook(object sender, RoutedEventArgs e)
+        {
+            string facebookUrl = UserSession.Instance.CurrentPlayer.Facebook;
+            SocialMediaHelper.TryOpenSocialMediaLink(facebookUrl, SocialMediaPlatform.Facebook);
+        }
+
+        private void Click_BtnInstagram(object sender, RoutedEventArgs e)
+        {
+            string instagramUrl = UserSession.Instance.CurrentPlayer.Instagram;
+            SocialMediaHelper.TryOpenSocialMediaLink(instagramUrl, SocialMediaPlatform.Instagram);
+        }
+
+        private void Click_BtnX(object sender, RoutedEventArgs e)
+        {
+            string xUrl = UserSession.Instance.CurrentPlayer.X;
+            SocialMediaHelper.TryOpenSocialMediaLink(xUrl, SocialMediaPlatform.X);
+        }
+
+        private void Click_BtnTiktok(object sender, RoutedEventArgs e)
+        {
+            string tiktokUrl = UserSession.Instance.CurrentPlayer.Tiktok;
+            SocialMediaHelper.TryOpenSocialMediaLink(tiktokUrl, SocialMediaPlatform.TikTok);
+
+        }
+
+        private void Click_BtnEditFacebook(object sender, RoutedEventArgs e)
+        {
+            new UpdateFacebook().ShowDialog();
+        }
+
+        private void Click_BtnEditInstagram(object sender, RoutedEventArgs e)
+        {
+            new UpdateInstagram().ShowDialog();
+        }
+
+        private void Click_BtnEditX(object sender, RoutedEventArgs e)
+        {
+            new UpdateX().ShowDialog();
+        }
+
+        private void Click_BtnEditTiktok(object sender, RoutedEventArgs e)
+        {
+            new UpdateTikTok().ShowDialog();
+
         }
 
     }

@@ -1,17 +1,27 @@
-﻿using System;
+﻿using ArchsVsDinosServer.Services;
+using log4net;
+using log4net.Config;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using System.ServiceModel;
-using ArchsVsDinosServer.Services;
 
 namespace Host
 {
     internal class Program
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(Program));
         static void Main(string[] args)
         {
+
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
+            log.Info("=== Iniciando servidor ArchsVsDinos ===");
 
             using (ServiceHost registerHost = new ServiceHost(typeof(RegisterManager)))
             using (ServiceHost authenticationHost = new ServiceHost(typeof(AuthenticationManager)))

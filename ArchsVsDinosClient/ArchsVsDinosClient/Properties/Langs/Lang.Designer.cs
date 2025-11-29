@@ -79,6 +79,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Editar enlace.
+        /// </summary>
+        public static string Account_EditSocialMedia {
+            get {
+                return ResourceManager.GetString("Account_EditSocialMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Editar.
         /// </summary>
         public static string Account_EditText {
@@ -687,6 +696,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string GlobalSoundNotFound {
             get {
                 return ResourceManager.GetString("GlobalSoundNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Ocurrió un error con el sistema!.
+        /// </summary>
+        public static string GlobalSystemError {
+            get {
+                return ResourceManager.GetString("GlobalSystemError", resourceCulture);
             }
         }
         
@@ -1546,6 +1564,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo abrir el enlace. Verifica que tengas un navegador predeterminado configurado..
+        /// </summary>
+        public static string SocialMedia_ErrorOpeningLink {
+            get {
+                return ResourceManager.GetString("SocialMedia_ErrorOpeningLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ingrese un enlace válido de Facebook (ej: https://facebook.com/tuperfil).
         /// </summary>
         public static string SocialMedia_InvalidFacebookLink {
@@ -1623,6 +1650,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string SocialMedia_InvalidXLinkTitle {
             get {
                 return ResourceManager.GetString("SocialMedia_InvalidXLinkTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se configuró ningún link.
+        /// </summary>
+        public static string SocialMedia_NoLinkConfigured {
+            get {
+                return ResourceManager.GetString("SocialMedia_NoLinkConfigured", resourceCulture);
             }
         }
         

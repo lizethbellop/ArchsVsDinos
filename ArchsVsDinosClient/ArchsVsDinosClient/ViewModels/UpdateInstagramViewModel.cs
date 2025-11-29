@@ -62,6 +62,8 @@ namespace ArchsVsDinosClient.ViewModels
         {
             string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
+            UserSession.Instance.CurrentPlayer.Instagram = NewInstagramLink;
+            UserProfileObserver.Instance.NotifyProfileUpdated();
             RequestClose?.Invoke(this, EventArgs.Empty);
         }
 

@@ -55,6 +55,8 @@ namespace ArchsVsDinosClient.ViewModels
                 messageService.ShowMessage(message);
                 return;
             }
+
+            HandleSuccess(response);
         }
 
         private void HandleSuccess(UpdateResponse response)

@@ -741,4 +741,16 @@
   <data name="SocialMedia_InvalidLink" xml:space="preserve">
     <value>Ingrese un enlace válido</value>
   </data>
+  <data name="SocialMedia_ErrorOpeningLink" xml:space="preserve">
+    <value>No se pudo abrir el enlace. Verifica que tengas un navegador predeterminado configurado.</value>
+  </data>
+  <data name="GlobalSystemError" xml:space="preserve">
+    <value>¡Ocurrió un error con el sistema!</value>
+  </data>
+  <data name="Account_EditSocialMedia" xml:space="preserve">
+    <value>Editar enlace</value>
+  </data>
+  <data name="SocialMedia_NoLinkConfigured" xml:space="preserve">
+    <value>No se configuró ningún link</value>
+  </data>
 </root>

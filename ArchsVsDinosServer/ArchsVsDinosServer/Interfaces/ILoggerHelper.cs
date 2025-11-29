@@ -11,5 +11,7 @@ namespace ArchsVsDinosServer.Interfaces
         void LogError(string message, Exception ex);
         void LogWarning(string message);
         void LogInfo(string message);
+
+        void LogDebug(string message);
     }
 }

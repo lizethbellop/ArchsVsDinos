@@ -10,7 +10,7 @@ namespace ArchsVsDinosServer.Wrappers
 {
     public class LoggerHelperWrapper : ILoggerHelper
     {
-        public void LogInfo(string message)      // ← AGREGAR
+        public void LogInfo(string message)      
         {
             LoggerHelper.LogInfo(message);
         }
@@ -23,6 +23,11 @@ namespace ArchsVsDinosServer.Wrappers
         public void LogError(string message, Exception ex)
         {
             LoggerHelper.LogError(message, ex);
+        }
+
+        public void LogDebug(string message)
+        {
+            LoggerHelper.LogDebug(message);
         }
     }
 }

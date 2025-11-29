@@ -258,7 +258,6 @@
     <None Include="ArchsVsDinosModel.edmx.diagram">
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
     </None>
-    <None Include="log4net.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
