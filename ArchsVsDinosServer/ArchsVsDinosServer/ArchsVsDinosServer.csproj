@@ -238,6 +238,8 @@
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Utils\CodeGenerator.cs" />
+    <Compile Include="Utils\EmailService.cs" />
+    <Compile Include="Utils\EnvLoader.cs" />
     <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\ProfanityFilter.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
@@ -257,6 +259,9 @@
     </EntityDeploy>
     <None Include="ArchsVsDinosModel.edmx.diagram">
       <DependentUpon>ArchsVsDinosModel.edmx</DependentUpon>
+    </None>
+    <None Include="Utils\email.env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

@@ -27,13 +27,13 @@ namespace UnitTest
         {
             //Arrange
             Register register = new Register();
-            string email = "canoabraham172@gmail.com";
+            string email = "test@example.com";
 
             //Act
             bool result = register.SendEmailRegister(email);
 
             //Assert
-            Assert.IsTrue(result, "Correct sent");
+            Assert.IsTrue(result, "Email should be sent successfully");
         }
 
         [TestMethod]
@@ -47,15 +47,15 @@ namespace UnitTest
             bool result = register.SendEmailRegister(email);
 
             //Assert
-            Assert.IsFalse(result, "Invalid email");
+            Assert.IsFalse(result, "Email should be invalid");
         }
 
         [TestMethod]
         public void TestCorrectCheckCode()
         {
-            //Arrage 
+            //Arrange 
             Register register = new Register();
-            string email = "canoabraham172@gmail.com";
+            string email = "test@example.com";
             string code = "A7HC3N9K";
                 Register.verificationCodes.Add(new VerificationCode
                 {
@@ -67,17 +67,17 @@ namespace UnitTest
             //Act
             bool result = register.CheckCode(email, code);
 
-            //Asert
+            //Assert
             Assert.IsTrue(result, "Correct code");
         }
 
         [TestMethod]
         public void TestIncorrectCheckCode()
         {
-            //Arrage 
+            //Arrange 
             Register register = new Register();
-            string email = "canoabraham172@gmail.com";
-            string code = "A7HC3N9L";
+            string email = "test@example.com";
+            string code = "CORRECTCODE";
 
             Register.verificationCodes.Add(new VerificationCode
             {
@@ -89,7 +89,7 @@ namespace UnitTest
             //Act
             bool result = register.CheckCode(email, "incorrectCode");
 
-            //Asert
+            //Assert
             Assert.IsFalse(result, "Incorrect code");
         }
 

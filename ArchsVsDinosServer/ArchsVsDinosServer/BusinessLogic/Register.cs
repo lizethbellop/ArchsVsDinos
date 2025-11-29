@@ -107,18 +107,8 @@ namespace ArchsVsDinosServer.BusinessLogic
             try
             {
                 string verificationCode = CodeGenerator.GenerateVerificationCode();
-                
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress("archvsdinos@gmail.com");
-                mail.To.Add(email);
-                mail.Subject = "Verification code - Arch vs Dinos";
-                mail.Body = $"Hi, your verification code is: {verificationCode} \n Don't share this code with another person.";
-                mail.IsBodyHtml = false;
 
-                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-                smtp.Credentials = new NetworkCredential("archvsdinos@gmail.com", "gysm nupz tsei cyvn");
-                smtp.EnableSsl = true;
-                smtp.Send(mail);
+                EmailService.SendVerificationEmail(email, verificationCode);
 
                 verificationCodes.Add(new VerificationCode
                 {
@@ -141,7 +131,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return false;
             }
         }
-
 
         public bool CheckCode(string email, string code)
         {
@@ -196,7 +185,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (EntityException ex)
             {
-                Console.WriteLine($"Error validating username and nickname : {ex.Message}");
+                Console.WriteLine($"Error validating username and nickname. ", ex);
                 return new RegisterResponse
                 {
                     Success = false,
@@ -206,7 +195,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in Register: {ex.Message}");
+                Console.WriteLine($"Error in Register. ", ex);
                 return new RegisterResponse
                 {
                     Success = false,

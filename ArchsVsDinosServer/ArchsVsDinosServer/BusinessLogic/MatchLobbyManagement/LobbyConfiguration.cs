@@ -37,7 +37,6 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             }
         }
 
-
         private LobbyPlayerDTO CreatePlayer(UserAccountDTO userAccount, bool isHost)
         {
             var playerProfile = new ProfileInformation().GetPlayerByUsername(userAccount.Username);
@@ -344,8 +343,13 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             }
         }
 
+        /*
+        public LobbyResultCode InvitByAnEmailToMatch(string email, string matchCode)
+        {
 
-        /*public void ExpelPlayerByStrike(string username, string reason)
+        }
+
+        public void ExpelPlayerByStrike(string username, string reason)
         {
             try
             {
