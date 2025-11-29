@@ -13,7 +13,6 @@ namespace Contracts.DTO.Response
     {
         [DataMember]
         public bool Success { get; set; }
-
         [DataMember]
         public UpdateResultCode ResultCode { get; set; }
 
@@ -22,7 +21,7 @@ namespace Contracts.DTO.Response
             if (obj == null || GetType() != obj.GetType())
                 return false;
             var other = (UpdateResponse)obj;
-            return Success == other.Success;
+            return Success == other.Success && ResultCode == other.ResultCode;
         }
 
         public override int GetHashCode()
@@ -31,6 +30,7 @@ namespace Contracts.DTO.Response
             {
                 int hash = 17;
                 hash = hash * 23 + Success.GetHashCode();
+                hash = hash * 23 + ResultCode.GetHashCode();
                 return hash;
             }
         }

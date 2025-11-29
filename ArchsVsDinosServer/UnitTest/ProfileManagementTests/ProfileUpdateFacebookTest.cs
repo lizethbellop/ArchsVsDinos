@@ -23,10 +23,14 @@ namespace UnitTest.ProfileManagementTests
         [TestInitialize]
         public void Setup()
         {
-            ServiceDependencies dependencies = new ServiceDependencies(
+            CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
-                mockLoggerHelper.Object,
+                mockLoggerHelper.Object
+            );
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                coreDeps,
                 () => mockDbContext.Object
             );
 
@@ -62,7 +66,7 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             SetupMockUserSet(new List<UserAccount>());
 
-            var expectedResult = new UpdateResponse
+            UpdateResponse expectedResult = new UpdateResponse
             {
                 Success = false,
                 ResultCode = UpdateResultCode.Profile_UserNotFound
@@ -107,13 +111,13 @@ namespace UnitTest.ProfileManagementTests
             string username = "user123";
             string newFacebook = "facebook.com/newuser";
 
-            var player = new Player
+            Player player = new Player
             {
                 idPlayer = 1,
                 facebook = "facebook.com/olduser"
             };
 
-            var userAccount = new UserAccount
+            UserAccount userAccount = new UserAccount
             {
                 idUser = 1,
                 username = username,
@@ -125,7 +129,7 @@ namespace UnitTest.ProfileManagementTests
             SetupMockPlayerSet(new List<Player> { player });
             mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
 
-            var expectedResult = new UpdateResponse
+            UpdateResponse expectedResult = new UpdateResponse
             {
                 Success = true,
                 ResultCode = UpdateResultCode.Profile_UpdateFacebookSuccess
@@ -134,6 +138,64 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse result = socialMediaManager.UpdateFacebook(username, newFacebook);
 
             Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateFacebookUpdatesPlayerFacebook()
+        {
+            string username = "user123";
+            string newFacebook = "facebook.com/newuser";
+
+            Player player = new Player
+            {
+                idPlayer = 1,
+                facebook = "facebook.com/olduser"
+            };
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            socialMediaManager.UpdateFacebook(username, newFacebook);
+
+            Assert.AreEqual(newFacebook, player.facebook);
+        }
+
+        [TestMethod]
+        public void TestUpdateFacebookCallsSaveChanges()
+        {
+            string username = "user123";
+            string newFacebook = "facebook.com/newuser";
+
+            Player player = new Player
+            {
+                idPlayer = 1,
+                facebook = "facebook.com/olduser"
+            };
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                idPlayer = 1
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            SetupMockPlayerSet(new List<Player> { player });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            socialMediaManager.UpdateFacebook(username, newFacebook);
+
+            mockDbContext.Verify(c => c.SaveChanges(), Times.Once);
         }
 
         [TestMethod]

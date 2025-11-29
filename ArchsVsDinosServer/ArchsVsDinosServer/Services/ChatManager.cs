@@ -1,5 +1,7 @@
 ﻿using ArchsVsDinosServer.BusinessLogic;
+using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Services.Interfaces;
+using ArchsVsDinosServer.Utils;
 using ArchsVsDinosServer.Wrappers;
 using Contracts;
 using Contracts.DTO;
@@ -19,6 +21,7 @@ namespace ArchsVsDinosServer.Services
         private Chat ChatBusinessLogic;
         private static ILobbyNotifier lobbyNotifier;
         private static IGameNotifier gameNotifier;
+        private ILoggerHelper loggerHelper = new LoggerHelperWrapper();
 
         public static void RegisterNotifiers(ILobbyNotifier lobby, IGameNotifier game)
         {
@@ -28,11 +31,14 @@ namespace ArchsVsDinosServer.Services
 
         public ChatManager()
         {
-            var loggerHelper = new Wrappers.LoggerHelperWrapper();
+            var dependencies = new BasicServiceDependencies
+            {
+                loggerHelper = loggerHelper,
+                contextFactory = () => new DbContextWrapper()
+            };
 
             ChatBusinessLogic = new Chat(
-                loggerHelper,
-                () => new DbContextWrapper(),
+                dependencies,
                 lobbyNotifier,
                 gameNotifier
             );

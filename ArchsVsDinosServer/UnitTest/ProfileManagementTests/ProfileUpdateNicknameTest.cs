@@ -26,12 +26,17 @@ namespace UnitTest.ProfileManagementTests
         [TestInitialize]
         public void Setup()
         {
-            ServiceDependencies dependencies = new ServiceDependencies(
+            CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
-                mockLoggerHelper.Object,
+                mockLoggerHelper.Object
+            );
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                coreDeps,
                 () => mockDbContext.Object
             );
+
 
             profileInformation = new ProfileInformation(dependencies);
         }
@@ -75,31 +80,37 @@ namespace UnitTest.ProfileManagementTests
         }
 
         [TestMethod]
-        public void TestUpdateNickname_SameValue()
+        public void TestUpdateNicknameAlreadyExists()
         {
             string username = "user123";
-            string newNickname = "currentNick";
+            string newNickname = "existingNick";
 
-            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-
-            UserAccount existingUser = new UserAccount
+            UserAccount currentUser = new UserAccount
             {
                 idUser = 1,
                 username = username,
-                nickname = "currentNick" 
+                nickname = "oldNick"
             };
 
-            SetupMockUserSet(new List<UserAccount> { existingUser });
+            UserAccount otherUser = new UserAccount
+            {
+                idUser = 2,
+                username = "otherUser",
+                nickname = "existingNick"
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { currentUser, otherUser });
 
             UpdateResponse expectedResult = new UpdateResponse
             {
                 Success = false,
-                ResultCode = UpdateResultCode.Profile_SameNicknameValue
+                ResultCode = UpdateResultCode.Profile_NicknameExists
             };
 
             UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
 
-            Assert.AreEqual(expectedResult, result); 
+            Assert.AreEqual(expectedResult, result);
         }
 
         [TestMethod]
@@ -128,6 +139,84 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
 
             Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameExistsCaseInsensitive()
+        {
+            string username = "user123";
+            string newNickname = "coolnick";
+
+            UserAccount currentUser = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                nickname = "oldNick"
+            };
+
+            UserAccount otherUser = new UserAccount
+            {
+                idUser = 2,
+                username = "otherUser",
+                nickname = "CoolNick"
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { currentUser, otherUser });
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_NicknameExists
+            };
+
+            UpdateResponse result = profileInformation.UpdateNickname(username, newNickname);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameUpdatesUserNickname()
+        {
+            string username = "user123";
+            string newNickname = "coolNickname";
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                nickname = "oldNickname"
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            profileInformation.UpdateNickname(username, newNickname);
+
+            Assert.AreEqual(newNickname, userAccount.nickname);
+        }
+
+        [TestMethod]
+        public void TestUpdateNicknameCallsSaveChanges()
+        {
+            string username = "user123";
+            string newNickname = "coolNickname";
+
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                nickname = "oldNickname"
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+            mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
+
+            profileInformation.UpdateNickname(username, newNickname);
+
+            mockDbContext.Verify(c => c.SaveChanges(), Times.Once);
         }
 
         [TestMethod]

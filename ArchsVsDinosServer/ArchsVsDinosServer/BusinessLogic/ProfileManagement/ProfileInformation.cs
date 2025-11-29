@@ -88,6 +88,14 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     response.ResultCode = UpdateResultCode.Profile_EmptyFields;
                     return response;
                 }
+
+                if (currentUsername == newUsername)
+                {
+                    response.Success = false;
+                    response.ResultCode = UpdateResultCode.Profile_SameUsernameValue;
+                    return response;
+                }
+
                 using (var context = GetContext())
                 {
                     var userAccount = context.UserAccount.FirstOrDefault(u => u.username == currentUsername);
