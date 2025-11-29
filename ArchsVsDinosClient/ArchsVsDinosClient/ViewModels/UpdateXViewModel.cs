@@ -62,6 +62,8 @@ namespace ArchsVsDinosClient.ViewModels
         {
             string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
+            UserSession.Instance.CurrentPlayer.X = NewXLink;
+            UserProfileObserver.Instance.NotifyProfileUpdated();
             RequestClose?.Invoke(this, EventArgs.Empty);
         }
 

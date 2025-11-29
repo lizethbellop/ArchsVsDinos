@@ -750,4 +750,7 @@
   <data name="Account_EditSocialMedia" xml:space="preserve">
     <value>Editar enlace</value>
   </data>
+  <data name="SocialMedia_NoLinkConfigured" xml:space="preserve">
+    <value>No se configuró ningún link</value>
+  </data>
 </root>

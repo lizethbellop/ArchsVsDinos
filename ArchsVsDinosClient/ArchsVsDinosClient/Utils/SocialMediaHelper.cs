@@ -13,36 +13,51 @@ namespace ArchsVsDinosClient.Utils
 {
     public static class SocialMediaHelper
     {
-        private readonly static ILogger logger = new Logging.Logger(typeof(SocialMediaHelper));
 
+        private readonly static ILogger log = new Logging.Logger(typeof(SocialMediaHelper));
         public static void OpenSocialMediaLink(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return;
 
-            try
+            Task.Run(() =>
             {
-                Process.Start(url);
-            }
-            catch (Win32Exception ex)
-            {
-                logger.LogDebug($"Win32Exception al abrir link: {ex.Message}");
-                ShowErrorMessage(Lang.SocialMedia_ErrorOpeningLink);
-            }
-            catch (InvalidOperationException ex)
-            {
-                logger.LogDebug($"InvalidOperationException al abrir link: {ex.Message}");
-                ShowErrorMessage(Lang.SocialMedia_ErrorOpeningLink);
-            }
-            catch (Exception ex)
-            {
-                logger.LogDebug($"Error inesperado al abrir link: {ex.Message}");
-                ShowErrorMessage(Lang.SocialMedia_ErrorOpeningLink);
-            }
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
+                catch (Win32Exception ex)
+                {
+                    
+                    log.LogInfo($"Win32Exception al abrir link: {ex.Message}");
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ShowErrorMessage(Lang.SocialMedia_ErrorOpeningLink);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    log.LogDebug($"Error al abrir link: {ex.Message}");
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        ShowErrorMessage(Lang.SocialMedia_ErrorOpeningLink);
+                    });
+                }
+            });
         }
 
         public static bool TryOpenSocialMediaLink(string url, SocialMediaPlatform platform)
         {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                ShowErrorMessage(Lang.SocialMedia_NoLinkConfigured);
+                return false;
+            }
+
             if (!SocialMediaValidator.IsValidSocialMediaLink(url, platform))
             {
                 ShowErrorMessage(SocialMediaValidator.GetValidationErrorMessage(platform));
@@ -55,13 +70,12 @@ namespace ArchsVsDinosClient.Utils
 
         private static void ShowErrorMessage(string message)
         {
-            MessageBox.Show(
+            System.Windows.MessageBox.Show(
                 message,
                 Lang.GlobalSystemError,
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning
             );
         }
-
     }
 }

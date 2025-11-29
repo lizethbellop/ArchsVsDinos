@@ -1654,6 +1654,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se configuró ningún link.
+        /// </summary>
+        public static string SocialMedia_NoLinkConfigured {
+            get {
+                return ResourceManager.GetString("SocialMedia_NoLinkConfigured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a 1ro.
         /// </summary>
         public static string Statistics_1stPlace {

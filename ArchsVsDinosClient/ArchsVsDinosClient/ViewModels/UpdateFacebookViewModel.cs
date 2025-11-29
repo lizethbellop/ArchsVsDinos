@@ -63,6 +63,8 @@ namespace ArchsVsDinosClient.ViewModels
         {
             string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
             messageService.ShowMessage(successMessage);
+            UserSession.Instance.CurrentPlayer.Facebook = NewFacebookLink;
+            UserProfileObserver.Instance.NotifyProfileUpdated();
             RequestClose?.Invoke(this, EventArgs.Empty);
         }
 
