@@ -34,275 +34,169 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public FriendResponse RemoveFriend(string username, string friendUsername)
         {
-            try
-            {
-                FriendResponse response = new FriendResponse();
+            return ExecuteWithErrorHandling(
+                () => RemoveFriendCore(username, friendUsername),
+                "RemoveFriend",
+                string.Format("users {0} and {1}", username, friendUsername)
+            );
+        }
 
-                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(friendUsername))
+        public FriendListResponse GetFriends(string username)
+        {
+            return ExecuteWithErrorHandling(
+                () => GetFriendsCore(username),
+                "GetFriends",
+                string.Format("user {0}", username)
+            );
+        }
+
+        public FriendCheckResponse AreFriends(string username, string friendUsername)
+        {
+            return ExecuteWithErrorHandling(
+                () => AreFriendsCore(username, friendUsername),
+                "AreFriends",
+                string.Format("users {0} and {1}", username, friendUsername)
+            );
+        }
+
+        private FriendResponse RemoveFriendCore(string username, string friendUsername)
+        {
+            FriendResponse response = new FriendResponse();
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(friendUsername))
+            {
+                response.Success = false;
+                response.ResultCode = FriendResultCode.Friend_UserNotFound;
+                return response;
+            }
+
+            if (username == friendUsername)
+            {
+                response.Success = false;
+                response.ResultCode = FriendResultCode.Friend_CannotAddYourself;
+                return response;
+            }
+
+            using (var context = contextFactory())
+            {
+                UserAccount user = context.UserAccount
+                    .FirstOrDefault(u => u.username == username);
+                UserAccount friendUser = context.UserAccount
+                    .FirstOrDefault(u => u.username == friendUsername);
+
+                if (user == null || friendUser == null)
                 {
                     response.Success = false;
                     response.ResultCode = FriendResultCode.Friend_UserNotFound;
                     return response;
                 }
 
-                if (username == friendUsername)
+                var friendships = context.Friendship
+                    .Where(f => (f.idUser == user.idUser && f.idUserFriend == friendUser.idUser) ||
+                                (f.idUser == friendUser.idUser && f.idUserFriend == user.idUser))
+                    .ToList();
+
+                if (friendships.Count == 0)
                 {
                     response.Success = false;
-                    response.ResultCode = FriendResultCode.Friend_CannotAddYourself;
+                    response.ResultCode = FriendResultCode.Friend_NotFriends;
                     return response;
                 }
 
-                using (var context = contextFactory())
+                if (friendships.Count != 2)
                 {
-                    UserAccount user = context.UserAccount
-                        .FirstOrDefault(u => u.username == username);
-                    UserAccount friendUser = context.UserAccount
-                        .FirstOrDefault(u => u.username == friendUsername);
-
-                    if (user == null || friendUser == null)
-                    {
-                        response.Success = false;
-                        response.ResultCode = FriendResultCode.Friend_UserNotFound;
-                        return response;
-                    }
-
-                    var friendships = context.Friendship
-                        .Where(f => (f.idUser == user.idUser && f.idUserFriend == friendUser.idUser) ||
-                                    (f.idUser == friendUser.idUser && f.idUserFriend == user.idUser))
-                        .ToList();
-
-                    if (friendships.Count == 0)
-                    {
-                        response.Success = false;
-                        response.ResultCode = FriendResultCode.Friend_NotFriends;
-                        return response;
-                    }
-
-                    if (friendships.Count != 2)
-                    {
-                        loggerHelper.LogWarning($"Database inconsistency: found {friendships.Count} friendship records between {username} and {friendUsername}. Expected 2.");
-                    }
-
-                    using (var transaction = context.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            foreach (var friendship in friendships)
-                            {
-                                context.Friendship.Remove(friendship);
-                            }
-                            context.SaveChanges();
-                            transaction.Commit();
-                        }
-                        catch
-                        {
-                            transaction.Rollback();
-                            throw;
-                        }
-                    }
-
-                    response.Success = true;
-                    response.ResultCode = FriendResultCode.Friend_Success;
-                    return response;
+                    loggerHelper.LogWarning(string.Format("Database inconsistency: found {0} friendship records between {1} and {2}. Expected 2.",
+                        friendships.Count, username, friendUsername));
                 }
-            }
-            catch (EntityException ex)
-            {
-                loggerHelper.LogError($"Database connection error in RemoveFriend for users {username} and {friendUsername}", ex);
-                return new FriendResponse
+
+                using (var transaction = context.Database.BeginTransaction())
                 {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_DatabaseError
-                };
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"SQL error in RemoveFriend for users {username} and {friendUsername}", ex);
-                return new FriendResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_DatabaseError
-                };
-            }
-            catch (DbEntityValidationException ex)
-            {
-                loggerHelper.LogError($"Validation error in RemoveFriend for users {username} and {friendUsername}", ex);
-                return new FriendResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_DatabaseError
-                };
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"Invalid operation in RemoveFriend for users {username} and {friendUsername}", ex);
-                return new FriendResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_UnexpectedError
-                };
-            }
-            catch (Exception ex)
-            {
-                loggerHelper.LogError($"Unexpected error in RemoveFriend for users {username} and {friendUsername}: {ex.Message}", ex);
-                return new FriendResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_UnexpectedError
-                };
+                    try
+                    {
+                        foreach (var friendship in friendships)
+                        {
+                            context.Friendship.Remove(friendship);
+                        }
+                        context.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+
+                response.Success = true;
+                response.ResultCode = FriendResultCode.Friend_Success;
+                return response;
             }
         }
 
-        public FriendListResponse GetFriends(string username)
+        private FriendListResponse GetFriendsCore(string username)
         {
-            try
-            {
-                FriendListResponse response = new FriendListResponse();
+            FriendListResponse response = new FriendListResponse();
 
-                if (IsUsernameEmpty(username))
+            if (IsUsernameEmpty(username))
+            {
+                response.Success = false;
+                response.ResultCode = FriendResultCode.Friend_EmptyUsername;
+                response.Friends = new List<string>();
+                return response;
+            }
+
+            using (var context = contextFactory())
+            {
+                UserAccount user = GetUserByUsername(context, username);
+
+                if (user == null)
                 {
                     response.Success = false;
-                    response.ResultCode = FriendResultCode.Friend_EmptyUsername;
+                    response.ResultCode = FriendResultCode.Friend_UserNotFound;
                     response.Friends = new List<string>();
                     return response;
                 }
 
-                using (var context = contextFactory())
-                {
-                    UserAccount user = GetUserByUsername(context, username);
+                List<string> friends = GetFriendsList(context, user.idUser);
 
-                    if (user == null)
-                    {
-                        response.Success = false;
-                        response.ResultCode = FriendResultCode.Friend_UserNotFound;
-                        response.Friends = new List<string>();
-                        return response;
-                    }
-
-                    List<string> friends = GetFriendsList(context, user.idUser);
-
-                    response.Success = true;
-                    response.ResultCode = FriendResultCode.Friend_Success;
-                    response.Friends = friends;
-                    return response;
-                }
-            }
-            catch (EntityException ex)
-            {
-                loggerHelper.LogError($"Database connection error in GetFriends for user {username}", ex);
-                return new FriendListResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_DatabaseError,
-                    Friends = new List<string>()
-                };
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"SQL error in GetFriends for user {username}", ex);
-                return new FriendListResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_DatabaseError,
-                    Friends = new List<string>()
-                };
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"Invalid operation in GetFriends for user {username}", ex);
-                return new FriendListResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_UnexpectedError,
-                    Friends = new List<string>()
-                };
-            }
-            catch (Exception ex)
-            {
-                loggerHelper.LogError($"Unexpected error in GetFriends for user {username}: {ex.Message}", ex);
-                return new FriendListResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_UnexpectedError,
-                    Friends = new List<string>()
-                };
+                response.Success = true;
+                response.ResultCode = FriendResultCode.Friend_Success;
+                response.Friends = friends;
+                return response;
             }
         }
 
-        public FriendCheckResponse AreFriends(string username, string friendUsername)
+        private FriendCheckResponse AreFriendsCore(string username, string friendUsername)
         {
-            try
-            {
-                FriendCheckResponse response = new FriendCheckResponse();
+            FriendCheckResponse response = new FriendCheckResponse();
 
-                if (IsUsernameEmpty(username) || IsUsernameEmpty(friendUsername))
+            if (IsUsernameEmpty(username) || IsUsernameEmpty(friendUsername))
+            {
+                response.Success = false;
+                response.ResultCode = FriendResultCode.Friend_EmptyUsername;
+                response.AreFriends = false;
+                return response;
+            }
+
+            using (var context = contextFactory())
+            {
+                UserAccount user = GetUserByUsername(context, username);
+                UserAccount friendUser = GetUserByUsername(context, friendUsername);
+
+                if (user == null || friendUser == null)
                 {
                     response.Success = false;
-                    response.ResultCode = FriendResultCode.Friend_EmptyUsername;
+                    response.ResultCode = FriendResultCode.Friend_UserNotFound;
                     response.AreFriends = false;
                     return response;
                 }
 
-                using (var context = contextFactory())
-                {
-                    UserAccount user = GetUserByUsername(context, username);
-                    UserAccount friendUser = GetUserByUsername(context, friendUsername);
+                bool areFriends = IsFriendshipExists(context, user.idUser, friendUser.idUser);
 
-                    if (user == null || friendUser == null)
-                    {
-                        response.Success = false;
-                        response.ResultCode = FriendResultCode.Friend_UserNotFound;
-                        response.AreFriends = false;
-                        return response;
-                    }
-
-                    bool areFriends = IsFriendshipExists(context, user.idUser, friendUser.idUser);
-
-                    response.Success = true;
-                    response.ResultCode = FriendResultCode.Friend_Success;
-                    response.AreFriends = areFriends;
-                    return response;
-                }
-            }
-            catch (EntityException ex)
-            {
-                loggerHelper.LogError($"Database connection error in AreFriends for users {username} and {friendUsername}", ex);
-                return new FriendCheckResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_DatabaseError,
-                    AreFriends = false
-                };
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"SQL error in AreFriends for users {username} and {friendUsername}", ex);
-                return new FriendCheckResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_DatabaseError,
-                    AreFriends = false
-                };
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"Invalid operation in AreFriends for users {username} and {friendUsername}", ex);
-                return new FriendCheckResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_UnexpectedError,
-                    AreFriends = false
-                };
-            }
-            catch (Exception ex)
-            {
-                loggerHelper.LogError($"Unexpected error in AreFriends for users {username} and {friendUsername}: {ex.Message}", ex);
-                return new FriendCheckResponse
-                {
-                    Success = false,
-                    ResultCode = FriendResultCode.Friend_UnexpectedError,
-                    AreFriends = false
-                };
+                response.Success = true;
+                response.ResultCode = FriendResultCode.Friend_Success;
+                response.AreFriends = areFriends;
+                return response;
             }
         }
 
@@ -329,6 +223,64 @@ namespace ArchsVsDinosServer.BusinessLogic
         private bool IsFriendshipExists(IDbContext context, int userId, int friendUserId)
         {
             return context.Friendship.Any(f => f.idUser == userId && f.idUserFriend == friendUserId);
+        }
+
+        private T ExecuteWithErrorHandling<T>(Func<T> operation, string operationName, string context) where T : new()
+        {
+            try
+            {
+                return operation();
+            }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError(string.Format("Database connection error in {0} for {1}", operationName, context), ex);
+                return CreateErrorResponse<T>(FriendResultCode.Friend_DatabaseError);
+            }
+            catch (SqlException ex)
+            {
+                loggerHelper.LogError(string.Format("SQL error in {0} for {1}", operationName, context), ex);
+                return CreateErrorResponse<T>(FriendResultCode.Friend_DatabaseError);
+            }
+            catch (DbEntityValidationException ex)
+            {
+                loggerHelper.LogError(string.Format("Validation error in {0} for {1}", operationName, context), ex);
+                return CreateErrorResponse<T>(FriendResultCode.Friend_DatabaseError);
+            }
+            catch (InvalidOperationException ex)
+            {
+                loggerHelper.LogError(string.Format("Invalid operation in {0} for {1}", operationName, context), ex);
+                return CreateErrorResponse<T>(FriendResultCode.Friend_UnexpectedError);
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError(string.Format("Unexpected error in {0} for {1}: {2}", operationName, context, ex.Message), ex);
+                return CreateErrorResponse<T>(FriendResultCode.Friend_UnexpectedError);
+            }
+        }
+
+        private T CreateErrorResponse<T>(FriendResultCode resultCode) where T : new()
+        {
+            var response = new T();
+
+            if (response is FriendResponse friendResponse)
+            {
+                friendResponse.Success = false;
+                friendResponse.ResultCode = resultCode;
+            }
+            else if (response is FriendListResponse listResponse)
+            {
+                listResponse.Success = false;
+                listResponse.ResultCode = resultCode;
+                listResponse.Friends = new List<string>();
+            }
+            else if (response is FriendCheckResponse checkResponse)
+            {
+                checkResponse.Success = false;
+                checkResponse.ResultCode = resultCode;
+                checkResponse.AreFriends = false;
+            }
+
+            return response;
         }
     }
 }

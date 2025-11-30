@@ -31,7 +31,7 @@ namespace ArchsVsDinosServer.Services
             logger = dependencies.loggerHelper;
         }
 
-       public SaveMatchResultCode SaveMatchStatistics(MatchResultDTO matchResult)
+        public SaveMatchResultCode SaveMatchStatistics(MatchResultDTO matchResult)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace ArchsVsDinosServer.Services
                     return SaveMatchResultCode.InvalidData;
                 }
 
-                if (matchResult.MatchId <= 0)
+                if (string.IsNullOrWhiteSpace(matchResult.MatchId))
                 {
                     logger.LogWarning($"SaveMatchStatistics: Invalid matchId {matchResult.MatchId}");
                     return SaveMatchResultCode.InvalidData;
@@ -115,7 +115,7 @@ namespace ArchsVsDinosServer.Services
             {
                 if (topN <= 0)
                 {
-                    topN = 10; // Default top 10
+                    topN = 10;
                 }
 
                 var leaderboard = leaderboardCalc.GetTopPlayers(topN);
@@ -157,10 +157,24 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
-        public GameStatisticsDTO GetMatchStatistics(int matchId)
+        public GameStatisticsDTO GetMatchStatistics(string matchCode)
         {
-            var processor = new MatchResultProcessor(dependencies);
-            return processor.GetMatchStatistics(matchId);
+            try
+            {
+                if (string.IsNullOrWhiteSpace(matchCode))
+                {
+                    logger.LogWarning($"GetMatchStatistics: Invalid matchCode {matchCode}");
+                    return new GameStatisticsDTO();
+                }
+
+                var processor = new MatchResultProcessor(dependencies);
+                return processor.GetMatchStatistics(matchCode);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"GetMatchStatistics: Error getting stats for match {matchCode} - {ex.Message}", ex);
+                return new GameStatisticsDTO();
+            }
         }
     }
 }

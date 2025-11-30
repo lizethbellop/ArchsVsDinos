@@ -30,7 +30,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                 {
                     try
                     {
-                        var match = context.GeneralMatch.FirstOrDefault(m => m.idGeneralMatch == matchResult.MatchId);
+                        var match = context.GeneralMatch.FirstOrDefault(m => m.matchCode == matchResult.MatchId);
 
                         if (match == null)
                         {
@@ -43,7 +43,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                         foreach (var playerResult in matchResult.PlayerResults)
                         {
                             var participant = context.MatchParticipants
-                                .FirstOrDefault(mp => mp.idGeneralMatch == matchResult.MatchId &&
+                                .FirstOrDefault(mp => mp.idGeneralMatch == match.idGeneralMatch &&
                                                      mp.idPlayer == playerResult.UserId);
 
                             if (participant != null)
@@ -130,30 +130,30 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
             }
         }
 
-        public GameStatisticsDTO GetMatchStatistics(int matchId)
+        public GameStatisticsDTO GetMatchStatistics(string matchCode)
         {
             using (var context = contextFactory())
             {
                 try
                 {
-                    var match = context.GeneralMatch.FirstOrDefault(m => m.idGeneralMatch == matchId);
+                    var match = context.GeneralMatch.FirstOrDefault(m => m.matchCode == matchCode);
 
                     if (match == null)
                     {
-                        logger.LogWarning($"GetMatchStatistics: Match {matchId} not found");
-                        return null;
+                        logger.LogWarning($"GetMatchStatistics: Match {matchCode} not found");
+                        return new GameStatisticsDTO();
                     }
 
                     var participants = context.MatchParticipants
-                        .Where(mp => mp.idGeneralMatch == matchId && !mp.isDefeated)
+                        .Where(mp => mp.idGeneralMatch == match.idGeneralMatch && !mp.isDefeated)
                         .OrderByDescending(mp => mp.points)
                         .ThenByDescending(mp => mp.isWinner)
                         .ToList();
 
                     if (!participants.Any())
                     {
-                        logger.LogWarning($"GetMatchStatistics: No participants found for match {matchId}");
-                        return null;
+                        logger.LogWarning($"GetMatchStatistics: No participants found for match {matchCode}");
+                        return new GameStatisticsDTO();
                     }
 
                     var playerStats = new List<PlayerMatchStatsDTO>();
@@ -184,25 +184,25 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
 
                     return new GameStatisticsDTO
                     {
-                        MatchId = matchId,
+                        MatchCode = matchCode,
                         MatchDate = match.date,
                         PlayerStats = playerStats.ToArray()
                     };
                 }
                 catch (NullReferenceException ex)
                 {
-                    logger.LogError($"GetMatchStatistics: Null reference for match {matchId} - {ex.Message}", ex);
-                    return null;
+                    logger.LogError($"GetMatchStatistics: Null reference for match {matchCode} - {ex.Message}", ex);
+                    return new GameStatisticsDTO();
                 }
                 catch (InvalidOperationException ex)
                 {
-                    logger.LogError($"GetMatchStatistics: Invalid operation for match {matchId} - {ex.Message}", ex);
-                    return null;
+                    logger.LogError($"GetMatchStatistics: Invalid operation for match {matchCode} - {ex.Message}", ex);
+                    return new GameStatisticsDTO();
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"GetMatchStatistics: Error getting stats for match {matchId} - {ex.Message}", ex);
-                    return null;
+                    logger.LogError($"GetMatchStatistics: Error getting stats for match {matchCode} - {ex.Message}", ex);
+                    return new GameStatisticsDTO();
                 }
             }
         }

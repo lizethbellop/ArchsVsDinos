@@ -192,7 +192,9 @@
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\ICodeGenerator.cs" />
+    <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
+    <Compile Include="Interfaces\IDbContextTransaction.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\ILoggerHelper.cs" />
     <Compile Include="Interfaces\ISecurityHelper.cs" />
@@ -264,6 +266,8 @@
     <Compile Include="Utils\ValidationHelper.cs" />
     <Compile Include="Utils\VerificationCodeManager.cs" />
     <Compile Include="Wrappers\CodeGeneratorWrapper.cs" />
+    <Compile Include="Wrappers\DatabaseWrapper.cs" />
+    <Compile Include="Wrappers\DbContextTransactionWrapper.cs" />
     <Compile Include="Wrappers\DbContextWrapper.cs" />
     <Compile Include="Wrappers\EmailServiceWrapper.cs" />
     <Compile Include="Wrappers\LoggerHelperWrapper.cs" />

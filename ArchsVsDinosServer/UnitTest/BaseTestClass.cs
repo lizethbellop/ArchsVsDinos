@@ -18,6 +18,9 @@ namespace UnitTest
         protected Mock<IDbContext> mockDbContext;
         protected Mock<DbSet<UserAccount>> mockUserSet;
         protected Mock<DbSet<Player>> mockPlayerSet;
+        protected Mock<DbSet<MatchParticipants>> mockMatchParticipantSet;
+        protected Mock<DbSet<GeneralMatch>> mockGeneralMatchSet;
+
 
         [TestInitialize]
         public void BaseSetup()
@@ -26,6 +29,8 @@ namespace UnitTest
             mockDbContext = new Mock<IDbContext>();
             mockUserSet = new Mock<DbSet<UserAccount>>();
             mockPlayerSet = new Mock<DbSet<Player>>();
+            mockMatchParticipantSet = new Mock<DbSet<MatchParticipants>>();
+            mockGeneralMatchSet = new Mock<DbSet<GeneralMatch>>();
         }
 
         protected void SetupMockUserSet(List<UserAccount> users)
@@ -46,6 +51,30 @@ namespace UnitTest
             mockPlayerSet.As<IQueryable<Player>>().Setup(m => m.ElementType).Returns(queryablePlayers.ElementType);
             mockPlayerSet.As<IQueryable<Player>>().Setup(m => m.GetEnumerator()).Returns(queryablePlayers.GetEnumerator());
             mockDbContext.Setup(c => c.Player).Returns(mockPlayerSet.Object);
+        }
+
+        protected void SetupMockMatchParticipantsSet(List<MatchParticipants> participants)
+        {
+            var queryable = participants.AsQueryable();
+
+            mockMatchParticipantSet.As<IQueryable<MatchParticipants>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockMatchParticipantSet.As<IQueryable<MatchParticipants>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockMatchParticipantSet.As<IQueryable<MatchParticipants>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockMatchParticipantSet.As<IQueryable<MatchParticipants>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+
+            mockDbContext.Setup(c => c.MatchParticipants).Returns(mockMatchParticipantSet.Object);
+        }
+
+        protected void SetupMockGeneralMatchSet(List<GeneralMatch> matches)
+        {
+            var queryable = matches.AsQueryable();
+
+            mockGeneralMatchSet.As<IQueryable<GeneralMatch>>().Setup(m => m.Provider).Returns(queryable.Provider);
+            mockGeneralMatchSet.As<IQueryable<GeneralMatch>>().Setup(m => m.Expression).Returns(queryable.Expression);
+            mockGeneralMatchSet.As<IQueryable<GeneralMatch>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
+            mockGeneralMatchSet.As<IQueryable<GeneralMatch>>().Setup(m => m.GetEnumerator()).Returns(queryable.GetEnumerator());
+
+            mockDbContext.Setup(c => c.GeneralMatch).Returns(mockGeneralMatchSet.Object);
         }
     }
 }

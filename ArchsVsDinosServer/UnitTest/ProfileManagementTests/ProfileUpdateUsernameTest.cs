@@ -238,12 +238,16 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database error"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
-                );
+             );
 
             ProfileInformation profileInfo = new ProfileInformation(dependencies);
 
@@ -266,12 +270,16 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
 
-            ServiceDependencies dependencies = new ServiceDependencies(
+            CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
-                mockLoggerHelper.Object,
-                () => mockDbContext.Object
+                mockLoggerHelper.Object
             );
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    coreDeps,
+                    () => mockDbContext.Object
+             );
 
             ProfileInformation profileInfo = new ProfileInformation(dependencies);
 

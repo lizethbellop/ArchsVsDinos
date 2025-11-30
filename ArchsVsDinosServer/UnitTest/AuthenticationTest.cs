@@ -253,10 +253,14 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database connection failed"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+            
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
              );
 
@@ -284,10 +288,14 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockSecurityHelper.Setup(s => s.HashPassword(password)).Throws(new Exception("Unexpected error"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
              );
 
