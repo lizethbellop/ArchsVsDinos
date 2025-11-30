@@ -104,6 +104,7 @@ namespace UnitTest.ProfileManagementTests
             Assert.AreEqual(expectedResult, result);
         }
 
+        [TestMethod]
         public void TestUpdateInstagramSuccess()
         {
             string username = "user123";

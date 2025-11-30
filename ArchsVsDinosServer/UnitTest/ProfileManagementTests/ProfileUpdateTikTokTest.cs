@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace UnitTest.ProfileManagementTests
 {
+    [TestClass]
     public class ProfileUpdateTikTokTest : ProfileManagementTestBase
     {
         private SocialMediaManager socialMediaManager;

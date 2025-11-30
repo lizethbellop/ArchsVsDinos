@@ -82,6 +82,12 @@ namespace UnitTest.ProfileManagementTests
             string currentUsername = "user123";
             string newUsername = "existingUser";
 
+            UserAccount currentUser = new UserAccount
+            {
+                idUser = 1,
+                username = currentUsername
+            };
+
             UserAccount existingUser = new UserAccount
             {
                 idUser = 2,
@@ -89,16 +95,21 @@ namespace UnitTest.ProfileManagementTests
             };
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-            SetupMockUserSet(new List<UserAccount> { existingUser });
+
+            SetupMockUserSet(new List<UserAccount> { currentUser, existingUser });
 
             UpdateResponse expectedResult = new UpdateResponse
             {
                 Success = false,
                 ResultCode = UpdateResultCode.Profile_UsernameExists
             };
+
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
+
             Assert.AreEqual(expectedResult, result);
         }
+
+
 
         [TestMethod]
         public void TestUpdateUsernameUserNotFound()

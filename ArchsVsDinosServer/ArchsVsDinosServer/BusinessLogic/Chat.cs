@@ -70,7 +70,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             );
 
             var profanityFilter = new ProfanityFilter(dependencies.loggerHelper, bannedWordsPath);
-            this.strikeManager = new StrikeManager(serviceDeps, profanityFilter);
+            this.strikeManager = new StrikeManager(new StrikeServiceDependencies());
         }
 
         public void Connect(ChatConnectionRequest request)

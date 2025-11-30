@@ -109,6 +109,7 @@ namespace UnitTest
             Assert.AreEqual(expectedResult, result);
         }
 
+        [TestMethod]
         public void TestValidateUsernameAndNicknameBothExist()
         {
             string username = "existinguser";
@@ -568,6 +569,4 @@ namespace UnitTest
             mockDbContext.Setup(c => c.Configuration).Returns(mockConfigurationSet.Object);
         }
     }
-
-
 }
