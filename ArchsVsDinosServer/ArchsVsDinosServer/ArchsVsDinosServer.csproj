@@ -191,6 +191,7 @@
     <Compile Include="GeneralMatch.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\ICallbackProvider.cs" />
     <Compile Include="Interfaces\ICodeGenerator.cs" />
     <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="Wrappers\LoggerHelperWrapper.cs" />
     <Compile Include="Wrappers\SecurityHelperWrapper.cs" />
     <Compile Include="Wrappers\ValidationHelperWrapper.cs" />
+    <Compile Include="Wrappers\WcfCallbackProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

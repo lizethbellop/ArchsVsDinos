@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace UnitTest.FriendsTests
 {
+    [TestClass]
     public class FriendRequestSendTest : BaseTestClass
     {
         private Mock<IValidationHelper> mockValidationHelper;

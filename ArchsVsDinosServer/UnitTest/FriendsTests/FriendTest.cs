@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace UnitTest.FriendsTests
 {
+    [TestClass]
     public class FriendTest : BaseTestClass
     {
         private Mock<ISecurityHelper> mockSecurityHelper;

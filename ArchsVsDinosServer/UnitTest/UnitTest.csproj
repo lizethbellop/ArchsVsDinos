@@ -73,6 +73,9 @@
   <ItemGroup>
     <Compile Include="AuthenticationTest.cs" />
     <Compile Include="BaseTestClass.cs" />
+    <Compile Include="ChatTests\ChatConnectionTest.cs" />
+    <Compile Include="ChatTests\ChatMessageTest.cs" />
+    <Compile Include="ChatTests\ChatMinimumPlayersTest.cs" />
     <Compile Include="FriendsTests\FriendRequestAcceptTest.cs" />
     <Compile Include="FriendsTests\FriendRequestBaseTest.cs" />
     <Compile Include="FriendsTests\FriendRequestGetPendingTest.cs" />
