@@ -23,7 +23,7 @@ namespace ArchsVsDinosServer.Interfaces
         DbSet<MatchParticipants> MatchParticipants { get; }
 
         DbSet<Configuration> Configuration { get; }
-        Database Database { get; }
+        IDatabase Database { get; }
         int SaveChanges();
     }
 }

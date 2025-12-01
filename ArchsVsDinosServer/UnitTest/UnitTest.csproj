@@ -73,6 +73,15 @@
   <ItemGroup>
     <Compile Include="AuthenticationTest.cs" />
     <Compile Include="BaseTestClass.cs" />
+    <Compile Include="ChatTests\ChatConnectionTest.cs" />
+    <Compile Include="ChatTests\ChatMessageTest.cs" />
+    <Compile Include="ChatTests\ChatMinimumPlayersTest.cs" />
+    <Compile Include="FriendsTests\FriendRequestAcceptTest.cs" />
+    <Compile Include="FriendsTests\FriendRequestBaseTest.cs" />
+    <Compile Include="FriendsTests\FriendRequestGetPendingTest.cs" />
+    <Compile Include="FriendsTests\FriendRequestRejectTest.cs" />
+    <Compile Include="FriendsTests\FriendRequestSendTest.cs" />
+    <Compile Include="FriendsTests\FriendTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileUpdateInstagramTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileChangePasswordTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileManagementTestBase.cs" />
@@ -83,6 +92,11 @@
     <Compile Include="ProfileManagementTests\ProfileUpdateXTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterTest.cs" />
+    <Compile Include="StatisticsTests\LeaderboardCalculatorGetTopPlayersByWinsTest.cs" />
+    <Compile Include="StatisticsTests\LeaderboardCalculatorGetTopPlayersTest.cs" />
+    <Compile Include="StatisticsTests\LeaderboardCalculatorGetPlayerRankTest.cs" />
+    <Compile Include="StatisticsTests\MatchResultProcessorTest.cs" />
+    <Compile Include="StatisticsTests\StatisticsHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

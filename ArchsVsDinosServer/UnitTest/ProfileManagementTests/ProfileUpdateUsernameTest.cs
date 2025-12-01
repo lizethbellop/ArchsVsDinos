@@ -82,6 +82,12 @@ namespace UnitTest.ProfileManagementTests
             string currentUsername = "user123";
             string newUsername = "existingUser";
 
+            UserAccount currentUser = new UserAccount
+            {
+                idUser = 1,
+                username = currentUsername
+            };
+
             UserAccount existingUser = new UserAccount
             {
                 idUser = 2,
@@ -89,16 +95,21 @@ namespace UnitTest.ProfileManagementTests
             };
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-            SetupMockUserSet(new List<UserAccount> { existingUser });
+
+            SetupMockUserSet(new List<UserAccount> { currentUser, existingUser });
 
             UpdateResponse expectedResult = new UpdateResponse
             {
                 Success = false,
                 ResultCode = UpdateResultCode.Profile_UsernameExists
             };
+
             UpdateResponse result = profileInformation.UpdateUsername(currentUsername, newUsername);
+
             Assert.AreEqual(expectedResult, result);
         }
+
+
 
         [TestMethod]
         public void TestUpdateUsernameUserNotFound()
@@ -227,12 +238,16 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database error"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
-                );
+             );
 
             ProfileInformation profileInfo = new ProfileInformation(dependencies);
 
@@ -255,12 +270,16 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
 
-            ServiceDependencies dependencies = new ServiceDependencies(
+            CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
-                mockLoggerHelper.Object,
-                () => mockDbContext.Object
+                mockLoggerHelper.Object
             );
+
+            ServiceDependencies dependencies = new ServiceDependencies(
+                    coreDeps,
+                    () => mockDbContext.Object
+             );
 
             ProfileInformation profileInfo = new ProfileInformation(dependencies);
 

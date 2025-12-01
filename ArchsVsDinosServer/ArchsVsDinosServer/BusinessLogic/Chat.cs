@@ -42,6 +42,7 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly Func<IDbContext> contextFactory;
         private readonly ILobbyNotifier lobbyNotifier;
         private readonly IGameNotifier gameNotifier;
+        private readonly ICallbackProvider callbackProvider;
 
         public Chat(
         BasicServiceDependencies dependencies,
@@ -52,6 +53,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             this.contextFactory = dependencies.contextFactory;
             this.lobbyNotifier = lobbyNotifier;
             this.gameNotifier = gameNotifier;
+            this.callbackProvider = dependencies.callbackProvider;
 
             var serviceDeps = new ServiceDependencies
             {
@@ -70,7 +72,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             );
 
             var profanityFilter = new ProfanityFilter(dependencies.loggerHelper, bannedWordsPath);
-            this.strikeManager = new StrikeManager(serviceDeps, profanityFilter);
+            this.strikeManager = new StrikeManager(new StrikeServiceDependencies());
         }
 
         public void Connect(ChatConnectionRequest request)
@@ -78,7 +80,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             IChatManagerCallback callback;
             try
             {
-                callback = OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
+                callback = callbackProvider.GetCallback();
             }
             catch (InvalidOperationException ex)
             {

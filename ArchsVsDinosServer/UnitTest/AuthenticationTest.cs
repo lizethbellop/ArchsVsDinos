@@ -18,23 +18,20 @@ using System.Threading.Tasks;
 namespace UnitTest
 {
     [TestClass]
-    public class AuthenticationTest
+    public class AuthenticationTest : BaseTestClass
     {
         private Mock<ISecurityHelper> mockSecurityHelper;
         private Mock<IValidationHelper> mockValidationHelper;
-        private Mock<ILoggerHelper> mockLoggerHelper;
-        private Mock<IDbContext> mockDbContext;
-        private Mock<DbSet<UserAccount>> mockUserSet;
+        private Mock<IStrikeManager> mockStrikeManager;
         private Authentication authentication;
 
         [TestInitialize]
         public void Setup()
         {
+            base.BaseSetup();
             mockSecurityHelper = new Mock<ISecurityHelper>();
             mockValidationHelper = new Mock<IValidationHelper>();
-            mockLoggerHelper = new Mock<ILoggerHelper>();
-            mockDbContext = new Mock<IDbContext>();
-            mockUserSet = new Mock<DbSet<UserAccount>>();
+            mockStrikeManager = new Mock<IStrikeManager>();
 
             CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
@@ -46,16 +43,14 @@ namespace UnitTest
                 coreDeps,
                 () => mockDbContext.Object
             );
-
-
-            authentication = new Authentication(dependencies);
+            
+            authentication = new Authentication(dependencies, mockStrikeManager.Object);
         }
 
 
         [TestMethod]
         public void TestLoginEmptyFields()
         {
-            //Arrange
             string username = "";
             string password = "";
 
@@ -258,10 +253,14 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("Database connection failed"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+            
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
              );
 
@@ -289,10 +288,14 @@ namespace UnitTest
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockSecurityHelper.Setup(s => s.HashPassword(password)).Throws(new Exception("Unexpected error"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
              );
 
@@ -310,17 +313,239 @@ namespace UnitTest
             Assert.AreEqual(expectedResult, result);
         }
 
-
-        private void SetupMockUserSet(List<UserAccount> users)
+        [TestMethod]
+        public void TestLoginUserBanned()
         {
-            var queryableUsers = users.AsQueryable();
+            string username = "banneduser";
+            string password = "password123";
+            string passwordHash = "hashedPassword123";
 
-            mockUserSet.As<IQueryable<UserAccount>>().Setup(m => m.Provider).Returns(queryableUsers.Provider);
-            mockUserSet.As<IQueryable<UserAccount>>().Setup(m => m.Expression).Returns(queryableUsers.Expression);
-            mockUserSet.As<IQueryable<UserAccount>>().Setup(m => m.ElementType).Returns(queryableUsers.ElementType);
-            mockUserSet.As<IQueryable<UserAccount>>().Setup(m => m.GetEnumerator()).Returns(queryableUsers.GetEnumerator());
+            UserAccount bannedUser = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = passwordHash,
+                name = "Banned User",
+                nickname = "banned",
+                email = "banned@test.com"
+            };
 
-            mockDbContext.Setup(c => c.UserAccount).Returns(mockUserSet.Object);
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(true);
+            mockStrikeManager.Setup(s => s.IsUserBanned(1)).Returns(true);
+
+            SetupMockUserSet(new List<UserAccount> { bannedUser });
+
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_UserBanned
+            };
+
+            LoginResponse result = authentication.Login(username, password);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestLoginCallsIsUserBanned()
+        {
+            string username = "user123";
+            string password = "password123";
+            string passwordHash = "hashedPassword123";
+
+            Player expectedPlayer = new Player
+            {
+                idPlayer = 1,
+                totalWins = 10,
+                totalLosses = 5,
+                totalPoints = 100
+            };
+
+            UserAccount user = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = passwordHash,
+                name = "Test User",
+                nickname = "testnick",
+                email = "test@test.com",
+                Player = expectedPlayer
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(true);
+            mockStrikeManager.Setup(s => s.IsUserBanned(1)).Returns(false);
+
+            SetupMockUserSet(new List<UserAccount> { user });
+
+            authentication.Login(username, password);
+
+            mockStrikeManager.Verify(s => s.IsUserBanned(1), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestLoginCallsVerifyPassword()
+        {
+            string username = "user123";
+            string password = "password123";
+            string passwordHash = "hashedPassword123";
+
+            Player expectedPlayer = new Player
+            {
+                idPlayer = 1,
+                totalWins = 10,
+                totalLosses = 5,
+                totalPoints = 100
+            };
+
+            UserAccount user = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = passwordHash,
+                name = "Test User",
+                nickname = "testnick",
+                email = "test@test.com",
+                Player = expectedPlayer
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(true);
+            mockStrikeManager.Setup(s => s.IsUserBanned(1)).Returns(false);
+
+            SetupMockUserSet(new List<UserAccount> { user });
+
+            authentication.Login(username, password);
+
+            mockSecurityHelper.Verify(s => s.VerifyPassword(password, passwordHash), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestLoginCallsIsEmptyForUsername()
+        {
+            string username = "user123";
+            string password = "password123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(username)).Returns(false);
+            mockValidationHelper.Setup(v => v.IsEmpty(password)).Returns(false);
+            SetupMockUserSet(new List<UserAccount>());
+
+            authentication.Login(username, password);
+
+            mockValidationHelper.Verify(v => v.IsEmpty(username), Times.AtLeastOnce);  // UN SOLO VERIFY
+        }
+
+        [TestMethod]
+        public void TestLoginCallsIsEmptyForPassword()
+        {
+            string username = "user123";
+            string password = "password123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(username)).Returns(false);
+            mockValidationHelper.Setup(v => v.IsEmpty(password)).Returns(false);
+            SetupMockUserSet(new List<UserAccount>());
+
+            authentication.Login(username, password);
+
+            mockValidationHelper.Verify(v => v.IsEmpty(password), Times.AtLeastOnce);  // UN SOLO VERIFY
+        }
+
+        [TestMethod]
+        public void TestLoginUserWithoutAssociatedPlayer()
+        {
+            string username = "user123";
+            string password = "password123";
+            string passwordHash = "hashedPassword123";
+
+            UserAccount userWithoutPlayer = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = passwordHash,
+                name = "User Without Player",
+                nickname = "noPlayer",
+                email = "user@test.com",
+                Player = null
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(true);
+            mockStrikeManager.Setup(s => s.IsUserBanned(1)).Returns(false);
+
+            SetupMockUserSet(new List<UserAccount> { userWithoutPlayer });
+
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = true,
+                UserSession = new UserDTO
+                {
+                    IdUser = 1,
+                    Username = "user123",
+                    Name = "User Without Player",
+                    Nickname = "noPlayer",
+                    Email = "user@test.com"
+                },
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_Success
+            };
+
+            LoginResponse result = authentication.Login(username, password);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestLoginDoesNotCallVerifyPasswordWhenUserNotFound()
+        {
+            string username = "nonexistent";
+            string password = "password123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            SetupMockUserSet(new List<UserAccount>());
+
+            authentication.Login(username, password);
+
+            mockSecurityHelper.Verify(s => s.VerifyPassword(It.IsAny<string>(), It.IsAny<string>()), Times.Never);  // UN SOLO VERIFY
+        }
+
+        [TestMethod]
+        public void TestLoginDoesNotCheckBanStatusWhenCredentialsInvalid()
+        {
+            string username = "user123";
+            string password = "wrongpassword";
+            string passwordHash = "hashedPassword123";
+
+            UserAccount user = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = passwordHash
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(false);
+
+            SetupMockUserSet(new List<UserAccount> { user });
+
+            authentication.Login(username, password);
+
+            mockStrikeManager.Verify(s => s.IsUserBanned(It.IsAny<int>()), Times.Never);  // UN SOLO VERIFY
+        }
+
+        [TestMethod]
+        public void TestLoginDoesNotCheckBanStatusWhenFieldsEmpty()
+        {
+            string username = "";
+            string password = "";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(true);
+
+            authentication.Login(username, password);
+
+            mockStrikeManager.Verify(s => s.IsUserBanned(It.IsAny<int>()), Times.Never);  // UN SOLO VERIFY
         }
 
     }

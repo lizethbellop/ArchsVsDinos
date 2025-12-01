@@ -194,11 +194,15 @@
     <Compile Include="GeneralMatch.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\ICallbackProvider.cs" />
     <Compile Include="Interfaces\ICodeGenerator.cs" />
+    <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
+    <Compile Include="Interfaces\IDbContextTransaction.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\ILoggerHelper.cs" />
     <Compile Include="Interfaces\ISecurityHelper.cs" />
+    <Compile Include="Interfaces\IStrikeManager.cs" />
     <Compile Include="Interfaces\IValidationHelper.cs" />
     <Compile Include="Interfaces\IVerificationCodeManager.cs" />
     <Compile Include="MatchParticipants.cs">
@@ -215,6 +219,12 @@
     <Compile Include="Services\AuthenticationManager.cs" />
     <Compile Include="Services\ChatManager.cs" />
     <Compile Include="Services\GameCallbackManager.cs" />
+    <Compile Include="Services\StrikeService\BanService.cs" />
+    <Compile Include="Services\StrikeService\ContextExecutor.cs" />
+    <Compile Include="Services\StrikeService\ProfanityService.cs" />
+    <Compile Include="Services\StrikeService\SpamService.cs" />
+    <Compile Include="Services\StrikeService\StrikeRepository.cs" />
+    <Compile Include="Services\StrikeService\UserFetcher.cs" />
     <Compile Include="Utils\BasicServiceDependencies.cs" />
     <Compile Include="Utils\CoreDependencies.cs" />
     <Compile Include="Utils\EmailService.cs" />
@@ -255,16 +265,20 @@
     <Compile Include="Utils\RegisterServiceDependencies.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\ServiceDependencies.cs" />
+    <Compile Include="Utils\StrikeServiceDependencies.cs" />
     <Compile Include="Utils\UnregisteredPlayerGenerator.cs" />
     <Compile Include="Utils\ValidationCodeManager.cs" />
     <Compile Include="Utils\ValidationHelper.cs" />
     <Compile Include="Utils\VerificationCodeManager.cs" />
     <Compile Include="Wrappers\CodeGeneratorWrapper.cs" />
+    <Compile Include="Wrappers\DatabaseWrapper.cs" />
+    <Compile Include="Wrappers\DbContextTransactionWrapper.cs" />
     <Compile Include="Wrappers\DbContextWrapper.cs" />
     <Compile Include="Wrappers\EmailServiceWrapper.cs" />
     <Compile Include="Wrappers\LoggerHelperWrapper.cs" />
     <Compile Include="Wrappers\SecurityHelperWrapper.cs" />
     <Compile Include="Wrappers\ValidationHelperWrapper.cs" />
+    <Compile Include="Wrappers\WcfCallbackProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

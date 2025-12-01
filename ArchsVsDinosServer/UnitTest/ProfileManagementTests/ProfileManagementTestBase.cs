@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace UnitTest.ProfileManagementTests
 {
+    [TestClass]
     public class ProfileManagementTestBase : BaseTestClass
     {
         protected Mock<IValidationHelper> mockValidationHelper;

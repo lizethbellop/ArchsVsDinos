@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace UnitTest.ProfileManagementTests
 {
+    [TestClass]
     public class ProfileUpdateTikTokTest : ProfileManagementTestBase
     {
         private SocialMediaManager socialMediaManager;
@@ -203,10 +204,14 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new DbEntityValidationException("Validation error"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
              );
 
@@ -232,10 +237,14 @@ namespace UnitTest.ProfileManagementTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
 
+            CoreDependencies coreDeps = new CoreDependencies(
+                mockSecurityHelper.Object,
+                mockValidationHelper.Object,
+                mockLoggerHelper.Object
+            );
+
             ServiceDependencies dependencies = new ServiceDependencies(
-                    mockSecurityHelper.Object,
-                    mockValidationHelper.Object,
-                    mockLoggerHelper.Object,
+                    coreDeps,
                     () => mockDbContext.Object
              );
 

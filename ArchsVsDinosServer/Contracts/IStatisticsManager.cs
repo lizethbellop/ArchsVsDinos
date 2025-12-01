@@ -25,6 +25,6 @@ namespace Contracts
         List<MatchHistoryDTO> GetPlayerMatchHistory(int userId, int count);
 
         [OperationContract]
-        GameStatisticsDTO GetMatchStatistics(int matchId);
+        GameStatisticsDTO GetMatchStatistics(string matchCode);
     }
 }

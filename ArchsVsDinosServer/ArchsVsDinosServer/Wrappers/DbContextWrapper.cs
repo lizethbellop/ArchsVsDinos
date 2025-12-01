@@ -11,6 +11,7 @@ namespace ArchsVsDinosServer.Wrappers
     public class DbContextWrapper : IDbContext
     {
         private readonly ArchsVsDinosConnection context;
+        private IDatabase database;
 
         public DbContextWrapper()
         {
@@ -31,7 +32,17 @@ namespace ArchsVsDinosServer.Wrappers
         public DbSet<GeneralMatch> GeneralMatch => context.GeneralMatch;
         public DbSet<MatchParticipants> MatchParticipants => context.MatchParticipants;
 
-        public Database Database => context.Database;
+        public IDatabase Database
+        {
+            get
+            {
+                if (database == null)
+                {
+                    database = new DatabaseWrapper(context.Database);
+                }
+                return database;
+            }
+        }
 
         public DbSet<Configuration> Configuration => context.Configuration;
 

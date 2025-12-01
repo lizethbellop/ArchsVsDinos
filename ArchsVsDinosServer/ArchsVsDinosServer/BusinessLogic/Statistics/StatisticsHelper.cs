@@ -32,7 +32,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                     if (player == null)
                     {
                         logger.LogWarning($"GetPlayerStatistics: Player {userId} not found");
-                        return null;
+                        return new PlayerStatisticsDTO();
                     }
 
                     var totalWins = player.totalWins;
@@ -72,17 +72,17 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                 catch (NullReferenceException ex)
                 {
                     logger.LogError($"GetPlayerStatistics: Null reference for user {userId} - {ex.Message}", ex);
-                    return null;
+                    return new PlayerStatisticsDTO();
                 }
                 catch (DbUpdateException ex)
                 {
                     logger.LogError($"GetPlayerStatistics: Database update error for user {userId} - {ex.Message}", ex);
-                    return null;
+                    return new PlayerStatisticsDTO();
                 }
                 catch (Exception ex)
                 {
                     logger.LogError($"GetPlayerStatistics: Error for user {userId} - {ex.Message}", ex);
-                    return null;
+                    return new PlayerStatisticsDTO();
                 }
             }
         }
@@ -166,7 +166,8 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                     {
                         var playerStats = GetPlayerStatistics(userId);
 
-                        if (playerStats != null)
+                        // Verificar si el DTO está vacío (UserId == 0)
+                        if (playerStats != null && playerStats.UserId != 0)
                         {
                             stats.Add(playerStats);
                         }
@@ -192,7 +193,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                 return stats;
             }
         }
-
 
         public List<MatchHistoryDTO> GetRecentMatches(int count)
         {
@@ -253,6 +253,5 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                 return history;
             }
         }
-
     }
 }

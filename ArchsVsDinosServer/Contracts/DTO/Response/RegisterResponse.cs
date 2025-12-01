@@ -17,6 +17,26 @@ namespace Contracts.DTO.Response
         [DataMember]
         public RegisterResultCode ResultCode { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            RegisterResponse other = (RegisterResponse)obj;
+            return Success == other.Success && ResultCode == other.ResultCode;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + Success.GetHashCode();
+                hash = hash * 23 + ResultCode.GetHashCode();
+                return hash;
+            }
+        }
+
     }
 
 }

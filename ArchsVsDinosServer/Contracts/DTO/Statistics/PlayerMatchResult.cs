@@ -27,5 +27,30 @@ namespace Contracts.DTO.Statistics
 
         [DataMember]
         public int SupremeBossesEliminated { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            PlayerMatchResult other = (PlayerMatchResult)obj;
+
+            return UserId == other.UserId &&
+                   Points == other.Points &&
+                   IsWinner == other.IsWinner &&
+                   ArchaeologistsEliminated == other.ArchaeologistsEliminated &&
+                   SupremeBossesEliminated == other.SupremeBossesEliminated;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + UserId.GetHashCode();
+            hash = hash * 23 + Points.GetHashCode();
+            hash = hash * 23 + IsWinner.GetHashCode();
+            hash = hash * 23 + ArchaeologistsEliminated.GetHashCode();
+            hash = hash * 23 + SupremeBossesEliminated.GetHashCode();
+            return hash;
+        }
     }
 }

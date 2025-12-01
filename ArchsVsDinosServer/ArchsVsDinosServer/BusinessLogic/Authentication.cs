@@ -19,18 +19,24 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly IValidationHelper validationHelper;
         private readonly ILoggerHelper loggerHelper;
         private readonly Func<IDbContext> contextFactory;
-        private readonly StrikeManager strikeManager;
+        private readonly IStrikeManager strikeManager;
 
-        public Authentication(ServiceDependencies dependencies)
+        public Authentication(ServiceDependencies dependencies, IStrikeManager strikeManager)
         {
             securityHelper = dependencies.securityHelper;
             validationHelper = dependencies.validationHelper;
             loggerHelper = dependencies.loggerHelper;
             contextFactory = dependencies.contextFactory;
-            strikeManager = new StrikeManager(dependencies, new ProfanityFilter());
+            this.strikeManager = strikeManager;
         }
 
-        public Authentication() : this(new ServiceDependencies())
+        public Authentication()
+        : this(new ServiceDependencies(), new StrikeManager(new StrikeServiceDependencies()))
+        {
+        }
+
+        public Authentication(ServiceDependencies dependencies)
+            : this(dependencies, new StrikeManager(new StrikeServiceDependencies()))
         {
         }
 

@@ -42,5 +42,13 @@ namespace ArchsVsDinosServer.Utils
             this.loggerHelper = coreDeps.loggerHelper;
             this.contextFactory = contextFactory;
         }
+
+        public ServiceDependencies(ILoggerHelper loggerHelper, Func<IDbContext> contextFactory)
+        {
+            this.securityHelper = new Wrappers.SecurityHelperWrapper();
+            this.validationHelper = new Wrappers.ValidationHelperWrapper();
+            this.loggerHelper = loggerHelper;
+            this.contextFactory = contextFactory;
+        }
     }
 }
