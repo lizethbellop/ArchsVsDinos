@@ -120,8 +120,10 @@
     <Compile Include="Converters\PositionToHeightConverter.cs" />
     <Compile Include="Converters\PositionToStatsBorderThicknessConverter.cs" />
     <Compile Include="DTO\Configuration.cs" />
+    <Compile Include="DTO\GameSession.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
+    <Compile Include="DTO\PlayerInGame.cs" />
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
@@ -186,12 +188,11 @@
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
-    <Compile Include="ViewModels\GameManagerViewModel.cs" />
     <Compile Include="ViewModels\GameStatisticsViewModel.cs" />
+    <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\MatchViewModel.cs" />
     <Compile Include="ViewModels\PersonalStatisticsViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\UpdateFacebookViewModel.cs" />

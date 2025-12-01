@@ -11,20 +11,25 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
         private readonly List<CardInGame> bodyParts = new List<CardInGame>();
 
         public int DinoInstanceId { get; set; }
-        public string ArmyType { get; set; }
+        public string Element { get; set; }  
         public CardInGame HeadCard { get; set; }
         public IReadOnlyList<CardInGame> BodyParts => bodyParts.AsReadOnly();
 
         public void AddBodyPart(CardInGame card)
         {
-            bodyParts.Add(card);
+            if (card != null && card.IsBodyPart())
+            {
+                bodyParts.Add(card);
+            }
         }
 
         public int GetTotalPower()
         {
-            int total = HeadCard.Power;
+            int total = HeadCard?.Power ?? 0;
             foreach (var part in bodyParts)
+            {
                 total += part.Power;
+            }
             return total;
         }
     }

@@ -73,7 +73,7 @@ namespace ArchsVsDinosClient.Models
         {
             var elementRules = new Dictionary<string, ElementType>
             {
-                { "Sea", ElementType.Sea },
+                { "Sea", ElementType.Water },
                 { "Sand", ElementType.Sand },
                 { "Wind", ElementType.Wind },
                 { "None", ElementType.None },

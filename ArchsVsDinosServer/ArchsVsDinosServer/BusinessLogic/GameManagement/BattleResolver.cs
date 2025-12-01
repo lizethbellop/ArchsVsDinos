@@ -4,18 +4,14 @@ using ArchsVsDinosServer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public class BattleResolver
     {
-        private readonly CardHelper cardHelper;
-
         public BattleResolver(ServiceDependencies dependencies)
         {
-            cardHelper = new CardHelper(dependencies);
+            // Ya no necesitamos CardHelper
         }
 
         public BattleResult ResolveBattle(GameSession session, string armyType)
@@ -25,7 +21,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return null;
             }
 
-            var archArmy = session.CentralBoard.GetArmyByType(armyType);
+            var normalizedArmyType = ArmyTypeHelper.NormalizeElement(armyType);
+            var archArmy = session.CentralBoard.GetArmyByType(normalizedArmyType);
+
             if (archArmy == null || archArmy.Count == 0)
             {
                 return null;
@@ -33,39 +31,41 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             int archPower = CalculateArchPower(archArmy);
 
-            var playerDinos = GetAllPlayerDinosOfType(session, armyType);
+            var playerDinos = GetAllPlayerDinosOfType(session, normalizedArmyType);
 
             var playerPowers = new Dictionary<int, int>();
-            foreach (var kvp in playerDinos)
+            foreach (var playerDinosPair in playerDinos)
             {
-                var totalPower = kvp.Value.Sum(dino => dino.GetTotalPower());
-                playerPowers[kvp.Key] = totalPower;
+                var playerId = playerDinosPair.Key;
+                var dinosList = playerDinosPair.Value;
+                var totalPower = dinosList.Sum(dino => dino.GetTotalPower());
+                playerPowers[playerId] = totalPower;
             }
 
             var maxPower = playerPowers.Any() ? playerPowers.Values.Max() : 0;
-            var dinosWin = maxPower >= archPower; // Empate = Dinos ganan
+            var dinosWin = maxPower >= archPower; 
 
             PlayerSession winner = null;
             if (dinosWin && maxPower > 0)
             {
-                var winnerUserId = playerPowers.First(p => p.Value == maxPower).Key;
-                winner = session.Players.FirstOrDefault(p => p.UserId == winnerUserId);
+                var winnerUserId = playerPowers.First(powerPair => powerPair.Value == maxPower).Key;
+                winner = session.Players.FirstOrDefault(player => player.UserId == winnerUserId);
             }
 
-            var result = new BattleResult
+            var battleResult = new BattleResult
             {
-                ArmyType = armyType,
+                ArmyType = normalizedArmyType,
                 ArchPower = archPower,
                 DinosWon = dinosWin,
                 Winner = winner,
                 WinnerPower = maxPower,
-                ArchCardIds = new List<string>(archArmy),
+                ArchCardIds = new List<int>(archArmy),  
                 PlayerDinos = playerDinos
             };
 
-            ApplyBattleConsequences(session, result);
+            ApplyBattleConsequences(session, battleResult);
 
-            return result;
+            return battleResult;
         }
 
         private void ApplyBattleConsequences(GameSession session, BattleResult result)
@@ -84,30 +84,28 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             session.AddToDiscard(result.ArchCardIds);
             session.CentralBoard.ClearArmy(result.ArmyType);
 
-            foreach (var kvp in result.PlayerDinos)
+            foreach (var playerDinosPair in result.PlayerDinos)
             {
-                var player = session.Players.FirstOrDefault(p => p.UserId == kvp.Key);
+                var playerId = playerDinosPair.Key;
+                var dinosList = playerDinosPair.Value;
+                var player = session.Players.FirstOrDefault(p => p.UserId == playerId);
+
                 if (player != null)
                 {
-                    DiscardPlayerDinos(session, player, kvp.Value);
+                    DiscardPlayerDinos(session, player, dinosList);
                 }
             }
         }
 
-        private Dictionary<int, List<DinoInstance>> GetAllPlayerDinosOfType(GameSession session, string armyType)
+        private Dictionary<int, List<DinoInstance>> GetAllPlayerDinosOfType(GameSession session, string element)
         {
             var result = new Dictionary<int, List<DinoInstance>>();
-
-            var dinoType = ArmyTypeHelper.ToDinoType(armyType);
-            if (string.IsNullOrWhiteSpace(dinoType))
-            {
-                return result;
-            }
+            var normalizedElement = ArmyTypeHelper.NormalizeElement(element);
 
             foreach (var player in session.Players)
             {
                 var playerDinos = player.Dinos
-                    .Where(d => d.ArmyType == dinoType)
+                    .Where(dino => ArmyTypeHelper.NormalizeElement(dino.Element) == normalizedElement)
                     .ToList();
 
                 if (playerDinos.Any())
@@ -119,13 +117,13 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             return result;
         }
 
-        private int CalculateArchPower(List<string> archCardIds)
+        private int CalculateArchPower(List<int> archCardIds)
         {
             int totalPower = 0;
 
             foreach (var cardId in archCardIds)
             {
-                var card = cardHelper.CreateCardInGame(cardId);
+                var card = CardInGame.FromDefinition(cardId);
                 if (card != null)
                 {
                     totalPower += card.Power;
@@ -135,7 +133,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             return totalPower;
         }
 
-        private int CalculateArchPoints(List<string> archCardIds)
+        private int CalculateArchPoints(List<int> archCardIds)
         {
             return CalculateArchPower(archCardIds);
         }
@@ -146,12 +144,12 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             {
                 if (dino.HeadCard != null)
                 {
-                    session.AddToDiscard(dino.HeadCard.IdCardGlobal);
+                    session.AddToDiscard(dino.HeadCard.IdCard);  
                 }
 
                 foreach (var bodyPart in dino.BodyParts)
                 {
-                    session.AddToDiscard(bodyPart.IdCardGlobal);
+                    session.AddToDiscard(bodyPart.IdCard);  
                 }
 
                 player.RemoveDino(dino);

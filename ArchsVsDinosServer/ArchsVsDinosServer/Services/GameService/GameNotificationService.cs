@@ -4,78 +4,80 @@ using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
 using Contracts.DTO;
 using Contracts.DTO.Game_DTO;
+using ArchsVsDinosServer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.Services.GameService
 {
     public class GameNotificationService
     {
         private readonly ILoggerHelper logger;
-        private readonly CardHelper cardHelper;
 
-        public GameNotificationService(ILoggerHelper logger, CardHelper cardHelper)
+        public GameNotificationService(ILoggerHelper logger)
         {
             this.logger = logger;
-            this.cardHelper = cardHelper;
         }
 
         #region Game Lifecycle Notifications
 
         public void NotifyGameInitialized(GameSession session)
         {
-            var dto = new GameInitializedDTO
+            var playersInfo = session.Players.Select(player => new PlayerInGameDTO
+            {
+                UserId = player.UserId,
+                Username = player.Username,
+                TurnOrder = player.TurnOrder
+            }).ToList();
+
+            var gameInitializedData = new GameInitializedDTO
             {
                 MatchId = session.MatchId,
-                Players = session.Players.Select(p => new PlayerInGameDTO
-                {
-                    UserId = p.UserId,
-                    Username = p.Username,
-                    TurnOrder = p.TurnOrder
-                }).ToList()
+                Players = playersInfo,
+                RemainingCardsInDeck = 96
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnGameInitialized(dto));
+            NotifyAllPlayers(session, player => player.Callback?.OnGameInitialized(gameInitializedData));
         }
 
         public void NotifyGameStarted(GameSession session, PlayerSession firstPlayer, GameEndHandler endHandler)
         {
-            var dto = new GameStartedDTO
+            var playersHands = session.Players.Select(player => new PlayerHandDTO
+            {
+                UserId = player.UserId,
+                Cards = CardConverter.ToDTOList(player.Hand.ToList())
+            }).ToList();
+
+            var gameStartedData = new GameStartedDTO
             {
                 MatchId = session.MatchId,
                 FirstPlayerUserId = firstPlayer.UserId,
                 FirstPlayerUsername = firstPlayer.Username,
-                PlayersHands = session.Players.Select(p => new PlayerHandDTO
-                {
-                    UserId = p.UserId,
-                    Cards = p.Hand.Select(c => CardHelper.ConvertToCardDTO(c)).ToList()
-                }).ToList(),
+                PlayersHands = playersHands,
                 DrawPile1Count = session.GetDrawPileCount(0),
                 DrawPile2Count = session.GetDrawPileCount(1),
                 DrawPile3Count = session.GetDrawPileCount(2),
                 StartTime = session.StartTime ?? DateTime.UtcNow
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnGameStarted(dto));
+            NotifyAllPlayers(session, player => player.Callback?.OnGameStarted(gameStartedData));
         }
 
         public void NotifyGameEnded(GameSession session, GameEndResult result)
         {
             var finalScores = session.Players
-                .OrderByDescending(p => p.Points)
-                .Select((p, index) => new PlayerScoreDTO
+                .OrderByDescending(player => player.Points)
+                .Select((player, index) => new PlayerScoreDTO
                 {
-                    UserId = p.UserId,
-                    Username = p.Username,
-                    Points = p.Points,
+                    UserId = player.UserId,
+                    Username = player.Username,
+                    Points = player.Points,
                     Position = index + 1
                 }).ToList();
 
-            var dto = new GameEndedDTO
+            var gameEndedData = new GameEndedDTO
             {
                 MatchId = session.MatchId,
                 Reason = result.Reason,
@@ -85,7 +87,7 @@ namespace ArchsVsDinosServer.Services.GameService
                 FinalScores = finalScores
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnGameEnded(dto));
+            NotifyAllPlayers(session, player => player.Callback?.OnGameEnded(gameEndedData));
         }
 
         #endregion
@@ -94,7 +96,7 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public void NotifyTurnChanged(GameSession session, PlayerSession currentPlayer, GameEndHandler endHandler)
         {
-            var dto = new TurnChangedDTO
+            var turnChangedData = new TurnChangedDTO
             {
                 MatchId = session.MatchId,
                 CurrentPlayerUserId = currentPlayer.UserId,
@@ -103,7 +105,7 @@ namespace ArchsVsDinosServer.Services.GameService
                 RemainingTime = endHandler.GetRemainingTime(session)
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnTurnChanged(dto));
+            NotifyAllPlayers(session, player => player.Callback?.OnTurnChanged(turnChangedData));
         }
 
         #endregion
@@ -112,46 +114,46 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public void NotifyCardDrawn(GameSession session, PlayerSession player, CardInGame card, int pileNumber)
         {
-            var dto = new CardDrawnDTO
+            var cardDrawnData = new CardDrawnDTO
             {
                 MatchId = session.MatchId,
                 PlayerUserId = player.UserId,
                 PlayerUsername = player.Username,
                 DrawPileNumber = pileNumber,
-                Card = CardHelper.ConvertToCardDTO(card)
+                Card = CardConverter.ToDTO(card)
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnCardDrawn(dto));
+            NotifyAllPlayers(session, playerToNotify => playerToNotify.Callback?.OnCardDrawn(cardDrawnData));
         }
 
         public void NotifyDinoPlayed(GameSession session, PlayerSession player, DinoInstance dino)
         {
-            var dto = new DinoPlayedDTO
+            var dinoPlayedData = new DinoPlayedDTO
             {
                 MatchId = session.MatchId,
                 PlayerUserId = player.UserId,
                 PlayerUsername = player.Username,
                 DinoInstanceId = dino.DinoInstanceId,
-                HeadCard = CardHelper.ConvertToCardDTO(dino.HeadCard),
-                ArmyType = dino.ArmyType
+                HeadCard = CardConverter.ToDTO(dino.HeadCard),
+                ArmyType = dino.Element
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnDinoHeadPlayed(dto));
+            NotifyAllPlayers(session, playerToNotify => playerToNotify.Callback?.OnDinoHeadPlayed(dinoPlayedData));
         }
 
         public void NotifyBodyPartAttached(GameSession session, PlayerSession player, DinoInstance dino, CardInGame bodyCard)
         {
-            var dto = new BodyPartAttachedDTO
+            var bodyPartAttachedData = new BodyPartAttachedDTO
             {
                 MatchId = session.MatchId,
                 PlayerUserId = player.UserId,
                 PlayerUsername = player.Username,
                 DinoInstanceId = dino.DinoInstanceId,
-                BodyCard = CardHelper.ConvertToCardDTO(bodyCard),
+                BodyCard = CardConverter.ToDTO(bodyCard),
                 NewTotalPower = dino.GetTotalPower()
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnBodyPartAttached(dto));
+            NotifyAllPlayers(session, playerToNotify => playerToNotify.Callback?.OnBodyPartAttached(bodyPartAttachedData));
         }
 
         #endregion
@@ -160,7 +162,23 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public void NotifyBattleResolved(GameSession session, PlayerSession provoker, BattleResult battleResult)
         {
-            var dto = new BattleResultDTO
+            var archCardDTOs = battleResult.ArchCardIds
+                .Select(cardId => CardInGame.FromDefinition(cardId))
+                .Where(card => card != null)
+                .Select(card => CardConverter.ToDTO(card))
+                .Where(cardDTO => cardDTO != null)
+                .ToList();
+
+            var playerPowersDictionary = new Dictionary<int, int>();
+            foreach (var playerDinosPair in battleResult.PlayerDinos)
+            {
+                var playerId = playerDinosPair.Key;
+                var dinosList = playerDinosPair.Value;
+                var totalPower = dinosList.Sum(dino => dino.GetTotalPower());
+                playerPowersDictionary[playerId] = totalPower;
+            }
+
+            var battleResultData = new BattleResultDTO
             {
                 MatchId = session.MatchId,
                 ArmyType = battleResult.ArmyType,
@@ -170,30 +188,21 @@ namespace ArchsVsDinosServer.Services.GameService
                 WinnerUsername = battleResult.Winner?.Username,
                 WinnerPower = battleResult.WinnerPower,
                 PointsAwarded = battleResult.DinosWon ? battleResult.ArchPower : 0,
-                ArchCards = battleResult.ArchCardIds
-                    .Select(id => CardHelper.ConvertToCardDTO(cardHelper.CreateCardInGame(id)))
-                    .Where(c => c != null)
-                    .ToList(),
-                PlayerPowers = new Dictionary<int, int>()
+                ArchCards = archCardDTOs,
+                PlayerPowers = playerPowersDictionary
             };
 
-            foreach (var kvp in battleResult.PlayerDinos)
-            {
-                var totalPower = kvp.Value.Sum(d => d.GetTotalPower());
-                dto.PlayerPowers[kvp.Key] = totalPower;
-            }
-
-            var provokeDto = new ArchArmyProvokedDTO
+            var archArmyProvokedData = new ArchArmyProvokedDTO
             {
                 MatchId = session.MatchId,
                 ProvokerUserId = provoker.UserId,
                 ProvokerUsername = provoker.Username,
                 ArmyType = battleResult.ArmyType,
-                BattleResult = dto
+                BattleResult = battleResultData
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnArchArmyProvoked(provokeDto));
-            NotifyAllPlayers(session, p => p.Callback?.OnBattleResolved(dto));
+            NotifyAllPlayers(session, player => player.Callback?.OnArchArmyProvoked(archArmyProvokedData));
+            NotifyAllPlayers(session, player => player.Callback?.OnBattleResolved(battleResultData));
         }
 
         #endregion
@@ -202,7 +211,7 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public void NotifyPlayerExpelled(GameSession session, PlayerSession expelledPlayer, string reason)
         {
-            var dto = new PlayerExpelledDTO
+            var playerExpelledData = new PlayerExpelledDTO
             {
                 MatchId = session.MatchId,
                 ExpelledUserId = expelledPlayer.UserId,
@@ -210,7 +219,7 @@ namespace ArchsVsDinosServer.Services.GameService
                 Reason = reason
             };
 
-            NotifyAllPlayers(session, p => p.Callback?.OnPlayerExpelled(dto));
+            NotifyAllPlayers(session, player => player.Callback?.OnPlayerExpelled(playerExpelledData));
         }
 
         #endregion

@@ -1,25 +1,16 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
-using ArchsVsDinosServer.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public class GameSetupHandler
     {
-        private readonly CardHelper cardHelper;
         private const int InitialHandSize = 5;
-
-        public GameSetupHandler(ServiceDependencies dependencies)
-        {
-            cardHelper = new CardHelper(dependencies);
-        }
 
         public bool InitializeGameSession(GameSession session, List<PlayerSession> players)
         {
@@ -30,85 +21,84 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             lock (session.SyncRoot)
             {
-                int turnOrder = 1;
-                foreach (var player in players)
-                {
-                    player.TurnOrder = turnOrder++;
-                    session.AddPlayer(player);
-                }
+                AssignTurnOrderToPlayers(session, players);
 
-                var allCardIds = cardHelper.GetAllCardIds();
-                var shuffledDeck = cardHelper.ShuffleCards(allCardIds);
+                var allCardIds = CardDefinitions.GetAllCardIds();
+                var shuffledDeck = CardShuffler.ShuffleCards(allCardIds);
 
                 var remainingDeck = DealInitialHands(session, shuffledDeck);
 
-                CreateSinglePile(session, remainingDeck);
+                CreateSingleDrawPile(session, remainingDeck);
 
                 return true;
             }
         }
 
-        private void CreateSinglePile(GameSession session, List<string> remainingCards)
+        private void AssignTurnOrderToPlayers(GameSession session, List<PlayerSession> players)
         {
-            var pile = new List<string>(remainingCards);
-            session.SetDrawPiles(new List<List<string>> { pile });
+            int turnOrder = 1;
+            foreach (var player in players)
+            {
+                player.TurnOrder = turnOrder++;
+                session.AddPlayer(player);
+            }
         }
 
-        private List<string> DealInitialHands(GameSession session, List<string> deck)
+        private void CreateSingleDrawPile(GameSession session, List<int> remainingCards)
         {
-            var deckCopy = new List<string>(deck);
-            var currentIndex = 0;
+            var drawPile = new List<int>(remainingCards);
+            var drawPiles = new List<List<int>> { drawPile };
+            session.SetDrawPiles(drawPiles);
+        }
+
+        private List<int> DealInitialHands(GameSession session, List<int> deck)
+        {
+            var deckCopy = new List<int>(deck);
+            var currentCardIndex = 0;
 
             foreach (var player in session.Players)
             {
-                var playerHand = new List<CardInGame>();
+                var cardsDealtToPlayer = 0;
 
-                // Repartir cartas iniciales
-                while (playerHand.Count < InitialHandSize && currentIndex < deckCopy.Count)
+                while (cardsDealtToPlayer < InitialHandSize && currentCardIndex < deckCopy.Count)
                 {
-                    var cardId = deckCopy[currentIndex];
-                    currentIndex++;
+                    var cardId = deckCopy[currentCardIndex];
+                    currentCardIndex++;
 
-                    var card = cardHelper.CreateCardInGame(cardId);
+                    var card = CardInGame.FromDefinition(cardId);
                     if (card == null)
                     {
                         continue;
                     }
 
-                    // Si es un Arch (archLand, archSea, archSky), ponerlo en el tablero central
-                    if (ArmyTypeHelper.IsArch(card.ArmyType))
+                    if (card.IsArch())
                     {
-                        PlaceArchOnBoard(session.CentralBoard, cardId, card.ArmyType);
-                        // No cuenta como carta en mano, seguir repartiendo
+                        PlaceArchOnBoard(session.CentralBoard, cardId, card.Element);
                         continue;
                     }
 
-                    // Agregar carta normal (Dino) a la mano
                     player.AddCard(card);
-                    playerHand.Add(card);
+                    cardsDealtToPlayer++;
                 }
             }
 
-            return deckCopy.Skip(currentIndex).ToList();
+            var remainingCards = deckCopy.Skip(currentCardIndex).ToList();
+            return remainingCards;
         }
 
-        private void PlaceArchOnBoard(CentralBoard board, string cardId, string armyType)
+        private void PlaceArchOnBoard(CentralBoard board, int cardId, string element)
         {
-            if (board == null || string.IsNullOrWhiteSpace(cardId) || string.IsNullOrWhiteSpace(armyType))
+            if (board == null || cardId <= 0 || string.IsNullOrWhiteSpace(element))
             {
                 return;
             }
 
-            var baseType = ArmyTypeHelper.GetBaseType(armyType);
-            if (string.IsNullOrWhiteSpace(baseType))
-            {
-                return;
-            }
+            var normalizedElement = ArmyTypeHelper.NormalizeElement(element);
+            var armyList = board.GetArmyByType(normalizedElement);
 
-            var army = board.GetArmyByType(baseType);
-            if (army != null)
+            if (armyList != null)
             {
-                army.Add(cardId);
+                armyList.Add(cardId);
             }
         }
 
@@ -119,26 +109,26 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return null;
             }
 
-            var players = session.Players.ToList();
-            var randomIndex = GetSecureRandomNumber(players.Count);
+            var playersList = session.Players.ToList();
 
-            return players[randomIndex];
+            using (var randomGenerator = RandomNumberGenerator.Create())
+            {
+                var randomPlayerIndex = GetSecureRandomNumber(randomGenerator, playersList.Count);
+                return playersList[randomPlayerIndex];
+            }
         }
 
-        private int GetSecureRandomNumber(int maxValue)
+        private int GetSecureRandomNumber(RandomNumberGenerator randomGenerator, int maxValue)
         {
             if (maxValue <= 0)
             {
                 return 0;
             }
 
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                var bytes = new byte[4];
-                rng.GetBytes(bytes);
-                var value = BitConverter.ToUInt32(bytes, 0);
-                return (int)(value % (uint)maxValue);
-            }
+            var randomBytes = new byte[4];
+            randomGenerator.GetBytes(randomBytes);
+            var randomValue = BitConverter.ToUInt32(randomBytes, 0);
+            return (int)(randomValue % (uint)maxValue);
         }
     }
 }

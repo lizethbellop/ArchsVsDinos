@@ -11,27 +11,18 @@ namespace Contracts.DTO.Game_DTO
     public class CardDTO
     {
         [DataMember]
-        public string IdCardGlobal { get; set; }  
-
-        [DataMember]
-        public int? IdCardBody { get; set; } 
-
-        [DataMember]
-        public int? IdCardCharacter { get; set; } 
-
-        [DataMember]
-        public string Name { get; set; }
-
-        [DataMember]
-        public string Type { get; set; }
-
-        [DataMember]
-        public string ArmyType { get; set; }
+        public int IdCard { get; set; }  
 
         [DataMember]
         public int Power { get; set; }
 
         [DataMember]
-        public string ImagePath { get; set; }
+        public string Type { get; set; }
+
+        [DataMember]
+        public string Element { get; set; }
+
+        [DataMember]
+        public string BodyPart { get; set; }
     }
 }

@@ -31,12 +31,9 @@
   <xs:element name="ArrayOfCardDTO" nillable="true" type="tns:ArrayOfCardDTO" />
   <xs:complexType name="CardDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" name="ArmyType" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="IdCardBody" nillable="true" type="xs:int" />
-      <xs:element minOccurs="0" name="IdCardCharacter" nillable="true" type="xs:int" />
-      <xs:element minOccurs="0" name="IdCardGlobal" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="ImagePath" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="BodyPart" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Element" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdCard" type="xs:int" />
       <xs:element minOccurs="0" name="Power" type="xs:int" />
       <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string" />
     </xs:sequence>
@@ -44,9 +41,9 @@
   <xs:element name="CardDTO" nillable="true" type="tns:CardDTO" />
   <xs:complexType name="GameInitializedDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" name="IsReady" type="xs:boolean" />
       <xs:element minOccurs="0" name="MatchId" type="xs:int" />
       <xs:element minOccurs="0" name="Players" nillable="true" type="tns:ArrayOfPlayerInGameDTO" />
+      <xs:element minOccurs="0" name="RemainingCardsInDeck" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="GameInitializedDTO" nillable="true" type="tns:GameInitializedDTO" />

@@ -624,22 +624,13 @@ namespace ArchsVsDinosClient.GameService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ArmyTypeField;
+        private string BodyPartField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> IdCardBodyField;
+        private string ElementField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.Nullable<int> IdCardCharacterField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string IdCardGlobalField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ImagePathField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
+        private int IdCardField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int PowerField;
@@ -658,79 +649,40 @@ namespace ArchsVsDinosClient.GameService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ArmyType {
+        public string BodyPart {
             get {
-                return this.ArmyTypeField;
+                return this.BodyPartField;
             }
             set {
-                if ((object.ReferenceEquals(this.ArmyTypeField, value) != true)) {
-                    this.ArmyTypeField = value;
-                    this.RaisePropertyChanged("ArmyType");
+                if ((object.ReferenceEquals(this.BodyPartField, value) != true)) {
+                    this.BodyPartField = value;
+                    this.RaisePropertyChanged("BodyPart");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> IdCardBody {
+        public string Element {
             get {
-                return this.IdCardBodyField;
+                return this.ElementField;
             }
             set {
-                if ((this.IdCardBodyField.Equals(value) != true)) {
-                    this.IdCardBodyField = value;
-                    this.RaisePropertyChanged("IdCardBody");
+                if ((object.ReferenceEquals(this.ElementField, value) != true)) {
+                    this.ElementField = value;
+                    this.RaisePropertyChanged("Element");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public System.Nullable<int> IdCardCharacter {
+        public int IdCard {
             get {
-                return this.IdCardCharacterField;
+                return this.IdCardField;
             }
             set {
-                if ((this.IdCardCharacterField.Equals(value) != true)) {
-                    this.IdCardCharacterField = value;
-                    this.RaisePropertyChanged("IdCardCharacter");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string IdCardGlobal {
-            get {
-                return this.IdCardGlobalField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.IdCardGlobalField, value) != true)) {
-                    this.IdCardGlobalField = value;
-                    this.RaisePropertyChanged("IdCardGlobal");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ImagePath {
-            get {
-                return this.ImagePathField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ImagePathField, value) != true)) {
-                    this.ImagePathField = value;
-                    this.RaisePropertyChanged("ImagePath");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
-            get {
-                return this.NameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
+                if ((this.IdCardField.Equals(value) != true)) {
+                    this.IdCardField = value;
+                    this.RaisePropertyChanged("IdCard");
                 }
             }
         }
@@ -781,13 +733,13 @@ namespace ArchsVsDinosClient.GameService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool IsReadyField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int MatchIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ArchsVsDinosClient.GameService.PlayerInGameDTO[] PlayersField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int RemainingCardsInDeckField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -796,19 +748,6 @@ namespace ArchsVsDinosClient.GameService {
             }
             set {
                 this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsReady {
-            get {
-                return this.IsReadyField;
-            }
-            set {
-                if ((this.IsReadyField.Equals(value) != true)) {
-                    this.IsReadyField = value;
-                    this.RaisePropertyChanged("IsReady");
-                }
             }
         }
         
@@ -834,6 +773,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((object.ReferenceEquals(this.PlayersField, value) != true)) {
                     this.PlayersField = value;
                     this.RaisePropertyChanged("Players");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int RemainingCardsInDeck {
+            get {
+                return this.RemainingCardsInDeckField;
+            }
+            set {
+                if ((this.RemainingCardsInDeckField.Equals(value) != true)) {
+                    this.RemainingCardsInDeckField = value;
+                    this.RaisePropertyChanged("RemainingCardsInDeck");
                 }
             }
         }

@@ -151,7 +151,10 @@
     <Compile Include="BusinessLogic\GameManagement\BattleResult.cs" />
     <Compile Include="BusinessLogic\GameManagement\Board\CentralBoard.cs" />
     <Compile Include="BusinessLogic\GameManagement\CardHelper.cs" />
+    <Compile Include="BusinessLogic\GameManagement\Cards\CardConverter.cs" />
+    <Compile Include="BusinessLogic\GameManagement\Cards\CardDefinition.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\CardInGame.cs" />
+    <Compile Include="BusinessLogic\GameManagement\Cards\CardShuffler.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\DinoInstance.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameActionHandler.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameEndHandler.cs" />
@@ -211,6 +214,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthenticationManager.cs" />
     <Compile Include="Services\ChatManager.cs" />
+    <Compile Include="Services\GameCallbackManager.cs" />
     <Compile Include="Utils\BasicServiceDependencies.cs" />
     <Compile Include="Utils\CoreDependencies.cs" />
     <Compile Include="Utils\EmailService.cs" />

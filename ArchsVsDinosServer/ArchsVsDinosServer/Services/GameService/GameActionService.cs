@@ -3,10 +3,6 @@ using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
 using Contracts.DTO.Result_Codes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.Services.GameService
 {
@@ -44,26 +40,42 @@ namespace ArchsVsDinosServer.Services.GameService
             {
                 var session = sessionManager.GetSession(matchId);
                 var sessionValidation = validationService.ValidateSessionExists(session, matchId, "DrawCard");
-                if (!sessionValidation.IsValid) return DrawCardResultCode.UnexpectedError;
+                if (!sessionValidation.IsValid)
+                {
+                    return DrawCardResultCode.UnexpectedError;
+                }
 
                 var gameStartedValidation = validationService.ValidateGameStarted(session, "DrawCard");
-                if (!gameStartedValidation.IsValid) return DrawCardResultCode.GameNotStarted;
+                if (!gameStartedValidation.IsValid)
+                {
+                    return DrawCardResultCode.GameNotStarted;
+                }
 
                 var player = sessionManager.GetPlayer(matchId, userId);
                 var playerValidation = validationService.ValidatePlayerExists(player, userId, matchId, "DrawCard");
-                if (!playerValidation.IsValid) return DrawCardResultCode.UnexpectedError;
+                if (!playerValidation.IsValid)
+                {
+                    return DrawCardResultCode.UnexpectedError;
+                }
 
                 var turnValidation = validationService.ValidatePlayerTurn(session, userId, "DrawCard");
-                if (!turnValidation.IsValid) return DrawCardResultCode.NotYourTurn;
+                if (!turnValidation.IsValid)
+                {
+                    return DrawCardResultCode.NotYourTurn;
+                }
 
                 var canDrawValidation = validationService.ValidateCanDrawCard(session, userId, "DrawCard");
-                if (!canDrawValidation.IsValid) return DrawCardResultCode.AlreadyDrewThisTurn;
+                if (!canDrawValidation.IsValid)
+                {
+                    return DrawCardResultCode.AlreadyDrewThisTurn;
+                }
 
                 var pileValidation = validationService.ValidateDrawPile(session, drawPileNumber, "DrawCard");
                 if (!pileValidation.IsValid)
                 {
                     return pileValidation.ErrorMessage == "Invalid draw pile"
-                        ? DrawCardResultCode.InvalidDrawPile : DrawCardResultCode.DrawPileEmpty;
+                        ? DrawCardResultCode.InvalidDrawPile
+                        : DrawCardResultCode.DrawPileEmpty;
                 }
 
                 return ExecuteDrawCard(session, player, drawPileNumber);
@@ -96,17 +108,29 @@ namespace ArchsVsDinosServer.Services.GameService
             {
                 var session = sessionManager.GetSession(matchId);
                 var sessionValidation = validationService.ValidateSessionExists(session, matchId, "PlayDinoHead");
-                if (!sessionValidation.IsValid) return PlayCardResultCode.UnexpectedError;
+                if (!sessionValidation.IsValid)
+                {
+                    return PlayCardResultCode.UnexpectedError;
+                }
 
                 var player = sessionManager.GetPlayer(matchId, userId);
                 var playerValidation = validationService.ValidatePlayerExists(player, userId, matchId, "PlayDinoHead");
-                if (!playerValidation.IsValid) return PlayCardResultCode.UnexpectedError;
+                if (!playerValidation.IsValid)
+                {
+                    return PlayCardResultCode.UnexpectedError;
+                }
 
                 var turnValidation = validationService.ValidatePlayerTurn(session, userId, "PlayDinoHead");
-                if (!turnValidation.IsValid) return PlayCardResultCode.NotYourTurn;
+                if (!turnValidation.IsValid)
+                {
+                    return PlayCardResultCode.NotYourTurn;
+                }
 
                 var canPlayValidation = validationService.ValidateCanPlayCard(session, userId, "PlayDinoHead");
-                if (!canPlayValidation.IsValid) return PlayCardResultCode.AlreadyPlayedTwoCards;
+                if (!canPlayValidation.IsValid)
+                {
+                    return PlayCardResultCode.AlreadyPlayedTwoCards;
+                }
 
                 return ExecutePlayDinoHead(session, player, cardId);
             }
@@ -119,12 +143,18 @@ namespace ArchsVsDinosServer.Services.GameService
         private PlayCardResultCode ExecutePlayDinoHead(GameSession session, PlayerSession player, int cardId)
         {
             var cardValidation = validationService.ValidateCardInHand(player, cardId, "PlayDinoHead");
-            if (!cardValidation.IsValid) return PlayCardResultCode.CardNotInHand;
+            if (!cardValidation.IsValid)
+            {
+                return PlayCardResultCode.CardNotInHand;
+            }
 
             var dinoHeadValidation = validationService.ValidateDinoHead(cardValidation.Data, cardId, "PlayDinoHead");
-            if (!dinoHeadValidation.IsValid) return PlayCardResultCode.InvalidDinoHead;
+            if (!dinoHeadValidation.IsValid)
+            {
+                return PlayCardResultCode.InvalidDinoHead;
+            }
 
-            var dino = actionHandler.PlayDinoHead(session, player, cardValidation.Data.IdCardGlobal);
+            var dino = actionHandler.PlayDinoHead(session, player, cardId);
             if (dino == null)
             {
                 logger.LogInfo($"PlayDinoHead: Failed to play dino head {cardId}");
@@ -142,17 +172,29 @@ namespace ArchsVsDinosServer.Services.GameService
             {
                 var session = sessionManager.GetSession(matchId);
                 var sessionValidation = validationService.ValidateSessionExists(session, matchId, "AttachBodyPart");
-                if (!sessionValidation.IsValid) return PlayCardResultCode.UnexpectedError;
+                if (!sessionValidation.IsValid)
+                {
+                    return PlayCardResultCode.UnexpectedError;
+                }
 
                 var player = sessionManager.GetPlayer(matchId, userId);
                 var playerValidation = validationService.ValidatePlayerExists(player, userId, matchId, "AttachBodyPart");
-                if (!playerValidation.IsValid) return PlayCardResultCode.UnexpectedError;
+                if (!playerValidation.IsValid)
+                {
+                    return PlayCardResultCode.UnexpectedError;
+                }
 
                 var turnValidation = validationService.ValidatePlayerTurn(session, userId, "AttachBodyPart");
-                if (!turnValidation.IsValid) return PlayCardResultCode.NotYourTurn;
+                if (!turnValidation.IsValid)
+                {
+                    return PlayCardResultCode.NotYourTurn;
+                }
 
                 var canPlayValidation = validationService.ValidateCanPlayCard(session, userId, "AttachBodyPart");
-                if (!canPlayValidation.IsValid) return PlayCardResultCode.AlreadyPlayedTwoCards;
+                if (!canPlayValidation.IsValid)
+                {
+                    return PlayCardResultCode.AlreadyPlayedTwoCards;
+                }
 
                 return ExecuteAttachBodyPart(session, player, cardId, dinoHeadCardId);
             }
@@ -165,18 +207,30 @@ namespace ArchsVsDinosServer.Services.GameService
         private PlayCardResultCode ExecuteAttachBodyPart(GameSession session, PlayerSession player, int cardId, int dinoHeadCardId)
         {
             var cardValidation = validationService.ValidateCardInHand(player, cardId, "AttachBodyPart");
-            if (!cardValidation.IsValid) return PlayCardResultCode.CardNotInHand;
+            if (!cardValidation.IsValid)
+            {
+                return PlayCardResultCode.CardNotInHand;
+            }
 
             var dinoValidation = validationService.ValidateDinoExists(player, dinoHeadCardId, "AttachBodyPart");
-            if (!dinoValidation.IsValid) return PlayCardResultCode.MustAttachToHead;
+            if (!dinoValidation.IsValid)
+            {
+                return PlayCardResultCode.MustAttachToHead;
+            }
 
             var bodyPartValidation = validationService.ValidateBodyPart(cardValidation.Data, cardId, "AttachBodyPart");
-            if (!bodyPartValidation.IsValid) return PlayCardResultCode.InvalidCardType;
+            if (!bodyPartValidation.IsValid)
+            {
+                return PlayCardResultCode.InvalidCardType;
+            }
 
             var armyTypeValidation = validationService.ValidateArmyTypeMatch(cardValidation.Data, dinoValidation.Data, "AttachBodyPart");
-            if (!armyTypeValidation.IsValid) return PlayCardResultCode.ArmyTypeMismatch;
+            if (!armyTypeValidation.IsValid)
+            {
+                return PlayCardResultCode.ArmyTypeMismatch;
+            }
 
-            var success = actionHandler.AttachBodyPart(session, player, cardValidation.Data.IdCardGlobal, dinoValidation.Data.HeadCard.IdCardGlobal);
+            var success = actionHandler.AttachBodyPart(session, player, cardId, dinoHeadCardId);
             if (!success)
             {
                 logger.LogInfo($"AttachBodyPart: Cannot attach body {cardId} to dino {dinoHeadCardId}");
@@ -194,23 +248,41 @@ namespace ArchsVsDinosServer.Services.GameService
             {
                 var session = sessionManager.GetSession(matchId);
                 var sessionValidation = validationService.ValidateSessionExists(session, matchId, "ProvokeArmy");
-                if (!sessionValidation.IsValid) return ProvokeResultCode.UnexpectedError;
+                if (!sessionValidation.IsValid)
+                {
+                    return ProvokeResultCode.UnexpectedError;
+                }
 
                 var player = sessionManager.GetPlayer(matchId, userId);
                 var playerValidation = validationService.ValidatePlayerExists(player, userId, matchId, "ProvokeArmy");
-                if (!playerValidation.IsValid) return ProvokeResultCode.UnexpectedError;
+                if (!playerValidation.IsValid)
+                {
+                    return ProvokeResultCode.UnexpectedError;
+                }
 
                 var turnValidation = validationService.ValidatePlayerTurn(session, userId, "ProvokeArmy");
-                if (!turnValidation.IsValid) return ProvokeResultCode.NotYourTurn;
+                if (!turnValidation.IsValid)
+                {
+                    return ProvokeResultCode.NotYourTurn;
+                }
 
                 var canProvokeValidation = validationService.ValidateCanProvoke(session, userId, "ProvokeArmy");
-                if (!canProvokeValidation.IsValid) return ProvokeResultCode.AlreadyTookAction;
+                if (!canProvokeValidation.IsValid)
+                {
+                    return ProvokeResultCode.AlreadyTookAction;
+                }
 
                 var armyTypeValidation = validationService.ValidateArmyType(armyType, "ProvokeArmy");
-                if (!armyTypeValidation.IsValid) return ProvokeResultCode.InvalidArmyType;
+                if (!armyTypeValidation.IsValid)
+                {
+                    return ProvokeResultCode.InvalidArmyType;
+                }
 
                 var armyNotEmptyValidation = validationService.ValidateArmyNotEmpty(session, armyType, "ProvokeArmy");
-                if (!armyNotEmptyValidation.IsValid) return ProvokeResultCode.NoArchsInArmy;
+                if (!armyNotEmptyValidation.IsValid)
+                {
+                    return ProvokeResultCode.NoArchsInArmy;
+                }
 
                 return ExecuteProvokeArmy(session, player, armyType);
             }
@@ -242,13 +314,22 @@ namespace ArchsVsDinosServer.Services.GameService
             {
                 var session = sessionManager.GetSession(matchId);
                 var sessionValidation = validationService.ValidateSessionExists(session, matchId, "EndTurn");
-                if (!sessionValidation.IsValid) return EndTurnResultCode.UnexpectedError;
+                if (!sessionValidation.IsValid)
+                {
+                    return EndTurnResultCode.UnexpectedError;
+                }
 
                 var turnValidation = validationService.ValidatePlayerTurn(session, userId, "EndTurn");
-                if (!turnValidation.IsValid) return EndTurnResultCode.NotYourTurn;
+                if (!turnValidation.IsValid)
+                {
+                    return EndTurnResultCode.NotYourTurn;
+                }
 
                 var canEndTurnValidation = validationService.ValidateCanEndTurn(session, userId, "EndTurn");
-                if (!canEndTurnValidation.IsValid) return EndTurnResultCode.NotYourTurn;
+                if (!canEndTurnValidation.IsValid)
+                {
+                    return EndTurnResultCode.NotYourTurn;
+                }
 
                 if (CheckAndHandleGameEnd(session))
                 {
@@ -297,11 +378,13 @@ namespace ArchsVsDinosServer.Services.GameService
                 logger.LogError($"DrawCard: Index out of range", ex);
                 return DrawCardResultCode.InvalidDrawPile;
             }
+
             if (ex is InvalidOperationException)
             {
                 logger.LogError($"DrawCard: Invalid operation", ex);
                 return DrawCardResultCode.DatabaseError;
             }
+
             logger.LogInfo($"DrawCard: Unexpected error");
             return DrawCardResultCode.UnexpectedError;
         }
@@ -313,11 +396,13 @@ namespace ArchsVsDinosServer.Services.GameService
                 logger.LogError($"{operation}: Null argument", ex);
                 return PlayCardResultCode.UnexpectedError;
             }
+
             if (ex is InvalidOperationException)
             {
                 logger.LogError($"{operation}: Invalid operation", ex);
                 return PlayCardResultCode.DatabaseError;
             }
+
             logger.LogWarning($"{operation}: Unexpected error");
             return PlayCardResultCode.UnexpectedError;
         }
@@ -329,11 +414,13 @@ namespace ArchsVsDinosServer.Services.GameService
                 logger.LogError($"ProvokeArmy: Invalid argument", ex);
                 return ProvokeResultCode.InvalidArmyType;
             }
+
             if (ex is InvalidOperationException)
             {
                 logger.LogError($"ProvokeArmy: Invalid operation", ex);
                 return ProvokeResultCode.DatabaseError;
             }
+
             logger.LogInfo($"ProvokeArmy: Unexpected error");
             return ProvokeResultCode.UnexpectedError;
         }
@@ -345,9 +432,9 @@ namespace ArchsVsDinosServer.Services.GameService
                 logger.LogError($"EndTurn: Invalid operation", ex);
                 return EndTurnResultCode.DatabaseError;
             }
+
             logger.LogWarning($"EndTurn: Unexpected error");
             return EndTurnResultCode.UnexpectedError;
         }
-
     }
 }

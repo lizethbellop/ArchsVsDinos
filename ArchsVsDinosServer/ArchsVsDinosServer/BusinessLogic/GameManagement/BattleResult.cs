@@ -15,7 +15,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         public bool DinosWon { get; set; }
         public PlayerSession Winner { get; set; }
         public int WinnerPower { get; set; }
-        public List<string> ArchCardIds { get; set; }
+        public List<int> ArchCardIds { get; set; }
         public Dictionary<int, List<DinoInstance>> PlayerDinos { get; set; }
     }
 }

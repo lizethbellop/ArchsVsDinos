@@ -72,7 +72,6 @@ namespace ArchsVsDinosClient.Services
         }
         public void NotifySystemMessage(string title, string message)
         {
-            // si quieres luego agregar un evento, aquí lo puedes manejar
             Console.WriteLine($"[SYSTEM MESSAGE] {title}: {message}");
         }
 

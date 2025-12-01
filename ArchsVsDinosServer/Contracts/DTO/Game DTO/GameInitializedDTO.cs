@@ -16,7 +16,7 @@ namespace Contracts.DTO.Game_DTO
         [DataMember]
         public List<PlayerInGameDTO> Players { get; set; }
 
-        [DataMember]
-        public bool IsReady { get; set; }
+        [DataMember] 
+        public int RemainingCardsInDeck { get; set; }
     }
 }

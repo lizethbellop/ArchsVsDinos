@@ -9,7 +9,7 @@ namespace ArchsVsDinosClient.Models
     public enum ElementType
     {
         None, 
-        Sea, 
+        Water, 
         Sand, 
         Wind
     }

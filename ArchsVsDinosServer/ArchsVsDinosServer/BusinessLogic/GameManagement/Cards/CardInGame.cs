@@ -8,13 +8,41 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
 {
     public class CardInGame
     {
-        public string IdCardGlobal { get; set; } 
-        public int? IdCardBody { get; set; }
-        public int? IdCardCharacter { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string ArmyType { get; set; }
+        public int IdCard { get; set; }        
         public int Power { get; set; }
-        public string ImagePath { get; set; }
+        public string Type { get; set; }     
+        public string Element { get; set; }   
+        public string BodyPart { get; set; }
+
+        public static CardInGame FromDefinition(int idCard)
+        {
+            var cardDefinition = CardDefinitions.GetCard(idCard);
+            if (cardDefinition == null) return null;
+
+            return new CardInGame
+            {
+                IdCard = cardDefinition.IdCard,
+                Power = cardDefinition.Power,
+                Type = cardDefinition.Type,
+                Element = cardDefinition.Element,
+                BodyPart = cardDefinition.BodyPart
+            };
+        }
+
+        public bool IsArch()
+        {
+            return Type == "arch";
+        }
+
+        public bool IsDinoHead()
+        {
+            return Type == "head";
+        }
+
+        public bool IsBodyPart()
+        {
+            return Type == "body";
+        }
     }
+
 }

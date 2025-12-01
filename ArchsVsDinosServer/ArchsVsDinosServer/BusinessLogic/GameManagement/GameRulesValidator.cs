@@ -1,10 +1,6 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
@@ -64,16 +60,12 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public bool IsValidDinoHead(CardInGame card)
         {
-            return card != null &&
-                   card.Type == "head" &&
-                   ArmyTypeHelper.IsDino(card.ArmyType);
+            return card != null && card.Type == "head" && card.IsDinoHead();
         }
 
         public bool IsValidBodyPart(CardInGame card)
         {
-            return card != null &&
-                   card.Type == "body" &&
-                   !string.IsNullOrWhiteSpace(card.ArmyType);
+            return card != null && card.Type == "body" && card.IsBodyPart();
         }
 
         public bool CanAttachBodyPart(CardInGame bodyCard, DinoInstance dino)
@@ -83,32 +75,35 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            return bodyCard.ArmyType == dino.ArmyType;
+            var normalizedBodyElement = ArmyTypeHelper.NormalizeElement(bodyCard.Element);
+            var normalizedDinoElement = ArmyTypeHelper.NormalizeElement(dino.Element);
+
+            return normalizedBodyElement == normalizedDinoElement;
         }
 
-        public bool PlayerHasCard(PlayerSession player, string cardGlobalId)
+        public bool PlayerHasCard(PlayerSession player, int cardId)
         {
-            if (player == null || string.IsNullOrWhiteSpace(cardGlobalId))
+            if (player == null || cardId <= 0)
             {
                 return false;
             }
 
-            return player.Hand.Any(c => c.IdCardGlobal == cardGlobalId);
+            return player.Hand.Any(card => card.IdCard == cardId);
         }
 
-        public DinoInstance FindDinoByHeadCardId(PlayerSession player, string headCardId)
+        public DinoInstance FindDinoByHeadCardId(PlayerSession player, int headCardId)
         {
-            if (player == null || string.IsNullOrWhiteSpace(headCardId))
+            if (player == null || headCardId <= 0)
             {
                 return null;
             }
 
-            return player.Dinos.FirstOrDefault(d => d.HeadCard?.IdCardGlobal == headCardId);
+            return player.Dinos.FirstOrDefault(dino => dino.HeadCard?.IdCard == headCardId);
         }
 
         public bool IsValidArmyType(string armyType)
         {
-            return ArmyTypeHelper.IsValidArmyType(armyType) || ArmyTypeHelper.IsValidBaseType(armyType);
+            return ArmyTypeHelper.IsValidBaseType(armyType);
         }
     }
 }

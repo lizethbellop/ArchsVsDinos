@@ -2,11 +2,7 @@
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.Services.GameService
 {
@@ -132,7 +128,7 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public ValidationResult<CardInGame> ValidateCardInHand(PlayerSession player, int cardId, string operation)
         {
-            var card = player.Hand.FirstOrDefault(c => c.IdCardBody == cardId || c.IdCardCharacter == cardId);
+            var card = player.Hand.FirstOrDefault(c => c.IdCard == cardId);
 
             if (card == null)
             {
@@ -160,9 +156,7 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public ValidationResult<DinoInstance> ValidateDinoExists(PlayerSession player, int dinoHeadCardId, string operation)
         {
-            var dino = player.Dinos.FirstOrDefault(d =>
-                d.HeadCard.IdCardBody == dinoHeadCardId ||
-                d.HeadCard.IdCardCharacter == dinoHeadCardId);
+            var dino = player.Dinos.FirstOrDefault(d => d.HeadCard.IdCard == dinoHeadCardId);
 
             if (dino == null)
             {
@@ -186,10 +180,13 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public ValidationResult ValidateArmyTypeMatch(CardInGame bodyCard, DinoInstance dino, string operation)
         {
-            if (bodyCard.ArmyType != dino.ArmyType)
+            var normalizedBodyElement = ArmyTypeHelper.NormalizeElement(bodyCard.Element);
+            var normalizedDinoElement = ArmyTypeHelper.NormalizeElement(dino.Element);
+
+            if (normalizedBodyElement != normalizedDinoElement)
             {
-                logger.LogInfo($"{operation}: Army type mismatch");
-                return ValidationResult.Fail("Army type mismatch");
+                logger.LogInfo($"{operation}: Element mismatch - Body: {bodyCard.Element}, Dino: {dino.Element}");
+                return ValidationResult.Fail("Element mismatch");
             }
 
             return ValidationResult.Success();
@@ -223,7 +220,8 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public ValidationResult ValidateArmyNotEmpty(GameSession session, string armyType, string operation)
         {
-            var army = session.CentralBoard.GetArmyByType(armyType);
+            var normalizedArmyType = ArmyTypeHelper.NormalizeElement(armyType);
+            var army = session.CentralBoard.GetArmyByType(normalizedArmyType);
 
             if (army == null || army.Count == 0)
             {

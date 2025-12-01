@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public class CardHelper
-    {
+    {/*
         private readonly Func<IDbContext> contextFactory;
 
         public CardHelper(ServiceDependencies dependencies)
@@ -277,6 +277,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 var value = BitConverter.ToUInt32(bytes, 0);
                 return (int)(value % (uint)maxValue);
             }
-        }
+        }*/
     }
 }

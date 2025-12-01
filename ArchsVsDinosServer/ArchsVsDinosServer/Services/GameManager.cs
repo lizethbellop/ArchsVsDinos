@@ -35,17 +35,16 @@ namespace ArchsVsDinosServer.Services
         {
             var dependencies = new ServiceDependencies();
             sessionManager = GameSessionManager.Instance;
-            setupHandler = new GameSetupHandler(dependencies);
+            setupHandler = new GameSetupHandler();
             var actionHandler = new GameActionHandler(dependencies);
             var battleResolver = new BattleResolver(dependencies);
             var endHandler = new GameEndHandler();
             logger = dependencies.loggerHelper;
 
             var validator = new GameRulesValidator();
-            var cardHelper = new CardHelper(dependencies);
 
             validationService = new GameValidationService(validator, logger);
-            notificationService = new GameNotificationService(logger, cardHelper);
+            notificationService = new GameNotificationService(logger);
             expulsionHandler = new GameExpulsionHandler(sessionManager, actionHandler, notificationService, dependencies, logger);
             actionService = new GameActionService(sessionManager, actionHandler, battleResolver, endHandler, validationService, notificationService, logger);
             queryService = new GameQueryService(sessionManager, endHandler, dependencies, logger);
@@ -53,6 +52,7 @@ namespace ArchsVsDinosServer.Services
 
         public GameSetupResultCode InitializeGame(int matchId)
         {
+
             try
             {
                 var matchValidation = validationService.ValidateMatchId(matchId, "InitializeGame");

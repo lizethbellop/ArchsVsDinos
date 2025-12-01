@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement;
+using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Utils;
@@ -9,8 +10,6 @@ using System.Collections.Generic;
 using System.Data.Entity.Core;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.Services.GameService
 {
@@ -79,11 +78,14 @@ namespace ArchsVsDinosServer.Services.GameService
                     return null;
                 }
 
-                return new PlayerHandDTO
+                var playerHandCards = player.Hand.ToList();
+                var playerHandData = new PlayerHandDTO
                 {
                     UserId = userId,
-                    Cards = player.Hand.Select(c => CardHelper.ConvertToCardDTO(c)).ToList()
+                    Cards = CardConverter.ToDTOList(playerHandCards)
                 };
+
+                return playerHandData;
             }
             catch (CommunicationException)
             {
@@ -144,39 +146,44 @@ namespace ArchsVsDinosServer.Services.GameService
 
         private GameStateDTO BuildGameStateDTO(GameSession session)
         {
-            return new GameStateDTO
+            var playersInfo = session.Players.Select(player => new PlayerInGameDTO
+            {
+                UserId = player.UserId,
+                Username = player.Username,
+                TurnOrder = player.TurnOrder
+            }).ToList();
+
+            var gameStateData = new GameStateDTO
             {
                 MatchId = session.MatchId,
                 IsStarted = session.IsStarted,
                 CurrentTurnUserId = session.CurrentTurn,
                 TurnNumber = session.TurnNumber,
                 RemainingTime = endHandler.GetRemainingTime(session),
-                Players = session.Players.Select(p => new PlayerInGameDTO
-                {
-                    UserId = p.UserId,
-                    Username = p.Username,
-                    TurnOrder = p.TurnOrder
-                }).ToList(),
+                Players = playersInfo,
                 CentralBoard = BuildCentralBoardDTO(session),
                 DrawPile1Count = session.GetDrawPileCount(0),
                 DrawPile2Count = session.GetDrawPileCount(1),
                 DrawPile3Count = session.GetDrawPileCount(2),
                 DiscardPileCount = session.DiscardPile.Count
             };
+
+            return gameStateData;
         }
 
         private CentralBoardDTO BuildCentralBoardDTO(GameSession session)
         {
-            var cardHelper = new CardHelper(dependencies);
-            return new CentralBoardDTO
+            var centralBoardData = new CentralBoardDTO
             {
-                LandArmyCount = session.CentralBoard.LandArmy.Count,
-                SeaArmyCount = session.CentralBoard.SeaArmy.Count,
-                SkyArmyCount = session.CentralBoard.SkyArmy.Count,
-                LandArmyPower = session.CentralBoard.GetArmyPower("land", cardHelper),
-                SeaArmyPower = session.CentralBoard.GetArmyPower("sea", cardHelper),
-                SkyArmyPower = session.CentralBoard.GetArmyPower("sky", cardHelper)
+                LandArmyCount = session.CentralBoard.SandArmy.Count,
+                SeaArmyCount = session.CentralBoard.WaterArmy.Count,
+                SkyArmyCount = session.CentralBoard.WindArmy.Count,
+                LandArmyPower = session.CentralBoard.GetArmyPower("sand"),
+                SeaArmyPower = session.CentralBoard.GetArmyPower("water"),
+                SkyArmyPower = session.CentralBoard.GetArmyPower("wind")
             };
+
+            return centralBoardData;
         }
     }
 }

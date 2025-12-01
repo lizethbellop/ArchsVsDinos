@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
@@ -46,14 +44,14 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             return false;
         }
 
-        public CardInGame RemoveCardById(string cardGlobalId)
+        public CardInGame RemoveCardById(int cardId)
         {
-            if (string.IsNullOrWhiteSpace(cardGlobalId))
+            if (cardId <= 0)
             {
                 return null;
             }
 
-            var card = hand.FirstOrDefault(c => c.IdCardGlobal == cardGlobalId);
+            var card = hand.FirstOrDefault(c => c.IdCard == cardId);
             if (card != null)
             {
                 hand.Remove(card);
@@ -79,14 +77,14 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             return false;
         }
 
-        public DinoInstance GetDinoByHeadCardId(string headCardId)
+        public DinoInstance GetDinoByHeadCardId(int headCardId)
         {
-            if (string.IsNullOrWhiteSpace(headCardId))
+            if (headCardId <= 0)
             {
                 return null;
             }
 
-            return dinos.FirstOrDefault(d => d.HeadCard?.IdCardGlobal == headCardId);
+            return dinos.FirstOrDefault(dino => dino.HeadCard?.IdCard == headCardId);
         }
 
         public void ClearHand()

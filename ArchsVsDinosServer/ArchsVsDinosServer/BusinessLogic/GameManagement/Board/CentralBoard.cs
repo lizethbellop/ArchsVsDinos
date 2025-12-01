@@ -1,41 +1,39 @@
-﻿using ArchsVsDinosServer.BusinessLogic.GameManagement;
+﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Board
 {
     public class CentralBoard
     {
-        public List<string> LandArmy { get; set; } = new List<string>();
-        public List<string> SeaArmy { get; set; } = new List<string>();
-        public List<string> SkyArmy { get; set; } = new List<string>();
+        public List<int> SandArmy { get; set; } = new List<int>();
+        public List<int> WaterArmy { get; set; } = new List<int>();
+        public List<int> WindArmy { get; set; } = new List<int>();
 
-        public List<string> GetArmyByType(string armyType)
+        public List<int> GetArmyByType(string element)
         {
-            if (string.IsNullOrWhiteSpace(armyType))
+            if (string.IsNullOrWhiteSpace(element))
             {
                 return null;
             }
 
-            switch (armyType.ToLower())
+            switch (element.ToLower())
             {
-                case "land":
-                    return LandArmy;
-                case "sea":
-                    return SeaArmy;
-                case "sky":
-                    return SkyArmy;
+                case "sand":
+                    return SandArmy;
+                case "water":
+                    return WaterArmy;
+                case "wind":
+                    return WindArmy;
                 default:
                     return null;
             }
         }
 
-        public int GetArmyPower(string armyType, CardHelper cardHelper)
+        public int GetArmyPower(string element)
         {
-            var army = GetArmyByType(armyType);
+            var army = GetArmyByType(element);
             if (army == null || army.Count == 0)
             {
                 return 0;
@@ -44,7 +42,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Board
             int totalPower = 0;
             foreach (var cardId in army)
             {
-                var card = cardHelper.CreateCardInGame(cardId);
+                var card = CardInGame.FromDefinition(cardId);
                 if (card != null)
                 {
                     totalPower += card.Power;
@@ -54,9 +52,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Board
             return totalPower;
         }
 
-        public void ClearArmy(string armyType)
+        public void ClearArmy(string element)
         {
-            var army = GetArmyByType(armyType);
+            var army = GetArmyByType(element);
             army?.Clear();
         }
     }
