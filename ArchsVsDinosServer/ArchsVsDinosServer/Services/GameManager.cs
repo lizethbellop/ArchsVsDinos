@@ -49,7 +49,7 @@ namespace ArchsVsDinosServer.Services
             actionService = new GameActionService(sessionManager, actionHandler, battleResolver, endHandler, validationService, notificationService, logger);
             queryService = new GameQueryService(sessionManager, endHandler, dependencies, logger);
         }
-
+        /*
         public GameSetupResultCode InitializeGame(int matchId)
         {
 
@@ -70,36 +70,179 @@ namespace ArchsVsDinosServer.Services
 
                 if (!sessionManager.CreateSession(matchId))
                 {
-                    logger.LogInfo($"InitializeGame: Failed to create session {matchId}");
+                    logger.LogInfo($"Failed to create session {matchId}");
                     return GameSetupResultCode.UnexpectedError;
                 }
 
                 var session = sessionManager.GetSession(matchId);
-                notificationService.NotifyGameInitialized(session);
+                var lobbyPlayers = LobbyConfiguration.GetPlayersForMatch(matchId);
+                foreach (var playerInLobby in lobbyPlayers)
+                {
+                    session.AddPlayer(new PlayerSession(playerInLobby.UserId, playerInLobby.Username));
+                }
 
-                logger.LogInfo($"InitializeGame: Session {matchId} initialized successfully");
+                if (session == null)
+                {
+                    logger.LogInfo($"Session {matchId} is null after creation.");
+                    return GameSetupResultCode.UnexpectedError;
+                }
+
+                notificationService.NotifyGameInitialized(session);
                 return GameSetupResultCode.Success;
             }
             catch (ArgumentNullException ex)
             {
-                logger.LogError($"InitializeGame: Argument null - {ex.Message}", ex);
+                logger.LogError($"Argument null to initialize game", ex);
                 return GameSetupResultCode.UnexpectedError;
             }
             catch (ArgumentException ex)
             {
-                logger.LogError($"InitializeGame: Argument error - {ex.Message}", ex);
+                logger.LogError($"Argument error while initializing game", ex);
                 return GameSetupResultCode.UnexpectedError;
             }
             catch (InvalidOperationException ex)
             {
-                logger.LogError($"InitializeGame: Invalid operation - {ex.Message}", ex);
+                logger.LogError($"Invalid operation while initializing game", ex);
                 return GameSetupResultCode.DatabaseError;
             }
             catch (Exception ex)
             {
-                logger.LogInfo($"InitializeGame: Unexpected error - {ex.Message}");
+                logger.LogInfo($"Unexpected error initializing game");
                 return GameSetupResultCode.UnexpectedError;
             }
+        }*/
+
+        public GameSetupResultCode InitializeGame(int matchId)
+        {
+            try
+            {
+                var validationResult = ValidateGameInitialization(matchId);
+                if (validationResult != GameSetupResultCode.Success)
+                {
+                    return validationResult;
+                }
+
+                var session = CreateGameSession(matchId);
+                if (session == null)
+                {
+                    return GameSetupResultCode.UnexpectedError;
+                }
+
+                var addPlayersResult = AddPlayersToSession(matchId, session);
+                if (addPlayersResult != GameSetupResultCode.Success)
+                {
+                    return addPlayersResult;
+                }
+
+                notificationService.NotifyGameInitialized(session);
+                logger.LogInfo($"Session {matchId} initialized with {session.Players.Count} players");
+                return GameSetupResultCode.Success;
+            }
+            catch (ArgumentNullException ex)
+            {
+                logger.LogError($"Argument null to initialize game", ex);
+                return GameSetupResultCode.UnexpectedError;
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogError($"Argument error while initializing game", ex);
+                return GameSetupResultCode.UnexpectedError;
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogError($"Invalid operation while initializing game", ex);
+                return GameSetupResultCode.DatabaseError;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Unexpected error initializing game", ex);
+                return GameSetupResultCode.UnexpectedError;
+            }
+        }
+
+        private GameSetupResultCode ValidateGameInitialization(int matchId)
+        {
+            var matchValidation = validationService.ValidateMatchId(matchId, "InitializeGame");
+            if (!matchValidation.IsValid)
+            {
+                return GameSetupResultCode.UnexpectedError;
+            }
+
+            var existsValidation = validationService.ValidateSessionNotExists(
+                sessionManager.SessionExists(matchId), matchId, "InitializeGame");
+            if (!existsValidation.IsValid)
+            {
+                return GameSetupResultCode.GameAlreadyInitialized;
+            }
+
+            return GameSetupResultCode.Success;
+        }
+
+        private GameSession CreateGameSession(int matchId)
+        {
+            if (!sessionManager.CreateSession(matchId))
+            {
+                logger.LogInfo($"Failed to create session {matchId}");
+                return null;
+            }
+
+            var session = sessionManager.GetSession(matchId);
+            if (session == null)
+            {
+                logger.LogInfo($"Session is null after creation.");
+            }
+
+            return session;
+        }
+
+        private GameSetupResultCode AddPlayersToSession(int matchId, GameSession session)
+        {
+            var lobbyConfig = new BusinessLogic.MatchLobbyManagement.LobbyConfiguration();
+            var lobbyPlayers = lobbyConfig.GetPlayersForGameMatch(matchId);
+
+            if (lobbyPlayers == null || lobbyPlayers.Count < 2)
+            {
+                logger.LogInfo($"Not enough players for match. Found: {lobbyPlayers?.Count ?? 0}");
+                sessionManager.RemoveSession(matchId);
+                return GameSetupResultCode.NotEnoughPlayers;
+            }
+
+            logger.LogInfo($"Retrieved {lobbyPlayers.Count} players for match {matchId}");
+
+            foreach (var lobbyPlayer in lobbyPlayers)
+            {
+                AddPlayerToSession(session, lobbyPlayer);
+            }
+
+            if (session.Players.Count < 2)
+            {
+                logger.LogInfo($"Failed to add enough players to session.");
+                sessionManager.RemoveSession(matchId);
+                return GameSetupResultCode.NotEnoughPlayers;
+            }
+
+            return GameSetupResultCode.Success;
+        }
+
+        private void AddPlayerToSession(GameSession session, Contracts.DTO.LobbyPlayerDTO lobbyPlayer)
+        {
+            var profileInfo = new BusinessLogic.ProfileManagement.ProfileInformation();
+            var playerProfile = profileInfo.GetPlayerByUsername(lobbyPlayer.Username);
+
+            if (playerProfile == null)
+            {
+                logger.LogWarning($"Profile not found for username: {lobbyPlayer.Username}");
+                return;
+            }
+
+            var playerSession = new PlayerSession(
+                playerProfile.IdPlayer,
+                lobbyPlayer.Username,
+                null
+            );
+
+            session.AddPlayer(playerSession);
+            logger.LogInfo($"Added player: {lobbyPlayer.Username} (ID: {playerProfile.IdPlayer})");
         }
 
         public GameSetupResultCode StartGame(int matchId)
@@ -115,7 +258,6 @@ namespace ArchsVsDinosServer.Services
 
                 if (session.IsStarted)
                 {
-                    logger.LogInfo($"StartGame: Session {matchId} already started");
                     return GameSetupResultCode.GameAlreadyInitialized;
                 }
 
@@ -129,17 +271,17 @@ namespace ArchsVsDinosServer.Services
             }
             catch (ArgumentException ex)
             {
-                logger.LogError($"StartGame: Invalid argument - {ex.Message}", ex);
+                logger.LogError($"Invalid argument to start game", ex);
                 return GameSetupResultCode.UnexpectedError;
             }
             catch (InvalidOperationException ex)
             {
-                logger.LogError($"StartGame: Invalid operation - {ex.Message}", ex);
+                logger.LogError($"Invalid operation to start game", ex);
                 return GameSetupResultCode.DatabaseError;
             }
             catch (Exception ex)
             {
-                logger.LogInfo($"StartGame: Unexpected error - {ex.Message}");
+                logger.LogError($"Unexpected error while stranting game", ex);
                 return GameSetupResultCode.UnexpectedError;
             }
         }
@@ -149,14 +291,14 @@ namespace ArchsVsDinosServer.Services
             var players = session.Players.ToList();
             if (!setupHandler.InitializeGameSession(session, players))
             {
-                logger.LogInfo($"StartGame: Failed to initialize game session {session.MatchId}");
+                logger.LogInfo($"Failed to initialize game session");
                 return GameSetupResultCode.UnexpectedError;
             }
 
             var firstPlayer = setupHandler.SelectFirstPlayer(session);
             if (firstPlayer == null)
             {
-                logger.LogInfo($"StartGame: Failed to select first player for session {session.MatchId}");
+                logger.LogInfo($"Failed to select first player for session");
                 return GameSetupResultCode.UnexpectedError;
             }
 
@@ -164,7 +306,7 @@ namespace ArchsVsDinosServer.Services
             session.MarkAsStarted();
             notificationService.NotifyGameStarted(session, firstPlayer, new GameEndHandler());
 
-            logger.LogInfo($"StartGame: Session {session.MatchId} started successfully");
+            logger.LogInfo($"Session started successfully");
             return GameSetupResultCode.Success;
         }
 

@@ -33,5 +33,16 @@ namespace ArchsVsDinosServer.Utils
             return GenerateCode(5);
         }
 
+        public static string GenerateGameMatchCode(string lobbyCode)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode))
+            {
+                throw new ArgumentException("Lobby code cannot be empty");
+            }
+
+            string suffix = GenerateCode(3);
+            return $"{lobbyCode}-{suffix}";
+        }
+
     }
 }

@@ -253,17 +253,20 @@ namespace ArchsVsDinosClient.ViewModels
                     IsHost = player.IsHost
                 }).ToList();
 
-                var match = new MainMatch(convertedPlayers, myUsername);
+                var match = new MainMatch(convertedPlayers, myUsername, matchCode);
                 match.Show();
 
-                foreach (Window window in Application.Current.Windows)
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    if (window is Lobby)
+                    foreach (Window window in Application.Current.Windows)
                     {
-                        window.Close();
-                        break;
+                        if (window is Lobby)
+                        {
+                            window.Close();
+                            break;
+                        }
                     }
-                }
+                }), System.Windows.Threading.DispatcherPriority.Background);
             });
         }
 

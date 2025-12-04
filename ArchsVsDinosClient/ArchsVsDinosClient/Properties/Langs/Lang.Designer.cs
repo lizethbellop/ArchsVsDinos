@@ -1096,6 +1096,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡El juego ha comenzado!.
+        /// </summary>
+        public static string Match_InfoBegin1 {
+            get {
+                return ResourceManager.GetString("Match_InfoBegin1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a es el primer jugador..
+        /// </summary>
+        public static string Match_InfoBegin2 {
+            get {
+                return ResourceManager.GetString("Match_InfoBegin2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Opciones.
         /// </summary>
         public static string Match_Options {

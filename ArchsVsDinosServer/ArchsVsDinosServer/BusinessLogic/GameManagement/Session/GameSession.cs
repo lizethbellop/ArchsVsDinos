@@ -203,10 +203,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
                     if (player != null)
                     {
                         bool removed = players.Remove(player);
-                        if (removed)
-                        {
-                            loggerHelper.LogInfo($"Player {player.Username} (ID: {userId}) removed from session {MatchId}");
-                        }
                         return removed;
                     }
                     return false;

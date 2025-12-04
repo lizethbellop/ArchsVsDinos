@@ -17,6 +17,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
     public class LobbyConfiguration
     {
         private readonly ConcurrentDictionary<string, Lobby> ActiveMatches = new ConcurrentDictionary<string, Lobby>();
+        private static readonly ConcurrentDictionary<int, List<LobbyPlayerDTO>> gameMatchPlayers = new ConcurrentDictionary<int, List<LobbyPlayerDTO>>();
         private readonly ILoggerHelper loggerHelper;
 
         public LobbyConfiguration()
@@ -308,7 +309,6 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             }
         }
 
-
         public LobbyResultCode StartTheGame(string matchCode, string hostUsername)
         {
             Lobby targetLobby;
@@ -318,38 +318,73 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 return LobbyResultCode.Lobby_NotExist;
             }
 
-            if (IsUserHost(targetLobby, hostUsername))
-            {
-                lock (targetLobby)
-                {
-
-                    if (targetLobby.Players.Count < 2)
-                    {
-                        return LobbyResultCode.Lobby_IncompleteLobby;
-                    }
-
-                    var failedCallbacks = BroadcastToCallbacks(
-                        targetLobby.Callbacks,
-                        callback => callback.GameStarted(matchCode, targetLobby.Players)
-                    );
-
-                    foreach (var failed in failedCallbacks)
-                    {
-                        targetLobby.Callbacks.Remove(failed);
-                    }
-
-                    ActiveMatches.TryRemove(matchCode, out targetLobby);
-
-                    return LobbyResultCode.Lobby_GameStarted;
-
-                }
-            }
-            else
+            if (!IsUserHost(targetLobby, hostUsername))
             {
                 return LobbyResultCode.Lobby_NotHost;
             }
+
+            lock (targetLobby)
+            {
+                if (targetLobby.Players.Count < 2)
+                {
+                    return LobbyResultCode.Lobby_IncompleteLobby;
+                }
+
+                string gameMatchCode = GenerateAndRegisterGameCode(matchCode);
+
+                if (gameMatchCode == null)
+                {
+                    return LobbyResultCode.Lobby_LobbyCreationError;
+                }
+
+                NotifyPlayersGameStarted(targetLobby, gameMatchCode);
+                RemoveLobbyFromActive(matchCode);
+
+                return LobbyResultCode.Lobby_GameStarted;
+            }
         }
-        
+
+        private string GenerateAndRegisterGameCode(string lobbyCode)
+        {
+            string gameMatchCode = CodeGenerator.GenerateGameMatchCode(lobbyCode);
+            int matchId = Math.Abs(gameMatchCode.GetHashCode());
+            var sessionManager = GameManagement.GameSessionManager.Instance;
+
+            if (!sessionManager.RegisterGameCode(gameMatchCode, matchId))
+            {
+                loggerHelper.LogInfo($"Failed to register game code: {gameMatchCode}");
+                return null;
+            }
+
+            Lobby lobby;
+            if (ActiveMatches.TryGetValue(lobbyCode, out lobby))
+            {
+                var playersCopy = new List<LobbyPlayerDTO>(lobby.Players);
+                gameMatchPlayers.TryAdd(matchId, playersCopy);
+                loggerHelper.LogInfo($"Saved {playersCopy.Count} players for matchId: {matchId}");
+            }
+
+            return gameMatchCode;
+        }
+
+        private void NotifyPlayersGameStarted(Lobby lobby, string gameMatchCode)
+        {
+            var failedCallbacks = BroadcastToCallbacks(
+                lobby.Callbacks,
+                callback => callback.GameStarted(gameMatchCode, lobby.Players)
+            );
+
+            foreach (var failed in failedCallbacks)
+            {
+                lobby.Callbacks.Remove(failed);
+            }
+        }
+
+        private void RemoveLobbyFromActive(string matchCode)
+        {
+            ActiveMatches.TryRemove(matchCode, out _);
+        }
+
         public LobbyResultCode InvitByAnEmailToMatch(string email, string matchCode, string inviterUsername)
         {
             try
@@ -367,6 +402,18 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 loggerHelper.LogError($"Unexpected error sending email", ex);
                 return LobbyResultCode.Lobby_EmailSendError;
             }
+        }
+
+        public List<LobbyPlayerDTO> GetPlayersForGameMatch(int matchId)
+        {
+            if (gameMatchPlayers.TryRemove(matchId, out var players))
+            {
+                loggerHelper.LogInfo($"Retrieved {players.Count} players for matchId: {matchId}");
+                return players;
+            }
+
+            loggerHelper.LogWarning($"No players found for matchId: {matchId}");
+            return new List<LobbyPlayerDTO>();
         }
 
         /*

@@ -39,7 +39,6 @@ namespace ArchsVsDinosClient.Services
             syncContext = SynchronizationContext.Current;
             callback = new GameCallbackHandler();
 
-            // Suscribirse a eventos del callback
             callback.GameInitialized += OnGameInitialized;
             callback.GameStarted += OnGameStarted;
             callback.TurnChanged += OnTurnChanged;
@@ -66,80 +65,70 @@ namespace ArchsVsDinosClient.Services
         public async Task<GameSetupResultCode> InitializeGameAsync(int matchId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.InitializeGame(matchId)),
-                operationName: "inicialización de juego"
+                async () => await Task.Run(() => client.InitializeGame(matchId))
             );
         }
 
         public async Task<GameSetupResultCode> StartGameAsync(int matchId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.StartGame(matchId)),
-                operationName: "inicio de juego"
+                async () => await Task.Run(() => client.StartGame(matchId))
             );
         }
 
         public async Task<DrawCardResultCode> DrawCardAsync(int matchId, int userId, int drawPileNumber)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.DrawCard(matchId, userId, drawPileNumber)),
-                operationName: "robar carta"
+                async () => await Task.Run(() => client.DrawCard(matchId, userId, drawPileNumber))
             );
         }
 
         public async Task<PlayCardResultCode> PlayDinoHeadAsync(int matchId, int userId, int cardId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.PlayDinoHead(matchId, userId, cardId)),
-                operationName: "jugar cabeza de dino"
+                async () => await Task.Run(() => client.PlayDinoHead(matchId, userId, cardId))
             );
         }
 
         public async Task<PlayCardResultCode> AttachBodyPartToDinoAsync(int matchId, int userId, int cardId, int dinoHeadCardId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.AttachBodyPartToDino(matchId, userId, cardId, dinoHeadCardId)),
-                operationName: "adjuntar parte del cuerpo"
+                async () => await Task.Run(() => client.AttachBodyPartToDino(matchId, userId, cardId, dinoHeadCardId))
             );
         }
 
         public async Task<ProvokeResultCode> ProvokeArchArmyAsync(int matchId, int userId, string armyType)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.ProvokeArchArmy(matchId, userId, armyType)),
-                operationName: "provocar ejército"
+                async () => await Task.Run(() => client.ProvokeArchArmy(matchId, userId, armyType))
             );
         }
 
         public async Task<EndTurnResultCode> EndTurnAsync(int matchId, int userId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.EndTurn(matchId, userId)),
-                operationName: "terminar turno"
+                async () => await Task.Run(() => client.EndTurn(matchId, userId))
             );
         }
 
         public async Task<GameStateDTO> GetGameStateAsync(int matchId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetGameState(matchId)),
-                operationName: "obtener estado del juego"
+                async () => await Task.Run(() => client.GetGameState(matchId))
             );
         }
 
         public async Task<PlayerHandDTO> GetPlayerHandAsync(int matchId, int userId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetPlayerHand(matchId, userId)),
-                operationName: "obtener mano del jugador"
+                async () => await Task.Run(() => client.GetPlayerHand(matchId, userId))
             );
         }
 
         public async Task<CentralBoardDTO> GetCentralBoardAsync(int matchId)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetCentralBoard(matchId)),
-                operationName: "obtener tablero central"
+                async () => await Task.Run(() => client.GetCentralBoard(matchId))
             );
         }
 

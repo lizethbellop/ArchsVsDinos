@@ -759,4 +759,10 @@
   <data name="Lobby_EmailSended" xml:space="preserve">
     <value>Invitation mail sended</value>
   </data>
+  <data name="Match_InfoBegin1" xml:space="preserve">
+    <value>The game has started!</value>
+  </data>
+  <data name="Match_InfoBegin2" xml:space="preserve">
+    <value>is the first player.</value>
+  </data>
 </root>

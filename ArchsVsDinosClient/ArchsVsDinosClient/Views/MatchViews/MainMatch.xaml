@@ -663,8 +663,7 @@
                                     <!-- Card -->
                                     <Grid Name="Gr_AllCards" Margin="30,30,30,30">
                                         <Button Name="Btn_TakeACard" 
-                                            Visibility="{Binding HasCardsInDeck }"
-                                            IsEnabled="{Binding IsPlayerTurn}">
+                                            Visibility="Visible">
                                             <Button.Background>
                                                 <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png"/>
                                             </Button.Background>
@@ -675,6 +674,9 @@
                                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                     </Border>
                                                     <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter TargetName="border" Property="Opacity" Value="0.3"/>
+                                                        </Trigger>
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="border" Property="Opacity" Value="0.8"/>
                                                         </Trigger>
@@ -697,8 +699,8 @@
 
                 <Grid Grid.Row="2">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="4*"/>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="3.5*"/>
+                        <RowDefinition Height="1.5*"/>
                     </Grid.RowDefinitions>
 
                     <!-- Bottom player cards -->
@@ -706,8 +708,8 @@
                         <controls:PlayerCellHorizontal x:Name="BottomPlayerCards"/>
                     </Grid>
 
-                    <Grid Grid.Row="1" Background="Transparent">
-                        <Canvas x:Name="MyDeckCanvas" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                    <Grid Grid.Row="1" Background="Transparent" ClipToBounds="False">
+                        <Canvas x:Name="MyDeckCanvas" HorizontalAlignment="Center" VerticalAlignment="Bottom" ClipToBounds="False"/>
                     </Grid>
 
                 </Grid>

@@ -236,19 +236,19 @@ namespace ArchsVsDinosServer.Services.GameService
                 }
                 catch (CommunicationObjectAbortedException)
                 {
-                    logger.LogWarning($"NotifyAllPlayers: Connection aborted for player {player.UserId}");
+                    logger.LogWarning($"Connection aborted for player {player.UserId}");
                 }
                 catch (CommunicationException)
                 {
-                    logger.LogWarning($"NotifyAllPlayers: Communication issue notifying player {player.UserId}");
+                    logger.LogWarning($"Communication issue notifying player {player.UserId}");
                 }
                 catch (TimeoutException)
                 {
-                    logger.LogWarning($"NotifyAllPlayers: Timeout notifying player {player.UserId}");
+                    logger.LogWarning($"Timeout notifying player {player.UserId}");
                 }
                 catch (Exception)
                 {
-                    logger.LogInfo($"NotifyAllPlayers: Failed to notify player {player.UserId}");
+                    logger.LogInfo($"Failed to notify player {player.UserId}");
                 }
             }
         }

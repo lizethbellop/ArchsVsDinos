@@ -13,12 +13,13 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
     {
         private static GameSessionManager instance;
         private static readonly object lockObject = new object();
-
         private readonly ConcurrentDictionary<int, GameSession> activeSessions;
+        private readonly ConcurrentDictionary<string, int> gameCodeToMatchId;
 
         private GameSessionManager()
         {
             activeSessions = new ConcurrentDictionary<int, GameSession>();
+            gameCodeToMatchId = new ConcurrentDictionary<string, int>();
         }
 
         public static GameSessionManager Instance
@@ -99,6 +100,25 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         public int GetActiveSessionCount()
         {
             return activeSessions.Count;
+        }
+
+        public bool RegisterGameCode(string gameMatchCode, int matchId)
+        {
+            return gameCodeToMatchId.TryAdd(gameMatchCode, matchId);
+        }
+
+        public int? GetMatchIdFromGameCode(string gameMatchCode)
+        {
+            if (gameCodeToMatchId.TryGetValue(gameMatchCode, out int matchId))
+            {
+                return matchId;
+            }
+            return null;
+        }
+
+        public bool UnregisterGameCode(string gameMatchCode)
+        {
+            return gameCodeToMatchId.TryRemove(gameMatchCode, out _);
         }
     }
 }
