@@ -436,43 +436,43 @@
     <None Include="Connected Services\AuthenticationService\ArchsVsDinosClient.AuthenticationService.LoginResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\AuthenticationService\AuthenticationManager.wsdl" />
-    <None Include="Connected Services\AuthenticationService\item.xsd">
+    <None Include="Connected Services\AuthenticationService\AuthenticationManager1.wsdl" />
+    <None Include="Connected Services\AuthenticationService\item4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\AuthenticationService\item1.xsd">
+    <None Include="Connected Services\AuthenticationService\item41.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\AuthenticationService\item2.xsd">
+    <None Include="Connected Services\AuthenticationService\item42.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\AuthenticationService\item3.xsd">
+    <None Include="Connected Services\AuthenticationService\item43.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ChatManager\ChatManager.wsdl" />
-    <None Include="Connected Services\ChatManager\item.xsd">
+    <None Include="Connected Services\ChatManager\ChatManager1.wsdl" />
+    <None Include="Connected Services\ChatManager\item41.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ChatManager\item1.xsd">
+    <None Include="Connected Services\ChatManager\item42.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ChatManager\item2.xsd">
+    <None Include="Connected Services\ChatManager\item43.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ChatManager\item3.xsd">
+    <None Include="Connected Services\ChatManager\item44.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ChatManager\item5.xsd">
+    <None Include="Connected Services\ChatManager\item45.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\FriendRequestService\FriendRequestManager.wsdl" />
-    <None Include="Connected Services\FriendRequestService\item.xsd">
+    <None Include="Connected Services\FriendRequestService\FriendRequestManager1.wsdl" />
+    <None Include="Connected Services\FriendRequestService\item3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\FriendRequestService\item1.xsd">
+    <None Include="Connected Services\FriendRequestService\item31.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\FriendRequestService\item2.xsd">
+    <None Include="Connected Services\FriendRequestService\item32.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\FriendService\ArchsVsDinosClient.FriendService.FriendCheckResponse.datasource">
@@ -484,20 +484,20 @@
     <None Include="Connected Services\FriendService\ArchsVsDinosClient.FriendService.FriendResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\FriendService\FriendManager.wsdl" />
-    <None Include="Connected Services\FriendService\item.xsd">
+    <None Include="Connected Services\FriendService\FriendManager1.wsdl" />
+    <None Include="Connected Services\FriendService\item5.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\FriendService\item1.xsd">
+    <None Include="Connected Services\FriendService\item51.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\FriendService\item2.xsd">
+    <None Include="Connected Services\FriendService\item52.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\FriendService\item3.xsd">
+    <None Include="Connected Services\FriendService\item53.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\FriendService\item4.xsd">
+    <None Include="Connected Services\FriendService\item54.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.CentralBoardDTO.datasource">
@@ -524,82 +524,82 @@
     <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.ProvokeResultCode.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\GameService\GameManager.wsdl" />
-    <None Include="Connected Services\GameService\item.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item5.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Connected Services\GameService\GameManager1.wsdl" />
     <None Include="Connected Services\GameService\item6.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\GameService\item7.xsd">
+    <None Include="Connected Services\GameService\item61.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item62.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item63.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item64.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item65.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item66.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item67.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.LobbyResultCode.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\LobbyService\item.xsd">
+    <None Include="Connected Services\LobbyService\item4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\LobbyService\item1.xsd">
+    <None Include="Connected Services\LobbyService\item41.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\LobbyService\item2.xsd">
+    <None Include="Connected Services\LobbyService\item42.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\LobbyService\item3.xsd">
+    <None Include="Connected Services\LobbyService\item43.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\LobbyService\LobbyManager1.wsdl" />
+    <None Include="Connected Services\LobbyService\LobbyManager.wsdl" />
     <None Include="Connected Services\ProfileManagerService\ArchsVsDinosClient.ProfileManagerService.UpdateResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\ProfileManagerService\item.xsd">
+    <None Include="Connected Services\ProfileManagerService\item4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ProfileManagerService\item1.xsd">
+    <None Include="Connected Services\ProfileManagerService\item41.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ProfileManagerService\item2.xsd">
+    <None Include="Connected Services\ProfileManagerService\item42.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ProfileManagerService\item3.xsd">
+    <None Include="Connected Services\ProfileManagerService\item43.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\ProfileManagerService\ProfileManager.wsdl" />
+    <None Include="Connected Services\ProfileManagerService\ProfileManager1.wsdl" />
     <None Include="Connected Services\RegisterService\ArchsVsDinosClient.RegisterService.RegisterResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\RegisterService\item.xsd">
+    <None Include="Connected Services\RegisterService\item5.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\RegisterService\item1.xsd">
+    <None Include="Connected Services\RegisterService\item51.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\RegisterService\item2.xsd">
+    <None Include="Connected Services\RegisterService\item52.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\RegisterService\item3.xsd">
+    <None Include="Connected Services\RegisterService\item53.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\RegisterService\item4.xsd">
+    <None Include="Connected Services\RegisterService\item54.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\RegisterService\RegisterManager.wsdl" />
+    <None Include="Connected Services\RegisterService\RegisterManager1.wsdl" />
     <None Include="Connected Services\StatisticsService\ArchsVsDinosClient.StatisticsService.GameStatisticsDTO.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -862,14 +862,14 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Connected Services\AuthenticationService\item.disco" />
-    <None Include="Connected Services\ChatManager\item.disco" />
-    <None Include="Connected Services\FriendRequestService\item.disco" />
-    <None Include="Connected Services\FriendService\item.disco" />
-    <None Include="Connected Services\GameService\item.disco" />
-    <None Include="Connected Services\LobbyService\item.disco" />
-    <None Include="Connected Services\ProfileManagerService\item.disco" />
-    <None Include="Connected Services\RegisterService\item.disco" />
+    <None Include="Connected Services\AuthenticationService\item1.disco" />
+    <None Include="Connected Services\ChatManager\item1.disco" />
+    <None Include="Connected Services\FriendRequestService\item1.disco" />
+    <None Include="Connected Services\FriendService\item1.disco" />
+    <None Include="Connected Services\GameService\item1.disco" />
+    <None Include="Connected Services\LobbyService\item1.disco" />
+    <None Include="Connected Services\ProfileManagerService\item1.disco" />
+    <None Include="Connected Services\RegisterService\item1.disco" />
     <Content Include="Resources\Images\Avatars\default_avatar_01.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

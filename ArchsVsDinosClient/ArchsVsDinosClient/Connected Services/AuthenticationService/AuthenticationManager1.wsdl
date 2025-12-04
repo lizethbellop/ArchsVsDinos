@@ -31,10 +31,10 @@
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://172.20.10.2:8080/?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://172.20.10.2:8080/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://172.20.10.2:8080/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
-      <xsd:import schemaLocation="http://172.20.10.2:8080/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+      <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
+      <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IAuthenticationManager_Login_InputMessage">
@@ -64,9 +64,9 @@
   </wsdl:binding>
   <wsdl:service name="AuthenticationManager">
     <wsdl:port name="NetTcpBinding_IAuthenticationManager" binding="tns:NetTcpBinding_IAuthenticationManager">
-      <soap12:address location="net.tcp://172.20.10.2:8091/AuthenticationManager" />
+      <soap12:address location="net.tcp://localhost:8091/AuthenticationManager" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://172.20.10.2:8091/AuthenticationManager</wsa10:Address>
+        <wsa10:Address>net.tcp://localhost:8091/AuthenticationManager</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
           <Upn>MSI\acrca</Upn>
         </Identity>
