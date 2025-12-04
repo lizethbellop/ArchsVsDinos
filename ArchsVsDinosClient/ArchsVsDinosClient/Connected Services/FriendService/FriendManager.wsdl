@@ -31,11 +31,11 @@
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://10.147.231.153:8085/?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://10.147.231.153:8085/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://10.147.231.153:8085/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" />
-      <xsd:import schemaLocation="http://10.147.231.153:8085/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
-      <xsd:import schemaLocation="http://10.147.231.153:8085/?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://172.20.10.2:8085/?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://172.20.10.2:8085/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://172.20.10.2:8085/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" />
+      <xsd:import schemaLocation="http://172.20.10.2:8085/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+      <xsd:import schemaLocation="http://172.20.10.2:8085/?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IFriendManager_RemoveFriend_InputMessage">
@@ -103,9 +103,9 @@
   </wsdl:binding>
   <wsdl:service name="FriendManager">
     <wsdl:port name="NetTcpBinding_IFriendManager" binding="tns:NetTcpBinding_IFriendManager">
-      <soap12:address location="net.tcp://10.147.231.153:8096/FriendManager" />
+      <soap12:address location="net.tcp://172.20.10.2:8096/FriendManager" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://10.147.231.153:8096/FriendManager</wsa10:Address>
+        <wsa10:Address>net.tcp://172.20.10.2:8096/FriendManager</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
           <Upn>MSI\acrca</Upn>
         </Identity>

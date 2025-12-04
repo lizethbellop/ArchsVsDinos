@@ -10,10 +10,10 @@
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://10.147.231.153:8083/?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://10.147.231.153:8083/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://10.147.231.153:8083/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
-      <xsd:import schemaLocation="http://10.147.231.153:8083/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+      <xsd:import schemaLocation="http://172.20.10.2:8083/?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://172.20.10.2:8083/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://172.20.10.2:8083/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
+      <xsd:import schemaLocation="http://172.20.10.2:8083/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="ILobbyManager_CreateLobby_InputMessage">
@@ -229,9 +229,9 @@
   </wsdl:binding>
   <wsdl:service name="LobbyManager">
     <wsdl:port name="NetTcpBinding_ILobbyManager" binding="tns:NetTcpBinding_ILobbyManager">
-      <soap12:address location="net.tcp://10.147.231.153:8094/MatchLobbyManager" />
+      <soap12:address location="net.tcp://172.20.10.2:8094/MatchLobbyManager" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://10.147.231.153:8094/MatchLobbyManager</wsa10:Address>
+        <wsa10:Address>net.tcp://172.20.10.2:8094/MatchLobbyManager</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>
