@@ -28,7 +28,6 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly IVerificationCodeManager codeManager;
         private readonly Func<IDbContext> contextFactory;
 
-        public static List<VerificationCode> verificationCodes = new List<VerificationCode>();
 
         public Register() : this(new RegisterServiceDependencies())
         {
@@ -47,7 +46,6 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             try
             {
-                // Valida el código PRIMERO
                 if (!codeManager.ValidateCode(userAccountDTO.Email, code))
                 {
                     return new RegisterResponse
@@ -57,7 +55,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                     };
                 }
 
-                // Valida username y nickname
                 var validationUsernameAndNickname = ValidateUsernameAndNicknameResult(
                     userAccountDTO.Username,
                     userAccountDTO.Nickname);
@@ -65,7 +62,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 if (!validationUsernameAndNickname.Success)
                     return validationUsernameAndNickname;
 
-                // Registra el usuario
                 using (var context = contextFactory())
                 {
                     var player = InitialConfig.InitialPlayer;
@@ -139,7 +135,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        public bool CheckCode(string email, string code)
+        /*public bool CheckCode(string email, string code)
         {
             var dataCheck = verificationCodes.Find(x => x.Email == email && x.Code == code);
         
@@ -152,7 +148,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 return false;
             }
-        }
+        }*/
 
         public RegisterResponse ValidateUsernameAndNicknameResult(string newUsername, string newNickname)
         {

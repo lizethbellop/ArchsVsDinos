@@ -157,6 +157,7 @@
     <Compile Include="BusinessLogic\GameManagement\Cards\CardShuffler.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\DinoInstance.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameActionHandler.cs" />
+    <Compile Include="BusinessLogic\GameManagement\GameCallbackRegistery.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameEndHandler.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameRulesValidator.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameSessionManager.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="Utils\RegisterServiceDependencies.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\ServiceDependencies.cs" />
+    <Compile Include="Utils\ServiceLocator.cs" />
     <Compile Include="Utils\StrikeServiceDependencies.cs" />
     <Compile Include="Utils\UnregisteredPlayerGenerator.cs" />
     <Compile Include="Utils\ValidationCodeManager.cs" />

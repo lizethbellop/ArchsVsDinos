@@ -11,6 +11,13 @@ namespace ArchsVsDinosServer.Utils
     public class VerificationCodeManager : IVerificationCodeManager
     {
         private List<VerificationCode> verificationCodes = new List<VerificationCode>();
+        private readonly ILoggerHelper loggerHelper;
+
+        // Constructor que recibe el logger
+        public VerificationCodeManager(ILoggerHelper logger)
+        {
+            this.loggerHelper = logger;
+        }
 
         public void AddCode(string email, string code, DateTime expiration)
         {
@@ -20,17 +27,32 @@ namespace ArchsVsDinosServer.Utils
                 Code = code,
                 Expiration = expiration
             });
+
+            loggerHelper.LogInfo($"✓ Code added - Email: {email}, Code: {code}, Total codes: {verificationCodes.Count}");
         }
 
         public bool ValidateCode(string email, string code)
         {
+            loggerHelper.LogInfo($"→ Validating - Email: {email}, Code: {code}, Total codes in list: {verificationCodes.Count}");
+
             var dataCheck = verificationCodes.Find(x => x.Email == email && x.Code == code);
 
-            if (dataCheck != null && dataCheck.Expiration > DateTime.Now)
+            if (dataCheck != null)
             {
-                verificationCodes.Remove(dataCheck);
-                return true;
+                if (dataCheck.Expiration > DateTime.Now)
+                {
+                    verificationCodes.Remove(dataCheck);
+                    loggerHelper.LogInfo($"✓ Code validated successfully for {email}");
+                    return true;
+                }
+                else
+                {
+                    loggerHelper.LogWarning($"✗ Code EXPIRED for {email}. Expiration: {dataCheck.Expiration}, Now: {DateTime.Now}");
+                    return false;
+                }
             }
+
+            loggerHelper.LogWarning($"✗ Code NOT FOUND for {email}. Available codes: {verificationCodes.Count}");
             return false;
         }
     }

@@ -232,7 +232,20 @@ namespace ArchsVsDinosServer.Services.GameService
             {
                 try
                 {
-                    notifyAction(player);
+                    var callback = GameCallbackRegistry.Instance.GetCallback(player.UserId);
+
+                    if (callback != null)
+                    {
+                        if (player.Callback == null)
+                        {
+                            player.SetCallback(callback);
+                        }
+                        notifyAction(player);
+                    }
+                    else
+                    {
+                        logger.LogWarning($"No callback found for player {player.UserId}");
+                    }
                 }
                 catch (CommunicationObjectAbortedException)
                 {

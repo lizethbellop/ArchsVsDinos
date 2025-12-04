@@ -828,6 +828,9 @@ namespace ArchsVsDinosClient.GameService {
         private int MatchIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int MyUserIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ArchsVsDinosClient.GameService.PlayerHandDTO[] PlayersHandsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -917,6 +920,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((this.MatchIdField.Equals(value) != true)) {
                     this.MatchIdField = value;
                     this.RaisePropertyChanged("MatchId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int MyUserId {
+            get {
+                return this.MyUserIdField;
+            }
+            set {
+                if ((this.MyUserIdField.Equals(value) != true)) {
+                    this.MyUserIdField = value;
+                    this.RaisePropertyChanged("MyUserId");
                 }
             }
         }

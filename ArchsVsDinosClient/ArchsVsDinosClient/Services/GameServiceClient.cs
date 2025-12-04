@@ -73,6 +73,7 @@ namespace ArchsVsDinosClient.Services
         {
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.StartGame(matchId))
+
             );
         }
 

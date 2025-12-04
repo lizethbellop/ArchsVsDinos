@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="FriendRequestManager" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="NetTcpBinding_IFriendRequestManager_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://10.147.231.153:8086/?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://10.147.231.153:8086/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://10.147.231.153:8086/?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IFriendRequestManager_SendFriendRequest_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendFriendRequest" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_AcceptFriendRequest_InputMessage">
+    <wsdl:part name="parameters" element="tns:AcceptFriendRequest" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_RejectFriendRequest_InputMessage">
+    <wsdl:part name="parameters" element="tns:RejectFriendRequest" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_GetPendingRequests_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPendingRequests" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_Subscribe_InputMessage">
+    <wsdl:part name="parameters" element="tns:Subscribe" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_Subscribe_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SubscribeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_Unsubscribe_InputMessage">
+    <wsdl:part name="parameters" element="tns:Unsubscribe" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_Unsubscribe_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UnsubscribeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_OnFriendRequestSent_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnFriendRequestSent" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_OnFriendRequestAccepted_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnFriendRequestAccepted" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_OnFriendRequestRejected_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnFriendRequestRejected" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_OnPendingRequestsReceived_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnPendingRequestsReceived" />
+  </wsdl:message>
+  <wsdl:message name="IFriendRequestManager_OnFriendRequestReceived_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnFriendRequestReceived" />
+  </wsdl:message>
+  <wsdl:portType name="IFriendRequestManager">
+    <wsdl:operation name="SendFriendRequest">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFriendRequestManager/SendFriendRequest" message="tns:IFriendRequestManager_SendFriendRequest_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AcceptFriendRequest">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFriendRequestManager/AcceptFriendRequest" message="tns:IFriendRequestManager_AcceptFriendRequest_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RejectFriendRequest">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFriendRequestManager/RejectFriendRequest" message="tns:IFriendRequestManager_RejectFriendRequest_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPendingRequests">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFriendRequestManager/GetPendingRequests" message="tns:IFriendRequestManager_GetPendingRequests_InputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Subscribe">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFriendRequestManager/Subscribe" message="tns:IFriendRequestManager_Subscribe_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFriendRequestManager/SubscribeResponse" message="tns:IFriendRequestManager_Subscribe_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Unsubscribe">
+      <wsdl:input wsaw:Action="http://tempuri.org/IFriendRequestManager/Unsubscribe" message="tns:IFriendRequestManager_Unsubscribe_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IFriendRequestManager/UnsubscribeResponse" message="tns:IFriendRequestManager_Unsubscribe_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestSent">
+      <wsdl:output wsaw:Action="http://tempuri.org/IFriendRequestManager/OnFriendRequestSent" message="tns:IFriendRequestManager_OnFriendRequestSent_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestAccepted">
+      <wsdl:output wsaw:Action="http://tempuri.org/IFriendRequestManager/OnFriendRequestAccepted" message="tns:IFriendRequestManager_OnFriendRequestAccepted_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestRejected">
+      <wsdl:output wsaw:Action="http://tempuri.org/IFriendRequestManager/OnFriendRequestRejected" message="tns:IFriendRequestManager_OnFriendRequestRejected_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnPendingRequestsReceived">
+      <wsdl:output wsaw:Action="http://tempuri.org/IFriendRequestManager/OnPendingRequestsReceived" message="tns:IFriendRequestManager_OnPendingRequestsReceived_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestReceived">
+      <wsdl:output wsaw:Action="http://tempuri.org/IFriendRequestManager/OnFriendRequestReceived" message="tns:IFriendRequestManager_OnFriendRequestReceived_OutputCallbackMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NetTcpBinding_IFriendRequestManager" type="tns:IFriendRequestManager">
+    <wsp:PolicyReference URI="#NetTcpBinding_IFriendRequestManager_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
+    <wsdl:operation name="SendFriendRequest">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/SendFriendRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="AcceptFriendRequest">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/AcceptFriendRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="RejectFriendRequest">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/RejectFriendRequest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="GetPendingRequests">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/GetPendingRequests" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="Subscribe">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/Subscribe" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Unsubscribe">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/Unsubscribe" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestSent">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/OnFriendRequestSent" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestAccepted">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/OnFriendRequestAccepted" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestRejected">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/OnFriendRequestRejected" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnPendingRequestsReceived">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/OnPendingRequestsReceived" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnFriendRequestReceived">
+      <soap12:operation soapAction="http://tempuri.org/IFriendRequestManager/OnFriendRequestReceived" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FriendRequestManager">
+    <wsdl:port name="NetTcpBinding_IFriendRequestManager" binding="tns:NetTcpBinding_IFriendRequestManager">
+      <soap12:address location="net.tcp://10.147.231.153:8097/FriendRequestManager" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.tcp://10.147.231.153:8097/FriendRequestManager</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

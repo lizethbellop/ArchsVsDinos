@@ -49,94 +49,75 @@ namespace ArchsVsDinosServer.Services
             actionService = new GameActionService(sessionManager, actionHandler, battleResolver, endHandler, validationService, notificationService, logger);
             queryService = new GameQueryService(sessionManager, endHandler, dependencies, logger);
         }
-        /*
-        public GameSetupResultCode InitializeGame(int matchId)
-        {
-
-            try
-            {
-                var matchValidation = validationService.ValidateMatchId(matchId, "InitializeGame");
-                if (!matchValidation.IsValid)
-                {
-                    return GameSetupResultCode.UnexpectedError;
-                }
-
-                var existsValidation = validationService.ValidateSessionNotExists(
-                    sessionManager.SessionExists(matchId), matchId, "InitializeGame");
-                if (!existsValidation.IsValid)
-                {
-                    return GameSetupResultCode.GameAlreadyInitialized;
-                }
-
-                if (!sessionManager.CreateSession(matchId))
-                {
-                    logger.LogInfo($"Failed to create session {matchId}");
-                    return GameSetupResultCode.UnexpectedError;
-                }
-
-                var session = sessionManager.GetSession(matchId);
-                var lobbyPlayers = LobbyConfiguration.GetPlayersForMatch(matchId);
-                foreach (var playerInLobby in lobbyPlayers)
-                {
-                    session.AddPlayer(new PlayerSession(playerInLobby.UserId, playerInLobby.Username));
-                }
-
-                if (session == null)
-                {
-                    logger.LogInfo($"Session {matchId} is null after creation.");
-                    return GameSetupResultCode.UnexpectedError;
-                }
-
-                notificationService.NotifyGameInitialized(session);
-                return GameSetupResultCode.Success;
-            }
-            catch (ArgumentNullException ex)
-            {
-                logger.LogError($"Argument null to initialize game", ex);
-                return GameSetupResultCode.UnexpectedError;
-            }
-            catch (ArgumentException ex)
-            {
-                logger.LogError($"Argument error while initializing game", ex);
-                return GameSetupResultCode.UnexpectedError;
-            }
-            catch (InvalidOperationException ex)
-            {
-                logger.LogError($"Invalid operation while initializing game", ex);
-                return GameSetupResultCode.DatabaseError;
-            }
-            catch (Exception ex)
-            {
-                logger.LogInfo($"Unexpected error initializing game");
-                return GameSetupResultCode.UnexpectedError;
-            }
-        }*/
 
         public GameSetupResultCode InitializeGame(int matchId)
         {
             try
             {
-                var validationResult = ValidateGameInitialization(matchId);
-                if (validationResult != GameSetupResultCode.Success)
-                {
-                    return validationResult;
-                }
+                var callback = OperationContext.Current.GetCallbackChannel<IGameManagerCallback>();
 
-                var session = CreateGameSession(matchId);
-                if (session == null)
+                lock (GameCallbackRegistry.Instance.GetMatchLock(matchId))
                 {
-                    return GameSetupResultCode.UnexpectedError;
-                }
+                    var matchValidation = validationService.ValidateMatchId(matchId, "InitializeGame");
+                    if (!matchValidation.IsValid)
+                    {
+                        return GameSetupResultCode.UnexpectedError;
+                    }
 
-                var addPlayersResult = AddPlayersToSession(matchId, session);
-                if (addPlayersResult != GameSetupResultCode.Success)
-                {
-                    return addPlayersResult;
-                }
+                    var session = sessionManager.GetSession(matchId);
 
-                notificationService.NotifyGameInitialized(session);
-                logger.LogInfo($"Session {matchId} initialized with {session.Players.Count} players");
-                return GameSetupResultCode.Success;
+                    if (session == null)
+                    {
+                        if (!sessionManager.CreateSession(matchId))
+                        {
+                            logger.LogInfo($"Failed to create session {matchId}");
+                            return GameSetupResultCode.UnexpectedError;
+                        }
+
+                        session = sessionManager.GetSession(matchId);
+
+                        var addPlayersResult = AddPlayersToSession(matchId, session);
+                        if (addPlayersResult != GameSetupResultCode.Success)
+                        {
+                            return addPlayersResult;
+                        }
+
+                        logger.LogInfo($"✅ Created session {matchId} with {session.Players.Count} players");
+                    }
+                    else
+                    {
+                        logger.LogInfo($"✅ Session {matchId} already exists with {session.Players.Count} players");
+                    }
+
+                    PlayerSession myPlayer = null;
+                    foreach (var player in session.Players)
+                    {
+                        var existingCallback = GameCallbackRegistry.Instance.GetCallback(player.UserId);
+                        if (existingCallback == null)
+                        {
+                            myPlayer = player;
+                            break;
+                        }
+                    }
+
+                    if (myPlayer != null)
+                    {
+                        myPlayer.SetCallback(callback);
+                        GameCallbackRegistry.Instance.RegisterCallback(myPlayer.UserId, callback);
+                        logger.LogInfo($"✅ Registered callback for userId: {myPlayer.UserId}, username: {myPlayer.Username}");
+                    }
+                    else
+                    {
+                        logger.LogWarning($"⚠️ All {session.Players.Count} players already have callbacks registered");
+                    }
+
+                    if (myPlayer != null)
+                    {
+                        notificationService.NotifyGameInitialized(session);
+                    }
+
+                    return GameSetupResultCode.Success;
+                }
             }
             catch (ArgumentNullException ex)
             {

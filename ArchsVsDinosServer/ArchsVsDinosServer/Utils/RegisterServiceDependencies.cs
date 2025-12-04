@@ -25,7 +25,9 @@ namespace ArchsVsDinosServer.Utils
             loggerHelper = new Wrappers.LoggerHelperWrapper();
             emailService = new Wrappers.EmailServiceWrapper();
             codeGenerator = new Wrappers.CodeGeneratorWrapper();
-            codeManager = new VerificationCodeManager();
+
+            codeManager = ServiceLocator.GetCodeManager(loggerHelper);
+
             contextFactory = () => new Wrappers.DbContextWrapper();
         }
     }

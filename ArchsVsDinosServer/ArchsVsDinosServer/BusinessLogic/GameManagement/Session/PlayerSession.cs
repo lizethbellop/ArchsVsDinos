@@ -15,7 +15,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public string Username { get; }
         public int TurnOrder { get; set; }
         public int Points { get; set; }
-        public IGameManagerCallback Callback { get; }
+        public IGameManagerCallback Callback { get; private set; }
 
         public IReadOnlyList<CardInGame> Hand => hand.AsReadOnly();
         public IReadOnlyList<DinoInstance> Dinos => dinos.AsReadOnly();
@@ -96,5 +96,11 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             dinos.Clear();
         }
+        
+        public void SetCallback(IGameManagerCallback callback)
+        {
+            Callback = callback;
+        }
+
     }
 }

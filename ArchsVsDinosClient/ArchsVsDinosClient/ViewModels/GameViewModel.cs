@@ -22,6 +22,9 @@ namespace ArchsVsDinosClient.ViewModels
 
         private int remainingCardsInDeck;
         private bool isMyTurn;
+        private bool isInitializing = false;
+        private bool isInitialized = false;
+        private bool gameStartedProcessed = false;
 
         public ObservableCollection<Card> PlayerHand { get; } = new ObservableCollection<Card>();
         public ObservableCollection<Card> SandArmy { get; } = new ObservableCollection<Card>();
@@ -76,23 +79,36 @@ namespace ArchsVsDinosClient.ViewModels
 
         public async Task InitializeAndStartGameAsync()
         {
+
+            if (isInitializing || isInitialized)
+            {
+                Console.WriteLine("[GameViewModel] Already initializing or initialized, skipping...");
+                return;
+            }
+
+            isInitializing = true;
+
             try
             {
                 await gameServiceClient.InitializeGameAsync(matchId);
                 await Task.Delay(1000);
                 await gameServiceClient.StartGameAsync(matchId);
+                isInitialized = true;
             }
             catch (TimeoutException)
             {
                 MessageBox.Show(Lang.GlobalServerError);
+                isInitializing = false;
             }
             catch (System.ServiceModel.CommunicationException)
             {
                 MessageBox.Show(Lang.GlobalServerError);
+                isInitializing = false;
             }
             catch (Exception)
             {
                 MessageBox.Show(Lang.GlobalSystemError);
+                isInitializing = false;
             }
         }
 
@@ -106,15 +122,25 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void OnGameStarted(GameStartedDTO data)
         {
-            System.Diagnostics.Debug.WriteLine("🎮 GAME STARTED CALLBACK!"); 
+            System.Diagnostics.Debug.WriteLine("🎮 GAME STARTED CALLBACK!");
+
             Application.Current.Dispatcher.Invoke(() =>
             {
-         
+                if (gameStartedProcessed)
+                {
+                    System.Diagnostics.Debug.WriteLine("⚠️ GameStarted already processed, ignoring...");
+                    return;
+                }
+
+                gameStartedProcessed = true;
+
                 var myPlayer = allPlayers?.FirstOrDefault(player => player.Username == currentUsername);
                 int myUserId = myPlayer?.IdPlayer ?? 0;
- 
+
+                System.Diagnostics.Debug.WriteLine($"MyUserId={myUserId}, Username={currentUsername}");
+
                 var myHand = data.PlayersHands?.FirstOrDefault(playerHand => playerHand.UserId == myUserId);
- 
+
                 if (myHand != null && myHand.Cards != null)
                 {
                     PlayerHand.Clear();
@@ -125,15 +151,20 @@ namespace ArchsVsDinosClient.ViewModels
                         if (card != null)
                         {
                             PlayerHand.Add(card);
-                            System.Diagnostics.Debug.WriteLine($"✅ CARDS ADDED: {PlayerHand.Count}");
                         }
                     }
-                }
-                RemainingCardsInDeck = data.DrawPile1Count + data.DrawPile2Count + data.DrawPile3Count;
 
+                    System.Diagnostics.Debug.WriteLine($"✅ CARDS ADDED: {PlayerHand.Count}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("❌ NO HAY MANO!");
+                }
+
+                RemainingCardsInDeck = data.DrawPile1Count + data.DrawPile2Count + data.DrawPile3Count;
                 IsMyTurn = data.FirstPlayerUsername == currentUsername;
 
-                MessageBox.Show(Lang.Match_InfoBegin1 + " " + "{data.FirstPlayerUsername}" + " " + Lang.Match_InfoBegin2);
+                MessageBox.Show($"{Lang.Match_InfoBegin1} {data.FirstPlayerUsername} {Lang.Match_InfoBegin2}\n\n🎴 Cartas: {PlayerHand.Count}");
             });
         }
 

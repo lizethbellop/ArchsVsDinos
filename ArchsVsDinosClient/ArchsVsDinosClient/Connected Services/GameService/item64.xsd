@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://10.147.231.153:8087/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
+  <xs:import schemaLocation="http://10.147.231.153:8087/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="GameStateDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CentralBoard" nillable="true" type="tns:CentralBoardDTO" />
+      <xs:element minOccurs="0" name="CurrentTurnUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="DiscardPileCount" type="xs:int" />
+      <xs:element minOccurs="0" name="DrawPile1Count" type="xs:int" />
+      <xs:element minOccurs="0" name="DrawPile2Count" type="xs:int" />
+      <xs:element minOccurs="0" name="DrawPile3Count" type="xs:int" />
+      <xs:element minOccurs="0" name="IsStarted" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MatchId" type="xs:int" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="Players" nillable="true" type="q1:ArrayOfPlayerInGameDTO" />
+      <xs:element minOccurs="0" name="RemainingTime" type="ser:duration" />
+      <xs:element minOccurs="0" name="TurnNumber" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GameStateDTO" nillable="true" type="tns:GameStateDTO" />
+  <xs:complexType name="CentralBoardDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LandArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="LandArmyPower" type="xs:int" />
+      <xs:element minOccurs="0" name="SeaArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="SeaArmyPower" type="xs:int" />
+      <xs:element minOccurs="0" name="SkyArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="SkyArmyPower" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CentralBoardDTO" nillable="true" type="tns:CentralBoardDTO" />
+</xs:schema>

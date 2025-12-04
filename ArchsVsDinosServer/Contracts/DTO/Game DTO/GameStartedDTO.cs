@@ -20,6 +20,9 @@ namespace Contracts.DTO.Game_DTO
         public string FirstPlayerUsername { get; set; }
 
         [DataMember]
+        public int MyUserId { get; set; }
+
+        [DataMember]
         public List<PlayerHandDTO> PlayersHands { get; set; }
 
         [DataMember]
