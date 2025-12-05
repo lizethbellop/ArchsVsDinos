@@ -916,11 +916,29 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Necesitas al menos 2 jugadores para comenzar la partida..
+        /// </summary>
+        public static string Lobby_MiniumPlayers {
+            get {
+                return ResourceManager.GetString("Lobby_MiniumPlayers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Sólo el host puede expulsar jugadores.
         /// </summary>
         public static string Lobby_OnlyHostCanKick {
             get {
                 return ResourceManager.GetString("Lobby_OnlyHostCanKick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Sólo usuarios registrados pueden invitar por correo,.
+        /// </summary>
+        public static string Lobby_OnlyRegisteredInviteEmail {
+            get {
+                return ResourceManager.GetString("Lobby_OnlyRegisteredInviteEmail", resourceCulture);
             }
         }
         

@@ -12,6 +12,7 @@ namespace ArchsVsDinosClient.Models
 
         private string username;
         private string nickname;
+        private string profilePicture;
         private bool isFriend;
         private bool canKick;
         private bool isLocalPlayer;
@@ -32,6 +33,16 @@ namespace ArchsVsDinosClient.Models
         {
             get => isFriend;
             set { isFriend = value; OnPropertyChanged(nameof(IsFriend)); }
+        }
+
+        public string ProfilePicture
+        {
+            get => profilePicture;
+            set
+            {
+                profilePicture = value;
+                OnPropertyChanged(nameof(ProfilePicture));
+            }
         }
 
         public bool CanKick

@@ -765,4 +765,10 @@
   <data name="Match_InfoBegin2" xml:space="preserve">
     <value>es el primer jugador.</value>
   </data>
+  <data name="Lobby_MiniumPlayers" xml:space="preserve">
+    <value>Necesitas al menos 2 jugadores para comenzar la partida.</value>
+  </data>
+  <data name="Lobby_OnlyRegisteredInviteEmail" xml:space="preserve">
+    <value>Sólo usuarios registrados pueden invitar por correo,</value>
+  </data>
 </root>

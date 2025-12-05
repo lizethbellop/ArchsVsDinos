@@ -52,6 +52,7 @@ namespace ArchsVsDinosServer.Services
 
         public GameSetupResultCode InitializeGame(int matchId)
         {
+
             try
             {
                 var callback = OperationContext.Current.GetCallbackChannel<IGameManagerCallback>();
@@ -210,20 +211,29 @@ namespace ArchsVsDinosServer.Services
             var profileInfo = new BusinessLogic.ProfileManagement.ProfileInformation();
             var playerProfile = profileInfo.GetPlayerByUsername(lobbyPlayer.Username);
 
-            if (playerProfile == null)
+            int finalUserId;
+            string finalUsername = lobbyPlayer.Username;
+
+            if (playerProfile != null)
             {
-                logger.LogWarning($"Profile not found for username: {lobbyPlayer.Username}");
-                return;
+                finalUserId = playerProfile.IdPlayer;
+            }
+            else
+            {
+                logger.LogInfo($"Profile not found for {lobbyPlayer.Username}, treating as Guest.");
+                finalUserId = lobbyPlayer.IdPlayer == 0 ? lobbyPlayer.Username.GetHashCode() : lobbyPlayer.IdPlayer;
             }
 
             var playerSession = new PlayerSession(
-                playerProfile.IdPlayer,
-                lobbyPlayer.Username,
+                finalUserId,
+                finalUsername,
                 null
             );
 
+            playerSession.TurnOrder = session.Players.Count + 1;
+
             session.AddPlayer(playerSession);
-            logger.LogInfo($"Added player: {lobbyPlayer.Username} (ID: {playerProfile.IdPlayer})");
+            logger.LogInfo($"Added player to session: {finalUsername} (ID: {finalUserId})");
         }
 
         public GameSetupResultCode StartGame(int matchId)

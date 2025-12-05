@@ -55,7 +55,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
                 if (totalPlayers < 2)
                 {
-                    MessageBox.Show("Necesitas al menos 2 jugadores para comenzar la partida.");
+                    MessageBox.Show(Lang.Lobby_MiniumPlayers);
                 }
                 else
                 {
@@ -70,9 +70,20 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             SoundButton.PlayDestroyingRockSound();
 
+            if (UserSession.Instance.CurrentUser == null)
+            {
+                this.Close();
+                return;
+            }
+
             if (viewModel.CurrentClientIsHost())
             {
-                var result = MessageBox.Show(Lang.Lobby_CancellationLobbyConfirmation, Lang.GlobalAcceptText, MessageBoxButton.YesNo);
+                var result = MessageBox.Show(
+                    Lang.Lobby_CancellationLobbyConfirmation,
+                    Lang.GlobalAcceptText,
+                    MessageBoxButton.YesNo
+                );
+
                 if (result == MessageBoxResult.Yes)
                 {
                     viewModel.CancellTheLobby(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
@@ -81,11 +92,11 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             else
             {
                 viewModel.LeaveOfTheLobby(UserSession.Instance.CurrentUser.Username);
+                var main = new MainWindow();
+                main.Show();
+                this.Close();
             }
 
-            var main = new MainWindow();
-            main.Show();
-            this.Close();
         }
 
         private void Click_BtnInviteFriends(object sender, RoutedEventArgs e)

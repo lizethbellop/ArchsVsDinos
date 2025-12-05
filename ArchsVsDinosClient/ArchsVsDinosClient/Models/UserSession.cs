@@ -61,13 +61,28 @@ namespace ArchsVsDinosClient.Models
             IsGuest = false;
         }
 
-        
+        public void SetGuestSession(string username, string nickname)
+        {
+            CurrentUser = new UserDTO
+            {
+                Username = username,
+                Nickname = nickname,
+                Name = "Guest",
+                Email = string.Empty,
+                IdUser = 0
+            };
+
+            CurrentPlayer = null;
+            IsGuest = true;
+        }
+
         public string GetUsername() =>CurrentUser?.Username ?? string.Empty;
         public string GetNickname() => CurrentUser?.Nickname ?? string.Empty;
         public string GetName() => CurrentUser?.Name ?? string.Empty;
         public int GetUserId() => CurrentUser?.IdUser ?? 0;
         public bool HasPlayer() => CurrentPlayer != null;
         public int GetPlayerId() => CurrentPlayer?.IdPlayer ?? 0;
+
 
     }
 }

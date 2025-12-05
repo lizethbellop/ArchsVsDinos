@@ -45,6 +45,12 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 var lobbyWindow = new Lobby(false, lobbyServiceClient);
                 var lobbyViewModel = (LobbyViewModel)lobbyWindow.DataContext;
 
+                bool isGuest = (userAccount.IdPlayer == 0);
+                if (isGuest)
+                {
+                    lobbyViewModel.SetWaitingForGuestCallback(true);
+                }
+
                 UserSession.Instance.CurrentMatchCode = code;
 
                 var result = await Task.Run(() => lobbyServiceClient.JoinLobby(userAccount, code));
@@ -90,17 +96,28 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             var user = UserSession.Instance.CurrentUser;
             var player = UserSession.Instance.CurrentPlayer;
 
+            if (user == null)
+            {
+                return new UserAccountDTO
+                {
+                    Name = string.Empty,
+                    Email = string.Empty,
+                    Username = string.Empty, 
+                    Nickname = string.Empty,
+                    Password = string.Empty,
+                    IdConfiguration = 0,
+                    IdPlayer = 0  
+                };
+            }
+
             return new UserAccountDTO
             {
                 Name = user.Name,
                 Email = user.Email,
                 Username = user.Username,
                 Nickname = user.Nickname,
-
                 Password = string.Empty,
-
                 IdConfiguration = 0,
-
                 IdPlayer = player?.IdPlayer ?? 0
             };
         }

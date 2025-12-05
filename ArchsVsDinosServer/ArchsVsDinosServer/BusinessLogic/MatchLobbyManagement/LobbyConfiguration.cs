@@ -41,8 +41,25 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
 
         private LobbyPlayerDTO CreatePlayer(UserAccountDTO userAccount, bool isHost)
         {
+            if (userAccount.IdPlayer == 0 && string.IsNullOrEmpty(userAccount.Username))
+            {
+
+                string generatedUsername = UnregisteredPlayerGenerator.GenerateIdUnregisteredPlayer();
+                string generatedNickname = UnregisteredPlayerGenerator.GenerateNicknameUnregisteredPlayer();
+
+                return new LobbyPlayerDTO
+                {
+                    IdPlayer = 0,
+                    Username = generatedUsername,
+                    Nickname = generatedNickname,
+                    ProfilePicture = null,
+                    IsHost = false  
+                };
+            }
+
             var playerProfile = new ProfileInformation().GetPlayerByUsername(userAccount.Username);
             return PlayerCreator.FromLogin(userAccount, playerProfile, isHost);
+ 
         }
 
         private List<ILobbyManagerCallback> BroadcastToCallbacks(IEnumerable<ILobbyManagerCallback> callbackList, Action<ILobbyManagerCallback> notifyAction)
@@ -109,7 +126,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 Lobby newLobby = new Lobby();
                 newLobby.MatchCode = matchCode;
                 newLobby.AddPlayer(hostPlayer);
-                newLobby.AddCallback(hostCallback, hostUser.Username);
+                newLobby.AddCallback(hostCallback, hostPlayer.Username);
 
                 if (!ActiveMatches.TryAdd(matchCode, newLobby))
                 {
@@ -151,7 +168,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 }
                     
                 LobbyPlayerDTO newJoiningPlayer = CreatePlayer(joiningUser, false);
-                targetLobby.AddCallback(joiningCallback, joiningUser.Username);
+                targetLobby.AddCallback(joiningCallback, newJoiningPlayer.Username);
 
                 var hostPlayer = targetLobby.Players.FirstOrDefault(player => player.IsHost);
                 if (hostPlayer != null)

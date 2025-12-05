@@ -61,21 +61,35 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 Gr_Null.Visibility = Visibility.Collapsed;
                 Gr_IsNotFriend.Visibility = Visibility.Collapsed;
                 Gr_IsFriend.Visibility = Visibility.Visible;
+                LoadPlayerAvatar(slotData, ImgFriendAvatar);
             }
             else
             {
                 Gr_Null.Visibility = Visibility.Collapsed;
                 Gr_IsNotFriend.Visibility = Visibility.Visible;
                 Gr_IsFriend.Visibility = Visibility.Collapsed;
+                LoadPlayerAvatar(slotData, ImgPlayerAvatar);
             }
+        }
 
-            /*
-            Lb_Username.Content = slotData.Username;
-            Lb_Nickname.Content = slotData.Nickname;
-
-            Lb_FriendUsername.Content = slotData.Username;
-            Lb_FriendNickname.Content = slotData.Nickname;
-        */}
+        private void LoadPlayerAvatar(SlotLobby slotData, System.Windows.Media.ImageBrush imageBrush)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(slotData.ProfilePicture))
+                {
+                    imageBrush.ImageSource = new BitmapImage(new Uri(slotData.ProfilePicture, UriKind.Relative));
+                }
+                else
+                {
+                    imageBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/Avatars/default_avatar_00.png"));
+                }
+            }
+            catch (Exception ex)
+            {
+                imageBrush.ImageSource = null;
+            }
+        }
 
         private void Click_BtnKick(object sender, RoutedEventArgs e)
         {

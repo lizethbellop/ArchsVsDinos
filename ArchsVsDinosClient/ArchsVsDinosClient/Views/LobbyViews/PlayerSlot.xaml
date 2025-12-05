@@ -19,7 +19,11 @@
                     <StackPanel Grid.Row="0" Margin="10,20,10,0">
                         <Label Name="Lb_Username" Content="{Binding Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="23" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,2,0,5" Padding="2" Foreground="#FF55FF46"/>
                         <Label Name="Lb_Nickname" Content="{Binding Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,2,0,5" Padding="2" Foreground="White"/>
-                        <Border Width="90" Height="90" Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="4" Margin="3" HorizontalAlignment="Center"/>
+                        <Border Width="90" Height="90" BorderBrush="Gray" BorderThickness="2" CornerRadius="45" Margin="3" HorizontalAlignment="Center">
+                            <Border.Background>
+                                <ImageBrush x:Name="ImgPlayerAvatar" Stretch="UniformToFill"/>
+                            </Border.Background>
+                        </Border>
                     </StackPanel>
                     <Grid Grid.Row="1" Margin="0,5,0,0">
                         <Grid.ColumnDefinitions>
@@ -74,7 +78,11 @@
                     <StackPanel Grid.Row="0" Margin="10,20,10,0">
                         <Label Name="Lb_FriendUsername" Content="{Binding Username}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="23" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,2,0,5" Padding="2" Foreground="#FF55FF46"/>
                         <Label Name="Lb_FriendNickname" Content="{Binding Nickname}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,2,0,5" Padding="2" Foreground="White"/>
-                        <Border Width="90" Height="90" Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="4" Margin="3" HorizontalAlignment="Center"/>
+                        <Border Width="90" Height="90" BorderBrush="Gray" BorderThickness="2" CornerRadius="45" Margin="3" HorizontalAlignment="Center">
+                            <Border.Background>
+                                <ImageBrush x:Name="ImgFriendAvatar" Stretch="UniformToFill"/>
+                            </Border.Background>
+                        </Border>
                     </StackPanel>
                     <Grid Grid.Row="1" Margin="0,5,0,0">
                         <!-- Kick Button Friend -->

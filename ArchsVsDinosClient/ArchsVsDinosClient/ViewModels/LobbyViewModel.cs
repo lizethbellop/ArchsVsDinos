@@ -19,6 +19,7 @@ namespace ArchsVsDinosClient.ViewModels
     {
         private readonly ILobbyServiceClient lobbyServiceClient;
         private string matchCode;
+        private bool waitingForGuestCallback = false;
         public ObservableCollection<LobbyPlayerDTO> Players { get; private set; } = new ObservableCollection<LobbyPlayerDTO>();
         public ObservableCollection<SlotLobby> Slots { get; private set; } = new ObservableCollection<SlotLobby>();
 
@@ -76,7 +77,8 @@ namespace ArchsVsDinosClient.ViewModels
             var userAccount = new UserAccountDTO
             {
                 Username = UserSession.Instance.CurrentUser.Username,
-                Nickname = UserSession.Instance.CurrentUser.Nickname
+                Nickname = UserSession.Instance.CurrentUser.Nickname,
+                IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
             };
 
             lobbyServiceClient.CreateLobby(userAccount);
@@ -104,6 +106,12 @@ namespace ArchsVsDinosClient.ViewModels
 
         public void InvitePlayerByEmail(string email)
         {
+            if (UserSession.Instance.CurrentUser == null)
+            {
+                MessageBox.Show(Lang.Lobby_OnlyRegisteredInviteEmail);
+                return;
+            }
+
             var senderUsername = UserSession.Instance.CurrentUser.Username; 
 
             if (ValidationHelper.IsEmpty(email) || ValidationHelper.IsWhiteSpace(email))
@@ -141,7 +149,14 @@ namespace ArchsVsDinosClient.ViewModels
 
         }
 
-        public bool CurrentClientIsHost() => Players.FirstOrDefault(player => player.IsHost)?.Username == UserSession.Instance.CurrentUser.Username;
+        public bool CurrentClientIsHost()
+        {
+            if (UserSession.Instance.CurrentUser == null)
+            {
+                return false;
+            }
+            return Players.FirstOrDefault(player => player.IsHost)?.Username == UserSession.Instance.CurrentUser.Username;
+        } 
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -183,6 +198,11 @@ namespace ArchsVsDinosClient.ViewModels
                 if (existingPlayer == null)
                 {
                     Players.Add(joiningPlayer);
+                    if (waitingForGuestCallback && !joiningPlayer.IsHost)
+                    {
+                        UserSession.Instance.SetGuestSession(joiningPlayer.Username, joiningPlayer.Nickname);
+                        waitingForGuestCallback = false;
+                    }
                     UpdateSlots();
                 }
             });
@@ -208,17 +228,16 @@ namespace ArchsVsDinosClient.ViewModels
                 if (!CurrentClientIsHost())
                 {
                     MessageBox.Show(Lang.Lobby_LobbyCancelled);
-
-                    var mainWindow = new MainWindow();
-                    mainWindow.Show();
-
-                    var currentWindow = Application.Current.Windows
-                        .OfType<Window>()
-                        .FirstOrDefault(window => window is Views.LobbyViews.Lobby);
-
-                    currentWindow?.Close();
-
                 }
+
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+
+                var currentWindow = Application.Current.Windows
+                    .OfType<Window>()
+                    .FirstOrDefault(window => window is Views.LobbyViews.Lobby);
+
+                currentWindow?.Close();
             });
         }
 
@@ -232,7 +251,8 @@ namespace ArchsVsDinosClient.ViewModels
                     Players.Remove(existing);
                 }
 
-                if (expelledPlayer.Username == UserSession.Instance.CurrentUser.Username)
+                if (UserSession.Instance.CurrentUser != null &&
+                    expelledPlayer.Username == UserSession.Instance.CurrentUser.Username)
                 {
                     MessageBox.Show(Lang.Lobby_LobbyExpell);
                     NavigationUtils.GoToMainMenu();
@@ -245,7 +265,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var myUsername = UserSession.Instance.CurrentUser.Username;
+                var myUsername = UserSession.Instance.CurrentUser?.Username;
                 var convertedPlayers = players.Select(player => new ArchsVsDinosClient.DTO.LobbyPlayerDTO
                 {
                     Username = player.Username,
@@ -270,9 +290,14 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
+        public void SetWaitingForGuestCallback(bool waiting)
+        {
+            waitingForGuestCallback = waiting;
+        }
+
         private void UpdateSlots()
         {
-            var localUsername = UserSession.Instance.CurrentUser.Username;
+            var localUsername = UserSession.Instance.CurrentUser?.Username ?? "Guest";
 
             var localPlayer = Players.FirstOrDefault(player => player.Username == localUsername);
             var otherPlayers = Players.Where(player => player.Username != localUsername).ToList();
@@ -292,6 +317,7 @@ namespace ArchsVsDinosClient.ViewModels
                     Slots[i].Username = player.Username;
                     Slots[i].Nickname = player.Nickname;
                     Slots[i].IsFriend = false;
+                    Slots[i].ProfilePicture = player.ProfilePicture;
                     Slots[i].CanKick = CurrentClientIsHost() && player.Username != localUsername;
                     Slots[i].IsLocalPlayer = player.Username == localUsername;
                     Slots[i].IsFriend = false;
@@ -301,6 +327,7 @@ namespace ArchsVsDinosClient.ViewModels
                     Slots[i].Username = string.Empty;
                     Slots[i].Nickname = string.Empty;
                     Slots[i].IsFriend = false;
+                    Slots[i].ProfilePicture = null;
                     Slots[i].CanKick = false;
                     Slots[i].IsLocalPlayer = false;
 
