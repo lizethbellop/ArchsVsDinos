@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" />
   <xs:import schemaLocation="http://localhost:8087/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="ArrayOfCardDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CardDTO" nillable="true" type="tns:CardDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCardDTO" nillable="true" type="tns:ArrayOfCardDTO" />
+  <xs:complexType name="CardDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BodyPart" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Element" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IdCard" type="xs:int" />
+      <xs:element minOccurs="0" name="Power" type="xs:int" />
+      <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CardDTO" nillable="true" type="tns:CardDTO" />
   <xs:complexType name="ArrayOfPlayerInGameDTO">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerInGameDTO" nillable="true" type="tns:PlayerInGameDTO" />
@@ -23,22 +40,6 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="PlayerHandDTO" nillable="true" type="tns:PlayerHandDTO" />
-  <xs:complexType name="ArrayOfCardDTO">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="CardDTO" nillable="true" type="tns:CardDTO" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfCardDTO" nillable="true" type="tns:ArrayOfCardDTO" />
-  <xs:complexType name="CardDTO">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="BodyPart" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Element" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="IdCard" type="xs:int" />
-      <xs:element minOccurs="0" name="Power" type="xs:int" />
-      <xs:element minOccurs="0" name="Type" nillable="true" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="CardDTO" nillable="true" type="tns:CardDTO" />
   <xs:complexType name="GameInitializedDTO">
     <xs:sequence>
       <xs:element minOccurs="0" name="MatchId" type="xs:int" />
@@ -54,6 +55,7 @@
       <xs:element minOccurs="0" name="DrawPile3Count" type="xs:int" />
       <xs:element minOccurs="0" name="FirstPlayerUserId" type="xs:int" />
       <xs:element minOccurs="0" name="FirstPlayerUsername" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" minOccurs="0" name="InitialBoard" nillable="true" type="q1:CentralBoardDTO" />
       <xs:element minOccurs="0" name="MatchId" type="xs:int" />
       <xs:element minOccurs="0" name="MyUserId" type="xs:int" />
       <xs:element minOccurs="0" name="PlayersHands" nillable="true" type="tns:ArrayOfPlayerHandDTO" />
@@ -72,6 +74,7 @@
       <xs:element minOccurs="0" name="CurrentPlayerUserId" type="xs:int" />
       <xs:element minOccurs="0" name="CurrentPlayerUsername" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="MatchId" type="xs:int" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerScores" nillable="true" type="q2:ArrayOfKeyValueOfintint" />
       <xs:element minOccurs="0" name="RemainingTime" type="ser:duration" />
       <xs:element minOccurs="0" name="TurnNumber" type="xs:int" />
     </xs:sequence>
@@ -137,7 +140,7 @@
       <xs:element minOccurs="0" name="ArmyType" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="DinosWon" type="xs:boolean" />
       <xs:element minOccurs="0" name="MatchId" type="xs:int" />
-      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerPowers" nillable="true" type="q1:ArrayOfKeyValueOfintint" />
+      <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerPowers" nillable="true" type="q3:ArrayOfKeyValueOfintint" />
       <xs:element minOccurs="0" name="PointsAwarded" type="xs:int" />
       <xs:element minOccurs="0" name="WinnerPower" type="xs:int" />
       <xs:element minOccurs="0" name="WinnerUserId" nillable="true" type="xs:int" />

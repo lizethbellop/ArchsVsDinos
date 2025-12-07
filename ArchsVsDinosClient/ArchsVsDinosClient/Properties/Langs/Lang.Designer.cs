@@ -1177,6 +1177,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡Es tu turno!.
+        /// </summary>
+        public static string Match_YourTurn {
+            get {
+                return ResourceManager.GetString("Match_YourTurn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Estadísticas del jugador.
         /// </summary>
         public static string PlayerStatistics_Title {

@@ -21,11 +21,19 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             lock (session.SyncRoot)
             {
-                AssignTurnOrderToPlayers(session, players);
+                foreach (var player in players)
+                {
+                    player.ClearHand();
+                    player.ClearDinos();
+                }
+
+                if (session.Players.Count == 0)
+                {
+                    AssignTurnOrderToPlayers(session, players);
+                }
 
                 var allCardIds = CardDefinitions.GetAllCardIds();
                 var shuffledDeck = CardShuffler.ShuffleCards(allCardIds);
-
                 var remainingDeck = DealInitialHands(session, shuffledDeck);
 
                 CreateSingleDrawPile(session, remainingDeck);
@@ -53,38 +61,31 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         private List<int> DealInitialHands(GameSession session, List<int> deck)
         {
-            var deckCopy = new List<int>(deck);
-            var currentCardIndex = 0;
+            var deckQueue = new Queue<int>(deck);
 
             foreach (var player in session.Players)
             {
-                var cardsDealtToPlayer = 0;
-
-                while (cardsDealtToPlayer < InitialHandSize && currentCardIndex < deckCopy.Count)
+                while (player.Hand.Count < InitialHandSize && deckQueue.Count > 0)
                 {
-                    var cardId = deckCopy[currentCardIndex];
-                    currentCardIndex++;
-
+                    int cardId = deckQueue.Dequeue();
                     var card = CardInGame.FromDefinition(cardId);
-                    if (card == null)
-                    {
-                        continue;
-                    }
+
+                    if (card == null) continue;
 
                     if (card.IsArch())
                     {
                         PlaceArchOnBoard(session.CentralBoard, cardId, card.Element);
-                        continue;
                     }
-
-                    player.AddCard(card);
-                    cardsDealtToPlayer++;
+                    else
+                    {
+                        player.AddCard(card);
+                    }
                 }
             }
 
-            var remainingCards = deckCopy.Skip(currentCardIndex).ToList();
-            return remainingCards;
+            return deckQueue.ToList();
         }
+
 
         private void PlaceArchOnBoard(CentralBoard board, int cardId, string element)
         {

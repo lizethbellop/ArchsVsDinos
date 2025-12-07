@@ -4,6 +4,7 @@ using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
+using ArchsVsDinosClient.ViewModels.GameViewsModels;
 using ArchsVsDinosClient.Views.MatchViews.MatchSeeDeck;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Effects;
 
 namespace ArchsVsDinosClient.Views.MatchViews
 {
@@ -62,8 +64,8 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 return;
             }
 
-            InitializePlayers(playersInMatch, currentUsername);
-            Loaded += Match_Loaded;
+            InitializePlayersVisuals(playersInMatch, currentUsername);
+            Loaded += MatchLoaded;
         }
 
         private int ExtractMatchIdFromCode(string gameMatchCode)
@@ -74,21 +76,70 @@ namespace ArchsVsDinosClient.Views.MatchViews
             return Math.Abs(gameMatchCode.GetHashCode());
         }
 
-        private void InitializePlayers(List<LobbyPlayerDTO> players, string myUsername)
+        private void InitializePlayersVisuals(List<LobbyPlayerDTO> players, string myUsername)
         {
             var others = players.Where(player => player.Username != myUsername).ToList();
 
             if (others.Count > 0)
+            {
                 Lb_TopPlayerName.Content = others[0].Username;
+            }
 
             if (others.Count > 1)
+            {
                 Lb_LeftPlayerName.Content = others[1].Username;
+                Grid_LeftPlayer.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Grid_LeftPlayer.Visibility = Visibility.Collapsed; 
+            }
 
             if (others.Count > 2)
+            {
                 Lb_RightPlayerName.Content = others[2].Username;
+                Grid_RightPlayer.Visibility = Visibility.Visible; 
+            }
+            else
+            {
+                Grid_RightPlayer.Visibility = Visibility.Collapsed; 
+            }
         }
 
-        private async void Match_Loaded(object sender, RoutedEventArgs e)
+        private void UpdateTurnGlow(string currentPlayerUsername)
+        {
+            Lb_TopPlayerName.Effect = null;
+            Lb_LeftPlayerName.Effect = null;
+            Lb_RightPlayerName.Effect = null;
+
+            if (currentPlayerUsername == currentUsername) return;
+
+            var neonGlow = new DropShadowEffect
+            {
+                Color = System.Windows.Media.Colors.Yellow, 
+                Direction = 0,
+                ShadowDepth = 0,
+                BlurRadius = 25, 
+                Opacity = 1
+            };
+
+            if (Lb_TopPlayerName.Content.ToString() == currentPlayerUsername)
+            {
+                Lb_TopPlayerName.Effect = neonGlow;
+            }
+            else if (Grid_LeftPlayer.Visibility == Visibility.Visible &&
+                     Lb_LeftPlayerName.Content.ToString() == currentPlayerUsername)
+            {
+                Lb_LeftPlayerName.Effect = neonGlow;
+            }
+            else if (Grid_RightPlayer.Visibility == Visibility.Visible &&
+                     Lb_RightPlayerName.Content.ToString() == currentPlayerUsername)
+            {
+                Lb_RightPlayerName.Effect = neonGlow;
+            }
+        }
+
+        private async void MatchLoaded(object sender, RoutedEventArgs e)
         {
             if (chatViewModel != null)
             {
@@ -115,8 +166,12 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             if (gameViewModel != null)
             {
-                gameViewModel.PlayerHand.CollectionChanged += PlayerHand_CollectionChanged;
+                gameViewModel.BoardManager.PlayerHand.CollectionChanged += PlayerHandCollectionChanged;
+                gameViewModel.TurnChangedForUI += UpdateTurnGlow;
+                MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
                 await gameViewModel.InitializeAndStartGameAsync();
+                await Application.Current.Dispatcher.InvokeAsync(() => UpdatePlayerHandVisual(),
+                    System.Windows.Threading.DispatcherPriority.Loaded);
             }
         }
 
@@ -160,7 +215,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             Btn_Chat.Visibility = Visibility.Visible;
         }
 
-        private void PlayerHand_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void PlayerHandCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -170,20 +225,21 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void UpdatePlayerHandVisual()
         {
-
-            System.Diagnostics.Debug.WriteLine($"🎴 UPDATING VISUAL: {gameViewModel.PlayerHand.Count} cards");
+            double canvasWidth = MyDeckCanvas.ActualWidth > 0 ? MyDeckCanvas.ActualWidth : 800;
 
             MyDeckCanvas.Children.Clear();
 
-            var cards = gameViewModel.PlayerHand.ToList();
+            var cards = gameViewModel.BoardManager.PlayerHand.ToList();
             if (cards.Count == 0) return;
 
             double cardWidth = 80;
-            double overlap = 50; 
+            double overlap = 50;
             double totalWidth = (cards.Count - 1) * overlap + cardWidth;
 
-            double canvasWidth = MyDeckCanvas.ActualWidth > 0 ? MyDeckCanvas.ActualWidth : 800;
+
             double startX = (canvasWidth - totalWidth) / 2;
+
+            if (startX < 10) startX = 10; 
 
             for (int i = 0; i < cards.Count; i++)
             {
@@ -193,12 +249,10 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 };
 
                 double leftPosition = startX + (i * overlap);
-                cardControl.SetInitialPosition(leftPosition, -80); 
+                cardControl.SetInitialPosition(leftPosition, -70);
                 Panel.SetZIndex(cardControl, i);
-
                 MyDeckCanvas.Children.Add(cardControl);
             }
-
         }
 
         protected override async void OnClosing(CancelEventArgs e)
@@ -217,7 +271,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 try
                 {
-                    gameViewModel.PlayerHand.CollectionChanged -= PlayerHand_CollectionChanged;
+                    gameViewModel.BoardManager.PlayerHand.CollectionChanged -= PlayerHandCollectionChanged;
                     gameViewModel.Dispose();
                 }
                 catch { }

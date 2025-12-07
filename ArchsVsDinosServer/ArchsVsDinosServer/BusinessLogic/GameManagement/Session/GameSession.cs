@@ -26,8 +26,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public bool HasDrawnThisTurn { get; private set; }
         public bool HasTakenMainAction { get; private set; }
         public int CardsPlayedThisTurn { get; private set; }
+        public int RemainingMoves { get; private set; }
         public CentralBoard CentralBoard { get; private set; }
-
         public IReadOnlyList<PlayerSession> Players => players.AsReadOnly();
         public IReadOnlyList<List<int>> DrawPiles => drawPiles.AsReadOnly();
         public IReadOnlyList<int> DiscardPile => discardPile.AsReadOnly();
@@ -114,6 +114,31 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
                 HasDrawnThisTurn = false;
                 HasTakenMainAction = false;
                 CardsPlayedThisTurn = 0;
+                RemainingMoves = 3;
+            }
+        }
+
+        public bool ConsumeMove()
+        {
+            lock (SyncRoot)
+            {
+                if (RemainingMoves > 0)
+                {
+                    RemainingMoves--;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public void RestoreMove()
+        {
+            lock (SyncRoot)
+            {
+                if (RemainingMoves < 3)
+                {
+                    RemainingMoves++;
+                }
             }
         }
 

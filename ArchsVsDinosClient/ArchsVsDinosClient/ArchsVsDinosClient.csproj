@@ -189,7 +189,9 @@
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
     <Compile Include="ViewModels\GameStatisticsViewModel.cs" />
-    <Compile Include="ViewModels\GameViewModel.cs" />
+    <Compile Include="ViewModels\GameViewsModels\GameBoardManager.cs" />
+    <Compile Include="ViewModels\GameViewsModels\GameTimerManager.cs" />
+    <Compile Include="ViewModels\GameViewsModels\GameViewModel.cs" />
     <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

@@ -96,13 +96,16 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public void NotifyTurnChanged(GameSession session, PlayerSession currentPlayer, GameEndHandler endHandler)
         {
+            var scores = session.Players.ToDictionary(player => player.UserId, player => player.Points);
+
             var turnChangedData = new TurnChangedDTO
             {
                 MatchId = session.MatchId,
                 CurrentPlayerUserId = currentPlayer.UserId,
                 CurrentPlayerUsername = currentPlayer.Username,
                 TurnNumber = session.TurnNumber,
-                RemainingTime = endHandler.GetRemainingTime(session)
+                RemainingTime = endHandler.GetRemainingTime(session),
+                PlayerScores = scores
             };
 
             NotifyAllPlayers(session, player => player.Callback?.OnTurnChanged(turnChangedData));

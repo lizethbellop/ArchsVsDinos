@@ -64,6 +64,8 @@ namespace ArchsVsDinosServer.Services.GameService
                     return DrawCardResultCode.NotYourTurn;
                 }
 
+                if (session.RemainingMoves <= 0) return DrawCardResultCode.AlreadyDrewThisTurn;
+
                 var canDrawValidation = validationService.ValidateCanDrawCard(session, userId, "DrawCard");
                 if (!canDrawValidation.IsValid)
                 {
@@ -88,6 +90,8 @@ namespace ArchsVsDinosServer.Services.GameService
 
         private DrawCardResultCode ExecuteDrawCard(GameSession session, PlayerSession player, int drawPileNumber)
         {
+
+            if (!session.ConsumeMove()) return DrawCardResultCode.AlreadyDrewThisTurn;
             var card = actionHandler.DrawCard(session, player, drawPileNumber);
             if (card == null)
             {
@@ -96,9 +100,15 @@ namespace ArchsVsDinosServer.Services.GameService
             }
 
             notificationService.NotifyCardDrawn(session, player, card, drawPileNumber);
+            if (CheckAndHandleGameEnd(session)) return DrawCardResultCode.Success;
             CheckAndHandleGameEnd(session);
 
             logger.LogInfo($"DrawCard: Player {player.UserId} drew card from pile {drawPileNumber}");
+
+            if (session.RemainingMoves == 0)
+            {
+                EndTurn(session.MatchId, player.UserId);
+            }
             return DrawCardResultCode.Success;
         }
 
@@ -154,6 +164,8 @@ namespace ArchsVsDinosServer.Services.GameService
                 return PlayCardResultCode.InvalidDinoHead;
             }
 
+            if (!session.ConsumeMove()) return PlayCardResultCode.AlreadyPlayedTwoCards;
+
             var dino = actionHandler.PlayDinoHead(session, player, cardId);
             if (dino == null)
             {
@@ -163,6 +175,11 @@ namespace ArchsVsDinosServer.Services.GameService
 
             notificationService.NotifyDinoPlayed(session, player, dino);
             logger.LogInfo($"PlayDinoHead: Player {player.UserId} played dino head {cardId}");
+
+            if (session.RemainingMoves == 0)
+            {
+                EndTurn(session.MatchId, player.UserId);
+            }
             return PlayCardResultCode.Success;
         }
 
@@ -189,6 +206,8 @@ namespace ArchsVsDinosServer.Services.GameService
                 {
                     return PlayCardResultCode.NotYourTurn;
                 }
+
+                if (session.RemainingMoves <= 0) return PlayCardResultCode.AlreadyPlayedTwoCards;
 
                 var canPlayValidation = validationService.ValidateCanPlayCard(session, userId, "AttachBodyPart");
                 if (!canPlayValidation.IsValid)
@@ -230,6 +249,8 @@ namespace ArchsVsDinosServer.Services.GameService
                 return PlayCardResultCode.ArmyTypeMismatch;
             }
 
+            if (!session.ConsumeMove()) return PlayCardResultCode.AlreadyPlayedTwoCards;
+
             var success = actionHandler.AttachBodyPart(session, player, cardId, dinoHeadCardId);
             if (!success)
             {
@@ -239,6 +260,12 @@ namespace ArchsVsDinosServer.Services.GameService
 
             notificationService.NotifyBodyPartAttached(session, player, dinoValidation.Data, cardValidation.Data);
             logger.LogInfo($"AttachBodyPart: Player {player.UserId} attached body {cardId} to dino {dinoHeadCardId}");
+
+            if (session.RemainingMoves == 0)
+            {
+                EndTurn(session.MatchId, player.UserId);
+            }
+
             return PlayCardResultCode.Success;
         }
 
@@ -295,6 +322,7 @@ namespace ArchsVsDinosServer.Services.GameService
         private ProvokeResultCode ExecuteProvokeArmy(GameSession session, PlayerSession player, string armyType)
         {
             session.MarkMainActionTaken();
+            while (session.RemainingMoves > 0) session.ConsumeMove();
 
             var battleResult = battleResolver.ResolveBattle(session, armyType);
             if (battleResult == null)
@@ -305,6 +333,8 @@ namespace ArchsVsDinosServer.Services.GameService
 
             notificationService.NotifyBattleResolved(session, player, battleResult);
             logger.LogInfo($"ProvokeArmy: Player {player.UserId} provoked {armyType} army");
+
+            EndTurn(session.MatchId, player.UserId);
             return ProvokeResultCode.Success;
         }
 

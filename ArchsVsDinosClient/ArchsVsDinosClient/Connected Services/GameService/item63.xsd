@@ -20,12 +20,15 @@
   <xs:element name="GameStateDTO" nillable="true" type="tns:GameStateDTO" />
   <xs:complexType name="CentralBoardDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" name="LandArmyCount" type="xs:int" />
-      <xs:element minOccurs="0" name="LandArmyPower" type="xs:int" />
-      <xs:element minOccurs="0" name="SeaArmyCount" type="xs:int" />
-      <xs:element minOccurs="0" name="SeaArmyPower" type="xs:int" />
-      <xs:element minOccurs="0" name="SkyArmyCount" type="xs:int" />
-      <xs:element minOccurs="0" name="SkyArmyPower" type="xs:int" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="SandArmy" nillable="true" type="q2:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="SandArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="SandArmyPower" type="xs:int" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="WaterArmy" nillable="true" type="q3:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="WaterArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="WaterArmyPower" type="xs:int" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="WindArmy" nillable="true" type="q4:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="WindArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="WindArmyPower" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CentralBoardDTO" nillable="true" type="tns:CentralBoardDTO" />

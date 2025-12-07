@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Contracts.DTO.Game_DTO
@@ -24,5 +25,8 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public TimeSpan RemainingTime { get; set; }
+
+        [DataMember]
+        public Dictionary<int, int> PlayerScores { get; set; }
     }
 }

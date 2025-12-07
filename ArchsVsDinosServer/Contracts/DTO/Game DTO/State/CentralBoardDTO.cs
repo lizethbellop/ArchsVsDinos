@@ -7,25 +7,35 @@ using System.Threading.Tasks;
 
 namespace Contracts.DTO.Game_DTO.State
 {
+
     [DataContract]
     public class CentralBoardDTO
     {
         [DataMember]
-        public int LandArmyCount { get; set; }
+        public List<CardDTO> SandArmy { get; set; }
 
         [DataMember]
-        public int SeaArmyCount { get; set; }
+        public List<CardDTO> WaterArmy { get; set; }
 
         [DataMember]
-        public int SkyArmyCount { get; set; }
+        public List<CardDTO> WindArmy { get; set; }
 
         [DataMember]
-        public int LandArmyPower { get; set; }
+        public int SandArmyCount { get; set; }
 
         [DataMember]
-        public int SeaArmyPower { get; set; }
+        public int WaterArmyCount { get; set; }
 
         [DataMember]
-        public int SkyArmyPower { get; set; }
+        public int WindArmyCount { get; set; }
+
+        [DataMember]
+        public int SandArmyPower { get; set; }
+
+        [DataMember]
+        public int WaterArmyPower { get; set; }
+
+        [DataMember]
+        public int WindArmyPower { get; set; }
     }
 }

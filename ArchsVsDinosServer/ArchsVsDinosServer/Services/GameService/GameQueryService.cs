@@ -175,12 +175,25 @@ namespace ArchsVsDinosServer.Services.GameService
         {
             var centralBoardData = new CentralBoardDTO
             {
-                LandArmyCount = session.CentralBoard.SandArmy.Count,
-                SeaArmyCount = session.CentralBoard.WaterArmy.Count,
-                SkyArmyCount = session.CentralBoard.WindArmy.Count,
-                LandArmyPower = session.CentralBoard.GetArmyPower("sand"),
-                SeaArmyPower = session.CentralBoard.GetArmyPower("water"),
-                SkyArmyPower = session.CentralBoard.GetArmyPower("wind")
+                SandArmy = CardConverter.ToDTOList(session.CentralBoard.SandArmy
+                                .Select(id => CardInGame.FromDefinition(id))
+                                .ToList()),
+
+                WaterArmy = CardConverter.ToDTOList(session.CentralBoard.WaterArmy
+                                .Select(id => CardInGame.FromDefinition(id))
+                                .ToList()),
+
+                WindArmy = CardConverter.ToDTOList(session.CentralBoard.WindArmy
+                                .Select(id => CardInGame.FromDefinition(id))
+                                .ToList()),
+
+                SandArmyCount = session.CentralBoard.SandArmy.Count,
+                WaterArmyCount = session.CentralBoard.WaterArmy.Count,
+                WindArmyCount = session.CentralBoard.WindArmy.Count,
+
+                SandArmyPower = session.CentralBoard.GetArmyPower("sand"),
+                WaterArmyPower = session.CentralBoard.GetArmyPower("water"),
+                WindArmyPower = session.CentralBoard.GetArmyPower("wind")
             };
 
             return centralBoardData;

@@ -771,4 +771,7 @@
   <data name="Lobby_OnlyRegisteredInviteEmail" xml:space="preserve">
     <value>Only registered users can invite by email.</value>
   </data>
+  <data name="Match_YourTurn" xml:space="preserve">
+    <value>Is your turn!</value>
+  </data>
 </root>

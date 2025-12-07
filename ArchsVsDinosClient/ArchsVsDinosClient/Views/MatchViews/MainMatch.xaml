@@ -183,7 +183,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Left player -->
-                <Grid Grid.Row="0" Margin="2">
+                <Grid x:Name="Grid_LeftPlayer" Grid.Row="0" Margin="2" Visibility="Collapsed">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
@@ -606,7 +606,7 @@
                                         <Image Source="/Resources/Images/waterLogo.png" Stretch="Uniform" HorizontalAlignment="Center" Margin="10,10,10,10"/>
                                     </Grid>
                                     <!-- Card -->
-                                    <Grid Name="Gr_SeaArchs" Grid.RowSpan="2" Visibility="Collapsed" Margin="10,10,10,10">
+                                    <Grid Name="Gr_SeaArchs" Grid.RowSpan="2" Visibility="{Binding WaterArmyVisibility}" Margin="10,10,10,10">
                                         <Grid.Background>
                                             <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png"/>
                                         </Grid.Background>
@@ -619,7 +619,7 @@
                                         <Image Source="/Resources/Images/sandLogo.png" Stretch="Uniform" HorizontalAlignment="Center" Margin="10,10,10,10"/>
                                     </Grid>
                                     <!-- Card -->
-                                    <Grid Name="Gr_SandArchs" Grid.RowSpan="2" Visibility="Collapsed" Margin="10,10,10,10">
+                                    <Grid Name="Gr_SandArchs" Grid.RowSpan="2" Visibility="{Binding SandArmyVisibility}" Margin="10,10,10,10">
                                         <Grid.Background>
                                             <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png"/>
                                         </Grid.Background>
@@ -631,7 +631,7 @@
                                         <Image Source="/Resources/Images/windLogo.png" Stretch="Uniform" HorizontalAlignment="Center" Margin="10,10,10,10"/>
                                     </Grid>
                                     <!-- Card -->
-                                    <Grid Name="Gr_WindArchs" Grid.RowSpan="2" Visibility="Collapsed" Margin="10,10,10,10">
+                                    <Grid Name="Gr_WindArchs" Grid.RowSpan="2" Visibility="{Binding WindArmyVisibility}" Margin="10,10,10,10">
                                         <Grid.Background>
                                             <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png"/>
                                         </Grid.Background>
@@ -709,7 +709,7 @@
                     </Grid>
 
                     <Grid Grid.Row="1" Background="Transparent" ClipToBounds="False">
-                        <Canvas x:Name="MyDeckCanvas" HorizontalAlignment="Center" VerticalAlignment="Bottom" ClipToBounds="False"/>
+                        <Canvas x:Name="MyDeckCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" ClipToBounds="False"/>
                     </Grid>
 
                 </Grid>
@@ -723,7 +723,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Right player -->
-                <Grid Grid.Row="0" Margin="0,0,45,0">
+                <Grid x:Name="Grid_RightPlayer" Grid.Row="0" Margin="0,0,45,0" Visibility="Collapsed">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>

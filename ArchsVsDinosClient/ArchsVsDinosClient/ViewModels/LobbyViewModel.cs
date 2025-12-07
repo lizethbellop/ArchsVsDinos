@@ -270,7 +270,9 @@ namespace ArchsVsDinosClient.ViewModels
                 {
                     Username = player.Username,
                     Nickname = player.Nickname,
-                    IsHost = player.IsHost
+                    IsHost = player.IsHost,
+                    IdPlayer = player.IdPlayer,
+                    ProfilePicture = player.ProfilePicture
                 }).ToList();
 
                 var match = new MainMatch(convertedPlayers, myUsername, matchCode);

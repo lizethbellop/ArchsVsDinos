@@ -55,42 +55,29 @@ namespace ArchsVsDinosServer.Services
 
             try
             {
-                var callback = OperationContext.Current.GetCallbackChannel<IGameManagerCallback>();
-
                 lock (GameCallbackRegistry.Instance.GetMatchLock(matchId))
                 {
-                    var matchValidation = validationService.ValidateMatchId(matchId, "InitializeGame");
-                    if (!matchValidation.IsValid)
-                    {
-                        return GameSetupResultCode.UnexpectedError;
-                    }
-
                     var session = sessionManager.GetSession(matchId);
 
                     if (session == null)
                     {
                         if (!sessionManager.CreateSession(matchId))
                         {
-                            logger.LogInfo($"Failed to create session {matchId}");
                             return GameSetupResultCode.UnexpectedError;
                         }
 
                         session = sessionManager.GetSession(matchId);
-
                         var addPlayersResult = AddPlayersToSession(matchId, session);
                         if (addPlayersResult != GameSetupResultCode.Success)
                         {
                             return addPlayersResult;
                         }
+                    }
 
-                        logger.LogInfo($"✅ Created session {matchId} with {session.Players.Count} players");
-                    }
-                    else
-                    {
-                        logger.LogInfo($"✅ Session {matchId} already exists with {session.Players.Count} players");
-                    }
+                    var callback = OperationContext.Current.GetCallbackChannel<IGameManagerCallback>();
 
                     PlayerSession myPlayer = null;
+
                     foreach (var player in session.Players)
                     {
                         var existingCallback = GameCallbackRegistry.Instance.GetCallback(player.UserId);
@@ -105,16 +92,14 @@ namespace ArchsVsDinosServer.Services
                     {
                         myPlayer.SetCallback(callback);
                         GameCallbackRegistry.Instance.RegisterCallback(myPlayer.UserId, callback);
-                        logger.LogInfo($"✅ Registered callback for userId: {myPlayer.UserId}, username: {myPlayer.Username}");
-                    }
-                    else
-                    {
-                        logger.LogWarning($"⚠️ All {session.Players.Count} players already have callbacks registered");
+                        logger.LogInfo($"✅ Registered callback for userId: {myPlayer.UserId}");
                     }
 
-                    if (myPlayer != null)
+                    int connectedCount = session.Players.Count(p => GameCallbackRegistry.Instance.GetCallback(p.UserId) != null);
+
+                    if (connectedCount == session.Players.Count && !session.IsStarted)
                     {
-                        notificationService.NotifyGameInitialized(session);
+                        ExecuteGameStart(session);
                     }
 
                     return GameSetupResultCode.Success;

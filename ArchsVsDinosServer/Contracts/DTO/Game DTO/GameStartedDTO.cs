@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.DTO.Game_DTO.State;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -24,6 +25,9 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public List<PlayerHandDTO> PlayersHands { get; set; }
+
+        [DataMember]
+        public CentralBoardDTO InitialBoard { get; set; }
 
         [DataMember]
         public int DrawPile1Count { get; set; }

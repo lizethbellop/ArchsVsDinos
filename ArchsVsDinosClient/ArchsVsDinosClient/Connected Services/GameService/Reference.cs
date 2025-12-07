@@ -361,22 +361,31 @@ namespace ArchsVsDinosClient.GameService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int LandArmyCountField;
+        private ArchsVsDinosClient.GameService.CardDTO[] SandArmyField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int LandArmyPowerField;
+        private int SandArmyCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SeaArmyCountField;
+        private int SandArmyPowerField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SeaArmyPowerField;
+        private ArchsVsDinosClient.GameService.CardDTO[] WaterArmyField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SkyArmyCountField;
+        private int WaterArmyCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SkyArmyPowerField;
+        private int WaterArmyPowerField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ArchsVsDinosClient.GameService.CardDTO[] WindArmyField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int WindArmyCountField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int WindArmyPowerField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -389,79 +398,118 @@ namespace ArchsVsDinosClient.GameService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int LandArmyCount {
+        public ArchsVsDinosClient.GameService.CardDTO[] SandArmy {
             get {
-                return this.LandArmyCountField;
+                return this.SandArmyField;
             }
             set {
-                if ((this.LandArmyCountField.Equals(value) != true)) {
-                    this.LandArmyCountField = value;
-                    this.RaisePropertyChanged("LandArmyCount");
+                if ((object.ReferenceEquals(this.SandArmyField, value) != true)) {
+                    this.SandArmyField = value;
+                    this.RaisePropertyChanged("SandArmy");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int LandArmyPower {
+        public int SandArmyCount {
             get {
-                return this.LandArmyPowerField;
+                return this.SandArmyCountField;
             }
             set {
-                if ((this.LandArmyPowerField.Equals(value) != true)) {
-                    this.LandArmyPowerField = value;
-                    this.RaisePropertyChanged("LandArmyPower");
+                if ((this.SandArmyCountField.Equals(value) != true)) {
+                    this.SandArmyCountField = value;
+                    this.RaisePropertyChanged("SandArmyCount");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SeaArmyCount {
+        public int SandArmyPower {
             get {
-                return this.SeaArmyCountField;
+                return this.SandArmyPowerField;
             }
             set {
-                if ((this.SeaArmyCountField.Equals(value) != true)) {
-                    this.SeaArmyCountField = value;
-                    this.RaisePropertyChanged("SeaArmyCount");
+                if ((this.SandArmyPowerField.Equals(value) != true)) {
+                    this.SandArmyPowerField = value;
+                    this.RaisePropertyChanged("SandArmyPower");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SeaArmyPower {
+        public ArchsVsDinosClient.GameService.CardDTO[] WaterArmy {
             get {
-                return this.SeaArmyPowerField;
+                return this.WaterArmyField;
             }
             set {
-                if ((this.SeaArmyPowerField.Equals(value) != true)) {
-                    this.SeaArmyPowerField = value;
-                    this.RaisePropertyChanged("SeaArmyPower");
+                if ((object.ReferenceEquals(this.WaterArmyField, value) != true)) {
+                    this.WaterArmyField = value;
+                    this.RaisePropertyChanged("WaterArmy");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SkyArmyCount {
+        public int WaterArmyCount {
             get {
-                return this.SkyArmyCountField;
+                return this.WaterArmyCountField;
             }
             set {
-                if ((this.SkyArmyCountField.Equals(value) != true)) {
-                    this.SkyArmyCountField = value;
-                    this.RaisePropertyChanged("SkyArmyCount");
+                if ((this.WaterArmyCountField.Equals(value) != true)) {
+                    this.WaterArmyCountField = value;
+                    this.RaisePropertyChanged("WaterArmyCount");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SkyArmyPower {
+        public int WaterArmyPower {
             get {
-                return this.SkyArmyPowerField;
+                return this.WaterArmyPowerField;
             }
             set {
-                if ((this.SkyArmyPowerField.Equals(value) != true)) {
-                    this.SkyArmyPowerField = value;
-                    this.RaisePropertyChanged("SkyArmyPower");
+                if ((this.WaterArmyPowerField.Equals(value) != true)) {
+                    this.WaterArmyPowerField = value;
+                    this.RaisePropertyChanged("WaterArmyPower");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ArchsVsDinosClient.GameService.CardDTO[] WindArmy {
+            get {
+                return this.WindArmyField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.WindArmyField, value) != true)) {
+                    this.WindArmyField = value;
+                    this.RaisePropertyChanged("WindArmy");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int WindArmyCount {
+            get {
+                return this.WindArmyCountField;
+            }
+            set {
+                if ((this.WindArmyCountField.Equals(value) != true)) {
+                    this.WindArmyCountField = value;
+                    this.RaisePropertyChanged("WindArmyCount");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int WindArmyPower {
+            get {
+                return this.WindArmyPowerField;
+            }
+            set {
+                if ((this.WindArmyPowerField.Equals(value) != true)) {
+                    this.WindArmyPowerField = value;
+                    this.RaisePropertyChanged("WindArmyPower");
                 }
             }
         }
@@ -539,67 +587,6 @@ namespace ArchsVsDinosClient.GameService {
                 if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
                     this.UsernameField = value;
                     this.RaisePropertyChanged("Username");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PlayerHandDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
-    [System.SerializableAttribute()]
-    public partial class PlayerHandDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.GameService.CardDTO[] CardsField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int UserIdField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.GameService.CardDTO[] Cards {
-            get {
-                return this.CardsField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.CardsField, value) != true)) {
-                    this.CardsField = value;
-                    this.RaisePropertyChanged("Cards");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int UserId {
-            get {
-                return this.UserIdField;
-            }
-            set {
-                if ((this.UserIdField.Equals(value) != true)) {
-                    this.UserIdField = value;
-                    this.RaisePropertyChanged("UserId");
                 }
             }
         }
@@ -725,6 +712,67 @@ namespace ArchsVsDinosClient.GameService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PlayerHandDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
+    [System.SerializableAttribute()]
+    public partial class PlayerHandDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ArchsVsDinosClient.GameService.CardDTO[] CardsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int UserIdField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ArchsVsDinosClient.GameService.CardDTO[] Cards {
+            get {
+                return this.CardsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CardsField, value) != true)) {
+                    this.CardsField = value;
+                    this.RaisePropertyChanged("Cards");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int UserId {
+            get {
+                return this.UserIdField;
+            }
+            set {
+                if ((this.UserIdField.Equals(value) != true)) {
+                    this.UserIdField = value;
+                    this.RaisePropertyChanged("UserId");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="GameInitializedDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
     [System.SerializableAttribute()]
     public partial class GameInitializedDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -825,6 +873,9 @@ namespace ArchsVsDinosClient.GameService {
         private string FirstPlayerUsernameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ArchsVsDinosClient.GameService.CentralBoardDTO InitialBoardField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int MatchIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -912,6 +963,19 @@ namespace ArchsVsDinosClient.GameService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public ArchsVsDinosClient.GameService.CentralBoardDTO InitialBoard {
+            get {
+                return this.InitialBoardField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.InitialBoardField, value) != true)) {
+                    this.InitialBoardField = value;
+                    this.RaisePropertyChanged("InitialBoard");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public int MatchId {
             get {
                 return this.MatchIdField;
@@ -992,6 +1056,9 @@ namespace ArchsVsDinosClient.GameService {
         private int MatchIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.Collections.Generic.Dictionary<int, int> PlayerScoresField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.TimeSpan RemainingTimeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -1042,6 +1109,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((this.MatchIdField.Equals(value) != true)) {
                     this.MatchIdField = value;
                     this.RaisePropertyChanged("MatchId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.Collections.Generic.Dictionary<int, int> PlayerScores {
+            get {
+                return this.PlayerScoresField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PlayerScoresField, value) != true)) {
+                    this.PlayerScoresField = value;
+                    this.RaisePropertyChanged("PlayerScores");
                 }
             }
         }
