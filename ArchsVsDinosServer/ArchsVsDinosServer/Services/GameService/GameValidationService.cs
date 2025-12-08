@@ -73,11 +73,6 @@ namespace ArchsVsDinosServer.Services.GameService
 
         public ValidationResult ValidateCanDrawCard(GameSession session, int userId, string operation)
         {
-            if (session.HasDrawnThisTurn)
-            {
-                logger.LogInfo($"{operation}: Player {userId} already drew this turn");
-                return ValidationResult.Fail("Already drew this turn");
-            }
 
             if (!rulesValidator.CanDrawCard(session, userId))
             {

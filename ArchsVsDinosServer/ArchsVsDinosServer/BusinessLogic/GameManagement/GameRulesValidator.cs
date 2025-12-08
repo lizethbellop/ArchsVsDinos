@@ -16,12 +16,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            if (session.HasDrawnThisTurn && session.CardsPlayedThisTurn >= MaxCardsPerTurn)
-            {
-                return false;
-            }
-
-            var totalActions = (session.HasDrawnThisTurn ? 1 : 0) + session.CardsPlayedThisTurn;
+            var totalActions = session.CardsDrawnThisTurn + session.CardsPlayedThisTurn;
             return totalActions < MaxActionsPerTurn;
         }
 
@@ -37,7 +32,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            var totalActions = (session.HasDrawnThisTurn ? 1 : 0) + session.CardsPlayedThisTurn;
+            var totalActions = session.CardsDrawnThisTurn + session.CardsPlayedThisTurn;
             return totalActions < MaxActionsPerTurn;
         }
 
@@ -48,7 +43,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            return !session.HasDrawnThisTurn &&
+            return session.CardsDrawnThisTurn == 0 &&
                    session.CardsPlayedThisTurn == 0 &&
                    !session.HasTakenMainAction;
         }

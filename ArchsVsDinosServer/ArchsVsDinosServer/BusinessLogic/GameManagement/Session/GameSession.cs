@@ -23,7 +23,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public int TurnNumber { get; private set; }
         public bool IsStarted { get; private set; }
         public DateTime? StartTime { get; private set; }
-        public bool HasDrawnThisTurn { get; private set; }
+        public int CardsDrawnThisTurn { get; private set; }
         public bool HasTakenMainAction { get; private set; }
         public int CardsPlayedThisTurn { get; private set; }
         public int RemainingMoves { get; private set; }
@@ -111,7 +111,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             {
                 CurrentTurn = userId;
                 TurnNumber++;
-                HasDrawnThisTurn = false;
+                CardsDrawnThisTurn = 0;
                 HasTakenMainAction = false;
                 CardsPlayedThisTurn = 0;
                 RemainingMoves = 3;
@@ -154,7 +154,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             lock (SyncRoot)
             {
-                HasDrawnThisTurn = true;
+                CardsDrawnThisTurn++;
             }
         }
 

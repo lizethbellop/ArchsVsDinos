@@ -12,6 +12,8 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input; 
+using System.Windows.Threading;
 
 namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 {
@@ -21,6 +23,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         private readonly int matchId;
         private readonly string currentUsername;
         private readonly List<LobbyPlayerDTO> allPlayers;
+
         public GameTimerManager TimerManager { get; }
         public GameBoardManager BoardManager { get; }
         public Dictionary<string, DinoBuilder> MyDinos { get; } = new Dictionary<string, DinoBuilder>();
@@ -31,9 +34,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         private bool isInitializing = false;
         private bool isInitialized = false;
         private bool gameStartedProcessed = false;
-        private bool isPlayer2Turn;
-        private bool isPlayer3Turn;
-        private bool isPlayer4Turn;
         private int remainingMoves = 0;
         private int currentPoints = 0;
 
@@ -65,23 +65,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             set { isMyTurn = value; OnPropertyChanged(nameof(IsMyTurn)); }
         }
 
-        public bool IsPlayer2Turn
-        {
-            get => isPlayer2Turn;
-            set { isPlayer2Turn = value; OnPropertyChanged(nameof(IsPlayer2Turn)); }
-        }
-
-        public bool IsPlayer3Turn
-        {
-            get => isPlayer3Turn;
-            set { isPlayer3Turn = value; OnPropertyChanged(nameof(IsPlayer3Turn)); }
-        }
-
-        public bool IsPlayer4Turn
-        {
-            get => isPlayer4Turn;
-            set { isPlayer4Turn = value; OnPropertyChanged(nameof(IsPlayer4Turn)); }
-        }
+        public bool IsPlayer2Turn { get; set; }
+        public bool IsPlayer3Turn { get; set; }
+        public bool IsPlayer4Turn { get; set; }
 
         public GameViewModel(IGameServiceClient gameServiceClient, int matchId, string username, List<LobbyPlayerDTO> players)
         {
@@ -100,8 +86,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     OnPropertyChanged(nameof(MatchTimeDisplay));
                 }
-            }
-            ;
+            };
 
             SubscribeToGameEvents();
         }
@@ -112,6 +97,116 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.GameStarted += OnGameStarted;
             gameServiceClient.TurnChanged += OnTurnChanged;
             gameServiceClient.ConnectionError += OnConnectionError;
+            gameServiceClient.CardDrawn += OnCardDrawn; 
+        }
+
+        public async Task<string> ExecuteDrawCardFromView(int drawPileNumber)
+        {
+            if (!IsMyTurn || RemainingMoves <= 0)
+            {
+                return Lang.Match_NotYourTurn;
+            }
+
+            try
+            {
+                var userId = DetermineMyUserId();
+
+                DrawCardResultCode result = await gameServiceClient.DrawCardAsync(matchId, userId, drawPileNumber);
+
+                if (result != DrawCardResultCode.Success)
+                {
+                    return GetDrawCardErrorMessage(result);
+                }
+            }
+            catch (TimeoutException)
+            {
+                return Lang.GlobalServerError;
+            }
+            catch (CommunicationException)
+            {
+                return Lang.GlobalServerError;
+            }
+            catch (Exception)
+            {
+                return Lang.GlobalServerError;
+            }
+
+            return null;
+        }
+
+        private void OnCardDrawn(CardDrawnDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (RemainingCardsInDeck > 0)
+                {
+                    RemainingCardsInDeck--;
+                }
+
+                if (data.PlayerUsername == currentUsername)
+                {
+                    var cardIdFromServer = data.Card.IdCard;
+
+                    var newCard = CardRepositoryModel.GetById(cardIdFromServer);
+
+                    if (newCard != null && data.Card.Type != "arch")
+                    {
+                        BoardManager.PlayerHand.Add(newCard);
+                    }
+
+                    if (IsMyTurn)
+                    {
+                        RemainingMoves--;
+                    }
+                }
+
+            });
+        }
+
+        public async Task<string> TryPlayCardAsync(Card card, string cellId)
+        {
+            string error = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
+            if (error != null)
+            {
+                return error;
+            }
+
+            bool success = false;
+            try
+            {
+                await Task.Delay(100);
+                success = true;
+            }
+            catch (Exception)
+            {
+                return Lang.GlobalServerError;
+            }
+
+            if (success)
+            {
+                ActionManager.RegisterSuccessfulMove(card, cellId);
+                BoardManager.PlayerHand.Remove(card);
+                RemainingMoves--;
+                return null;
+            }
+            else
+            {
+                return "El servidor rechazó el movimiento.";
+            }
+        }
+
+        private string GetDrawCardErrorMessage(DrawCardResultCode result)
+        {
+            switch (result)
+            {
+                case DrawCardResultCode.NotYourTurn: 
+                    return Lang.Match_NotYourTurn;
+                case DrawCardResultCode.DrawPileEmpty: 
+                    return Lang.Match_DeckCardsEmpty;
+                case DrawCardResultCode.AlreadyDrewThisTurn: 
+                    return Lang.Match_AlreadyUsedRolls;
+                default: return Lang.GlobalServerError;
+            }
         }
 
         public async Task InitializeAndStartGameAsync()
@@ -169,7 +264,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         private void OnTurnChanged(TurnChangedDTO data)
         {
-
             Application.Current.Dispatcher.Invoke(() =>
             {
                 TimerManager.UpdateTime(data.RemainingTime);
@@ -190,7 +284,11 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             var myPlayer = allPlayers?.FirstOrDefault(player => player.Username == currentUsername);
             int userId = myPlayer?.IdPlayer ?? 0;
-            if (userId == 0 && !string.IsNullOrEmpty(currentUsername)) userId = currentUsername.GetHashCode();
+
+            if (userId == 0 && !string.IsNullOrEmpty(currentUsername))
+            {
+                userId = currentUsername.GetHashCode();
+            }
             return userId;
         }
 
@@ -210,6 +308,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.GameStarted -= OnGameStarted;
                 gameServiceClient.TurnChanged -= OnTurnChanged;
                 gameServiceClient.ConnectionError -= OnConnectionError;
+                gameServiceClient.CardDrawn -= OnCardDrawn;
 
                 if (gameServiceClient is ICommunicationObject comm)
                 {
@@ -219,65 +318,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     gameServiceClient.Dispose();
                 }
-            }
-        }
-
-        public async Task<string> TryPlayCardAsync(Card card, string cellId)
-        {
-            // 1. Validar reglas de negocio en el cliente (rápido)
-            string error = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
-
-            if (error != null)
-            {
-                return error; // Retorna el mensaje para que la Vista lo muestre en amarillo
-            }
-
-            // 2. Si pasó la validación local, mandamos al servidor
-            bool success = false;
-            try
-            {
-                // TODO: Descomentar y ajustar cuando tengas los métodos en tu IGameServiceClient
-                /*
-                if (card.Category == CardCategory.DinoHead)
-                {
-                     var result = await gameServiceClient.PlayDinoHeadAsync(matchId, DetermineMyUserId(), card.IdCard);
-                     success = result == PlayCardResultCode.Success;
-                }
-                else
-                {
-                     // Necesitas saber el ID de la cabeza para adjuntar cuerpo. 
-                     // Tu DinoBuilder en ActionManager tiene esa info.
-                     var currentDino = ActionManager.GetDinoInCell(cellId); // (Necesitarías exponer esto en ActionManager)
-                     int headId = currentDino.Head.IdCard;
-                     
-                     var result = await gameServiceClient.AttachBodyPartToDinoAsync(matchId, DetermineMyUserId(), card.IdCard, headId);
-                     success = result == PlayCardResultCode.Success;
-                }
-                */
-
-                // SIMULACIÓN DE ÉXITO (Bórralo cuando conectes el servidor arriba)
-                await Task.Delay(100);
-                success = true;
-            }
-            catch (Exception)
-            {
-                return Lang.GlobalServerError;
-            }
-
-            // 3. Si el servidor aceptó, actualizamos el estado local
-            if (success)
-            {
-                ActionManager.RegisterSuccessfulMove(card, cellId);
-
-                // Actualizar UI
-                BoardManager.PlayerHand.Remove(card);
-                RemainingMoves--;
-
-                return null; // Null significa "Sin errores"
-            }
-            else
-            {
-                return "El servidor rechazó el movimiento.";
             }
         }
     }

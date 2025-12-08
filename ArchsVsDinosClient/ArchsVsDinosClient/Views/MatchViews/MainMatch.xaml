@@ -661,8 +661,7 @@
 
                                     <!-- Card -->
                                     <Grid Name="Gr_AllCards" Margin="30,30,30,30">
-                                        <Button Name="Btn_TakeACard" 
-                                            Visibility="Visible">
+                                        <Button Name="Btn_TakeACard" Click="Click_BtnTakeACard" Visibility="Visible">
                                             <Button.Background>
                                                 <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png"/>
                                             </Button.Background>
@@ -816,7 +815,7 @@
         </Grid>
 
         <Grid x:Name="Gr_ErrorNotification" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top" Width="500" Height="70" 
-                  Margin="0,150,0,0" Opacity="0.7" Visibility="Visible" Panel.ZIndex="999">
+                  Margin="0,150,0,0" Opacity="0.7" Visibility="Collapsed" Panel.ZIndex="999">
             <Grid.Background>
                 <LinearGradientBrush EndPoint=".5,1" StartPoint="1,0">
                     <GradientStop Color="White" Offset="0.007"/>

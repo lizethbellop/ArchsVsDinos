@@ -1114,6 +1114,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ya has agotado tus tiradas.
+        /// </summary>
+        public static string Match_AlreadyUsedRolls {
+            get {
+                return ResourceManager.GetString("Match_AlreadyUsedRolls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Necesitas colocar un torso antes de poner extremidades.
         /// </summary>
         public static string Match_AttachChestBeforeLimbs {
@@ -1164,6 +1173,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_ChestNotSupportLegs {
             get {
                 return ResourceManager.GetString("Match_ChestNotSupportLegs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡El mazo de cartas está vacío!.
+        /// </summary>
+        public static string Match_DeckCardsEmpty {
+            get {
+                return ResourceManager.GetString("Match_DeckCardsEmpty", resourceCulture);
             }
         }
         

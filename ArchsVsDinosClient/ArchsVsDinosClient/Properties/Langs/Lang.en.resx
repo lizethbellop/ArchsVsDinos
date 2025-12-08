@@ -810,4 +810,10 @@
   <data name="Match_ChestNotSupportLegs" xml:space="preserve">
     <value>This chest does not support legs (only arms)</value>
   </data>
+  <data name="Match_DeckCardsEmpty" xml:space="preserve">
+    <value>The deck of cards is empty!</value>
+  </data>
+  <data name="Match_AlreadyUsedRolls" xml:space="preserve">
+    <value>You have already used up your rolls</value>
+  </data>
 </root>

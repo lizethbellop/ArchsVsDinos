@@ -72,6 +72,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             InitializePlayersVisuals(playersInMatch, currentUsername);
             InitializeErrorTimer();
             InitializeDragAndDrop();
+            gameViewModel.PropertyChanged += GameViewModelPropertyChanged;
             Loaded += MatchLoaded;
         }
 
@@ -339,6 +340,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             Application.Current.Dispatcher.Invoke(() =>
             {
                 UpdatePlayerHandVisual();
+                CheckDrawButtonState();
             });
         }
 
@@ -429,6 +431,42 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 targetBorder.Background = brush;
             }
         }
+        private void GameViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(GameViewModel.RemainingMoves) ||
+              e.PropertyName == nameof(GameViewModel.IsMyTurn) ||
+              e.PropertyName == nameof(GameViewModel.RemainingCardsInDeck))
+            {
+                Application.Current.Dispatcher.Invoke(() => CheckDrawButtonState());
+            }
+        }
+
+        private void CheckDrawButtonState()
+        {
+            var drawButton = Gr_AllCards.FindName("Btn_TakeACard") as Button;
+            if (drawButton == null)
+            {
+                return;
+            }
+
+            if (gameViewModel.RemainingCardsInDeck <= 0)
+            {
+                drawButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                drawButton.Visibility = Visibility.Visible;
+            }
+
+            if (gameViewModel.IsMyTurn && gameViewModel.RemainingMoves > 0)
+            {
+                drawButton.IsEnabled = true;
+            }
+            else
+            {
+                drawButton.IsEnabled = false;
+            }
+        }
 
         private void ShowErrorNotification(string message)
         {
@@ -506,7 +544,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             };
         }
 
-        private void UpdatePlayerHandVisual()
+        public void UpdatePlayerHandVisual()
         {
             double canvasWidth = MyDeckCanvas.ActualWidth > 0 ? MyDeckCanvas.ActualWidth : 800;
             MyDeckCanvas.Children.Clear();
@@ -541,6 +579,26 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             SoundButton.PlayMovingRockSound();
             new MatchSeeDeckHorizontal().ShowDialog();
+        }
+
+        private async void Click_BtnTakeACard (object sender, RoutedEventArgs e)
+        {
+
+            const int mainDrawPileIndex = 0;
+
+            if (sender is Button button)
+            {
+                button.IsEnabled = false;
+
+                string errorMessage = await gameViewModel.ExecuteDrawCardFromView(mainDrawPileIndex);
+
+                if (errorMessage != null)
+                {
+                    ShowErrorNotification(errorMessage);
+                }
+
+                CheckDrawButtonState();
+            }
         }
 
         private void Click_BtnSeeDeckP2(object sender, RoutedEventArgs e)

@@ -107,9 +107,17 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             if (!success)
             {
-                var parent = this.Parent as Canvas;
-                Canvas.SetLeft(this, (double)elementStartPositionX); 
-                VisualTransform(false);
+                var parentCanvas = this.Parent as Canvas;
+                parentCanvas?.Children.Remove(this);
+
+                if (mainMatch != null)
+                {
+                    mainMatch.UpdatePlayerHandVisual();
+                }
+                else
+                {
+                    VisualTransform(false);
+                }
             }
         }
 
