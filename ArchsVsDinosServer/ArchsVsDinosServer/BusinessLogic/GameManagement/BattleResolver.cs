@@ -38,7 +38,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             {
                 var playerId = playerDinosPair.Key;
                 var dinosList = playerDinosPair.Value;
-                var totalPower = dinosList.Sum(dino => dino.GetTotalPower());
+                var totalPower = dinosList.Sum(dino => dino.TotalPower);
                 playerPowers[playerId] = totalPower;
             }
 

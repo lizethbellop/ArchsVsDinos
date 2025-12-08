@@ -11,8 +11,14 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
         private readonly List<CardInGame> bodyParts = new List<CardInGame>();
 
         public int DinoInstanceId { get; set; }
-        public string Element { get; set; }  
+        public int IdDino { get; set; }
         public CardInGame HeadCard { get; set; }
+        public string Element { get; set; }
+        public CardInGame ChestCard { get; set; }
+        public CardInGame LeftArmCard { get; set; }
+        public CardInGame RightArmCard { get; set; }
+        public CardInGame LegsCard { get; set; }
+
         public IReadOnlyList<CardInGame> BodyParts => bodyParts.AsReadOnly();
 
         public void AddBodyPart(CardInGame card)
@@ -23,14 +29,17 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
             }
         }
 
-        public int GetTotalPower()
+        public int TotalPower
         {
-            int total = HeadCard?.Power ?? 0;
-            foreach (var part in bodyParts)
+            get
             {
-                total += part.Power;
+                int power = HeadCard?.Power ?? 0;
+                power += ChestCard?.Power ?? 0;
+                power += LeftArmCard?.Power ?? 0;
+                power += RightArmCard?.Power ?? 0;
+                power += LegsCard?.Power ?? 0;
+                return power;
             }
-            return total;
         }
     }
 }

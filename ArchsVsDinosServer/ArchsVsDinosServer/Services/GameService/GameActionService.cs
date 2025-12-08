@@ -167,10 +167,11 @@ namespace ArchsVsDinosServer.Services.GameService
             if (dino == null)
             {
                 logger.LogInfo($"PlayDinoHead: Failed to play dino head {cardId}");
-                return PlayCardResultCode.InvalidCardType;
+                return PlayCardResultCode.UnexpectedError;
             }
 
             notificationService.NotifyDinoPlayed(session, player, dino);
+
             logger.LogInfo($"PlayDinoHead: Player {player.UserId} played dino head {cardId}");
 
             if (session.RemainingMoves == 0)

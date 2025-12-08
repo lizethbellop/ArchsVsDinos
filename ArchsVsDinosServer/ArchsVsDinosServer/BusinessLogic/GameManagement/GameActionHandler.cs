@@ -54,52 +54,59 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public DinoInstance PlayDinoHead(GameSession session, PlayerSession player, int cardId)
         {
-            if (session == null || player == null || cardId <= 0)
+            if (!session.ConsumeMove()) return null;
+
+            var cardInHand = player.Hand.FirstOrDefault(c => c.IdCard == cardId);
+            if (cardInHand == null)
             {
+                session.RestoreMove();
                 return null;
             }
 
-            var card = player.Hand.FirstOrDefault(c => c.IdCard == cardId);
-            if (card == null || !validator.IsValidDinoHead(card))
+            var newDino = new DinoInstance
             {
-                return null;
-            }
-
-            var dino = new DinoInstance
-            {
-                DinoInstanceId = nextDinoId++,
-                HeadCard = card,
-                Element = card.Element
+                IdDino = nextDinoId++,
+                HeadCard = cardInHand,
+                Element = cardInHand.Element
             };
 
-            player.RemoveCard(card);
-            player.AddDino(dino);
-            session.MarkCardPlayed();
+            player.Hand.Remove(cardInHand);
+            player.Dinos.Add(newDino);
 
-            return dino;
+            session.MarkCardPlayed();
+            return newDino;
         }
 
-        public bool AttachBodyPart(GameSession session, PlayerSession player, int bodyCardId, int headCardId)
+        public bool AttachBodyPart(GameSession session, PlayerSession player, int bodyCardId, int dinoHeadCardId)
         {
-            if (session == null || player == null || bodyCardId <= 0 || headCardId <= 0)
+            if (!session.ConsumeMove()) return false;
+
+            var bodyCard = player.Hand.FirstOrDefault(card => card.IdCard == bodyCardId);
+            var targetDino = player.Dinos.FirstOrDefault(card => card.HeadCard.IdCard == dinoHeadCardId);
+
+            if (bodyCard == null || targetDino == null)
             {
+                session.RestoreMove();
                 return false;
             }
 
-            var bodyCard = player.Hand.FirstOrDefault(c => c.IdCard == bodyCardId);
-            if (bodyCard == null || !validator.IsValidBodyPart(bodyCard))
+            switch (bodyCard.Type) 
             {
-                return false;
+                case "chest":
+                    if (targetDino.ChestCard != null) { session.RestoreMove(); return false; }
+                    targetDino.ChestCard = bodyCard;
+                    break;
+                case "left_arm":
+                    if (targetDino.LeftArmCard != null) { session.RestoreMove(); return false; }
+                    targetDino.LeftArmCard = bodyCard;
+                    break;
+                // ... (otros casos: right_arm, legs)
+                default:
+                    session.RestoreMove();
+                    return false;
             }
 
-            var dino = validator.FindDinoByHeadCardId(player, headCardId);
-            if (dino == null || !validator.CanAttachBodyPart(bodyCard, dino))
-            {
-                return false;
-            }
-
-            dino.AddBodyPart(bodyCard);
-            player.RemoveCard(bodyCard);
+            player.Hand.Remove(bodyCard);
             session.MarkCardPlayed();
 
             return true;

@@ -17,8 +17,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public int Points { get; set; }
         public IGameManagerCallback Callback { get; private set; }
 
-        public IReadOnlyList<CardInGame> Hand => hand.AsReadOnly();
-        public IReadOnlyList<DinoInstance> Dinos => dinos.AsReadOnly();
+        public List<CardInGame> Hand { get; private set; }
+        public List<DinoInstance> Dinos { get; private set; }
 
         public PlayerSession(int userId, string username, IGameManagerCallback callback)
         {

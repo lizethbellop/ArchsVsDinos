@@ -153,7 +153,7 @@ namespace ArchsVsDinosServer.Services.GameService
                 PlayerUsername = player.Username,
                 DinoInstanceId = dino.DinoInstanceId,
                 BodyCard = CardConverter.ToDTO(bodyCard),
-                NewTotalPower = dino.GetTotalPower()
+                NewTotalPower = dino.TotalPower
             };
 
             NotifyAllPlayers(session, playerToNotify => playerToNotify.Callback?.OnBodyPartAttached(bodyPartAttachedData));
@@ -177,7 +177,7 @@ namespace ArchsVsDinosServer.Services.GameService
             {
                 var playerId = playerDinosPair.Key;
                 var dinosList = playerDinosPair.Value;
-                var totalPower = dinosList.Sum(dino => dino.GetTotalPower());
+                var totalPower = dinosList.Sum(dino => dino.TotalPower);
                 playerPowersDictionary[playerId] = totalPower;
             }
 

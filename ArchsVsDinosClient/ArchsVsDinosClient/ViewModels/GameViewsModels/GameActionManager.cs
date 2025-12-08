@@ -26,7 +26,10 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             {
                 return Lang.Match_NotYourTurn;
             }
-
+            if (remainingMoves <= 0)
+            {
+                return Lang.Match_AlreadyUsedRolls;
+            }
             if (!dinoSlots.ContainsKey(cellId))
             {
                 return Lang.Match_InvalidCell;
@@ -34,23 +37,20 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
             var dino = dinoSlots[cellId];
 
-            if (card.Category == CardCategory.DinoHead)
-            {
-                if (dino.HasHead)
-                {
-                    return Lang.Match_AlreadyHeadInSpace; 
-                }
-                return null; 
-            }
-
-            if (!dino.HasHead)
-            {
-                return Lang.Match_CellNeedDinoHead;
-            }
-
             switch (card.Category)
             {
+                case CardCategory.DinoHead:
+                    if (dino.HasHead)
+                    {
+                        return Lang.Match_AlreadyHeadInSpace;
+                    }
+                    return null; 
+
                 case CardCategory.BodyPart:
+                    if (!dino.HasHead)
+                    {
+                        return Lang.Match_CellNeedDinoHead;
+                    }
                     return ValidateBodyPart(card, dino);
 
                 default:
