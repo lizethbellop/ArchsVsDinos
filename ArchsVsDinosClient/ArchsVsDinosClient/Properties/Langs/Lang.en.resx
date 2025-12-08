@@ -774,4 +774,40 @@
   <data name="Match_YourTurn" xml:space="preserve">
     <value>Is your turn!</value>
   </data>
+  <data name="Match_NotYourTurn" xml:space="preserve">
+    <value>It's not your turn yet</value>
+  </data>
+  <data name="Match_InvalidCell" xml:space="preserve">
+    <value>You can't put your card here</value>
+  </data>
+  <data name="Match_CellNeedDinoHead" xml:space="preserve">
+    <value>To create a dinosaur, you must have the head</value>
+  </data>
+  <data name="Match_AlreadyHeadInSpace" xml:space="preserve">
+    <value>There is already a head in this space</value>
+  </data>
+  <data name="Match_CardCannotPlacedHere" xml:space="preserve">
+    <value>This card cannot be placed here</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasChest" xml:space="preserve">
+    <value>This dinosaur already has a chest</value>
+  </data>
+  <data name="Match_AttachChestBeforeLimbs" xml:space="preserve">
+    <value>You need to attach a torso before attaching limbs</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasLeftArm" xml:space="preserve">
+    <value>The dinosaur already has a left arm</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasRightArm" xml:space="preserve">
+    <value>The dinosaur already has a right arm</value>
+  </data>
+  <data name="Match_ChestNotSupportArms" xml:space="preserve">
+    <value>This torso does not support arms</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasLegs" xml:space="preserve">
+    <value>The dinosaur already has legs</value>
+  </data>
+  <data name="Match_ChestNotSupportLegs" xml:space="preserve">
+    <value>This chest does not support legs (only arms)</value>
+  </data>
 </root>

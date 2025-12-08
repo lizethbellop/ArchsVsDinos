@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosClient.DTO;
 using ArchsVsDinosClient.GameService;
+using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.ViewModels.GameViewsModels;
@@ -22,6 +23,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         private readonly List<LobbyPlayerDTO> allPlayers;
         public GameTimerManager TimerManager { get; }
         public GameBoardManager BoardManager { get; }
+        public Dictionary<string, DinoBuilder> MyDinos { get; } = new Dictionary<string, DinoBuilder>();
+        public GameActionManager ActionManager { get; }
 
         private int remainingCardsInDeck;
         private bool isMyTurn;
@@ -36,6 +39,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event Action<string> TurnChangedForUI;
+        public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
 
         public int RemainingMoves
         {
@@ -88,6 +92,16 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
             TimerManager = new GameTimerManager();
             BoardManager = new GameBoardManager();
+            ActionManager = new GameActionManager();
+
+            TimerManager.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(GameTimerManager.MatchTimeDisplay))
+                {
+                    OnPropertyChanged(nameof(MatchTimeDisplay));
+                }
+            }
+            ;
 
             SubscribeToGameEvents();
         }
@@ -205,6 +219,65 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     gameServiceClient.Dispose();
                 }
+            }
+        }
+
+        public async Task<string> TryPlayCardAsync(Card card, string cellId)
+        {
+            // 1. Validar reglas de negocio en el cliente (rápido)
+            string error = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
+
+            if (error != null)
+            {
+                return error; // Retorna el mensaje para que la Vista lo muestre en amarillo
+            }
+
+            // 2. Si pasó la validación local, mandamos al servidor
+            bool success = false;
+            try
+            {
+                // TODO: Descomentar y ajustar cuando tengas los métodos en tu IGameServiceClient
+                /*
+                if (card.Category == CardCategory.DinoHead)
+                {
+                     var result = await gameServiceClient.PlayDinoHeadAsync(matchId, DetermineMyUserId(), card.IdCard);
+                     success = result == PlayCardResultCode.Success;
+                }
+                else
+                {
+                     // Necesitas saber el ID de la cabeza para adjuntar cuerpo. 
+                     // Tu DinoBuilder en ActionManager tiene esa info.
+                     var currentDino = ActionManager.GetDinoInCell(cellId); // (Necesitarías exponer esto en ActionManager)
+                     int headId = currentDino.Head.IdCard;
+                     
+                     var result = await gameServiceClient.AttachBodyPartToDinoAsync(matchId, DetermineMyUserId(), card.IdCard, headId);
+                     success = result == PlayCardResultCode.Success;
+                }
+                */
+
+                // SIMULACIÓN DE ÉXITO (Bórralo cuando conectes el servidor arriba)
+                await Task.Delay(100);
+                success = true;
+            }
+            catch (Exception)
+            {
+                return Lang.GlobalServerError;
+            }
+
+            // 3. Si el servidor aceptó, actualizamos el estado local
+            if (success)
+            {
+                ActionManager.RegisterSuccessfulMove(card, cellId);
+
+                // Actualizar UI
+                BoardManager.PlayerHand.Remove(card);
+                RemainingMoves--;
+
+                return null; // Null significa "Sin errores"
+            }
+            else
+            {
+                return "El servidor rechazó el movimiento.";
             }
         }
     }

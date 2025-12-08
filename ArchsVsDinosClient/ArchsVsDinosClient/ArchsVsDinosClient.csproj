@@ -129,6 +129,7 @@
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Models\DinoBuilder.cs" />
     <Compile Include="Models\EnumsCards\BodyPartType.cs" />
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\EnumsCards\CardCategory.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
     <Compile Include="ViewModels\GameStatisticsViewModel.cs" />
+    <Compile Include="ViewModels\GameViewsModels\GameActionManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameBoardManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameTimerManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameViewModel.cs" />

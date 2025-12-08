@@ -1,18 +1,16 @@
 ﻿using ArchsVsDinosClient.Models;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
+using System.Linq; 
 
 namespace ArchsVsDinosClient.Views.MatchViews
 {
     public partial class DeckCardSelection : UserControl
     {
-        private double originalBottom = -80; 
+        private double originalBottom = -70; 
         private bool isDragging = false;
-        private Point dragStartPoint;
-        private Point elementStartPosition;
+        private Point clickOffset; 
 
         public Card Card
         {
@@ -22,127 +20,105 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         public static readonly DependencyProperty CardProperty =
             DependencyProperty.Register("Card", typeof(Card), typeof(DeckCardSelection),
-                new PropertyMetadata(null, OnCardChanged));
-
-        private static void OnCardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is DeckCardSelection control && e.NewValue is Card card)
-            {
-                control.DataContext = card;
-            }
-        }
+                new PropertyMetadata(null, (d, e) => {
+                    if (d is DeckCardSelection ctrl && e.NewValue is Card c) ctrl.DataContext = c;
+                }));
 
         public DeckCardSelection()
         {
             InitializeComponent();
-
-            this.MouseEnter += CardControl_MouseEnter;
-            this.MouseLeave += CardControl_MouseLeave;
-            this.MouseLeftButtonDown += CardControl_MouseLeftButtonDown;
-            this.MouseMove += CardControl_MouseMove;
-            this.MouseLeftButtonUp += CardControl_MouseLeftButtonUp;
+            this.MouseEnter += (s, e) => { if (!isDragging) { VisualTransform(true); } };
+            this.MouseLeave += (s, e) => { if (!isDragging) { VisualTransform(false); } };
+            this.MouseLeftButtonDown += OnMouseDown;
+            this.MouseMove += OnMouseMove;
+            this.MouseLeftButtonUp += OnMouseUp;
         }
 
-        private void CardControl_MouseEnter(object sender, MouseEventArgs e)
+        private void VisualTransform(bool isHover)
         {
-            if (isDragging) return;
-
             var parent = this.Parent as Canvas;
             if (parent == null) return;
 
-            Canvas.SetBottom(this, 20);
-            Panel.SetZIndex(this, 1000);
-
-            CardTransform.ScaleX = 1.15;
-            CardTransform.ScaleY = 1.15;
-
-            BorderGlow.BorderThickness = new Thickness(3);
-            GlowEffect.BlurRadius = 20;
-            GlowEffect.Opacity = 1;
-        }
-
-        private void CardControl_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if (isDragging) return;
-
-            var parent = this.Parent as Canvas;
-            if (parent != null)
+            if (isHover)
             {
-                Canvas.SetBottom(this, originalBottom); 
-                Panel.SetZIndex(this, 1);
+                Canvas.SetBottom(this, 20);
+                Panel.SetZIndex(this, 1000);
+                CardTransform.ScaleX = 1.15; CardTransform.ScaleY = 1.15;
+                BorderGlow.BorderThickness = new Thickness(3);
+                GlowEffect.Opacity = 1;
             }
-
-            CardTransform.ScaleX = 1.0;
-            CardTransform.ScaleY = 1.0;
-
-            BorderGlow.BorderThickness = new Thickness(0);
-            GlowEffect.BlurRadius = 0;
-            GlowEffect.Opacity = 0;
-        }
-
-        private void CardControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            isDragging = true;
-
-            var parent = this.Parent as Canvas;
-            if (parent == null) return;
-
-            dragStartPoint = e.GetPosition(parent);
-            elementStartPosition = new Point(Canvas.GetLeft(this), Canvas.GetBottom(this));
-
-            this.CaptureMouse();
-
-            CardTransform.ScaleX = 1.0;
-            CardTransform.ScaleY = 1.0;
-            Canvas.SetBottom(this, Canvas.GetBottom(this)); 
-
-            Panel.SetZIndex(this, 2000);
-            e.Handled = true;
-        }
-
-        private void CardControl_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (!isDragging) return;
-
-            var parent = this.Parent as Canvas;
-            if (parent == null) return;
-
-            var currentPosition = e.GetPosition(parent);
-            var offset = currentPosition - dragStartPoint;
-
-            var newLeft = elementStartPosition.X + offset.X;
-            var newBottom = elementStartPosition.Y - offset.Y;
-
-            Canvas.SetLeft(this, newLeft);
-            Canvas.SetBottom(this, newBottom);
-        }
-
-        private void CardControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (!isDragging) return;
-
-            isDragging = false;
-            this.ReleaseMouseCapture();
-            ResetToOriginalPosition();
-
-            e.Handled = true;
-        }
-
-        private void ResetToOriginalPosition()
-        {
-            var parent = this.Parent as Canvas;
-            if (parent != null)
+            else
             {
-                Canvas.SetLeft(this, elementStartPosition.X);
                 Canvas.SetBottom(this, originalBottom);
                 Panel.SetZIndex(this, 1);
+                CardTransform.ScaleX = 1.0; CardTransform.ScaleY = 1.0;
+                BorderGlow.BorderThickness = new Thickness(0);
+                GlowEffect.Opacity = 0;
             }
         }
+
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var parent = this.Parent as Canvas;
+            if (parent == null) return;
+
+            isDragging = true;
+            clickOffset = e.GetPosition(this);
+
+            this.CaptureMouse();
+            Panel.SetZIndex(this, 2000); 
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isDragging) return;
+
+            var parent = this.Parent as Canvas;
+            if (parent == null) return;
+
+            Point mousePosParent = e.GetPosition(parent);
+            Canvas.SetLeft(this, mousePosParent.X - clickOffset.X);
+            Canvas.SetBottom(this, (parent.ActualHeight - mousePosParent.Y) - (this.ActualHeight - clickOffset.Y));
+
+            var mainMatch = Application.Current.Windows.OfType<MainMatch>().FirstOrDefault();
+            if (mainMatch != null)
+            {
+                Point screenPoint = this.PointToScreen(e.GetPosition(this));
+                Point windowPoint = mainMatch.PointFromScreen(screenPoint);
+                mainMatch.ManualDragOver(windowPoint, this.Card);
+            }
+        }
+
+        private async void OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!isDragging) return;
+            isDragging = false;
+            this.ReleaseMouseCapture();
+
+            bool success = false;
+
+            var mainMatch = Application.Current.Windows.OfType<MainMatch>().FirstOrDefault();
+            if (mainMatch != null)
+            {
+                Point screenPoint = this.PointToScreen(e.GetPosition(this));
+                Point windowPoint = mainMatch.PointFromScreen(screenPoint);
+                success = await mainMatch.ManualDrop(windowPoint, this.Card);
+            }
+
+            if (!success)
+            {
+                var parent = this.Parent as Canvas;
+                Canvas.SetLeft(this, (double)elementStartPositionX); 
+                VisualTransform(false);
+            }
+        }
+
+        private double elementStartPositionX;
 
         public void SetInitialPosition(double left, double bottom)
         {
             originalBottom = bottom;
-            elementStartPosition = new Point(left, bottom);
+            elementStartPositionX = left;
             Canvas.SetLeft(this, left);
             Canvas.SetBottom(this, bottom);
         }

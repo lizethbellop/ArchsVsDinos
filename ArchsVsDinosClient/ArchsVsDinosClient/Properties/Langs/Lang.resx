@@ -774,4 +774,40 @@
   <data name="Match_YourTurn" xml:space="preserve">
     <value>¡Es tu turno!</value>
   </data>
+  <data name="Match_NotYourTurn" xml:space="preserve">
+    <value>Aún no es tu turno</value>
+  </data>
+  <data name="Match_InvalidCell" xml:space="preserve">
+    <value>No puedes poner tu carta aquí</value>
+  </data>
+  <data name="Match_CellNeedDinoHead" xml:space="preserve">
+    <value>Para crear un dinosaurio, obligatoriamente se debe tener la cabeza.</value>
+  </data>
+  <data name="Match_AlreadyHeadInSpace" xml:space="preserve">
+    <value>Ya hay una cabeza en este espacio</value>
+  </data>
+  <data name="Match_CardCannotPlacedHere" xml:space="preserve">
+    <value>Esta carta no se puede colocar aquí</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasChest" xml:space="preserve">
+    <value>Este dinosaurio ya tiene torso</value>
+  </data>
+  <data name="Match_AttachChestBeforeLimbs" xml:space="preserve">
+    <value>Necesitas colocar un torso antes de poner extremidades</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasLeftArm" xml:space="preserve">
+    <value>El dinosaurio ya tiene brazo izquierdo</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasRightArm" xml:space="preserve">
+    <value>El dinosaurio ya tiene brazo derecho</value>
+  </data>
+  <data name="Match_ChestNotSupportArms" xml:space="preserve">
+    <value>Este torso no admite brazos</value>
+  </data>
+  <data name="Match_DinosaurAlreadyHasLegs" xml:space="preserve">
+    <value>El dinosaurio ya tiene piernas</value>
+  </data>
+  <data name="Match_ChestNotSupportLegs" xml:space="preserve">
+    <value>Este torso no admite piernas (Solo brazos)</value>
+  </data>
 </root>

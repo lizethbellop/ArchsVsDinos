@@ -64,7 +64,7 @@
                         </LinearGradientBrush>
                     </StackPanel.Background>
                     <Label Content="{x:Static language:Lang.Match_TimeMatch}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FFFFFDFD" Background="#FF513800"/>
-                    <Label Content="12:24" Name="Lb_MatchTime" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="30" Foreground="#FF472100" FontWeight="Bold"/>
+                    <Label Content="{Binding MatchTimeDisplay}" Name="Lb_MatchTime" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="30" Foreground="#FF472100" FontWeight="Bold"/>
                 </StackPanel>
             </Grid>
 
@@ -76,14 +76,14 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
+                <Grid Grid.Column="0" ClipToBounds="False">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*"/>
                         <RowDefinition Height="1.8*"/>
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="1">
-                        <Viewbox Stretch="Uniform">
+                    <Grid Grid.Row="1" ClipToBounds="False">
+                        <Viewbox Stretch="Uniform" ClipToBounds="False">
                             <Label Visibility="Visible"  Content="Player 2" Name="Lb_TopPlayerName" FontFamily="Trebuchet MS" Foreground="White" FontWeight="Bold"/>
                         </Viewbox>
                     </Grid>
@@ -147,7 +147,7 @@
                             </LinearGradientBrush>
                         </StackPanel.Background>
                         <Label Content="{x:Static language:Lang.Match_PlaysRemaining}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FFFFFDFD" Background="#FF513800" HorizontalAlignment="Stretch"/>
-                        <Label Content="3" Name="Lb_PlaysRemaining" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="30" Foreground="#FF472100" FontWeight="Bold"/>
+                        <Label Content="{Binding RemainingMoves}" Name="Lb_PlaysRemaining" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="30" Foreground="#FF472100" FontWeight="Bold"/>
                     </StackPanel>
                 </Grid>
 
@@ -160,7 +160,7 @@
                     </Grid.Background>
                     <StackPanel>
                         <Label Content="{x:Static language:Lang.Match_Points}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FFFFFDFD" Background="#FF513800" HorizontalAlignment="Stretch"/>
-                        <Label Content="124" Name="Lb_Points" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="30" Foreground="#FF472100" FontWeight="Bold"/>
+                        <Label Content="{Binding CurrentPoints}" Name="Lb_Points" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="30" Foreground="#FF472100" FontWeight="Bold"/>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -221,9 +221,9 @@
                             </Button>
                         </Grid>
 
-                        <Grid Grid.Column="1">
-                            <Viewbox Stretch="Uniform">
-                                <Label Visibility="Visible"  Content="Player 3" Name="Lb_LeftPlayerName" FontFamily="Trebuchet MS" Foreground="White" FontWeight="Bold"/>
+                        <Grid Grid.Column="1" ClipToBounds="False">
+                            <Viewbox Stretch="Uniform" ClipToBounds="False">
+                                <Label Visibility="Visible" Content="Player 3" Name="Lb_LeftPlayerName" FontFamily="Trebuchet MS" Foreground="White" FontWeight="Bold"/>
                             </Viewbox>
                         </Grid>
                     </Grid>
@@ -503,7 +503,6 @@
                     </Grid>
                 </Grid>
 
-
                 <!-- Center -->
                 <Grid Grid.Row="1">
                     <Grid.Background>
@@ -737,8 +736,8 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Grid Grid.Column="0">
-                            <Viewbox Stretch="Uniform">
+                        <Grid Grid.Column="0" ClipToBounds="False">
+                            <Viewbox Stretch="Uniform" ClipToBounds="False">
                                 <Label Visibility="Visible" Content="Player 4" Name="Lb_RightPlayerName" FontFamily="Trebuchet MS" Foreground="White" FontWeight="Bold"/>
                             </Viewbox>
                         </Grid>
@@ -809,9 +808,23 @@
                             </TextBlock.Effect>
                         </TextBlock>
                     </Button>
+
                 </Grid>
+
             </Grid>
 
+        </Grid>
+
+        <Grid x:Name="Gr_ErrorNotification" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top" Width="500" Height="70" 
+                  Margin="0,150,0,0" Opacity="0.7" Visibility="Visible" Panel.ZIndex="999">
+            <Grid.Background>
+                <LinearGradientBrush EndPoint=".5,1" StartPoint="1,0">
+                    <GradientStop Color="White" Offset="0.007"/>
+                    <GradientStop Color="#FFF3FF00" Offset="1"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <TextBlock Name="TxtB_ErrorNotificationContainer" HorizontalAlignment="Right" VerticalAlignment="Center"
+                            FontSize="18" FontFamily="Tw Cen MT Condensed Extra Bold" Margin="0,0,15,0" Foreground="#FF090400"/>
         </Grid>
 
     </Grid>

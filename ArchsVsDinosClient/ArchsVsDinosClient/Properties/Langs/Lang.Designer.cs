@@ -1105,11 +1105,101 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ya hay una cabeza en este espacio.
+        /// </summary>
+        public static string Match_AlreadyHeadInSpace {
+            get {
+                return ResourceManager.GetString("Match_AlreadyHeadInSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Necesitas colocar un torso antes de poner extremidades.
+        /// </summary>
+        public static string Match_AttachChestBeforeLimbs {
+            get {
+                return ResourceManager.GetString("Match_AttachChestBeforeLimbs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¡Provocar!.
         /// </summary>
         public static string Match_Attack {
             get {
                 return ResourceManager.GetString("Match_Attack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Esta carta no se puede colocar aquí.
+        /// </summary>
+        public static string Match_CardCannotPlacedHere {
+            get {
+                return ResourceManager.GetString("Match_CardCannotPlacedHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Para crear un dinosaurio, obligatoriamente se debe tener la cabeza..
+        /// </summary>
+        public static string Match_CellNeedDinoHead {
+            get {
+                return ResourceManager.GetString("Match_CellNeedDinoHead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Este torso no admite brazos.
+        /// </summary>
+        public static string Match_ChestNotSupportArms {
+            get {
+                return ResourceManager.GetString("Match_ChestNotSupportArms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Este torso no admite piernas (Solo brazos).
+        /// </summary>
+        public static string Match_ChestNotSupportLegs {
+            get {
+                return ResourceManager.GetString("Match_ChestNotSupportLegs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Este dinosaurio ya tiene torso.
+        /// </summary>
+        public static string Match_DinosaurAlreadyHasChest {
+            get {
+                return ResourceManager.GetString("Match_DinosaurAlreadyHasChest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El dinosaurio ya tiene brazo izquierdo.
+        /// </summary>
+        public static string Match_DinosaurAlreadyHasLeftArm {
+            get {
+                return ResourceManager.GetString("Match_DinosaurAlreadyHasLeftArm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El dinosaurio ya tiene piernas.
+        /// </summary>
+        public static string Match_DinosaurAlreadyHasLegs {
+            get {
+                return ResourceManager.GetString("Match_DinosaurAlreadyHasLegs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El dinosaurio ya tiene brazo derecho.
+        /// </summary>
+        public static string Match_DinosaurAlreadyHasRightArm {
+            get {
+                return ResourceManager.GetString("Match_DinosaurAlreadyHasRightArm", resourceCulture);
             }
         }
         
@@ -1128,6 +1218,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_InfoBegin2 {
             get {
                 return ResourceManager.GetString("Match_InfoBegin2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No puedes poner tu carta aquí.
+        /// </summary>
+        public static string Match_InvalidCell {
+            get {
+                return ResourceManager.GetString("Match_InvalidCell", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Aún no es tu turno.
+        /// </summary>
+        public static string Match_NotYourTurn {
+            get {
+                return ResourceManager.GetString("Match_NotYourTurn", resourceCulture);
             }
         }
         
