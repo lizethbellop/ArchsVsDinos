@@ -5,15 +5,16 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contracts.DTO
+namespace Contracts.DTO.Response
 {
     [DataContract]
-    public class LobbyPlayerDTO
+    public class MatchCreationResponse
     {
         [DataMember]
-        public string Nickname { get; set; }
+        public bool Success { get; set; }
         [DataMember]
-        public bool IsReady { get; set; }
-
+        public string Message { get; set; }
+        [DataMember]
+        public string LobbyCode { get; set; }
     }
 }

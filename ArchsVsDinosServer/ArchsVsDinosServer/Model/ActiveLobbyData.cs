@@ -1,0 +1,63 @@
+﻿using Contracts.DTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ArchsVsDinosServer.Model
+{
+    public class ActiveLobbyData
+    {
+        public string LobbyCode { get; set; }
+        public MatchSettings Settings { get; set; }
+
+        public List<LobbyPlayerDTO> Players { get; set; }
+
+        public readonly object LobbyLock = new object();
+
+        public ActiveLobbyData(string lobbyCode, MatchSettings settings)
+        {
+            LobbyCode = lobbyCode;
+            Settings = settings;
+            Players = new List<LobbyPlayerDTO>();
+        }
+
+        public ActiveLobbyData() { }
+
+        public bool AddPlayer(string nickname)
+        {
+            lock (LobbyLock)
+            {
+                if (Players.Count >= Settings.MaxPlayers)
+                {
+                    return false;
+                }
+
+                if (Players.Any(p => p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return false;
+                }
+
+                Players.Add(new LobbyPlayerDTO
+                {
+                    Nickname = nickname
+                });
+                return true;
+            }
+        }
+
+        public void RemovePlayer(string nickname)
+        {
+            lock (LobbyLock)
+            {
+                var player = Players.FirstOrDefault(p => p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase));
+                if (player != null)
+                {
+                    Players.Remove(player);
+                }
+            }
+
+        }
+    }
+}

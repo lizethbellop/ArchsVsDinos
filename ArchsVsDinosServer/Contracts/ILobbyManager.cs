@@ -13,36 +13,16 @@ namespace Contracts
     public interface ILobbyManager
     {
         [OperationContract]
-        LobbyResultCode CreateLobby(UserAccountDTO hostUserAccountDTO);
-
-
-        [OperationContract]
-        LobbyResultCode JoinLobby(UserAccountDTO userAccountDTO, string matchCode);
+        void ConnectToLobby(string lobbyCode, string nickname);
 
         [OperationContract]
-        LobbyResultCode CancelLobby(string matchCode, string usernameRequester);
+        void DisconnectFromLobby(string lobbyCode, string nickname);
 
         [OperationContract]
-        LobbyResultCode LeaveLobby(string username);
+        void SetReadyStatus(string lobbyCode, string nickname, bool isReady);
 
         [OperationContract]
-        LobbyResultCode ExpelPlayerLobby(string username, string hostUsername);
-
-        [OperationContract]
-        LobbyResultCode StartGame(string matchCode, string hostUsername);
-       
-        [OperationContract]
-        LobbyResultCode InviteByEmailToLobby(string email, string matchCode, string inviterUsername);
-
-
-        /*
-        [OperationContract]
-        void InviteFriendToLobby(string username, string friendUsername, string matchCode);
-
-
-
-        */
-
+        void StartGame(string lobbyCode);
     }
 
 }

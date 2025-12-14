@@ -159,14 +159,14 @@
     <Compile Include="BusinessLogic\GameManagement\GameActionHandler.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameCallbackRegistery.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameEndHandler.cs" />
+    <Compile Include="BusinessLogic\GameLogic.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameRulesValidator.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameSessionManager.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameSetupHandler.cs" />
     <Compile Include="BusinessLogic\GameManagement\Session\GameSession.cs" />
     <Compile Include="BusinessLogic\GameManagement\Session\PlayerSession.cs" />
-    <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyConfiguration.cs" />
-    <Compile Include="BusinessLogic\MatchLobbyManagement\MatchLobby.cs" />
-    <Compile Include="BusinessLogic\MatchLobbyManagement\PlayerCreator.cs" />
+    <Compile Include="BusinessLogic\LobbyLogic.cs" />
+    <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyCoreContext.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\BaseProfileService.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\PasswordManager.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\ProfileInformation.cs" />
@@ -195,20 +195,28 @@
     <Compile Include="GeneralMatch.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\Game\IGameLogic.cs" />
     <Compile Include="Interfaces\ICallbackProvider.cs" />
     <Compile Include="Interfaces\ICodeGenerator.cs" />
     <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IDbContext.cs" />
     <Compile Include="Interfaces\IDbContextTransaction.cs" />
+    <Compile Include="Interfaces\IEmailNotificationSender.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
+    <Compile Include="Interfaces\IInvitationSendHelper.cs" />
     <Compile Include="Interfaces\ILoggerHelper.cs" />
     <Compile Include="Interfaces\ISecurityHelper.cs" />
     <Compile Include="Interfaces\IStrikeManager.cs" />
     <Compile Include="Interfaces\IValidationHelper.cs" />
     <Compile Include="Interfaces\IVerificationCodeManager.cs" />
+    <Compile Include="Interfaces\Lobby\ILobbyCodeGeneratorHelper.cs" />
+    <Compile Include="Interfaces\Lobby\ILobbyLogic.cs" />
+    <Compile Include="Interfaces\Lobby\ILobbySession.cs" />
+    <Compile Include="Interfaces\Lobby\ILobbyValidationHelper.cs" />
     <Compile Include="MatchParticipants.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\ActiveLobbyData.cs" />
     <Compile Include="Music.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
@@ -220,6 +228,7 @@
     <Compile Include="Services\AuthenticationManager.cs" />
     <Compile Include="Services\ChatManager.cs" />
     <Compile Include="Services\GameCallbackManager.cs" />
+    <Compile Include="Services\MatchCreationManager.cs" />
     <Compile Include="Services\StrikeService\BanService.cs" />
     <Compile Include="Services\StrikeService\ContextExecutor.cs" />
     <Compile Include="Services\StrikeService\ProfanityService.cs" />
@@ -228,6 +237,7 @@
     <Compile Include="Services\StrikeService\UserFetcher.cs" />
     <Compile Include="Utils\BasicServiceDependencies.cs" />
     <Compile Include="Utils\CoreDependencies.cs" />
+    <Compile Include="Utils\EmailNotificationSender.cs" />
     <Compile Include="Utils\EmailService.cs" />
     <Compile Include="Services\FriendManager.cs" />
     <Compile Include="Services\GameManager.cs" />
@@ -238,7 +248,6 @@
     <Compile Include="Services\GameService\GameValidationService.cs" />
     <Compile Include="Services\Interfaces\IGameNotifier.cs" />
     <Compile Include="Services\Interfaces\ILobbyNotifier.cs" />
-    <Compile Include="Services\LobbyCallbackManager.cs" />
     <Compile Include="Services\StatisticsManager.cs" />
     <Compile Include="Services\StrikeManager.cs" />
     <Compile Include="Services\FriendRequestCallbackManager.cs" />
@@ -261,9 +270,14 @@
     <Compile Include="Utils\CodeGenerator.cs" />
     <Compile Include="Utils\EmailService.cs" />
     <Compile Include="Utils\EnvLoader.cs" />
+    <Compile Include="Utils\InvitationSendHelper.cs" />
+    <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyCodeGeneratorHelper.cs" />
+    <Compile Include="BusinessLogic\MatchLobbyManagement\LobbySession.cs" />
+    <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyValidationHelper.cs" />
     <Compile Include="Utils\LoggerHelper.cs" />
     <Compile Include="Utils\ProfanityFilter.cs" />
     <Compile Include="Utils\RegisterServiceDependencies.cs" />
+    <Compile Include="Utils\SafeCodeGenerator.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\ServiceDependencies.cs" />
     <Compile Include="Utils\ServiceLocator.cs" />
@@ -317,6 +331,7 @@
   <ItemGroup>
     <Folder Include="BusinessLogic\DTO\" />
     <Folder Include="Models\Response\" />
+    <Folder Include="Utils\Lobby\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj">

@@ -1,0 +1,419 @@
+﻿using ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement;
+using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Interfaces.Game;
+using ArchsVsDinosServer.Interfaces.Lobby;
+using ArchsVsDinosServer.Model;
+using Contracts;
+using Contracts.DTO;
+using Contracts.DTO.Response;
+using log4net.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.ServiceModel;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ArchsVsDinosServer.BusinessLogic
+{
+    public class LobbyLogic : ILobbyLogic
+    {
+        private readonly LobbyCoreContext core;
+        private readonly ILoggerHelper logger;
+        private readonly IGameLogic gameLogic;
+        private readonly IInvitationSendHelper invitationSendHelper;
+
+        public LobbyLogic(
+        LobbyCoreContext core,
+        ILoggerHelper logger,
+        IGameLogic gameLogic,
+        IInvitationSendHelper invitationSendHelper)
+        {
+            this.core = core;
+            this.logger = logger;
+            this.gameLogic = gameLogic;
+            this.invitationSendHelper = invitationSendHelper;
+        }
+        public Task<MatchCreationResponse> CreateLobby(MatchSettings settings)
+        {
+            if (settings == null)
+            {
+                return Task.FromResult(new MatchCreationResponse
+                {
+                    Success = false,
+                    Message = "Invalid match settings."
+                });
+            }
+
+            try
+            {
+                core.Validation.ValidateCreateLobby(settings);
+                var lobbyCode = core.CodeGenerator.GenerateLobbyCode(code => core.Session.LobbyExists(code));
+                var lobbyData = new ActiveLobbyData(lobbyCode, settings);
+                core.Session.CreateLobby(lobbyCode, lobbyData);
+                logger.LogInfo($"Lobby {lobbyCode} created by {settings.HostNickname}");
+
+                return Task.FromResult(new MatchCreationResponse
+                {
+                    Success = true,
+                    LobbyCode = lobbyCode,
+                    Message = "Lobby created successfully."
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogError("Failed to generate lobby code.", ex);
+
+                return Task.FromResult(new MatchCreationResponse
+                {
+                    Success = false,
+                    Message = "Server is busy. Please try again later."
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogError($"CreateLobby failed, invalid settings: {ex.Message}", ex);
+
+                return Task.FromResult(new MatchCreationResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"CreateLobby failed, timeout: {ex.Message}");
+                return Task.FromResult(new MatchCreationResponse
+                {
+                    Success = false,
+                    Message = "Time to reach the server has expired"
+                });
+            }
+        }
+
+        public Task<MatchJoinResponse> JoinLobby(string lobbyCode, string nickname)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
+            {
+                return Task.FromResult(new MatchJoinResponse
+                {
+                    Success = false,
+                    Message = "Invalid join parameters."
+                });
+            }
+
+            try
+            {
+                core.Validation.ValidateJoinLobby(lobbyCode, nickname);
+                var lobby = core.Session.GetLobby(lobbyCode);
+
+                if(lobby == null)
+                {
+                    return Task.FromResult(new MatchJoinResponse
+                    {
+                        Success = false,
+                        Message = "Lobby does not exist."
+                    });
+                }
+
+                var joined = lobby.AddPlayer(nickname);
+
+                if (!joined)
+                {
+                    return Task.FromResult(new MatchJoinResponse
+                    {
+                        Success = false,
+                        Message = "Failed to join lobby. It may be full or the nickname is already taken."
+                    });
+                }
+
+                logger.LogInfo($"Player {nickname} joined lobby {lobbyCode}");
+                return Task.FromResult(new MatchJoinResponse
+                {
+                    Success = true,
+                    Message = "Joined lobby successfully.",
+                    LobbyCode = lobbyCode
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogError($"JoinLobby validation failed: {ex.Message}", ex);
+
+                return Task.FromResult(new MatchJoinResponse
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"JoinLobby timeout: {ex.Message}");
+
+                return Task.FromResult(new MatchJoinResponse
+                {
+                    Success = false,
+                    Message = "Server timeout. Please try again."
+                });
+            }
+        }
+
+        public void ConnectPlayer(string lobbyCode, string playerNickname)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(playerNickname))
+            {
+                return;
+            }
+
+            if (OperationContext.Current == null)
+            {
+                logger.LogWarning("RegisterConnection called without OperationContext.");
+                return;
+            }
+
+            try
+            {
+                var callback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
+
+                if(callback == null)
+                {
+                    logger.LogWarning("RegisterConnection failed to get callback channel.");
+                    return;
+                }
+
+                core.Session.ConnectPlayerCallback(lobbyCode, playerNickname, callback);
+                var lobby = core.Session.GetLobby(lobbyCode);
+
+                if(lobby == null)
+                {
+                    logger.LogWarning($"Player registered connection but lobby {lobbyCode} was not found.");
+                    return;
+                }
+
+                SendInitialState(callback, lobby, playerNickname);
+
+                var player = lobby.Players.FirstOrDefault(p => p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
+                core.Session.Broadcast(lobbyCode, cb => cb.PlayerJoinedLobby(playerNickname));
+                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(lobby.Players.ToArray()));
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error registering connection: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout registering connection: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"Critical error registering connection: {ex.Message}");
+            }
+        }
+
+        public Task UpdatePlayerReadyStatus(string lobbyCode, string playerName, bool isReady)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(playerName))
+            {
+                return Task.CompletedTask;
+            }
+
+            var lobby = core.Session.GetLobby(lobbyCode);
+            if (lobby == null)
+            {
+                logger.LogWarning($"UpdatePlayerReadyStatus: Lobby {lobbyCode} not found.");
+                return Task.CompletedTask;
+            }
+
+            lock (lobby.LobbyLock)
+            {
+                var player = lobby.Players
+                    .FirstOrDefault(p => p.Nickname.Equals(playerName, StringComparison.OrdinalIgnoreCase));
+
+                if (player == null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                player.IsReady = isReady;
+            }
+
+            core.Session.Broadcast(
+                lobbyCode,
+                callback => callback.PlayerReadyStatusChanged(playerName, isReady)
+            );
+
+            return Task.CompletedTask;
+        }
+
+        public async Task EvaluateGameStart(string lobbyCode)
+        {
+            var lobby = core.Session.GetLobby(lobbyCode);
+            if (lobby == null)
+            {
+                logger.LogWarning($"EvaluateGameStart: Lobby {lobbyCode} not found.");
+                return;
+            }
+
+            bool shouldStart;
+
+            lock (lobby.LobbyLock)
+            {
+                shouldStart =
+                    lobby.Players.Count >= 2 &&
+                    lobby.Players.All(p => p.IsReady);
+            }
+
+            if (shouldStart)
+            {
+                await TryStartingGame(lobbyCode);
+            }
+        }
+
+
+
+        private async Task TryStartingGame(string lobbyCode)
+        {
+            await Task.Delay(2000);
+
+            var lobby = core.Session.GetLobby(lobbyCode);
+            if (lobby == null)
+            {
+                logger.LogWarning($"TryStartingGame: Lobby {lobbyCode} not found.");
+                return;
+            }
+
+            List<string> playersToStart;
+
+            lock (lobby.LobbyLock)
+            {
+                if (lobby.Players.Count < 2 || lobby.Players.Any(p => !p.IsReady))
+                {
+                    logger.LogInfo($"Game start cancelled for {lobbyCode}. Players not ready.");
+                    return;
+                }
+
+                playersToStart = lobby.Players
+                    .Select(p => p.Nickname)
+                    .ToList();
+            }
+
+            bool created = await gameLogic.InitializeMatch(lobbyCode, playersToStart);
+
+            if (!created)
+            {
+                logger.LogWarning($"TryStartingGame: Failed to create game for lobby {lobbyCode}.");
+                return;
+            }
+
+            core.Session.Broadcast(lobbyCode, callback => callback.GameStarting());
+
+            logger.LogInfo($"Game starting for lobby {lobbyCode}.");
+        }
+
+
+        public void DisconnectPlayer(string lobbyCode, string playerNickname)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(playerNickname))
+            {
+                return;
+            }
+
+            try
+            {
+                core.Session.DisconnectPlayerCallback(lobbyCode, playerNickname);
+                HandlePlayerExit(lobbyCode, playerNickname);
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error registering connection: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout registering connection: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"Critical error registering connection: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> SendInvitations(string lobbyCode, string sender, List<string> guests)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode)
+                || string.IsNullOrWhiteSpace(sender)
+                || guests == null
+                || guests.Count == 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                core.Validation.ValidateInviteGuests(guests);
+                var lobby = core.Session.GetLobby(lobbyCode);
+                if (lobby == null)
+                {
+                    logger.LogWarning($"SendInvitations failed: Lobby {lobbyCode} does not exist.");
+                    return false;
+                }
+
+                return await invitationSendHelper.SendInvitation(lobbyCode, sender, guests);
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogWarning($"SendInvitations validation failed: {ex.Message}");
+                return false;
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"SendInvitations timeout: {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Unexpected error sending invitations.", ex);
+                return false;
+            }
+        }
+
+        private void SendInitialState(ILobbyManagerCallback callback, ActiveLobbyData activeLobbyData, string nickname)
+        {
+            if(callback == null || activeLobbyData == null || string.IsNullOrWhiteSpace(nickname))
+            {
+                return;
+            }
+
+            try
+            {
+                var players = activeLobbyData.Players;
+                callback.UpdateListOfPlayers(players.ToArray());
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error sending initial state to {nickname}: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout sending initial state to {nickname}: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Critical error sending initial state to {nickname}.", ex);
+            }
+        }
+
+        private void HandlePlayerExit(string lobbyCode, string nickname)
+        {
+            var lobby = core.Session.GetLobby(lobbyCode);
+            if (lobby == null)
+            {
+                logger.LogWarning($"HandlePlayerExit: Lobby {lobbyCode} not found.");
+                return;
+            }
+            lobby.RemovePlayer(nickname);
+            core.Session.Broadcast(lobbyCode, cb => cb.PlayerLeftLobby(nickname));
+            core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(lobby.Players.ToArray()));
+        }
+
+        
+    }
+}

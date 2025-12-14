@@ -12,29 +12,19 @@ namespace Contracts
     public interface ILobbyManagerCallback
     {
         [OperationContract(IsOneWay = true)]
-        void CreatedLobby(LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
-        
-        [OperationContract(IsOneWay = true)]
-        void JoinedLobby(LobbyPlayerDTO userAccountDTO);
+        void PlayerJoinedLobby(string nickname);
 
         [OperationContract(IsOneWay = true)]
-        void LobbyCancelled(string matchCode);
+        void PlayerLeftLobby(string nickname);
 
         [OperationContract(IsOneWay = true)]
-        void LeftLobby(LobbyPlayerDTO playerWhoLeft);
+        void UpdateListOfPlayers(LobbyPlayerDTO[] players);
 
         [OperationContract(IsOneWay = true)]
-        void ExpelledFromLobby(LobbyPlayerDTO expelledPlayer);
+        void PlayerReadyStatusChanged(string nickname, bool isReady);
 
         [OperationContract(IsOneWay = true)]
-        void GameStarted(string matchCode, List<LobbyPlayerDTO> players);
-
-        /*
-        [OperationContract]
-        void InvitedFriendToLobby(string username, string matchCode);
-
-
-        */
+        void GameStarting();
 
     }
 }

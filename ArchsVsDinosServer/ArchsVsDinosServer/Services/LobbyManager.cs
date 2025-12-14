@@ -1,6 +1,6 @@
 ﻿using ArchsVsDinosServer.BusinessLogic;
-using ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Interfaces.Lobby;
 using ArchsVsDinosServer.Services.Interfaces;
 using Contracts;
 using Contracts.DTO;
@@ -14,75 +14,145 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.Services
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class LobbyManager : ILobbyManager, ILobbyNotifier
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Reentrant)]
+    public class LobbyManager : ILobbyManager
     {
+        private readonly ILobbyLogic lobbyLogic;
+        private readonly ILoggerHelper logger;
 
-        private readonly LobbyConfiguration lobbyBusinessLogic;
-
-        public LobbyManager()
+        public LobbyManager(
+        ILobbyLogic lobbyLogic,
+        ILoggerHelper logger)
         {
-            lobbyBusinessLogic = new LobbyConfiguration();
+            this.lobbyLogic = lobbyLogic;
+            this.logger = logger;
+        }
+        public void ConnectToLobby(string lobbyCode, string nickname)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
+            {
+                return;
+            }
+
+            if (OperationContext.Current == null)
+            {
+                logger.LogWarning("ConnectToLobby called without OperationContext.");
+                return;
+            }
+
+            try
+            {
+                var callback =
+                    OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
+
+                lobbyLogic.ConnectPlayer(lobbyCode, nickname);
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"WCF communication error while connecting {nickname} - {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout while connecting {nickname} to lobby {lobbyCode} - {ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogError($"Invalid data while connecting to lobby: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Error registering lobby connection.", ex);
+            }
         }
 
-        
-        public LobbyResultCode CreateLobby(UserAccountDTO hostUserAccountDTO)
+        public void DisconnectFromLobby(string lobbyCode, string nickname)
         {
-            return lobbyBusinessLogic.CreateANewMatch(hostUserAccountDTO);
-        }
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
+            {
+                return;
+            }
 
-        
-        public LobbyResultCode JoinLobby(UserAccountDTO userAccountDTO, string matchCode)
-        {
-            return lobbyBusinessLogic.JoinToTheLobbyWithCode(userAccountDTO, matchCode);
-        }
-
-        public LobbyResultCode CancelLobby(string matchCode, string usernameRequester)
-        {
-            return lobbyBusinessLogic.CancelTheLobby(matchCode, usernameRequester);
-        }
-
-        public LobbyResultCode LeaveLobby(string username)
-        {
-            return lobbyBusinessLogic.LeaveTheLobby(username);
-        }
-
-        public LobbyResultCode ExpelPlayerLobby(string username, string hostUsername)
-        {
-            return lobbyBusinessLogic.ExpelThePlayer(username, hostUsername);
-        }
-
-        public void NotifyPlayerExpelled(string username, string reason)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void NotifyLobbyClosure(string reason)
-        {
-            throw new NotImplementedException();
-        }
-
-        public LobbyResultCode StartGame(string matchCode, string hostUsername)
-        {
-            return lobbyBusinessLogic.StartTheGame(matchCode, hostUsername);
-        }
-        
-        public LobbyResultCode InviteByEmailToLobby(string email, string matchCode, string inviterUsername)
-        {
-            return lobbyBusinessLogic.InvitByAnEmailToMatch(email, matchCode, inviterUsername);
-        }
-
-        /*
-        
-        public InviteFriendToMatch(string username, string friendUsername, string matchCode)
-        {
-
+            try
+            {
+                lobbyLogic.DisconnectPlayer(lobbyCode, nickname);
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error disconnecting {nickname} - {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout disconnecting {nickname} from lobby {lobbyCode} - {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogError($"Invalid disconnect operation: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                logger.LogInfo($"Unexpected error in DisconnectFromLobby - {ex.Message}");
+            }
         }
 
 
+        public void SetReadyStatus(string lobbyCode, string nickname, bool isReady)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
+            {
+                return;
+            }
 
-        */
+            try
+            {
+                lobbyLogic.UpdatePlayerReadyStatus(lobbyCode, nickname, isReady);
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogError($"Invalid ready state update: {ex.Message}", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogError($"Ready state ignored: {ex.Message}", ex);
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout updating ready state for {nickname} - {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Unexpected error in SetReadyStatus.", ex);
+            }
+        }
 
+
+        public void StartGame(string lobbyCode)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode))
+            {
+                return;
+            }
+
+            try
+            {
+                lobbyLogic.EvaluateGameStart(lobbyCode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogWarning($"Game start rejected: {ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogError($"Invalid start game request: {ex.Message}", ex);
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout starting game in lobby {lobbyCode} - {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Unexpected error starting game.", ex);
+            }
+        }
 
     }
 }

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace Contracts.DTO
 {
     [DataContract]
-    public class LobbyPlayerDTO
+    public class MatchSettings
     {
         [DataMember]
-        public string Nickname { get; set; }
+        public string HostNickname { get; set; }
         [DataMember]
-        public bool IsReady { get; set; }
+        public int MaxPlayers { get; set; }
 
     }
 }

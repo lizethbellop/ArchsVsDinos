@@ -66,6 +66,7 @@
     <Compile Include="DTO\Game DTO\State\PlayerGameStateDTO.cs" />
     <Compile Include="DTO\Game DTO\TurnedChangedDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
+    <Compile Include="DTO\MatchSettings.cs" />
     <Compile Include="DTO\PlayerExpelledDTO.cs" />
     <Compile Include="DTO\Response\FriendCheckResponse.cs" />
     <Compile Include="DTO\Response\FriendListResponse.cs" />
@@ -75,6 +76,8 @@
     <Compile Include="DTO\Response\LobbyResponse.cs" />
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
+    <Compile Include="DTO\Response\MatchCreationResponse.cs" />
+    <Compile Include="DTO\Response\MatchJoinResponse.cs" />
     <Compile Include="DTO\Response\RegisterResponse.cs" />
     <Compile Include="DTO\Response\UpdateResponse.cs" />
     <Compile Include="DTO\Result Codes\ChatResultCode.cs" />
@@ -111,6 +114,7 @@
     <Compile Include="IGameManagerCallback.cs" />
     <Compile Include="ILobbyManager.cs" />
     <Compile Include="ILobbyManagerCallback.cs" />
+    <Compile Include="IMatchCreationManager.cs" />
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
     <Compile Include="IStatisticsManager.cs" />
