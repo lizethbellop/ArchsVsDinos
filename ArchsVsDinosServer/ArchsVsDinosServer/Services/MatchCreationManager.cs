@@ -3,6 +3,7 @@ using ArchsVsDinosServer.Interfaces.Lobby;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Response;
+using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace ArchsVsDinosServer.Services
                 return new MatchCreationResponse
                 {
                     Success = false,
-                    Message = "Match settings cannot be null."
+                    ResultCode = MatchCreationResultCode.MatchCreation_InvalidSettings
                 };
             }
 
@@ -45,7 +46,7 @@ namespace ArchsVsDinosServer.Services
                 return new MatchCreationResponse
                 {
                     Success = false,
-                    Message = "Server is taking too long to respond."
+                    ResultCode = MatchCreationResultCode.MatchCreation_Timeout
                 };
             }
             catch (Exception ex)
@@ -54,25 +55,25 @@ namespace ArchsVsDinosServer.Services
                 return new MatchCreationResponse
                 {
                     Success = false,
-                    Message = "Unexpected server error."
+                    ResultCode = MatchCreationResultCode.MatchCreation_UnexpectedError
                 };
             }
         }
 
-        public async Task<MatchJoinResponse> JoinMatch(string lobbyCode, string nickname)
+        public async Task<MatchJoinResponse> JoinMatch(string lobbyCode, int userId, string nickname)
         {
             if(string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
             {
                 return new MatchJoinResponse
                 {
                     Success = false,
-                    Message = "Lobby code or nickname invalid"
+                    ResultCode = JoinMatchResultCode.JoinMatch_InvalidParameters
                 };
             }
 
             try
             {
-                return await lobbyLogic.JoinLobby(lobbyCode, nickname);
+                return await lobbyLogic.JoinLobby(lobbyCode, userId,nickname);
             }
             catch (TimeoutException ex)
             {
@@ -80,7 +81,7 @@ namespace ArchsVsDinosServer.Services
                 return new MatchJoinResponse
                 {
                     Success = false,
-                    Message = "Server is taking too long to respond."
+                    ResultCode = JoinMatchResultCode.JoinMatch_Timeout
                 };
             }
             catch (Exception ex)
@@ -89,7 +90,7 @@ namespace ArchsVsDinosServer.Services
                 return new MatchJoinResponse
                 {
                     Success = false,
-                    Message = "Unexpected server error."
+                    ResultCode = JoinMatchResultCode.JoinMatch_UnexpectedError
                 };
             }
         }

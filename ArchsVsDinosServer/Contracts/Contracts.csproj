@@ -48,6 +48,7 @@
     <Compile Include="DTO\Game DTO\ArchAddedToBoardDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchArmyDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchArmyProvokedDTO.cs" />
+    <Compile Include="DTO\Game DTO\AttachBodyPartDTO.cs" />
     <Compile Include="DTO\Game DTO\BattleResultDTO.cs" />
     <Compile Include="DTO\Game DTO\BodyPartAttachedDTO.cs" />
     <Compile Include="DTO\Game DTO\CardDrawnDTO.cs" />
@@ -55,6 +56,8 @@
     <Compile Include="DTO\Game DTO\DinoBattleDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoPlayedDTO.cs" />
+    <Compile Include="DTO\Game DTO\Enums\GameEnumeration.cs" />
+    <Compile Include="DTO\Game DTO\ExchangeCardDTO.cs" />
     <Compile Include="DTO\Game DTO\GameEndedDTO.cs" />
     <Compile Include="DTO\Game DTO\GameInitializedDTO.cs" />
     <Compile Include="DTO\Game DTO\GameStartedDTO.cs" />
@@ -64,7 +67,10 @@
     <Compile Include="DTO\Game DTO\State\CentralBoardDTO.cs" />
     <Compile Include="DTO\Game DTO\State\GameStateDTO.cs" />
     <Compile Include="DTO\Game DTO\State\PlayerGameStateDTO.cs" />
+    <Compile Include="DTO\Game DTO\Swap\CardSwappedDTO.cs" />
+    <Compile Include="DTO\Game DTO\Swap\SwapCardDTO.cs" />
     <Compile Include="DTO\Game DTO\TurnedChangedDTO.cs" />
+    <Compile Include="DTO\GamePlayerInitDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
     <Compile Include="DTO\MatchSettings.cs" />
     <Compile Include="DTO\PlayerExpelledDTO.cs" />
@@ -86,12 +92,15 @@
     <Compile Include="DTO\Result Codes\FriendRequestResultCode.cs" />
     <Compile Include="DTO\Result Codes\FriendResultCode.cs" />
     <Compile Include="DTO\Result Codes\GameSetupResultCode.cs" />
+    <Compile Include="DTO\Result Codes\JoinMatchResultCode.cs" />
     <Compile Include="DTO\Result Codes\LobbyResultCode.cs" />
     <Compile Include="DTO\Result Codes\LoginResultCode.cs" />
+    <Compile Include="DTO\Result Codes\MatchCreationResultCode.cs" />
     <Compile Include="DTO\Result Codes\PlayCardResultCode.cs" />
     <Compile Include="DTO\Result Codes\ProvokeResultCode.cs" />
     <Compile Include="DTO\Result Codes\RegisterResultCode.cs" />
     <Compile Include="DTO\Result Codes\SaveMatchResultCode.cs" />
+    <Compile Include="DTO\Result Codes\SwapCardResultCode.cs" />
     <Compile Include="DTO\Result Codes\UpdateResultCode.cs" />
     <Compile Include="DTO\Statistics\GameStatisticsDTO.cs" />
     <Compile Include="DTO\Statistics\LeaderboardEntryDTO.cs" />

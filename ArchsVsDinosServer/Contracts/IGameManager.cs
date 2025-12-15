@@ -1,46 +1,53 @@
-﻿using System;
+﻿using Contracts.DTO.Game_DTO;
+using Contracts.DTO.Game_DTO.State;
+using Contracts.DTO.Game_DTO.Swap;
+using Contracts.DTO.Result_Codes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO.Result_Codes;
-using Contracts.DTO.Game_DTO.State;
-using Contracts.DTO.Game_DTO;
 
 namespace Contracts
 {
-    [ServiceContract(CallbackContract = typeof(IGameManagerCallback))]
+    [ServiceContract(CallbackContract = typeof(IGameManagerCallback), SessionMode = SessionMode.Required)]
     public interface IGameManager
     {
         [OperationContract]
-        GameSetupResultCode InitializeGame(int matchId);
+        void ConnectToGame(string matchCode, int userId);
 
         [OperationContract]
-        GameSetupResultCode StartGame(int matchId);
+        void LeaveGame(string matchCode, int userId);
 
         [OperationContract]
-        DrawCardResultCode DrawCard(int matchId, int userId, int drawPileNumber);
+        GameSetupResultCode InitializeGame(string matchCode);
 
         [OperationContract]
-        PlayCardResultCode PlayDinoHead(int matchId, int userId, int cardId);
+        DrawCardResultCode DrawCard(string matchCode, int userId, int drawPileNumber);
 
         [OperationContract]
-        PlayCardResultCode AttachBodyPartToDino(int matchId, int userId, int cardId, int dinoHeadCardId);
+        PlayCardResultCode PlayDinoHead(string matchCode, int userId, int cardId);
 
         [OperationContract]
-        ProvokeResultCode ProvokeArchArmy(int matchId, int userId, string armyType);
+        PlayCardResultCode AttachBodyPartToDino(string matchCode, int userId, AttachBodyPartDTO attachmentData);
 
         [OperationContract]
-        EndTurnResultCode EndTurn(int matchId, int userId);
+        SwapCardResultCode SwapCardWithPlayer(string matchCode, int initiatorUserId, SwapCardRequestDTO request);
 
         [OperationContract]
-        GameStateDTO GetGameState(int matchId);
+        ProvokeResultCode ProvokeArchArmy(string matchCode, int userId, string armyType);
 
         [OperationContract]
-        PlayerHandDTO GetPlayerHand(int matchId, int userId);
+        EndTurnResultCode EndTurn(string matchCode, int userId);
 
         [OperationContract]
-        CentralBoardDTO GetCentralBoard(int matchId);
+        GameStateDTO GetGameState(string matchCode);
+
+        [OperationContract]
+        PlayerHandDTO GetPlayerHand(string matchCode, int userId);
+
+        [OperationContract]
+        CentralBoardDTO GetCentralBoard(string matchCode);
     }
 }

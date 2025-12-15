@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
+using ArchsVsDinosServer.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,85 +12,62 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public class GameSessionManager
     {
-        private static GameSessionManager instance;
-        private static readonly object lockObject = new object();
-        private readonly ConcurrentDictionary<int, GameSession> activeSessions;
-        private readonly ConcurrentDictionary<string, int> gameCodeToMatchId;
+        private readonly ConcurrentDictionary<string, GameSession> activeSessions;
 
-        private GameSessionManager()
+        private readonly ILoggerHelper logger;
+
+        public GameSessionManager(ILoggerHelper logger)
         {
-            activeSessions = new ConcurrentDictionary<int, GameSession>();
-            gameCodeToMatchId = new ConcurrentDictionary<string, int>();
+            if (logger == null) throw new ArgumentNullException(nameof(logger), "Logger cannot be null.");
+
+            activeSessions = new ConcurrentDictionary<string, GameSession>();
+            this.logger = logger;
         }
 
-        public static GameSessionManager Instance
+        public bool CreateSession(string matchCode)
         {
-            get
-            {
-                if (instance == null)
-                {
-                    lock (lockObject)
-                    {
-                        if (instance == null)
-                        {
-                            instance = new GameSessionManager();
-                        }
-                    }
-                }
-                return instance;
-            }
-        }
-
-        public bool CreateSession(int matchId)
-        {
-            if (matchId <= 0)
+            if (string.IsNullOrWhiteSpace(matchCode))
             {
                 return false;
             }
 
             var centralBoard = new CentralBoard();
-            var session = new GameSession(matchId, centralBoard);
-            return activeSessions.TryAdd(matchId, session);
+
+            var session = new GameSession(matchCode, centralBoard, this.logger);
+
+            return activeSessions.TryAdd(matchCode, session);
         }
 
-        public GameSession GetSession(int matchId)
+        public GameSession GetSession(string matchCode)
         {
-            activeSessions.TryGetValue(matchId, out var session);
+            activeSessions.TryGetValue(matchCode, out var session);
             return session;
         }
 
-        public bool RemoveSession(int matchId)
+        public bool RemoveSession(string matchCode)
         {
-            return activeSessions.TryRemove(matchId, out _);
+            return activeSessions.TryRemove(matchCode, out _);
         }
 
-        public bool SessionExists(int matchId)
+        public bool SessionExists(string matchCode)
         {
-            return activeSessions.ContainsKey(matchId);
+            return activeSessions.ContainsKey(matchCode);
         }
 
-        public PlayerSession GetPlayer(int matchId, int userId)
+        public PlayerSession GetPlayer(string matchCode, int userId)
         {
-            var session = GetSession(matchId);
+            var session = GetSession(matchCode);
             if (session == null)
             {
                 return null;
             }
 
-            foreach (var player in session.Players)
-            {
-                if (player.UserId == userId)
-                {
-                    return player;
-                }
-            }
-
-            return null;
+            return session.Players.FirstOrDefault(player => player.UserId == userId);
         }
 
-        public bool IsPlayerInSession(int matchId, int userId)
+        public bool IsPlayerInSession(string matchCode, int userId)
         {
-            return GetPlayer(matchId, userId) != null;
+            return GetPlayer(matchCode, userId) != null;
         }
 
         public List<GameSession> GetAllActiveSessions()
@@ -102,23 +80,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             return activeSessions.Count;
         }
 
-        public bool RegisterGameCode(string gameMatchCode, int matchId)
-        {
-            return gameCodeToMatchId.TryAdd(gameMatchCode, matchId);
-        }
-
-        public int? GetMatchIdFromGameCode(string gameMatchCode)
-        {
-            if (gameCodeToMatchId.TryGetValue(gameMatchCode, out int matchId))
-            {
-                return matchId;
-            }
-            return null;
-        }
-
-        public bool UnregisterGameCode(string gameMatchCode)
-        {
-            return gameCodeToMatchId.TryRemove(gameMatchCode, out _);
-        }
+        
     }
 }

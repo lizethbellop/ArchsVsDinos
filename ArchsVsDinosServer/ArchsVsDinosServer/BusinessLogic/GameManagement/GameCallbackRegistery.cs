@@ -12,9 +12,10 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
     {
         private static GameCallbackRegistry instance;
         private static readonly object lockObject = new object();
+
         private readonly ConcurrentDictionary<int, IGameManagerCallback> playerCallbacks;
 
-        private readonly ConcurrentDictionary<int, object> matchLocks = new ConcurrentDictionary<int, object>();
+        private readonly ConcurrentDictionary<string, object> matchLocks = new ConcurrentDictionary<string, object>();
 
         private GameCallbackRegistry()
         {
@@ -55,9 +56,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             playerCallbacks.TryRemove(userId, out _);
         }
 
-        public object GetMatchLock(int matchId)
+        public object GetMatchLock(string matchCode)
         {
-            return matchLocks.GetOrAdd(matchId, _ => new object());
+            return matchLocks.GetOrAdd(matchCode, _ => new object());
         }
     }
 }

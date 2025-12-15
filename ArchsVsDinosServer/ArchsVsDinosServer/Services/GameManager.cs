@@ -20,9 +20,9 @@ using System.Threading.Tasks;
 namespace ArchsVsDinosServer.Services
 {
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
-    public class GameManager : IGameManager, IGameNotifier
+    public class GameManager 
     {
-        private readonly GameSessionManager sessionManager;
+        /*private readonly GameSessionManager sessionManager;
         private readonly GameSetupHandler setupHandler;
         private readonly GameNotificationService notificationService;
         private readonly GameValidationService validationService;
@@ -334,7 +334,7 @@ namespace ArchsVsDinosServer.Services
         public void NotifyGameClosure(string matchCode, string reason)
         {
             expulsionHandler.NotifyGameClosure(matchCode, reason);
-        }
+        }*/
 
     }
 }

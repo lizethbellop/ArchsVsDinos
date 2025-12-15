@@ -15,9 +15,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         public int WinnerPoints { get; set; }
     }
 
-    /// <summary>
-    /// Maneja la lógica de finalización del juego
-    /// </summary>
     public class GameEndHandler
     {
         private const int GameDurationMinutes = 20;
@@ -29,13 +26,11 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            // Verificar si se acabaron las cartas
             if (AreAllDrawPilesEmpty(session))
             {
                 return true;
             }
 
-            // Verificar si se acabó el tiempo
             if (HasTimeExpired(session))
             {
                 return true;
@@ -56,7 +51,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 GameEnded = true
             };
 
-            // Determinar razón
             if (AreAllDrawPilesEmpty(session))
             {
                 result.Reason = "cards_depleted";
@@ -70,7 +64,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 result.Reason = "unknown";
             }
 
-            // Determinar ganador (jugador con más puntos)
             var winner = session.Players.OrderByDescending(p => p.Points).FirstOrDefault();
             if (winner != null)
             {

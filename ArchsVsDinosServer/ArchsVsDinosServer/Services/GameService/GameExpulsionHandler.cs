@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosServer.Services.GameService
 {
-    public class GameExpulsionHandler : IGameNotifier
+    public class GameExpulsionHandler
     {
-        private readonly GameSessionManager sessionManager;
+        /*private readonly GameSessionManager sessionManager;
         private readonly GameActionHandler actionHandler;
         private readonly GameNotificationService notificationService;
         private readonly ServiceDependencies dependencies;
@@ -236,6 +236,6 @@ namespace ArchsVsDinosServer.Services.GameService
             }
         }
 
-        #endregion
+        #endregion*/
     }
 }

@@ -12,43 +12,67 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
 {
     public class GameSession
     {
+        public const int MaxMoves = 3;
+
         public readonly object SyncRoot = new object();
+        private readonly ILoggerHelper loggerHelper;
+
         private readonly List<PlayerSession> players = new List<PlayerSession>();
         private readonly List<List<int>> drawPiles = new List<List<int>>();
         private readonly List<int> discardPile = new List<int>();
-        private readonly ILoggerHelper loggerHelper;
 
-        public int MatchId { get; private set; }
+        public string MatchCode { get; private set; }
         public int CurrentTurn { get; private set; }
         public int TurnNumber { get; private set; }
         public bool IsStarted { get; private set; }
+        public bool IsFinished { get; private set; } // Renombrado a IsFinished
         public DateTime? StartTime { get; private set; }
-        public int CardsDrawnThisTurn { get; private set; }
-        public bool HasTakenMainAction { get; private set; }
-        public int CardsPlayedThisTurn { get; private set; }
+
         public int RemainingMoves { get; private set; }
         public CentralBoard CentralBoard { get; private set; }
+
         public IReadOnlyList<PlayerSession> Players => players.AsReadOnly();
         public IReadOnlyList<List<int>> DrawPiles => drawPiles.AsReadOnly();
         public IReadOnlyList<int> DiscardPile => discardPile.AsReadOnly();
 
-        public GameSession(int matchId, CentralBoard board)
+        public GameSession(string matchCode, CentralBoard board, ILoggerHelper logger)
         {
-            MatchId = matchId;
-            CentralBoard = board ?? new CentralBoard();
-            loggerHelper = new Wrappers.LoggerHelperWrapper();
+            MatchCode = matchCode ?? throw new ArgumentNullException(nameof(matchCode), "MatchCode cannot be null.");
+            CentralBoard = board ?? throw new ArgumentNullException(nameof(board), "CentralBoard cannot be null.");
+            loggerHelper = logger ?? throw new ArgumentNullException(nameof(logger), "Logger helper cannot be null.");
+
+            CurrentTurn = 0;
+            TurnNumber = 0;
+            IsStarted = false;
+            IsFinished = false;
+            RemainingMoves = MaxMoves;
+        }
+
+        public void MarkAsStarted()
+        {
+            lock (SyncRoot)
+            {
+                IsStarted = true;
+                StartTime = DateTime.UtcNow;
+            }
+        }
+
+        public void MarkAsFinished()
+        {
+            lock (SyncRoot)
+            {
+                IsFinished = true;
+            }
         }
 
         public void AddPlayer(PlayerSession player)
         {
             lock (SyncRoot)
             {
-                if (player != null)
-                {
-                    players.Add(player);
-                }
+                if (player != null) players.Add(player);
             }
         }
+
         public void SetDrawPiles(List<List<int>> piles)
         {
             lock (SyncRoot)
@@ -68,10 +92,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             lock (SyncRoot)
             {
-                if (pileIndex < 0 || pileIndex >= drawPiles.Count || count <= 0)
-                {
-                    return new List<int>();
-                }
+                if (pileIndex < 0 || pileIndex >= drawPiles.Count || count <= 0) return new List<int>();
 
                 var pile = drawPiles[pileIndex];
                 var availableCount = pile.Count < count ? pile.Count : count;
@@ -87,10 +108,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             lock (SyncRoot)
             {
-                if (cardId > 0)
-                {
-                    discardPile.Add(cardId);
-                }
+                if (cardId > 0) discardPile.Add(cardId);
             }
         }
 
@@ -98,80 +116,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             lock (SyncRoot)
             {
-                if (cardIds != null)
-                {
-                    discardPile.AddRange(cardIds.Where(id => id > 0));
-                }
-            }
-        }
-
-        public void StartTurn(int userId)
-        {
-            lock (SyncRoot)
-            {
-                CurrentTurn = userId;
-                TurnNumber++;
-                CardsDrawnThisTurn = 0;
-                HasTakenMainAction = false;
-                CardsPlayedThisTurn = 0;
-                RemainingMoves = 3;
-            }
-        }
-
-        public bool ConsumeMove()
-        {
-            lock (SyncRoot)
-            {
-                if (RemainingMoves > 0)
-                {
-                    RemainingMoves--;
-                    return true;
-                }
-                return false;
-            }
-        }
-
-        public void RestoreMove()
-        {
-            lock (SyncRoot)
-            {
-                if (RemainingMoves < 3)
-                {
-                    RemainingMoves++;
-                }
-            }
-        }
-
-        public void MarkCardPlayed()
-        {
-            lock (SyncRoot)
-            {
-                CardsPlayedThisTurn++;
-            }
-        }
-
-        public void MarkCardDrawn()
-        {
-            lock (SyncRoot)
-            {
-                CardsDrawnThisTurn++;
-            }
-        }
-
-        public void MarkMainActionTaken()
-        {
-            lock (SyncRoot)
-            {
-                HasTakenMainAction = true;
-            }
-        }
-
-        public void MarkAsStarted()
-        {
-            lock (SyncRoot)
-            {
-                IsStarted = true;
-                StartTime = DateTime.UtcNow;
+                if (cardIds != null) discardPile.AddRange(cardIds.Where(id => id > 0));
             }
         }
 
@@ -179,27 +124,24 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             lock (SyncRoot)
             {
-                if (pileIndex >= 0 && pileIndex < drawPiles.Count)
-                {
-                    return drawPiles[pileIndex].Count;
-                }
+                if (pileIndex >= 0 && pileIndex < drawPiles.Count) return drawPiles[pileIndex].Count;
                 return 0;
             }
         }
 
-        public bool RemovePlayer(string username)
+        public bool RemovePlayer(string nickname)
         {
             lock (SyncRoot)
             {
                 try
                 {
-                    var player = players.FirstOrDefault(p => p.Username == username);
+                    var player = players.FirstOrDefault(p => p.Nickname == nickname);
                     if (player != null)
                     {
                         bool removed = players.Remove(player);
                         if (removed)
                         {
-                            loggerHelper.LogInfo($"Player {username} removed from session {MatchId}");
+                            loggerHelper.LogInfo($"Player {nickname} removed from session {MatchCode}");
                         }
                         return removed;
                     }
@@ -207,12 +149,12 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
                 }
                 catch (InvalidOperationException ex)
                 {
-                    loggerHelper.LogError($"Invalid operation removing player {username}", ex);
+                    loggerHelper.LogError($"Invalid operation removing player {nickname}", ex);
                     return false;
                 }
                 catch (Exception ex)
                 {
-                    loggerHelper.LogError($"Unexpected error removing player {username}", ex);
+                    loggerHelper.LogError($"Unexpected error removing player {nickname}", ex);
                     return false;
                 }
             }
@@ -224,7 +166,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             {
                 try
                 {
-                    var player = players.FirstOrDefault(p => p.UserId == userId);  
+                    var player = players.FirstOrDefault(p => p.UserId == userId);
                     if (player != null)
                     {
                         bool removed = players.Remove(player);
@@ -232,11 +174,61 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
                     }
                     return false;
                 }
+                catch (InvalidOperationException ex)
+                {
+                    loggerHelper.LogError($"Invalid operation removing player {userId}", ex);
+                    return false;
+                }
                 catch (Exception ex)
                 {
                     loggerHelper.LogError($"Unexpected error removing player {userId}", ex);
                     return false;
                 }
+            }
+        }
+
+        public bool ConsumeMoves(int cost = 1)
+        {
+            lock (SyncRoot)
+            {
+                if (RemainingMoves >= cost)
+                {
+                    RemainingMoves -= cost;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        public void RestoreMoves(int cost = 1)
+        {
+            lock (SyncRoot)
+            {
+                RemainingMoves += cost;
+                if (RemainingMoves > MaxMoves)
+                {
+                    RemainingMoves = MaxMoves;
+                }
+            }
+        }
+
+        public void StartTurn(int userId)
+        {
+            lock (SyncRoot)
+            {
+                CurrentTurn = userId;
+                TurnNumber++;
+                RemainingMoves = MaxMoves;
+                loggerHelper.LogInfo($"Starting turn {TurnNumber} for user {userId} in match {MatchCode}.");
+            }
+        }
+
+        public void EndTurn(int nextUserId)
+        {
+            lock (SyncRoot)
+            {
+                CurrentTurn = nextUserId;
+                RemainingMoves = MaxMoves;
             }
         }
     }

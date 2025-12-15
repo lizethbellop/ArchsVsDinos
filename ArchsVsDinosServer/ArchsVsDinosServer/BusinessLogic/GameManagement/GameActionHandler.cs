@@ -2,6 +2,7 @@
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Utils;
+using Contracts.DTO.Game_DTO.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,90 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public CardInGame DrawCard(GameSession session, PlayerSession player, int pileIndex)
         {
-            if (session == null || player == null)
+            if (session == null || player == null) return null;
+
+            if (!session.ConsumeMoves(1)) return null;
+
+            var card = ProcessDrawnCard(session, player, pileIndex);
+
+            if (card == null)
             {
+                session.RestoreMoves(1);
+            }
+
+            return card;
+        }
+
+        public DinoInstance PlayDinoHead(GameSession session, PlayerSession player, int cardId)
+        {
+            if (!session.ConsumeMoves(1)) return null;
+
+            var cardInHand = player.RemoveCardById(cardId);
+
+            if (cardInHand == null || !cardInHand.IsDinoHead())
+            {
+                session.RestoreMoves(1);
                 return null;
             }
 
+            var newDino = new DinoInstance(
+                dinoInstanceId: nextDinoId++,
+                headCard: cardInHand
+            );
+
+            player.AddDino(newDino);
+
+            return newDino;
+        }
+
+        public bool AttachBodyPart(GameSession session, PlayerSession player, int bodyCardId, int dinoHeadCardId)
+        {
+            if (!session.ConsumeMoves(1)) return false;
+
+            var targetDino = player.GetDinoByHeadCardId(dinoHeadCardId);
+            var bodyCard = player.GetCardById(bodyCardId);
+
+            if (bodyCard == null || targetDino == null || !bodyCard.IsBodyPart())
+            {
+                session.RestoreMoves(1);
+                return false;
+            }
+
+            var successfullyAttached = targetDino.TryAddBodyPart(bodyCard);
+
+            if (successfullyAttached)
+            {
+                player.RemoveCard(bodyCard);
+                return true;
+            }
+
+            session.RestoreMoves(1);
+            return false;
+        }
+
+        public CardInGame ExchangeCard(GameSession session, PlayerSession player, int cardIdToDiscard, int pileIndex)
+        {
+            if (session == null || player == null) return null;
+
+            if (!session.ConsumeMoves(1)) return null;
+
+            var cardToDiscard = player.RemoveCardById(cardIdToDiscard);
+
+            if (cardToDiscard == null)
+            {
+                session.RestoreMoves(1);
+                return null;
+            }
+
+            session.AddToDiscard(cardToDiscard.IdCard);
+
+            var newCard = ProcessDrawnCard(session, player, pileIndex);
+
+            return newCard;
+        }
+
+        private CardInGame ProcessDrawnCard(GameSession session, PlayerSession player, int pileIndex)
+        {
             var drawnCardIds = session.DrawFromPile(pileIndex, 1);
             if (drawnCardIds == null || drawnCardIds.Count == 0)
             {
@@ -34,118 +114,37 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             var cardId = drawnCardIds[0];
             var card = CardInGame.FromDefinition(cardId);
 
-            if (card == null)
-            {
-                return null;
-            }
+            if (card == null) return null;
 
             if (card.IsArch())
             {
-                PlaceArchOnBoard(session.CentralBoard, cardId, card.Element);
-                session.MarkCardDrawn();
-                return card;
+                PlaceArchOnBoard(session.CentralBoard, card);
             }
-
-            player.AddCard(card);
-            session.MarkCardDrawn();
-
+            else
+            {
+                player.AddCard(card);
+            }
             return card;
         }
 
-        public DinoInstance PlayDinoHead(GameSession session, PlayerSession player, int cardId)
+        private void PlaceArchOnBoard(CentralBoard board, CardInGame archCard)
         {
-            if (!session.ConsumeMove()) return null;
-
-            var cardInHand = player.Hand.FirstOrDefault(c => c.IdCard == cardId);
-            if (cardInHand == null)
-            {
-                session.RestoreMove();
-                return null;
-            }
-
-            var newDino = new DinoInstance
-            {
-                IdDino = nextDinoId++,
-                HeadCard = cardInHand,
-                Element = cardInHand.Element
-            };
-
-            player.Hand.Remove(cardInHand);
-            player.Dinos.Add(newDino);
-
-            session.MarkCardPlayed();
-            return newDino;
-        }
-
-        public bool AttachBodyPart(GameSession session, PlayerSession player, int bodyCardId, int dinoHeadCardId)
-        {
-            if (!session.ConsumeMove()) return false;
-
-            var bodyCard = player.Hand.FirstOrDefault(card => card.IdCard == bodyCardId);
-            var targetDino = player.Dinos.FirstOrDefault(card => card.HeadCard.IdCard == dinoHeadCardId);
-
-            if (bodyCard == null || targetDino == null)
-            {
-                session.RestoreMove();
-                return false;
-            }
-
-            switch (bodyCard.Type) 
-            {
-                case "chest":
-                    if (targetDino.ChestCard != null) { session.RestoreMove(); return false; }
-                    targetDino.ChestCard = bodyCard;
-                    break;
-                case "left_arm":
-                    if (targetDino.LeftArmCard != null) { session.RestoreMove(); return false; }
-                    targetDino.LeftArmCard = bodyCard;
-                    break;
-                // ... (otros casos: right_arm, legs)
-                default:
-                    session.RestoreMove();
-                    return false;
-            }
-
-            player.Hand.Remove(bodyCard);
-            session.MarkCardPlayed();
-
-            return true;
+            if (board == null || archCard == null || !archCard.IsArch() || archCard.Element == ArmyType.None) return;
+            board.AddArchCardToArmy(archCard);
         }
 
         public PlayerSession GetNextPlayer(GameSession session)
         {
-            if (session == null || !session.Players.Any())
-            {
-                return null;
-            }
+            if (session == null || !session.Players.Any()) return null;
 
             var currentPlayer = session.Players.FirstOrDefault(player => player.UserId == session.CurrentTurn);
-            if (currentPlayer == null)
-            {
-                return session.Players.First();
-            }
+            if (currentPlayer == null) return session.Players.OrderBy(p => p.TurnOrder).First();
 
-            var playersList = session.Players.ToList();
+            var playersList = session.Players.OrderBy(p => p.TurnOrder).ToList();
             var currentPlayerIndex = playersList.IndexOf(currentPlayer);
-            var nextPlayerIndex = (currentPlayerIndex + 1) % session.Players.Count;
+            var nextPlayerIndex = (currentPlayerIndex + 1) % playersList.Count;
 
             return playersList[nextPlayerIndex];
-        }
-
-        private void PlaceArchOnBoard(CentralBoard board, int cardId, string element)
-        {
-            if (board == null || cardId <= 0 || string.IsNullOrWhiteSpace(element))
-            {
-                return;
-            }
-
-            var normalizedElement = ArmyTypeHelper.NormalizeElement(element);
-            var armyList = board.GetArmyByType(normalizedElement);
-
-            if (armyList != null)
-            {
-                armyList.Add(cardId);
-            }
         }
     }
 }

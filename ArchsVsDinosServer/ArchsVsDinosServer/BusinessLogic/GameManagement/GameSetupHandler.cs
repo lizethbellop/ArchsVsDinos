@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using Contracts.DTO.Game_DTO.Enums;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
@@ -34,7 +35,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
                 var allCardIds = CardDefinitions.GetAllCardIds();
                 var shuffledDeck = CardShuffler.ShuffleCards(allCardIds);
-                var remainingDeck = DealInitialHands(session, shuffledDeck);
+                var remainingDeck = DealInitialHands(session, shuffledDeck); // Usa la versión corregida
 
                 CreateSingleDrawPile(session, remainingDeck);
 
@@ -74,7 +75,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
                     if (card.IsArch())
                     {
-                        PlaceArchOnBoard(session.CentralBoard, cardId, card.Element);
+                        PlaceArchOnBoard(session.CentralBoard, card);
                     }
                     else
                     {
@@ -87,20 +88,14 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         }
 
 
-        private void PlaceArchOnBoard(CentralBoard board, int cardId, string element)
+        private void PlaceArchOnBoard(CentralBoard board, CardInGame archCard)
         {
-            if (board == null || cardId <= 0 || string.IsNullOrWhiteSpace(element))
+            if (board == null || archCard == null || !archCard.IsArch() || archCard.Element == ArmyType.None)
             {
                 return;
             }
 
-            var normalizedElement = ArmyTypeHelper.NormalizeElement(element);
-            var armyList = board.GetArmyByType(normalizedElement);
-
-            if (armyList != null)
-            {
-                armyList.Add(cardId);
-            }
+            board.AddArchCardToArmy(archCard);
         }
 
         public PlayerSession SelectFirstPlayer(GameSession session)

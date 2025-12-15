@@ -9,7 +9,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
 {
     public static class CardConverter
     {
-
         public static CardDTO ToDTO(CardInGame card)
         {
             if (card == null)
@@ -21,9 +20,14 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
             {
                 IdCard = card.IdCard,
                 Power = card.Power,
-                Type = card.Type,
+
                 Element = card.Element,
-                BodyPart = card.BodyPart
+                PartType = card.PartType,
+
+                HasTopJoint = card.HasTopJoint,
+                HasBottomJoint = card.HasBottomJoint,
+                HasLeftJoint = card.HasLeftJoint,
+                HasRightJoint = card.HasRightJoint
             };
         }
 
@@ -41,6 +45,5 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
 
             return cardDTOList;
         }
-
     }
 }

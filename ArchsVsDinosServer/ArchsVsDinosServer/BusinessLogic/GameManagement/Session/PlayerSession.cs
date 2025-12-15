@@ -8,98 +8,141 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
 {
     public class PlayerSession
     {
+        private readonly object syncRoot = new object();
+
         private readonly List<CardInGame> hand = new List<CardInGame>();
         private readonly List<DinoInstance> dinos = new List<DinoInstance>();
+        private int nextDinoId = 1;
 
         public int UserId { get; }
-        public string Username { get; }
+        public string Nickname { get; } 
         public int TurnOrder { get; set; }
         public int Points { get; set; }
         public IGameManagerCallback Callback { get; private set; }
 
-        public List<CardInGame> Hand { get; private set; }
-        public List<DinoInstance> Dinos { get; private set; }
+        public IReadOnlyList<CardInGame> Hand => hand.AsReadOnly();
+        public IReadOnlyList<DinoInstance> Dinos => dinos.AsReadOnly();
 
-        public PlayerSession(int userId, string username, IGameManagerCallback callback)
+        public PlayerSession(int userId, string nickname, IGameManagerCallback callback)
         {
             UserId = userId;
-            Username = username;
+            Nickname = nickname;
             Callback = callback;
         }
 
         public void AddCard(CardInGame card)
         {
-            if (card != null)
+            lock (syncRoot)
             {
-                hand.Add(card);
+                if (card != null)
+                {
+                    hand.Add(card);
+                }
             }
         }
 
         public bool RemoveCard(CardInGame card)
         {
-            if (card != null)
+            lock (syncRoot)
             {
-                return hand.Remove(card);
+                if (card != null)
+                {
+                    return hand.Remove(card);
+                }
+                return false;
             }
-            return false;
         }
 
         public CardInGame RemoveCardById(int cardId)
         {
-            if (cardId <= 0)
+            lock (syncRoot)
             {
-                return null;
-            }
+                if (cardId <= 0)
+                {
+                    return null;
+                }
 
-            var card = hand.FirstOrDefault(c => c.IdCard == cardId);
-            if (card != null)
+                var card = hand.FirstOrDefault(c => c.IdCard == cardId);
+                if (card != null)
+                {
+                    hand.Remove(card);
+                }
+
+                return card;
+            }
+        }
+
+        public CardInGame GetCardById(int cardId)
+        {
+            lock (syncRoot)
             {
-                hand.Remove(card);
+                return hand.FirstOrDefault(c => c.IdCard == cardId);
             }
+        }
 
-            return card;
+        public void ClearHand()
+        {
+            lock (syncRoot)
+            {
+                hand.Clear();
+            }
         }
 
         public void AddDino(DinoInstance dino)
         {
-            if (dino != null)
+            lock (syncRoot)
             {
-                dinos.Add(dino);
+                if (dino != null)
+                {
+                    dinos.Add(dino);
+                }
             }
         }
 
         public bool RemoveDino(DinoInstance dino)
         {
-            if (dino != null)
+            lock (syncRoot)
             {
-                return dinos.Remove(dino);
+                if (dino != null)
+                {
+                    return dinos.Remove(dino);
+                }
+                return false;
             }
-            return false;
         }
 
         public DinoInstance GetDinoByHeadCardId(int headCardId)
         {
-            if (headCardId <= 0)
+            lock (syncRoot)
             {
-                return null;
+                if (headCardId <= 0)
+                {
+                    return null;
+                }
+
+                return dinos.FirstOrDefault(dino => dino.HeadCard?.IdCard == headCardId);
             }
-
-            return dinos.FirstOrDefault(dino => dino.HeadCard?.IdCard == headCardId);
-        }
-
-        public void ClearHand()
-        {
-            hand.Clear();
         }
 
         public void ClearDinos()
         {
-            dinos.Clear();
+            lock (syncRoot)
+            {
+                dinos.Clear();
+            }
         }
-        
+
         public void SetCallback(IGameManagerCallback callback)
         {
             Callback = callback;
+        }
+
+        public int GetNextDinoId()
+        {
+            lock (syncRoot)
+            {
+                return nextDinoId++;
+            }
         }
 
     }

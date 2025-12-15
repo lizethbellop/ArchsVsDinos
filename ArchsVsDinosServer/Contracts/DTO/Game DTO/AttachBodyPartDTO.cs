@@ -5,18 +5,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contracts.DTO
+namespace Contracts.DTO.Game_DTO
 {
     [DataContract]
-    public class LobbyPlayerDTO
+    public class AttachBodyPartDTO
     {
         [DataMember]
-        public int UserId { get; set; }
+        public int CardId { get; set; }
 
         [DataMember]
-        public string Nickname { get; set; }
-        [DataMember]
-        public bool IsReady { get; set; }
-
+        public int DinoHeadCardId { get; set; }
     }
 }

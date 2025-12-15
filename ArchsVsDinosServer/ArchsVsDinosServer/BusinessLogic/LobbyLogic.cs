@@ -3,6 +3,7 @@ using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Interfaces.Game;
 using ArchsVsDinosServer.Interfaces.Lobby;
 using ArchsVsDinosServer.Model;
+using Contracts.DTO.Result_Codes;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Response;
@@ -41,7 +42,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(new MatchCreationResponse
                 {
                     Success = false,
-                    Message = "Invalid match settings."
+                    ResultCode = MatchCreationResultCode.MatchCreation_InvalidParameters
                 });
             }
 
@@ -57,7 +58,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     Success = true,
                     LobbyCode = lobbyCode,
-                    Message = "Lobby created successfully."
+                    ResultCode = MatchCreationResultCode.MatchCreation_Success
                 });
             }
             catch (InvalidOperationException ex)
@@ -67,7 +68,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(new MatchCreationResponse
                 {
                     Success = false,
-                    Message = "Server is busy. Please try again later."
+                    ResultCode = MatchCreationResultCode.MatchCreation_ServerBusy
                 });
             }
             catch (ArgumentException ex)
@@ -77,7 +78,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(new MatchCreationResponse
                 {
                     Success = false,
-                    Message = ex.Message
+                    ResultCode = MatchCreationResultCode.MatchCreation_InvalidSettings
                 });
             }
             catch (TimeoutException ex)
@@ -86,19 +87,19 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(new MatchCreationResponse
                 {
                     Success = false,
-                    Message = "Time to reach the server has expired"
+                    ResultCode = MatchCreationResultCode.MatchCreation_Timeout
                 });
             }
         }
 
-        public Task<MatchJoinResponse> JoinLobby(string lobbyCode, string nickname)
+        public Task<MatchJoinResponse> JoinLobby(string lobbyCode, int userId, string nickname)
         {
             if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
             {
                 return Task.FromResult(new MatchJoinResponse
                 {
                     Success = false,
-                    Message = "Invalid join parameters."
+                    ResultCode = JoinMatchResultCode.JoinMatch_InvalidParameters
                 });
             }
 
@@ -112,18 +113,18 @@ namespace ArchsVsDinosServer.BusinessLogic
                     return Task.FromResult(new MatchJoinResponse
                     {
                         Success = false,
-                        Message = "Lobby does not exist."
+                        ResultCode = JoinMatchResultCode.JoinMatch_LobbyNotFound
                     });
                 }
 
-                var joined = lobby.AddPlayer(nickname);
+                var joined = lobby.AddPlayer(userId, nickname);
 
                 if (!joined)
                 {
                     return Task.FromResult(new MatchJoinResponse
                     {
                         Success = false,
-                        Message = "Failed to join lobby. It may be full or the nickname is already taken."
+                        ResultCode = JoinMatchResultCode.JoinMatch_LobbyFull
                     });
                 }
 
@@ -131,7 +132,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(new MatchJoinResponse
                 {
                     Success = true,
-                    Message = "Joined lobby successfully.",
+                    ResultCode = JoinMatchResultCode.JoinMatch_Success,
                     LobbyCode = lobbyCode
                 });
             }
@@ -142,7 +143,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(new MatchJoinResponse
                 {
                     Success = false,
-                    Message = ex.Message
+                    ResultCode = JoinMatchResultCode.JoinMatch_InvalidSettings
                 });
             }
             catch (TimeoutException ex)
@@ -152,7 +153,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(new MatchJoinResponse
                 {
                     Success = false,
-                    Message = "Server timeout. Please try again."
+                    ResultCode = JoinMatchResultCode.JoinMatch_Timeout
                 });
             }
         }
@@ -193,7 +194,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 var player = lobby.Players.FirstOrDefault(p => p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
                 core.Session.Broadcast(lobbyCode, cb => cb.PlayerJoinedLobby(playerNickname));
-                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(lobby.Players.ToArray()));
+                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby.Players)));
+
             }
             catch (CommunicationException ex)
             {
@@ -281,7 +283,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return;
             }
 
-            List<string> playersToStart;
+            List<GamePlayerInitDTO> playersToStart;
+
 
             lock (lobby.LobbyLock)
             {
@@ -292,7 +295,11 @@ namespace ArchsVsDinosServer.BusinessLogic
                 }
 
                 playersToStart = lobby.Players
-                    .Select(p => p.Nickname)
+                    .Select(p => new GamePlayerInitDTO
+                    {
+                        UserId = p.UserId,
+                        Nickname = p.Nickname
+                    })
                     .ToList();
             }
 
@@ -385,7 +392,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             try
             {
                 var players = activeLobbyData.Players;
-                callback.UpdateListOfPlayers(players.ToArray());
+                callback.UpdateListOfPlayers(MapPlayersToDTOs(players));
             }
             catch (CommunicationException ex)
             {
@@ -411,9 +418,21 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             lobby.RemovePlayer(nickname);
             core.Session.Broadcast(lobbyCode, cb => cb.PlayerLeftLobby(nickname));
-            core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(lobby.Players.ToArray()));
+            core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby.Players)));
+
         }
 
-        
+        private LobbyPlayerDTO[] MapPlayersToDTOs(IEnumerable<LobbyPlayer> players)
+        {
+            return players.Select(p => new LobbyPlayerDTO
+            {
+                UserId = p.UserId,
+                Nickname = p.Nickname,
+                IsReady = p.IsReady
+            }).ToArray();
+        }
+
+
+
     }
 }

@@ -8,15 +8,13 @@ using System.Threading.Tasks;
 namespace Contracts.DTO
 {
     [DataContract]
-    public class LobbyPlayerDTO
+    public class GamePlayerInitDTO
     {
         [DataMember]
         public int UserId { get; set; }
 
         [DataMember]
         public string Nickname { get; set; }
-        [DataMember]
-        public bool IsReady { get; set; }
-
     }
+
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.DTO.Result_Codes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -13,7 +14,7 @@ namespace Contracts.DTO.Response
         [DataMember]
         public bool Success { get; set; }
         [DataMember]
-        public string Message { get; set; }
+        public MatchCreationResultCode ResultCode { get; set; }
         [DataMember]
         public string LobbyCode { get; set; }
     }

@@ -146,7 +146,6 @@
     <Compile Include="BusinessLogic\Chat.cs" />
     <Compile Include="BusinessLogic\Friend.cs" />
     <Compile Include="BusinessLogic\FriendRequestLogic.cs" />
-    <Compile Include="BusinessLogic\GameManagement\ArmyTypeHelper.cs" />
     <Compile Include="BusinessLogic\GameManagement\BattleResolver.cs" />
     <Compile Include="BusinessLogic\GameManagement\BattleResult.cs" />
     <Compile Include="BusinessLogic\GameManagement\Board\CentralBoard.cs" />
@@ -158,8 +157,10 @@
     <Compile Include="BusinessLogic\GameManagement\Cards\DinoInstance.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameActionHandler.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameCallbackRegistery.cs" />
+    <Compile Include="BusinessLogic\GameManagement\GameCoreContext.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameEndHandler.cs" />
     <Compile Include="BusinessLogic\GameLogic.cs" />
+    <Compile Include="BusinessLogic\GameManagement\GameNotifier.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameRulesValidator.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameSessionManager.cs" />
     <Compile Include="BusinessLogic\GameManagement\GameSetupHandler.cs" />
@@ -196,6 +197,7 @@
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\Game\IGameLogic.cs" />
+    <Compile Include="Interfaces\Game\IGameNotifier.cs" />
     <Compile Include="Interfaces\ICallbackProvider.cs" />
     <Compile Include="Interfaces\ICodeGenerator.cs" />
     <Compile Include="Interfaces\IDatabase.cs" />
@@ -217,6 +219,7 @@
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Model\ActiveLobbyData.cs" />
+    <Compile Include="Model\LobbyPlayer.cs" />
     <Compile Include="Music.cs">
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>

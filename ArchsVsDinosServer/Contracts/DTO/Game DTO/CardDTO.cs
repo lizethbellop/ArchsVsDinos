@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Contracts.DTO.Game_DTO.Enums;
 
 namespace Contracts.DTO.Game_DTO
 {
@@ -11,18 +12,27 @@ namespace Contracts.DTO.Game_DTO
     public class CardDTO
     {
         [DataMember]
-        public int IdCard { get; set; }  
+        public int IdCard { get; set; }
 
         [DataMember]
         public int Power { get; set; }
 
         [DataMember]
-        public string Type { get; set; }
+        public ArmyType Element { get; set; }
 
         [DataMember]
-        public string Element { get; set; }
+        public DinoPartType PartType { get; set; }
 
         [DataMember]
-        public string BodyPart { get; set; }
+        public bool HasTopJoint { get; set; }
+
+        [DataMember]
+        public bool HasBottomJoint { get; set; }
+
+        [DataMember]
+        public bool HasLeftJoint { get; set; }
+
+        [DataMember]
+        public bool HasRightJoint { get; set; }
     }
 }

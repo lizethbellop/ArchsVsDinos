@@ -1,61 +1,117 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using System;
 using System.Collections.Generic;
+using Contracts.DTO.Game_DTO.Enums;
 using System.Linq;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Board
 {
     public class CentralBoard
     {
-        public List<int> SandArmy { get; set; } = new List<int>();
-        public List<int> WaterArmy { get; set; } = new List<int>();
-        public List<int> WindArmy { get; set; } = new List<int>();
+        private readonly object syncRoot = new object();
 
-        public List<int> GetArmyByType(string element)
+        private readonly List<int> landArmy = new List<int>();
+        private readonly List<int> waterArmy = new List<int>();
+        private readonly List<int> airArmy = new List<int>();
+
+        private CardInGame supremeBossCard;
+
+        public IReadOnlyList<int> LandArmy => landArmy.AsReadOnly();
+        public IReadOnlyList<int> WaterArmy => waterArmy.AsReadOnly();
+        public IReadOnlyList<int> AirArmy => airArmy.AsReadOnly();
+        public CardInGame SupremeBossCard => supremeBossCard;
+
+        public List<int> GetArmyByType(ArmyType type)
         {
-            if (string.IsNullOrWhiteSpace(element))
+            lock (syncRoot)
             {
-                return null;
-            }
-
-            switch (element.ToLower())
-            {
-                case "sand":
-                    return SandArmy;
-                case "water":
-                    return WaterArmy;
-                case "wind":
-                    return WindArmy;
-                default:
-                    return null;
+                switch (type)
+                {
+                    case ArmyType.Land:
+                        return landArmy;
+                    case ArmyType.Water:
+                        return waterArmy;
+                    case ArmyType.Air:
+                        return airArmy;
+                    default:
+                        return null;
+                }
             }
         }
 
-        public int GetArmyPower(string element)
+        public void AddArchCardToArmy(CardInGame archCard)
         {
-            var army = GetArmyByType(element);
-            if (army == null || army.Count == 0)
+            if (archCard == null || archCard.Element == ArmyType.None) return;
+
+            lock (syncRoot)
             {
-                return 0;
+                var army = GetArmyByType(archCard.Element);
+                if (army != null)
+                {
+                    army.Add(archCard.IdCard);
+                }
             }
+        }
+
+        public void SetSupremeBoss(CardInGame bossCard)
+        {
+            lock (syncRoot)
+            {
+                supremeBossCard = bossCard;
+            }
+        }
+
+        public CardInGame RemoveSupremeBoss()
+        {
+            lock (syncRoot)
+            {
+                var boss = supremeBossCard;
+                supremeBossCard = null;
+                return boss;
+            }
+        }
+
+        public int GetArmyPower(ArmyType type)
+        {
+            var army = GetArmyByType(type);
+            if (army == null || army.Count == 0) return 0;
 
             int totalPower = 0;
-            foreach (var cardId in army)
+
+            lock (syncRoot)
             {
-                var card = CardInGame.FromDefinition(cardId);
-                if (card != null)
+                foreach (var cardId in army)
                 {
-                    totalPower += card.Power;
+                    var card = CardInGame.FromDefinition(cardId);
+                    
+                    if (card != null)
+                    {
+                        totalPower += card.Power;
+                    }
+                }
+                
+                if (SupremeBossCard != null && SupremeBossCard.Element == type)
+                {
+                    totalPower += SupremeBossCard.Power;
                 }
             }
 
             return totalPower;
         }
 
-        public void ClearArmy(string element)
+        public List<int> ClearArmy(ArmyType type)
         {
-            var army = GetArmyByType(element);
-            army?.Clear();
+            lock (syncRoot)
+            {
+                var army = GetArmyByType(type);
+                if (army != null)
+                {
+                    var discardedCards = new List<int>(army);
+                    army.Clear();
+                    return discardedCards;
+                }
+                return new List<int>();
+            }
         }
     }
 }

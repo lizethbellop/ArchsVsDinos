@@ -1,39 +1,24 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
+using Contracts.DTO.Game_DTO.Enums;
+using System;
 using System.Linq;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
     public class GameRulesValidator
     {
-        private const int MaxCardsPerTurn = 2;
-        private const int MaxActionsPerTurn = 3;
+        private const int CostPerAction = 1;
+        private const int CostProvoke = 3;
 
-        public bool CanDrawCard(GameSession session, int userId)
+        public bool CanTakeOneCostAction(GameSession session, int userId)
         {
             if (session == null || session.CurrentTurn != userId)
             {
                 return false;
             }
 
-            var totalActions = session.CardsDrawnThisTurn + session.CardsPlayedThisTurn;
-            return totalActions < MaxActionsPerTurn;
-        }
-
-        public bool CanPlayCard(GameSession session, int userId)
-        {
-            if (session == null || session.CurrentTurn != userId)
-            {
-                return false;
-            }
-
-            if (session.CardsPlayedThisTurn >= MaxCardsPerTurn)
-            {
-                return false;
-            }
-
-            var totalActions = session.CardsDrawnThisTurn + session.CardsPlayedThisTurn;
-            return totalActions < MaxActionsPerTurn;
+            return session.RemainingMoves >= CostPerAction;
         }
 
         public bool CanProvoke(GameSession session, int userId)
@@ -43,9 +28,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            return session.CardsDrawnThisTurn == 0 &&
-                   session.CardsPlayedThisTurn == 0 &&
-                   !session.HasTakenMainAction;
+            return session.RemainingMoves >= CostProvoke;
         }
 
         public bool CanEndTurn(GameSession session, int userId)
@@ -55,12 +38,12 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public bool IsValidDinoHead(CardInGame card)
         {
-            return card != null && card.Type == "head" && card.IsDinoHead();
+            return card != null && card.PartType == DinoPartType.Head;
         }
 
         public bool IsValidBodyPart(CardInGame card)
         {
-            return card != null && card.Type == "body" && card.IsBodyPart();
+            return card != null && card.IsBodyPart();
         }
 
         public bool CanAttachBodyPart(CardInGame bodyCard, DinoInstance dino)
@@ -70,10 +53,10 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            var normalizedBodyElement = ArmyTypeHelper.NormalizeElement(bodyCard.Element);
-            var normalizedDinoElement = ArmyTypeHelper.NormalizeElement(dino.Element);
+            var bodyElement = bodyCard.Element;
+            var dinoElement = dino.Element;
 
-            return normalizedBodyElement == normalizedDinoElement;
+            return bodyElement == ArmyType.None || bodyElement == dinoElement;
         }
 
         public bool PlayerHasCard(PlayerSession player, int cardId)
@@ -98,7 +81,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public bool IsValidArmyType(string armyType)
         {
-            return ArmyTypeHelper.IsValidBaseType(armyType);
+            ArmyType result;
+            return Enum.TryParse(armyType, true, out result) && result != ArmyType.None;
         }
     }
 }

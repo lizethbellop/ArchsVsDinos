@@ -1,4 +1,5 @@
 ﻿using System;
+using Contracts.DTO.Game_DTO.Enums;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,40 +9,113 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
 {
     public class CardInGame
     {
-        public int IdCard { get; set; }        
-        public int Power { get; set; }
-        public string Type { get; set; }     
-        public string Element { get; set; }   
-        public string BodyPart { get; set; }
+        public int IdCard { get; private set; }
+        public int Power { get; private set; }
+
+        public ArmyType Element { get; private set; }
+        public DinoPartType PartType { get; private set; }
+
+        public bool HasTopJoint { get; private set; }
+        public bool HasBottomJoint { get; private set; }
+        public bool HasLeftJoint { get; private set; }
+        public bool HasRightJoint { get; private set; }
+
+        public CardInGame() { }
 
         public static CardInGame FromDefinition(int idCard)
         {
-            var cardDefinition = CardDefinitions.GetCard(idCard);
-            if (cardDefinition == null) return null;
+            var def = CardDefinitions.GetCard(idCard);
+            if (def == null) return null;
 
-            return new CardInGame
+            var newCard = new CardInGame
             {
-                IdCard = cardDefinition.IdCard,
-                Power = cardDefinition.Power,
-                Type = cardDefinition.Type,
-                Element = cardDefinition.Element,
-                BodyPart = cardDefinition.BodyPart
+                IdCard = def.IdCard,
+                Power = def.Power,
+                Element = ParseElement(def.Element),
+                PartType = ParsePartType(def.BodyPart, def.Type)
             };
+
+            AssignJoints(newCard);
+
+            return newCard;
+        }
+
+        private static ArmyType ParseElement(string element)
+        {
+            string normalized = element;
+
+            switch (element)
+            {
+                case "Sand": normalized = "Land"; break;
+                case "Water": normalized = "Water"; break;
+                case "Wind": normalized = "Air"; break;
+            }
+
+            ArmyType result;
+            if (Enum.TryParse(normalized, true, out result))
+            {
+                return result;
+            }
+            return ArmyType.None;
+        }
+
+        private static DinoPartType ParsePartType(string bodyPart, string type)
+        {
+            if (type == "head") return DinoPartType.Head;
+
+            DinoPartType result;
+
+            switch (bodyPart)
+            {
+                case "Chest": result = DinoPartType.Torso; break;
+                case "Legs": result = DinoPartType.Legs; break;
+                case "LeftArm":
+                case "RightArm": result = DinoPartType.Arms; break;
+                default: result = DinoPartType.None; break;
+            }
+            return result;
+        }
+
+        private static void AssignJoints(CardInGame card)
+        {
+            switch (card.PartType)
+            {
+                case DinoPartType.Head:
+                    card.HasBottomJoint = true;
+                    break;
+                case DinoPartType.Torso:
+                    card.HasTopJoint = true;
+                    card.HasBottomJoint = true;
+                    card.HasLeftJoint = true;
+                    card.HasRightJoint = true;
+                    break;
+                case DinoPartType.Legs:
+                    card.HasTopJoint = true;
+                    break;
+                case DinoPartType.Arms:
+                    card.HasLeftJoint = true;
+                    card.HasRightJoint = true;
+                    break;
+                default:
+                    break;
+            }
         }
 
         public bool IsArch()
         {
-            return Type == "arch";
+            return PartType == DinoPartType.None && Element != ArmyType.None;
         }
 
         public bool IsDinoHead()
         {
-            return Type == "head";
+            return PartType == DinoPartType.Head;
         }
 
         public bool IsBodyPart()
         {
-            return Type == "body";
+            return PartType == DinoPartType.Torso ||
+                   PartType == DinoPartType.Legs ||
+                   PartType == DinoPartType.Arms;
         }
     }
 

@@ -14,7 +14,7 @@ namespace ArchsVsDinosServer.Services.GameService
 {
     public class GameNotificationService
     {
-        private readonly ILoggerHelper logger;
+        /*private readonly ILoggerHelper logger;
 
         public GameNotificationService(ILoggerHelper logger)
         {
@@ -269,6 +269,6 @@ namespace ArchsVsDinosServer.Services.GameService
             }
         }
 
-        #endregion
+        #endregion*/
     }
 }

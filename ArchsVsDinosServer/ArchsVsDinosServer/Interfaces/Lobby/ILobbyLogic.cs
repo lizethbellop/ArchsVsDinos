@@ -11,7 +11,7 @@ namespace ArchsVsDinosServer.Interfaces.Lobby
     public interface ILobbyLogic
     {
         Task<MatchCreationResponse> CreateLobby(MatchSettings settings);
-        Task<MatchJoinResponse> JoinLobby(string lobbyCode, string nickname);
+        Task<MatchJoinResponse> JoinLobby(string lobbyCode, int userId, string nickname);
         Task<bool> SendInvitations(string lobbyCode, string sender, List<string> guests);
         void ConnectPlayer(string lobbyCode, string playerNickname);
         void DisconnectPlayer(string lobbyCode, string playerNickname);

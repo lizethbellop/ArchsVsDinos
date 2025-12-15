@@ -12,7 +12,7 @@ namespace ArchsVsDinosServer.Model
         public string LobbyCode { get; set; }
         public MatchSettings Settings { get; set; }
 
-        public List<LobbyPlayerDTO> Players { get; set; }
+        public List<LobbyPlayer> Players { get; set; }
 
         public readonly object LobbyLock = new object();
 
@@ -20,29 +20,24 @@ namespace ArchsVsDinosServer.Model
         {
             LobbyCode = lobbyCode;
             Settings = settings;
-            Players = new List<LobbyPlayerDTO>();
+            Players = new List<LobbyPlayer>();
         }
 
         public ActiveLobbyData() { }
 
-        public bool AddPlayer(string nickname)
+        public bool AddPlayer(int userId, string nickname)
         {
             lock (LobbyLock)
             {
                 if (Players.Count >= Settings.MaxPlayers)
-                {
                     return false;
-                }
 
-                if (Players.Any(p => p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase)))
-                {
+                if (Players.Any(p =>
+                    p.UserId == userId ||
+                    p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase)))
                     return false;
-                }
 
-                Players.Add(new LobbyPlayerDTO
-                {
-                    Nickname = nickname
-                });
+                Players.Add(new LobbyPlayer(userId, nickname));
                 return true;
             }
         }
@@ -51,13 +46,13 @@ namespace ArchsVsDinosServer.Model
         {
             lock (LobbyLock)
             {
-                var player = Players.FirstOrDefault(p => p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase));
-                if (player != null)
-                {
-                    Players.Remove(player);
-                }
-            }
+                var player = Players
+                    .FirstOrDefault(p => p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase));
 
+                if (player != null)
+                    Players.Remove(player);
+            }
         }
     }
+
 }

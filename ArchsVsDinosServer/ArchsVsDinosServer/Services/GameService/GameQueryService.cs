@@ -15,7 +15,7 @@ namespace ArchsVsDinosServer.Services.GameService
 {
     public class GameQueryService
     {
-        private readonly GameSessionManager sessionManager;
+        /*private readonly GameSessionManager sessionManager;
         private readonly GameEndHandler endHandler;
         private readonly ServiceDependencies dependencies;
         private readonly ILoggerHelper logger;
@@ -197,6 +197,6 @@ namespace ArchsVsDinosServer.Services.GameService
             };
 
             return centralBoardData;
-        }
+        }*/
     }
 }
