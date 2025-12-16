@@ -5,18 +5,16 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Contracts.DTO.Game_DTO
+namespace Contracts.DTO
 {
     [DataContract]
-    public class ExchangeCardDTO
+    public class GameFault
     {
         [DataMember]
-        public int TargetUserId { get; set; } 
+        public string Code { get; set; } 
 
         [DataMember]
-        public int OfferedCardId { get; set; } 
-
-        [DataMember]
-        public int RequestedCardId { get; set; }
+        public string Detail { get; set; }
     }
+
 }

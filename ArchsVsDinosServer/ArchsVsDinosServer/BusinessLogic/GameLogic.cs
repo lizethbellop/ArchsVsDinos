@@ -3,17 +3,22 @@ using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Interfaces.Game;
+using ArchsVsDinosServer.Services;
+using ArchsVsDinosServer.Utils;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Game_DTO;
 using Contracts.DTO.Game_DTO.Enums;
-using log4net.Repository.Hierarchy;
+using Contracts.DTO.Result_Codes;
+using Contracts.DTO.Statistics;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.SessionState;
+using ArchsVsDinosServer.Model;
 
 namespace ArchsVsDinosServer.BusinessLogic
 {
@@ -23,13 +28,17 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly GameCoreContext core;
         private readonly GameRulesValidator validator;
         private readonly GameEndHandler endHandler;
+        private readonly IGameNotifier notifier;
+        private readonly IStatisticsManager statisticsManager;
 
-        public GameLogic(GameCoreContext core, ILoggerHelper logger)
+        public GameLogic(GameCoreContext core, ILoggerHelper logger, IGameNotifier notifier, IStatisticsManager statisticsManager)
         {
             this.core = core ?? throw new ArgumentNullException(nameof(core));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.validator = new GameRulesValidator();
             this.endHandler = new GameEndHandler();
+            this.notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
+            this.statisticsManager = statisticsManager ?? throw new ArgumentNullException(nameof(statisticsManager));
         }
         public bool AttachBodyPart(string matchCode, int userId, AttachBodyPartDTO data)
         {
@@ -56,11 +65,12 @@ namespace ArchsVsDinosServer.BusinessLogic
                     throw new InvalidOperationException($"No se pudo adjuntar o remover la carta {card.IdCard}.");
 
                 logger.LogInfo($"Jugador {userId} adjuntó carta {card.IdCard} al Dino {dino.DinoInstanceId} en {matchCode}.");
+
+                var dto = CreateBodyPartAttachedDTO(session, player, dino, card);
+                notifier.NotifyBodyPartAttached(dto);
                 return true;
             }
         }
-
-
         public CardInGame DrawCard(string matchCode, int userId, int pileIndex)
         {
             var session = GetActiveSession(matchCode);
@@ -87,11 +97,12 @@ namespace ArchsVsDinosServer.BusinessLogic
                 }
 
                 logger.LogInfo($"Player {userId} drew card {card.IdCard} from pile {pileIndex} in match {matchCode}");
+
+                var dto = CreateCardDrawnDTO(session, player, card);
+                notifier.NotifyCardDrawn(dto);
                 return card;
             }
         }
-
-
         public bool EndTurn(string matchCode, int userId)
         {
             var session = GetActiveSession(matchCode);
@@ -108,39 +119,57 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 session.EndTurn(nextPlayer.UserId);
                 logger.LogInfo($"Turn ended for {userId}. Next: {nextPlayer.UserId} in {matchCode}");
+
+                notifier.NotifyTurnChanged(new TurnChangedDTO
+                {
+                    MatchCode = matchCode,
+                    CurrentPlayerUserId = nextPlayer.UserId,
+                    TurnNumber = session.TurnNumber,
+                    RemainingTime = TimeSpan.Zero,
+                    PlayerScores = session.Players.ToDictionary(p => p.UserId, p => p.Points)
+                });
+
+
                 return true;
             }
         }
 
 
-        public CardInGame ExchangeCard(string matchCode, int userId, ExchangeCardDTO data)
+        public bool ExchangeCard(string matchCode, int userId, ExchangeCardDTO data)
         {
             var session = GetActiveSession(matchCode);
-            var player = GetPlayer(session, userId);
+            var playerA = GetPlayer(session, userId);
+            var playerB = GetPlayer(session, data.TargetUserId);
+
+            if (playerA == null || playerB == null)
+                return false;
 
             lock (session.SyncRoot)
             {
-                if (!session.ConsumeMoves(1)) return null;
+                if (!session.ConsumeMoves(1))
+                    return false;
 
-                var cardToDiscard = player.RemoveCardById(data.CardIdToDiscard);
-                if (cardToDiscard == null)
-                {
-                    session.RestoreMoves(1);
-                    return null;
-                }
+                var cardA = playerA.GetCardById(data.OfferedCardId);
+                var cardB = playerB.GetCardById(data.RequestedCardId);
 
-                session.AddToDiscard(cardToDiscard.IdCard);
+                if (cardA == null || cardB == null)
+                    return false;
 
-                var drawnIds = session.DrawFromPile(data.PileIndex, 1);
-                if (drawnIds == null || drawnIds.Count == 0) return null;
+                if (cardA.PartType != cardB.PartType)
+                    return false;
 
-                var newCard = CardInGame.FromDefinition(drawnIds[0]);
-                if (newCard != null) player.AddCard(newCard);
+                playerA.RemoveCard(cardA);
+                playerB.RemoveCard(cardB);
 
-                logger.LogInfo($"Jugador {userId} intercambió carta {cardToDiscard.IdCard} por {newCard?.IdCard} en {matchCode}");
-                return newCard;
+                playerA.AddCard(cardB);
+                playerB.AddCard(cardA);
+
+                NotifyCardExchange(matchCode, playerA, playerB, cardA, cardB);
+
+                return true;
             }
         }
+
 
         public Task<bool> InitializeMatch(string matchCode, List<GamePlayerInitDTO> players)
         {
@@ -159,6 +188,21 @@ namespace ArchsVsDinosServer.BusinessLogic
             StartFirstTurn(session);
 
             logger.LogInfo($"InitializeMatch: Match {matchCode} initialized successfully.");
+
+            var initDto = new GameInitializedDTO
+            {
+                MatchCode = matchCode,
+                Players = playerSessions.Select((p, index) => new PlayerInGameDTO
+                {
+                    UserId = p.UserId,
+                    TurnOrder = index + 1
+                }).ToList(),
+                RemainingCardsInDeck = session.DrawPiles.Sum(p => p.Count)
+            };
+
+            notifier.NotifyGameInitialized(initDto);
+
+
             return Task.FromResult(true);
         }
 
@@ -176,10 +220,14 @@ namespace ArchsVsDinosServer.BusinessLogic
                 var dino = new DinoInstance(player.GetNextDinoId(), card);
                 if (!player.RemoveCard(card)) throw new InvalidOperationException("No se pudo remover carta.");
                 player.AddDino(dino);
+
+                var dto = CreateDinoHeadPlayedDTO(session, player, dino);
+                notifier.NotifyDinoHeadPlayed(dto);
+
                 return dino;
             }
         }
-        
+
         public Task<bool> Provoke(string matchCode, int userId, ArmyType targetArmy)
         {
             var session = GetActiveSession(matchCode);
@@ -192,26 +240,30 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 session.ConsumeMoves(session.RemainingMoves);
 
-                int archPower = session.CentralBoard.GetArmyPower(targetArmy);
-                int dinoPower = player.Dinos.Sum(d => d.TotalPower);
+                var battleResolver = new BattleResolver(new ServiceDependencies());
+                var result = battleResolver.ResolveBattle(session, targetArmy);
 
-                bool playerWins = dinoPower >= archPower;
-                int pointsGained = 0;
-                if (playerWins)
+                var battleResultDto = CreateBattleResultDTO(matchCode, result);
+
+                var provokedDto = new ArchArmyProvokedDTO
                 {
-                    pointsGained = archPower + (session.CentralBoard.SupremeBossCard?.Element == targetArmy ? 3 : 0);
-                    player.Points += pointsGained;
-                }
+                    MatchCode = matchCode,
+                    ProvokerUserId = userId,
+                    ArmyType = targetArmy,
+                    BattleResult = battleResultDto
+                };
 
-                DiscardDinos(session);
+                notifier.NotifyArchArmyProvoked(provokedDto);
+
                 DiscardArmy(session, targetArmy);
+                DiscardDinos(session);
 
-                logger.LogInfo($"Jugador {userId} provocó ejército {targetArmy} en {matchCode}. DinoPower:{dinoPower}, ArchPower:{archPower}, Points:{pointsGained}");
+                logger.LogInfo($"Jugador {userId} provocó ejército {targetArmy} en {matchCode}. " +
+                               $"DinosWon: {result?.DinosWon}, Winner: {result?.Winner?.Nickname ?? "Nadie"}");
+
                 return Task.FromResult(true);
             }
         }
-
-
         private bool IsValidInitialization(string matchCode, List<GamePlayerInitDTO> players)
         {
             if (string.IsNullOrWhiteSpace(matchCode) || players == null || players.Count < 2 || players.Count > 4)
@@ -328,53 +380,123 @@ namespace ArchsVsDinosServer.BusinessLogic
             session.AddToDiscard(discardedArchs);
         }
 
-        public GameEndResult EndGame(string matchCode)
+        public GameEndResult EndGame(string matchCode, GameEndType gameType, string reason)
         {
-            var session = core.Sessions.GetSession(matchCode);
-            if (session == null)
-            {
-                logger.LogWarning($"EndGame: Session {matchCode} not found.");
-                return null;
-            }
+            if (string.IsNullOrWhiteSpace(matchCode))
+                throw new ArgumentException(nameof(matchCode));
+
+            var session = core.Sessions.GetSession(matchCode)
+                ?? throw new InvalidOperationException($"Sesión {matchCode} no encontrada.");
 
             lock (session.SyncRoot)
             {
-                if (!endHandler.ShouldGameEnd(session))
+                GameEndResult result;
+
+                if (gameType == GameEndType.Finished)
                 {
-                    logger.LogInfo($"EndGame: Game {matchCode} is not finished yet.");
-                    return null;
+                    if (!endHandler.ShouldGameEnd(session))
+                        throw new InvalidOperationException("El juego aún no puede finalizar.");
+
+                    result = endHandler.EndGame(session)
+                        ?? throw new InvalidOperationException("No se pudo calcular el resultado.");
+
+                    TrySaveMatchStatistics(session, result);
+                }
+                else
+                {
+                    result = new GameEndResult
+                    {
+                        Winner = null,
+                        WinnerPoints = 0,
+                        Reason = reason
+                    };
                 }
 
-                var result = endHandler.EndGame(session);
-
-                foreach (var player in session.Players)
-                {
-                    GameCallbackRegistry.Instance.UnregisterCallback(player.UserId);
-                }
-
+                session.MarkAsFinished(gameType);
                 core.Sessions.RemoveSession(matchCode);
 
-                logger.LogInfo($"EndGame: Game {matchCode} ended. Winner: {result.Winner?.Nickname}");
+                notifier.NotifyGameEnded(new GameEndedDTO
+                {
+                    MatchCode = matchCode,
+                    WinnerUserId = result.Winner?.UserId ?? 0,
+                    Reason = reason,
+                    WinnerPoints = result.WinnerPoints
+                });
+
                 return result;
             }
         }
 
-        public bool ConnectToGame(string matchCode, int userId, IGameManagerCallback callback)
+        private void SaveMatchStatistics(GameSession session, GameEndResult result)
         {
-            var session = core.Sessions.GetSession(matchCode);
             if (session == null)
-            {
-                logger.LogWarning($"ConnectToGame: Session {matchCode} not found.");
-                return false;
-            }
+                throw new ArgumentNullException(nameof(session), "Session no puede ser nula.");
+            if (result == null)
+                throw new ArgumentNullException(nameof(result), "GameEndResult no puede ser nulo.");
 
-            lock (session.SyncRoot)
+            if (statisticsManager == null)
+                throw new InvalidOperationException("StatisticsManager no está inicializado.");
+
+            var matchResultDto = new MatchResultDTO
             {
-                GameCallbackRegistry.Instance.RegisterCallback(userId, callback);
-                logger.LogInfo($"ConnectToGame: User {userId} connected to {matchCode}.");
-                return true;
+                MatchId = session.MatchCode,
+                MatchDate = session.StartTime ?? DateTime.UtcNow,
+                PlayerResults = session.Players.Select(p =>
+                {
+                    int archaeologistsEliminated = p.Dinos.Sum(d => d.ArchaeologistsEliminated);
+                    int supremeBossesEliminated = p.Dinos.Sum(d => d.SupremeBossesEliminated);
+
+                    return new PlayerMatchResultDTO
+                    {
+                        UserId = p.UserId,
+                        Points = p.Points,
+                        IsWinner = result.Winner?.UserId == p.UserId,
+                        ArchaeologistsEliminated = archaeologistsEliminated,
+                        SupremeBossesEliminated = supremeBossesEliminated
+                    };
+                }).ToList()
+            };
+
+            var saveCode = statisticsManager.SaveMatchStatistics(matchResultDto);
+            if (saveCode != SaveMatchResultCode.Success)
+                throw new InvalidOperationException($"No se pudieron guardar estadísticas. Código: {saveCode}");
+        }
+
+        private string AppendReason(string original, string addition)
+        {
+            if (string.IsNullOrWhiteSpace(original)) return addition;
+            return $"{original};{addition}";
+        }
+
+        private void TrySaveMatchStatistics(GameSession session, GameEndResult result)
+        {
+            try
+            {
+                SaveMatchStatistics(session, result);
+            }
+            catch (ArgumentNullException ex)
+            {
+                logger.LogError($"Estadísticas no se guardaron (ArgumentNullException) para {session.MatchCode} - {ex.Message}", ex);
+                result.Reason = AppendReason(result.Reason, "statistics_null_error");
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogError($"Estadísticas no se guardaron (InvalidOperationException) para {session.MatchCode} - {ex.Message}", ex);
+                result.Reason = AppendReason(result.Reason, "statistics_invalid_operation");
+            }
+            catch (SqlException ex)
+            {
+                logger.LogError($"Estadísticas no se guardaron (SQL) para {session.MatchCode} - {ex.Message}", ex);
+                result.Reason = AppendReason(result.Reason, "statistics_sql_error");
+            }
+            catch (EntityException ex)
+            {
+                logger.LogError($"Estadísticas no se guardaron (Entity Framework) para {session.MatchCode} - {ex.Message}", ex);
+                result.Reason = AppendReason(result.Reason, "statistics_entity_error");
             }
         }
+
+        
 
         public void LeaveGame(string matchCode, int userId)
         {
@@ -388,7 +510,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 var playerLeaving = RemovePlayerFromSession(session, userId);
                 if (playerLeaving == null) return;
 
-                UnregisterPlayerCallback(userId);
                 NotifyPlayersPlayerLeft(session, playerLeaving);
 
                 if (session.Players.Count < 2 && !session.IsFinished)
@@ -409,43 +530,189 @@ namespace ArchsVsDinosServer.BusinessLogic
             return null;
         }
 
-        private void UnregisterPlayerCallback(int userId)
-        {
-            GameCallbackRegistry.Instance.UnregisterCallback(userId);
-        }
-
         private void NotifyPlayersPlayerLeft(GameSession session, PlayerSession playerLeaving)
         {
-            foreach (var player in session.Players)
+            var dto = new PlayerExpelledDTO
             {
-                var callback = GameCallbackRegistry.Instance.GetCallback(player.UserId);
-                callback?.OnPlayerExpelled(new PlayerExpelledDTO
-                {
-                    MatchId = session.MatchCode.GetHashCode(),
-                    ExpelledUserId = playerLeaving.UserId,
-                    ExpelledUsername = playerLeaving.Nickname,
-                    Reason = "PlayerLeft"
-                });
-            }
+                MatchId = session.MatchCode.GetHashCode(),
+                ExpelledUserId = playerLeaving.UserId,
+                ExpelledUsername = playerLeaving.Nickname,
+                Reason = "PlayerLeft"
+            };
+
+            notifier.NotifyPlayerExpelled(dto);
         }
 
         private void EndGameDueToInsufficientPlayers(GameSession session)
         {
-            var result = EndGame(session.MatchCode);
+            var result = EndGame(session.MatchCode, GameEndType.Aborted, "Someone left");
 
-            foreach (var player in session.Players)
-            {
-                var callback = GameCallbackRegistry.Instance.GetCallback(player.UserId);
-                callback?.OnGameEnded(new GameEndedDTO
-                {
-                    MatchId = session.MatchCode.GetHashCode(),
-                    WinnerUserId = result.Winner?.UserId ?? 0,
-                    WinnerUsername = result.Winner?.Nickname ?? string.Empty,
-                    Reason = "NotEnoughPlayers",
-                    WinnerPoints = result.WinnerPoints
-                });
-            }
         }
 
+        private BodyPartAttachedDTO CreateBodyPartAttachedDTO(GameSession session, PlayerSession player, DinoInstance dino, CardInGame card)
+        {
+            return new BodyPartAttachedDTO
+            {
+                MatchCode = session.MatchCode,
+                PlayerUserId = player.UserId,
+                DinoInstanceId = dino.DinoInstanceId,
+                BodyCard = new CardDTO
+                {
+                    IdCard = card.IdCard,
+                    Power = card.Power,
+                    Element = card.Element,
+                    PartType = card.PartType,
+                    HasTopJoint = card.HasTopJoint,
+                    HasBottomJoint = card.HasBottomJoint,
+                    HasLeftJoint = card.HasLeftJoint,
+                    HasRightJoint = card.HasRightJoint
+                },
+                NewTotalPower = dino.TotalPower
+            };
+        }
+
+        private CardDrawnDTO CreateCardDrawnDTO(GameSession session, PlayerSession player, CardInGame card)
+        {
+            return new CardDrawnDTO
+            {
+                MatchCode = session.MatchCode,
+                PlayerUserId = player.UserId,
+                Card = new CardDTO
+                {
+                    IdCard = card.IdCard,
+                    Power = card.Power,
+                    Element = card.Element,
+                    PartType = card.PartType,
+                    HasTopJoint = card.HasTopJoint,
+                    HasBottomJoint = card.HasBottomJoint,
+                    HasLeftJoint = card.HasLeftJoint,
+                    HasRightJoint = card.HasRightJoint
+                }
+            };
+        }
+
+        private DinoPlayedDTO CreateDinoHeadPlayedDTO(GameSession session, PlayerSession player, DinoInstance dino)
+        {
+            return new DinoPlayedDTO
+            {
+                MatchCode = session.MatchCode,
+                PlayerUserId = player.UserId,
+                DinoInstanceId = dino.DinoInstanceId,
+                HeadCard = new CardDTO
+                {
+                    IdCard = dino.HeadCard.IdCard,
+                    Power = dino.HeadCard.Power,
+                    Element = dino.HeadCard.Element,
+                    PartType = dino.HeadCard.PartType,
+                    HasTopJoint = dino.HeadCard.HasTopJoint,
+                    HasBottomJoint = dino.HeadCard.HasBottomJoint,
+                    HasLeftJoint = dino.HeadCard.HasLeftJoint,
+                    HasRightJoint = dino.HeadCard.HasRightJoint
+                }
+            };
+        }
+
+        private BattleResultDTO CreateBattleResultDTO(string matchCode, BattleResult result)
+        {
+            if (result == null) return null;
+
+            var archCardsDTO = result.ArchCardIds.Select(CardInGame.FromDefinition)
+                                                 .Where(c => c != null)
+                                                 .Select(c => new CardDTO
+                                                 {
+                                                     IdCard = c.IdCard,
+                                                     Power = c.Power,
+                                                     Element = c.Element,
+                                                     PartType = c.PartType,
+                                                     HasTopJoint = c.HasTopJoint,
+                                                     HasBottomJoint = c.HasBottomJoint,
+                                                     HasLeftJoint = c.HasLeftJoint,
+                                                     HasRightJoint = c.HasRightJoint
+                                                 }).ToList();
+
+            var playerPowers = result.PlayerDinos.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Sum(d => d.TotalPower)
+            );
+
+            return new BattleResultDTO
+            {
+                MatchCode = matchCode,
+                ArmyType = result.ArmyType,
+                ArchPower = result.ArchPower,
+                DinosWon = result.DinosWon,
+                WinnerUserId = result.Winner?.UserId,
+                WinnerUsername = result.Winner?.Nickname,
+                WinnerPower = result.WinnerPower,
+                PointsAwarded = result.DinosWon && result.Winner != null
+                                ? CalculateArchPointsForDTO(result)
+                                : 0,
+                ArchCards = archCardsDTO,
+                PlayerPowers = playerPowers
+            };
+        }
+
+        private int CalculateArchPointsForDTO(BattleResult result)
+        {
+            int points = result.ArchCardIds.Count;
+            var bossCard = result.Winner?.Dinos.SelectMany(d => d.GetAllCards())
+                                .FirstOrDefault(c => c.Element == result.ArmyType);
+            if (bossCard != null)
+                points += 3;
+            return points;
+        }
+
+        private CardInGame RemoveCardToDiscard(PlayerSession player, GameSession session, int cardId)
+        {
+            var card = player.RemoveCardById(cardId);
+            if (card == null)
+            {
+                session.RestoreMoves(1);
+                return null;
+            }
+            session.AddToDiscard(card.IdCard);
+            return card;
+        }
+
+        private CardInGame DrawNewCard(PlayerSession player, GameSession session, int pileIndex)
+        {
+            var drawnIds = session.DrawFromPile(pileIndex, 1);
+            if (drawnIds == null || drawnIds.Count == 0) return null;
+
+            var card = CardInGame.FromDefinition(drawnIds[0]);
+            if (card != null) player.AddCard(card);
+
+            return card;
+        }
+
+        private void NotifyCardExchange(string matchCode, PlayerSession playerA, PlayerSession playerB, CardInGame cardFromA, CardInGame cardFromB)
+        {
+            var dto = new CardExchangedDTO
+            {
+                MatchCode = matchCode,
+                PlayerAUserId = playerA.UserId,
+                PlayerBUserId = playerB.UserId,
+                CardFromPlayerA = CreateCardDTO(cardFromA),
+                CardFromPlayerB = CreateCardDTO(cardFromB)
+            };
+
+            notifier.NotifyCardExchanged(dto);
+        }
+
+
+        private CardDTO CreateCardDTO(CardInGame card)
+        {
+            return new CardDTO
+            {
+                IdCard = card.IdCard,
+                Power = card.Power,
+                Element = card.Element,
+                PartType = card.PartType,
+                HasTopJoint = card.HasTopJoint,
+                HasBottomJoint = card.HasBottomJoint,
+                HasLeftJoint = card.HasLeftJoint,
+                HasRightJoint = card.HasRightJoint
+            };
+        }
     }
 }

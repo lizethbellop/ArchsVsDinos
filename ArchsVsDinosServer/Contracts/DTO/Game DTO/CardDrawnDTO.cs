@@ -11,13 +11,10 @@ namespace Contracts.DTO.Game_DTO
     public class CardDrawnDTO
     {
         [DataMember]
-        public int MatchId { get; set; }
+        public string MatchCode { get; set; }
 
         [DataMember]
         public int PlayerUserId { get; set; }
-
-        [DataMember]
-        public string PlayerUsername { get; set; }
 
         [DataMember]
         public int DrawPileNumber { get; set; }

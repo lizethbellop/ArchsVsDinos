@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.DTO.Game_DTO.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -11,16 +12,13 @@ namespace Contracts.DTO.Game_DTO
     public class ArchArmyProvokedDTO
     {
         [DataMember]
-        public int MatchId { get; set; }
+        public string MatchCode { get; set; }
 
         [DataMember]
         public int ProvokerUserId { get; set; }
 
         [DataMember]
-        public string ProvokerUsername { get; set; }
-
-        [DataMember]
-        public string ArmyType { get; set; }
+        public ArmyType ArmyType { get; set; }
 
         [DataMember]
         public BattleResultDTO BattleResult { get; set; }

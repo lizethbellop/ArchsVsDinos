@@ -14,15 +14,13 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
         public int DinoInstanceId { get; }
         public ArmyType Element { get; }
 
-        
-        public CardInGame HeadCard { get; } 
+        public CardInGame HeadCard { get; }
 
         private CardInGame torsoCard;
         private CardInGame leftArmCard;
         private CardInGame rightArmCard;
         private CardInGame legsCard;
 
-        
         public CardInGame TorsoCard => torsoCard;
         public CardInGame LeftArmCard => leftArmCard;
         public CardInGame RightArmCard => rightArmCard;
@@ -31,13 +29,13 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
         public DinoInstance(int dinoInstanceId, CardInGame headCard)
         {
             if (headCard == null)
-                throw new ArgumentNullException(nameof(headCard), "DinoInstance must be created with a HeadCard.");
+                throw new ArgumentNullException(nameof(headCard));
 
-            if (headCard.PartType != DinoPartType.Head) // Usa el Enum correcto
+            if (headCard.PartType != DinoPartType.Head)
                 throw new ArgumentException("HeadCard must be of type Head.");
 
-            if (headCard.Element == ArmyType.None) // Usa la propiedad Element de CardInGame
-                throw new ArgumentException("HeadCard must have a defined ArmyType (Element).");
+            if (headCard.Element == ArmyType.None)
+                throw new ArgumentException("HeadCard must have a defined ArmyType.");
 
             DinoInstanceId = dinoInstanceId;
             HeadCard = headCard;
@@ -53,54 +51,25 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
                 switch (card.PartType)
                 {
                     case DinoPartType.Torso:
-                        if (torsoCard == null)
-                        {
-                            torsoCard = card;
-                            return true;
-                        }
+                        if (torsoCard == null) { torsoCard = card; return true; }
                         break;
-
                     case DinoPartType.Legs:
-                        if (legsCard == null)
-                        {
-                            legsCard = card;
-                            return true;
-                        }
+                        if (legsCard == null) { legsCard = card; return true; }
                         break;
-
                     case DinoPartType.Arms:
-                        if (leftArmCard == null)
-                        {
-                            leftArmCard = card;
-                            return true;
-                        }
-                        if (rightArmCard == null)
-                        {
-                            rightArmCard = card;
-                            return true;
-                        }
+                        if (leftArmCard == null) { leftArmCard = card; return true; }
+                        if (rightArmCard == null) { rightArmCard = card; return true; }
                         break;
-
-                    default:
-                        return false;
                 }
                 return false;
             }
         }
 
-        public int TotalPower
-        {
-            get
-            {
-                int power = HeadCard?.Power ?? 0;
-                power += torsoCard?.Power ?? 0;
-                power += leftArmCard?.Power ?? 0;
-                power += rightArmCard?.Power ?? 0;
-                power += legsCard?.Power ?? 0;
-
-                return power;
-            }
-        }
+        public int TotalPower => HeadCard?.Power ?? 0
+            + (torsoCard?.Power ?? 0)
+            + (leftArmCard?.Power ?? 0)
+            + (rightArmCard?.Power ?? 0)
+            + (legsCard?.Power ?? 0);
 
         public IReadOnlyList<CardInGame> GetAllCards()
         {
@@ -111,5 +80,26 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
             if (legsCard != null) list.Add(legsCard);
             return list.AsReadOnly();
         }
+
+        public int ArchaeologistsEliminated
+        {
+            get
+            {
+                return GetAllCards()
+                    .Where(c => c.PartType == DinoPartType.None && c.Element != ArmyType.None && c.Power < 10)
+                    .Sum(c => c.Power);
+            }
+        }
+
+        public int SupremeBossesEliminated
+        {
+            get
+            {
+                return GetAllCards()
+                    .Where(c => c.PartType == DinoPartType.None && c.Element != ArmyType.None && c.Power >= 10)
+                    .Sum(c => c.Power);
+            }
+        }
     }
+
 }

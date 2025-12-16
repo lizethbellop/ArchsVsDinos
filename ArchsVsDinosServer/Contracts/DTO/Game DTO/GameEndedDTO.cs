@@ -11,16 +11,13 @@ namespace Contracts.DTO.Game_DTO
     public class GameEndedDTO
     {
         [DataMember]
-        public int MatchId { get; set; }
+        public string MatchCode { get; set; }
 
         [DataMember]
         public string Reason { get; set; }
 
         [DataMember]
         public int WinnerUserId { get; set; }
-
-        [DataMember]
-        public string WinnerUsername { get; set; }
 
         [DataMember]
         public int WinnerPoints { get; set; }

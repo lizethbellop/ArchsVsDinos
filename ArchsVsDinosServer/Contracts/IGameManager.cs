@@ -1,4 +1,5 @@
 ﻿using Contracts.DTO.Game_DTO;
+using Contracts.DTO.Game_DTO.Enums;
 using Contracts.DTO.Game_DTO.State;
 using Contracts.DTO.Game_DTO.Swap;
 using Contracts.DTO.Result_Codes;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    [ServiceContract(CallbackContract = typeof(IGameManagerCallback), SessionMode = SessionMode.Required)]
+    [ServiceContract(CallbackContract = typeof(IGameManagerCallback),SessionMode = SessionMode.Required)]
     public interface IGameManager
     {
         [OperationContract]
@@ -21,33 +22,22 @@ namespace Contracts
         void LeaveGame(string matchCode, int userId);
 
         [OperationContract]
-        GameSetupResultCode InitializeGame(string matchCode);
+        void DrawCard(string matchCode, int userId, int drawPileNumber);
 
         [OperationContract]
-        DrawCardResultCode DrawCard(string matchCode, int userId, int drawPileNumber);
+        void PlayDinoHead(string matchCode, int userId, int cardId);
 
         [OperationContract]
-        PlayCardResultCode PlayDinoHead(string matchCode, int userId, int cardId);
+        void AttachBodyPartToDino(string matchCode, int userId, AttachBodyPartDTO attachmentData);
 
         [OperationContract]
-        PlayCardResultCode AttachBodyPartToDino(string matchCode, int userId, AttachBodyPartDTO attachmentData);
+        void SwapCardWithPlayer(string matchCode, int initiatorUserId, ExchangeCardDTO request);
 
         [OperationContract]
-        SwapCardResultCode SwapCardWithPlayer(string matchCode, int initiatorUserId, SwapCardRequestDTO request);
+        void ProvokeArchArmy(string matchCode, int userId, ArmyType armyType);
 
         [OperationContract]
-        ProvokeResultCode ProvokeArchArmy(string matchCode, int userId, string armyType);
-
-        [OperationContract]
-        EndTurnResultCode EndTurn(string matchCode, int userId);
-
-        [OperationContract]
-        GameStateDTO GetGameState(string matchCode);
-
-        [OperationContract]
-        PlayerHandDTO GetPlayerHand(string matchCode, int userId);
-
-        [OperationContract]
-        CentralBoardDTO GetCentralBoard(string matchCode);
+        void EndTurn(string matchCode, int userId);
     }
+
 }

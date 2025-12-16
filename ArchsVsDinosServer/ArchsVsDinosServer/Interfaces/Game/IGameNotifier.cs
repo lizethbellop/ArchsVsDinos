@@ -11,9 +11,6 @@ namespace ArchsVsDinosServer.Interfaces.Game
 {
     public interface IGameNotifier
     {
-        void RegisterCallback();
-        void UnregisterCallback(IGameManagerCallback callback);
-
         void NotifyGameInitialized(GameInitializedDTO data);
         void NotifyGameStarted(GameStartedDTO data);
         void NotifyTurnChanged(TurnChangedDTO data);
@@ -25,6 +22,8 @@ namespace ArchsVsDinosServer.Interfaces.Game
         void NotifyBattleResolved(BattleResultDTO data);
         void NotifyGameEnded(GameEndedDTO data);
         void NotifyPlayerExpelled(PlayerExpelledDTO data);
+
+        void NotifyCardExchanged(CardExchangedDTO data);
     }
 
 }

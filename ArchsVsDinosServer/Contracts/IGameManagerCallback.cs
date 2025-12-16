@@ -44,5 +44,8 @@ namespace Contracts
 
         [OperationContract(IsOneWay = true)]
         void OnPlayerExpelled(PlayerExpelledDTO dto);
+
+        [OperationContract(IsOneWay = true)]
+        void OnCardExchanged(CardExchangedDTO dto);
     }
 }

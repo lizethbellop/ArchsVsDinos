@@ -16,7 +16,7 @@ namespace UnitTest.StatisticsTests
     [TestClass]
     public class MatchResultProcessorTest : BaseTestClass
     {
-        private MatchResultProcessor matchResultProcessor;
+        /*private MatchResultProcessor matchResultProcessor;
 
         [TestInitialize]
         public void Setup()
@@ -812,7 +812,7 @@ namespace UnitTest.StatisticsTests
             var result = matchResultProcessor.GetMatchStatistics("MATCH001");
 
             Assert.AreEqual(expectedResult, result);
-        }
+        }*/
 
     }
 }

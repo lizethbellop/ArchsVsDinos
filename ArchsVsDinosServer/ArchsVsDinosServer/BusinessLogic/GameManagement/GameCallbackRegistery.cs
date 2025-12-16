@@ -56,9 +56,27 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             playerCallbacks.TryRemove(userId, out _);
         }
 
+        public void UnregisterCallback(IGameManagerCallback callback)
+        {
+            if (callback == null) return;
+
+            var entry = playerCallbacks.FirstOrDefault(p => p.Value == callback);
+            if (!entry.Equals(default(KeyValuePair<int, IGameManagerCallback>)))
+            {
+                playerCallbacks.TryRemove(entry.Key, out _);
+            }
+        }
+
+
         public object GetMatchLock(string matchCode)
         {
             return matchLocks.GetOrAdd(matchCode, _ => new object());
         }
+
+        public IEnumerable<IGameManagerCallback> GetAllCallbacks()
+        {
+            return playerCallbacks.Values;
+        }
+
     }
 }

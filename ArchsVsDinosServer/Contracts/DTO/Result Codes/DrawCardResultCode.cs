@@ -11,20 +11,24 @@ namespace Contracts.DTO.Result_Codes
     public enum DrawCardResultCode
     {
         [EnumMember]
-        Success,
+        DrawCard_Success,
         [EnumMember]
-        NotYourTurn,
+        DrawCard_NotYourTurn,
         [EnumMember]
-        DrawPileEmpty,
+        DrawCard_DrawPileEmpty,
         [EnumMember]
-        InvalidDrawPile,
+        DrawCard_InvalidDrawPile,
         [EnumMember]
-        AlreadyDrewThisTurn,
+        DrawCard_InvalidParameter,
         [EnumMember]
-        GameNotStarted,
+        DrawCard_NoCards,
         [EnumMember]
-        DatabaseError,
+        DrawCard_AlreadyDrewThisTurn,
         [EnumMember]
-        UnexpectedError
+        DrawCard_GameNotStarted,
+        [EnumMember]
+        DrawCard_DatabaseError,
+        [EnumMember]
+        DrawCard_UnexpectedError
     }
 }

@@ -142,7 +142,7 @@ namespace ArchsVsDinosServer.Services
 
                 if (count <= 0)
                 {
-                    count = 10; // Default últimas 10 partidas
+                    count = 10;
                 }
 
                 var history = statsHelper.GetMatchHistory(userId, count);

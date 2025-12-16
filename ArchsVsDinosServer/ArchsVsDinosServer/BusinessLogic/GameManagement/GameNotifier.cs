@@ -33,6 +33,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public void NotifyCardDrawn(CardDrawnDTO data) => NotifyAll(cb => cb.OnCardDrawn(data));
 
+        public void NotifyCardExchanged(CardExchangedDTO data)=> NotifyAll(cb => cb.OnCardExchanged(data));
+
+
         public void NotifyDinoHeadPlayed(DinoPlayedDTO data) => NotifyAll(cb => cb.OnDinoHeadPlayed(data));
 
         public void NotifyGameEnded(GameEndedDTO data) => NotifyAll(cb => cb.OnGameEnded(data));
@@ -46,53 +49,56 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         public void NotifyTurnChanged(TurnChangedDTO data) => NotifyAll(cb => cb.OnTurnChanged(data));
 
 
-        public void RegisterCallback()
+        private void NotifyAll(Action<IGameManagerCallback> action)
         {
-            try
+            var failedCallbacks = new List<IGameManagerCallback>();
+
+            foreach (var callback in GameCallbackRegistry.Instance.GetAllCallbacks())
             {
-                IGameManagerCallback callback = OperationContext.Current.GetCallbackChannel<IGameManagerCallback>();
-                lock (syncRoot)
+                try
                 {
-                    if (!activeCallbacks.Contains(callback))
-                    {
-                        activeCallbacks.Add(callback);
-                        logger.LogInfo("New player callback registered.");
-                    }
+                    action(callback);
+                }
+                catch (CommunicationException ex)
+                {
+                    logger.LogWarning($"Callback communication error. Removing callback. - {ex.Message}");
+                    failedCallbacks.Add(callback);
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    logger.LogWarning($"Callback disposed. Removing callback. - {ex.Message}");
+                    failedCallbacks.Add(callback);
+                }
+                catch (TimeoutException ex)
+                {
+                    logger.LogWarning($"Callback timeout. Removing callback. - {ex.Message}");
+                    failedCallbacks.Add(callback);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    logger.LogError("Invalid operation in callback.", ex);
+                    failedCallbacks.Add(callback);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Unexpected error while notifying callback.", ex);
                 }
             }
-            catch (Exception ex)
+
+            foreach (var cb in failedCallbacks)
             {
-                logger.LogError("Error registering callback.", ex);
+                RemoveCallback(cb);
             }
         }
 
-        public void UnregisterCallback(IGameManagerCallback callback)
+
+        private void RemoveCallback(IGameManagerCallback callback)
         {
             if (callback == null) return;
 
-            lock (syncRoot)
-            {
-                activeCallbacks.Remove(callback);
-                logger.LogInfo("Player callback unregistered.");
-            }
+            GameCallbackRegistry.Instance.UnregisterCallback(callback);
+            logger.LogInfo("Callback removed due to failure.");
         }
 
-        private void NotifyAll(Action<IGameManagerCallback> action)
-        {
-            List<IGameManagerCallback> failed = new List<IGameManagerCallback>();
-            lock (syncRoot)
-            {
-                foreach (var cb in activeCallbacks)
-                {
-                    try { action(cb); }
-                    catch
-                    {
-                        failed.Add(cb);
-                    }
-                }
-
-                foreach (var f in failed) activeCallbacks.Remove(f);
-            }
-        }
     }
 }

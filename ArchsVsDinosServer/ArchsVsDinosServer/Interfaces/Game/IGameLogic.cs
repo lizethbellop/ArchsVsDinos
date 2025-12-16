@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ArchsVsDinosServer.Model;
 
 namespace ArchsVsDinosServer.Interfaces.Game
 {
@@ -16,10 +17,9 @@ namespace ArchsVsDinosServer.Interfaces.Game
     {
         Task<bool> InitializeMatch(string matchCode, List<GamePlayerInitDTO> players);
 
-        CardInGame DrawCard(string matchCode, int userId, int pileIndex); 
+        CardInGame DrawCard(string matchCode, int userId, int pileIndex);
 
-        CardInGame ExchangeCard(string matchCode, int userId, ExchangeCardDTO data); 
-
+        bool ExchangeCard(string matchCode, int userId, ExchangeCardDTO data);
         DinoInstance PlayDinoHead(string matchCode, int userId, int cardId); 
 
         bool AttachBodyPart(string matchCode, int userId, AttachBodyPartDTO data);
@@ -28,8 +28,7 @@ namespace ArchsVsDinosServer.Interfaces.Game
 
         bool EndTurn(string matchCode, int userId);
 
-        GameEndResult EndGame(string matchCode);
-        bool ConnectToGame(string matchCode, int userId, IGameManagerCallback callback);
+        GameEndResult EndGame(string matchCode, GameEndType gameEnd, string reason);
         void LeaveGame(string matchCode, int userId);
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Contracts.DTO.Statistics
 {
     [DataContract]
-    public class PlayerMatchResult
+    public class PlayerMatchResultDTO
     {
         [DataMember]
         public int UserId { get; set; }
@@ -33,7 +33,7 @@ namespace Contracts.DTO.Statistics
             if (obj == null || GetType() != obj.GetType())
                 return false;
 
-            PlayerMatchResult other = (PlayerMatchResult)obj;
+            PlayerMatchResultDTO other = (PlayerMatchResultDTO)obj;
 
             return UserId == other.UserId &&
                    Points == other.Points &&

@@ -14,9 +14,6 @@ namespace Contracts.DTO.Game_DTO
         public int UserId { get; set; }
 
         [DataMember]
-        public string Username { get; set; }
-
-        [DataMember]
         public int TurnOrder { get; set; }
     }
 }

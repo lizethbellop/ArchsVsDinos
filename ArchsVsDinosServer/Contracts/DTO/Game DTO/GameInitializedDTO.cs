@@ -11,7 +11,7 @@ namespace Contracts.DTO.Game_DTO
     public class GameInitializedDTO
     {
         [DataMember]
-        public int MatchId { get; set; }
+        public string MatchCode { get; set; }
 
         [DataMember]
         public List<PlayerInGameDTO> Players { get; set; }

@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Model;
 using log4net.Repository.Hierarchy;
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,10 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public int CurrentTurn { get; private set; }
         public int TurnNumber { get; private set; }
         public bool IsStarted { get; private set; }
-        public bool IsFinished { get; private set; } // Renombrado a IsFinished
+        public bool IsFinished { get; private set; }
         public DateTime? StartTime { get; private set; }
+        public GameEndType? EndType { get; private set; }
+
 
         public int RemainingMoves { get; private set; }
         public CentralBoard CentralBoard { get; private set; }
@@ -57,13 +60,15 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             }
         }
 
-        public void MarkAsFinished()
+        public void MarkAsFinished(GameEndType endType)
         {
             lock (SyncRoot)
             {
                 IsFinished = true;
+                EndType = endType;
             }
         }
+
 
         public void AddPlayer(PlayerSession player)
         {

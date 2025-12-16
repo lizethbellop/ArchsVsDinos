@@ -11,9 +11,13 @@ namespace Contracts.DTO.Game_DTO.Swap
     public class SwapCardRequestDTO
     {
         [DataMember]
-        public int CardToSwapId { get; set; } // ID de la carta que el jugador activo quiere ofrecer
+        public int TargetUserId { get; set; }
 
         [DataMember]
-        public int TargetPlayerId { get; set; } // ID del jugador al que se propone el intercambio
+        public int OfferedCardId { get; set; }
+
+        [DataMember]
+        public int RequestedCardId { get; set; }
     }
+
 }

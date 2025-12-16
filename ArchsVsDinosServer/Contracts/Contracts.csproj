@@ -53,6 +53,7 @@
     <Compile Include="DTO\Game DTO\BodyPartAttachedDTO.cs" />
     <Compile Include="DTO\Game DTO\CardDrawnDTO.cs" />
     <Compile Include="DTO\Game DTO\CardDTO.cs" />
+    <Compile Include="DTO\Game DTO\CardExchangedDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoBattleDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoPlayedDTO.cs" />
@@ -70,6 +71,8 @@
     <Compile Include="DTO\Game DTO\Swap\CardSwappedDTO.cs" />
     <Compile Include="DTO\Game DTO\Swap\SwapCardDTO.cs" />
     <Compile Include="DTO\Game DTO\TurnedChangedDTO.cs" />
+    <Compile Include="DTO\GameFault.cs" />
+    <Compile Include="DTO\GameFaultCodes.cs" />
     <Compile Include="DTO\GamePlayerInitDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
     <Compile Include="DTO\MatchSettings.cs" />

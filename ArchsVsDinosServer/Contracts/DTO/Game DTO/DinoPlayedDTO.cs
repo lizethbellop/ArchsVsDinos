@@ -11,7 +11,7 @@ namespace Contracts.DTO.Game_DTO
     public class DinoPlayedDTO
     {
         [DataMember]
-        public int MatchId { get; set; }
+        public string MatchCode { get; set; }
 
         [DataMember]
         public int PlayerUserId { get; set; }

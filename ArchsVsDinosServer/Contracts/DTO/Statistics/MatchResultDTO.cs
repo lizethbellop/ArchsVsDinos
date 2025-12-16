@@ -17,7 +17,7 @@ namespace Contracts.DTO.Statistics
         [DataMember]
         public int WinnerUserId { get; set; }
         [DataMember]
-        public List<PlayerMatchResult> PlayerResults { get; set; }
+        public List<PlayerMatchResultDTO> PlayerResults { get; set; }
 
         public override bool Equals(object obj)
         {
