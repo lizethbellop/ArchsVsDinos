@@ -1,6 +1,6 @@
 ﻿using ArchsVsDinosClient.LobbyService;
 using ArchsVsDinosClient.Logging;
-using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace ArchsVsDinosClient.Services
 {
@@ -17,31 +16,31 @@ namespace ArchsVsDinosClient.Services
         private readonly LobbyManagerClient lobbyManagerClient;
         private readonly LobbyCallbackManager lobbyCallbackManager;
         private readonly WcfConnectionGuardian connectionGuardian;
-        private readonly SynchronizationContext synchronizationContext;
-        private bool isDisposed;
 
-        public event Action<LobbyPlayerDTO, string> LobbyCreated;
-        public event Action<LobbyPlayerDTO> PlayerJoined;
-        public event Action<LobbyPlayerDTO> PlayerLeft;
-        public event Action<LobbyPlayerDTO> PlayerExpelled;
-        public event Action<string> LobbyCancelled;
-        public event Action<string, List<LobbyPlayerDTO>> GameStartedEvent;
+        public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO, string> LobbyCreated;
+        public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO> PlayerJoined;
+        public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO> PlayerLeft;
+        public event Action<string> GameStartedEvent;
+        public event Action<string, bool> PlayerReadyEvent;
         public event Action<string, string> ConnectionError;
+        public event Action<List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>> PlayerListUpdated;
 
         public LobbyServiceClient()
         {
-            synchronizationContext = SynchronizationContext.Current;
+            var synchronizationContext = SynchronizationContext.Current;
             lobbyCallbackManager = new LobbyCallbackManager();
 
-            lobbyCallbackManager.OnCreatedLobby += (player, code) => LobbyCreated?.Invoke(player, code);
-            lobbyCallbackManager.OnJoinedLobby += (player) => PlayerJoined?.Invoke(player);
-            lobbyCallbackManager.OnPlayerLeftLobby += (player) => PlayerLeft?.Invoke(player);
-            lobbyCallbackManager.OnPlayerExpelled += (player) => PlayerExpelled?.Invoke(player);
-            lobbyCallbackManager.OnLobbyCancelled += (code) => LobbyCancelled?.Invoke(code);
-            lobbyCallbackManager.OnGameStarted += (matchCode, players) => GameStartedEvent?.Invoke(matchCode, players);
+            lobbyCallbackManager.OnJoinedLobby += (playerDto) => PlayerJoined?.Invoke(playerDto);
+            lobbyCallbackManager.OnPlayerLeftLobby += (playerDto) => PlayerLeft?.Invoke(playerDto);
+            lobbyCallbackManager.OnPlayerListUpdated += (playerList) => PlayerListUpdated?.Invoke(playerList);
+            lobbyCallbackManager.OnPlayerReady += (nickname, isReady) => PlayerReadyEvent?.Invoke(nickname, isReady);
+            lobbyCallbackManager.OnGameStart += () => GameStartedEvent?.Invoke("");
 
             var instanceContext = new InstanceContext(lobbyCallbackManager);
-            instanceContext.SynchronizationContext = synchronizationContext;
+            if (synchronizationContext != null)
+            {
+                instanceContext.SynchronizationContext = synchronizationContext;
+            }
 
             lobbyManagerClient = new LobbyManagerClient(instanceContext);
 
@@ -52,91 +51,84 @@ namespace ArchsVsDinosClient.Services
             connectionGuardian.MonitorClientState(lobbyManagerClient);
         }
 
-        public void CreateLobby(UserAccountDTO userAccount)
+        public async Task<MatchCreationResultCode> CreateLobbyAsync(ArchsVsDinosClient.DTO.UserAccountDTO userAccount)
         {
-            Task ignoredTask = connectionGuardian.ExecuteAsync(
-                async () => await Task.Run(() => lobbyManagerClient.CreateLobby(userAccount))
-            );
+            var matchSettings = new ArchsVsDinosClient.LobbyService.MatchSettings
+            {
+                HostNickname = userAccount.Nickname,
+                MaxPlayers = 4
+            };
+
+            try
+            {
+                var response = await Task.Run(() => lobbyManagerClient.CreateLobby(matchSettings));
+
+                if (response.Success)
+                {
+                    UserSession.Instance.CurrentMatchCode = response.LobbyCode;
+                }
+                return response.ResultCode;
+            }
+            catch (Exception)
+            {
+                return MatchCreationResultCode.MatchCreation_UnexpectedError;
+            }
         }
 
-        public LobbyResultCode JoinLobby(UserAccountDTO userAccount, string matchCode)
+        public async Task<JoinMatchResultCode> JoinLobbyAsync(ArchsVsDinosClient.DTO.UserAccountDTO userAccount, string matchCode)
         {
-            return lobbyManagerClient.JoinLobby(userAccount, matchCode);
+            try
+            {
+                var matchJoinResponse = await Task.Run(() => lobbyManagerClient.JoinLobby(
+                    matchCode,
+                    userAccount.IdPlayer,
+                    userAccount.Nickname
+                ));
+
+                return matchJoinResponse.ResultCode;
+            }
+            catch (Exception)
+            {
+                return JoinMatchResultCode.JoinMatch_UnexpectedError;
+            }
+        }
+
+        public void ConnectToLobby(string matchCode, string nickname)
+        {
+            Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
+            {
+                await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
+            });
         }
 
         public void LeaveLobby(string username)
         {
-            Task ignoredTask = connectionGuardian.ExecuteAsync(
-                async () => await Task.Run(() => lobbyManagerClient.LeaveLobby(username))
-            );
+            var currentMatchCode = UserSession.Instance.CurrentMatchCode;
+            Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
+            {
+                await Task.Run(() => lobbyManagerClient.DisconnectFromLobby(currentMatchCode, username));
+            });
         }
 
-        public void ExpelPlayer(string targetUsername, string hostUsername)
+        public void StartGame(string matchCode)
         {
-            Task ignoredTask = connectionGuardian.ExecuteAsync(
-                async () => await Task.Run(() => lobbyManagerClient.ExpelPlayerLobby(hostUsername, targetUsername))
-            );
+            Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
+            {
+                await Task.Run(() => lobbyManagerClient.StartGame(matchCode));
+            });
         }
 
-        public void CancellLobby(string matchCode, string usernameRequester)
-        {
-            Task ignoredTask = connectionGuardian.ExecuteAsync(
-                async () => await Task.Run(() => lobbyManagerClient.CancelLobby(matchCode, usernameRequester))
-            );
-        }
-
-        public void StartGame(string matchCode, string hostUsername)
-        {
-            Task ignoredTask = connectionGuardian.ExecuteAsync(
-                async () => await Task.Run(() => lobbyManagerClient.StartGame(matchCode, hostUsername))
-            );
-        }
-
-        public LobbyResultCode SendLobbyInviteByEmail(string email, string matchCode, string senderUsername)
+        public async Task<bool> SendLobbyInviteByEmail(string email, string matchCode, string senderUsername)
         {
             try
             {
-                return lobbyManagerClient.InviteByEmailToLobby(email, matchCode, senderUsername);
-            }
-            catch (CommunicationException ex) 
-            {
-                var logger = new Logger();
-                logger.LogError(Lang.Lobby_ErrorSendingEmail);
-
-                return LobbyResultCode.Lobby_ConnectionError;
-            }
-        }
-
-        public void Dispose()
-        {
-            if (isDisposed) return;
-
-            if (lobbyCallbackManager != null)
-            {
-                lobbyCallbackManager.OnCreatedLobby -= (player, code) => LobbyCreated?.Invoke(player, code);
-                lobbyCallbackManager.OnJoinedLobby -= (player) => PlayerJoined?.Invoke(player);
-                lobbyCallbackManager.OnPlayerLeftLobby -= (player) => PlayerLeft?.Invoke(player);
-                lobbyCallbackManager.OnPlayerExpelled -= (player) => PlayerExpelled?.Invoke(player);
-                lobbyCallbackManager.OnLobbyCancelled -= (code) => LobbyCancelled?.Invoke(code);
-            }
-
-            try
-            {
-                if (lobbyManagerClient?.State == CommunicationState.Opened)
-                {
-                    lobbyManagerClient.Close();
-                }
-                else if (lobbyManagerClient?.State == CommunicationState.Faulted)
-                {
-                    lobbyManagerClient.Abort();
-                }
+                string[] guestsList = new string[] { email };
+                return await Task.Run(() => lobbyManagerClient.SendInvitations(matchCode, senderUsername, guestsList));
             }
             catch
             {
-                lobbyManagerClient?.Abort();
+                return false;
             }
-
-            isDisposed = true;
         }
     }
 }

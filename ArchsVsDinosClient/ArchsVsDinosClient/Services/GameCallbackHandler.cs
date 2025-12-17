@@ -1,83 +1,81 @@
 ﻿using ArchsVsDinosClient.GameService;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Services
 {
     public class GameCallbackHandler : IGameManagerCallback
     {
-        public event Action<GameInitializedDTO> GameInitialized;
-        public event Action<GameStartedDTO> GameStarted;
-        public event Action<TurnChangedDTO> TurnChanged;
-        public event Action<CardDrawnDTO> CardDrawn;
-        public event Action<DinoPlayedDTO> DinoHeadPlayed;
-        public event Action<BodyPartAttachedDTO> BodyPartAttached;
-        public event Action<ArchAddedToBoardDTO> ArchAddedToBoard;
-        public event Action<ArchArmyProvokedDTO> ArchArmyProvoked;
-        public event Action<BattleResultDTO> BattleResolved;
-        public event Action<GameEndedDTO> GameEnded;
-        public event Action<PlayerExpelledDTO> PlayerExpelled;
+        public event Action<GameInitializedDTO> OnGameInitializedEvent;
+        public event Action<GameStartedDTO> OnGameStartedEvent;
+        public event Action<TurnChangedDTO> OnTurnChangedEvent;
+        public event Action<CardDrawnDTO> OnCardDrawnEvent;
+        public event Action<DinoPlayedDTO> OnDinoPlayedEvent;
+        public event Action<BodyPartAttachedDTO> OnBodyPartAttachedEvent;
+        public event Action<ArchAddedToBoardDTO> OnArchAddedEvent;
+        public event Action<ArchArmyProvokedDTO> OnArchProvokedEvent;
+        public event Action<BattleResultDTO> OnBattleResolvedEvent;
+        public event Action<GameEndedDTO> OnGameEndedEvent;
+        public event Action<PlayerExpelledDTO> OnPlayerExpelledEvent;
+        public event Action<CardExchangedDTO> OnCardExchangedEvent;
 
         public void OnGameInitialized(GameInitializedDTO data)
         {
-            GameInitialized?.Invoke(data);
+            OnGameInitializedEvent?.Invoke(data);
         }
 
         public void OnGameStarted(GameStartedDTO data)
         {
-            GameStarted?.Invoke(data);
+            OnGameStartedEvent?.Invoke(data);
         }
 
         public void OnTurnChanged(TurnChangedDTO data)
         {
-            TurnChanged?.Invoke(data);
+            OnTurnChangedEvent?.Invoke(data);
         }
 
         public void OnCardDrawn(CardDrawnDTO data)
         {
-            CardDrawn?.Invoke(data);
+            OnCardDrawnEvent?.Invoke(data);
         }
 
         public void OnDinoHeadPlayed(DinoPlayedDTO data)
         {
-            DinoHeadPlayed?.Invoke(data);
+            OnDinoPlayedEvent?.Invoke(data);
         }
 
         public void OnBodyPartAttached(BodyPartAttachedDTO data)
         {
-            BodyPartAttached?.Invoke(data);
+            OnBodyPartAttachedEvent?.Invoke(data);
         }
 
         public void OnArchAddedToBoard(ArchAddedToBoardDTO data)
         {
-            ArchAddedToBoard?.Invoke(data);
+            OnArchAddedEvent?.Invoke(data);
         }
 
         public void OnArchArmyProvoked(ArchArmyProvokedDTO data)
         {
-            ArchArmyProvoked?.Invoke(data);
+            OnArchProvokedEvent?.Invoke(data);
         }
 
         public void OnBattleResolved(BattleResultDTO data)
         {
-            BattleResolved?.Invoke(data);
+            OnBattleResolvedEvent?.Invoke(data);
         }
 
         public void OnGameEnded(GameEndedDTO data)
         {
-            GameEnded?.Invoke(data);
-        }
-        public void NotifySystemMessage(string title, string message)
-        {
-            Console.WriteLine($"[SYSTEM MESSAGE] {title}: {message}");
+            OnGameEndedEvent?.Invoke(data);
         }
 
-        public void OnPlayerExpelled(PlayerExpelledDTO data)
+        public void OnPlayerExpelled(PlayerExpelledDTO dto)
         {
-            PlayerExpelled?.Invoke(data);
+            OnPlayerExpelledEvent?.Invoke(dto);
+        }
+
+        public void OnCardExchanged(CardExchangedDTO dto)
+        {
+            OnCardExchangedEvent?.Invoke(dto);
         }
     }
 }

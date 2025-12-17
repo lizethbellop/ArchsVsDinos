@@ -1,80 +1,89 @@
 ﻿using ArchsVsDinosClient.DTO;
-using ArchsVsDinosClient.GameService;
-using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.GameService; // DTOs de transporte (CardDrawnDTO, etc.)
+using ArchsVsDinosClient.Models;      // Tus Modelos Locales (Card, CardCategory)
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services.Interfaces;
-using ArchsVsDinosClient.ViewModels.GameViewsModels;
-using ArchsVsDinosClient.Views.MatchViews;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input; 
-using System.Windows.Threading;
 
 namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 {
     public class GameViewModel : INotifyPropertyChanged, IDisposable
     {
         private readonly IGameServiceClient gameServiceClient;
-        private readonly int matchId;
+        private readonly string matchCode;
         private readonly string currentUsername;
-        private readonly List<LobbyPlayerDTO> allPlayers;
+        private readonly List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> allPlayers;
 
         public GameTimerManager TimerManager { get; }
         public GameBoardManager BoardManager { get; }
-        public Dictionary<string, DinoBuilder> MyDinos { get; } = new Dictionary<string, DinoBuilder>();
         public GameActionManager ActionManager { get; }
 
         private int remainingCardsInDeck;
         private bool isMyTurn;
-        private bool isInitializing = false;
-        private bool isInitialized = false;
-        private bool gameStartedProcessed = false;
-        private int remainingMoves = 0;
-        private int currentPoints = 0;
+        private int remainingMoves;
+        private int currentPoints;
+        private bool isGameStartedReceived;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event Action<string> TurnChangedForUI;
+
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
 
         public int RemainingMoves
         {
             get => remainingMoves;
-            set { remainingMoves = value; OnPropertyChanged(nameof(RemainingMoves)); }
+            set
+            {
+                remainingMoves = value;
+                OnPropertyChanged(nameof(RemainingMoves));
+            }
         }
 
         public int CurrentPoints
         {
             get => currentPoints;
-            set { currentPoints = value; OnPropertyChanged(nameof(CurrentPoints)); }
+            set
+            {
+                currentPoints = value;
+                OnPropertyChanged(nameof(CurrentPoints));
+            }
         }
 
         public int RemainingCardsInDeck
         {
             get => remainingCardsInDeck;
-            set { remainingCardsInDeck = value; OnPropertyChanged(nameof(RemainingCardsInDeck)); }
+            set
+            {
+                remainingCardsInDeck = value;
+                OnPropertyChanged(nameof(RemainingCardsInDeck));
+            }
         }
 
         public bool IsMyTurn
         {
             get => isMyTurn;
-            set { isMyTurn = value; OnPropertyChanged(nameof(IsMyTurn)); }
+            set
+            {
+                isMyTurn = value;
+                OnPropertyChanged(nameof(IsMyTurn));
+            }
         }
 
-        public bool IsPlayer2Turn { get; set; }
-        public bool IsPlayer3Turn { get; set; }
-        public bool IsPlayer4Turn { get; set; }
-
-        public GameViewModel(IGameServiceClient gameServiceClient, int matchId, string username, List<LobbyPlayerDTO> players)
+        public GameViewModel(IGameServiceClient gameServiceClient, string matchCode, string username, List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
         {
-            this.gameServiceClient = gameServiceClient ?? throw new ArgumentNullException(nameof(gameServiceClient));
-            this.matchId = matchId;
+            if (gameServiceClient == null)
+            {
+                throw new ArgumentNullException(nameof(gameServiceClient));
+            }
+            this.gameServiceClient = gameServiceClient;
+            this.matchCode = matchCode;
             this.currentUsername = username;
-            this.allPlayers = players ?? new List<LobbyPlayerDTO>();
+            this.allPlayers = players ?? new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
 
             TimerManager = new GameTimerManager();
             BoardManager = new GameBoardManager();
@@ -96,11 +105,58 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.GameInitialized += OnGameInitialized;
             gameServiceClient.GameStarted += OnGameStarted;
             gameServiceClient.TurnChanged += OnTurnChanged;
-            gameServiceClient.ConnectionError += OnConnectionError;
-            gameServiceClient.CardDrawn += OnCardDrawn; 
+            gameServiceClient.CardDrawn += OnCardDrawn;
+            gameServiceClient.ServiceError += OnServiceError;
         }
 
-        public async Task<string> ExecuteDrawCardFromView(int drawPileNumber)
+        public async Task ConnectToGameAsync()
+        {
+            int userId = DetermineMyUserId();
+            await gameServiceClient.ConnectToGameAsync(matchCode, userId);
+        }
+
+        public async Task<string> TryPlayCardAsync(Card card, string cellId)
+        {
+            string localError = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
+
+            if (localError != null)
+            {
+                return localError;
+            }
+
+            int userId = DetermineMyUserId();
+
+            try
+            {
+                if (card.Category == ArchsVsDinosClient.Models.CardCategory.DinoHead)
+                {
+                    await gameServiceClient.PlayDinoHeadAsync(matchCode, userId, card.IdCard);
+                }
+                else if (card.Category == ArchsVsDinosClient.Models.CardCategory.BodyPart)
+                {
+                    int headId = ActionManager.GetHeadIdFromCell(cellId);
+
+                    var attachment = new AttachBodyPartDTO
+                    {
+                        CardId = card.IdCard,
+                        DinoHeadCardId = headId
+                    };
+
+                    await gameServiceClient.AttachBodyPartAsync(matchCode, userId, attachment);
+                }
+
+                ActionManager.RegisterSuccessfulMove(card, cellId);
+                BoardManager.PlayerHand.Remove(card);
+                RemainingMoves--;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
+        }
+
+        public async Task<string> ExecuteDrawCardFromView(int pileIndex)
         {
             if (!IsMyTurn || RemainingMoves <= 0)
             {
@@ -109,31 +165,15 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
             try
             {
-                var userId = DetermineMyUserId();
-
-                DrawCardResultCode result = await gameServiceClient.DrawCardAsync(matchId, userId, drawPileNumber);
-
-                if (result != DrawCardResultCode.Success)
-                {
-                    return GetDrawCardErrorMessage(result);
-                }
+                int userId = DetermineMyUserId();
+                await gameServiceClient.DrawCardAsync(matchCode, userId, pileIndex);
+                return null;
             }
-            catch (TimeoutException)
+            catch (Exception ex)
             {
-                return Lang.GlobalServerError;
+                return ex.Message;
             }
-            catch (CommunicationException)
-            {
-                return Lang.GlobalServerError;
-            }
-            catch (Exception)
-            {
-                return Lang.GlobalServerError;
-            }
-
-            return null;
         }
-
         private void OnCardDrawn(CardDrawnDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -143,13 +183,14 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     RemainingCardsInDeck--;
                 }
 
-                if (data.PlayerUsername == currentUsername)
+                int userIdWhoDrew = data.PlayerUserId;
+                int myUserId = DetermineMyUserId();
+
+                if (userIdWhoDrew == myUserId)
                 {
-                    var cardIdFromServer = data.Card.IdCard;
+                    var newCard = CardRepositoryModel.GetById(data.Card.IdCard);
 
-                    var newCard = CardRepositoryModel.GetById(cardIdFromServer);
-
-                    if (newCard != null && data.Card.Type != "arch")
+                    if (newCard != null && newCard.Category != ArchsVsDinosClient.Models.CardCategory.Arch)
                     {
                         BoardManager.PlayerHand.Add(newCard);
                     }
@@ -159,87 +200,28 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         RemainingMoves--;
                     }
                 }
-
             });
-        }
-
-        public async Task<string> TryPlayCardAsync(Card card, string cellId)
-        {
-            string error = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
-            if (error != null)
-            {
-                return error;
-            }
-
-            bool success = false;
-            try
-            {
-                await Task.Delay(100);
-                success = true;
-            }
-            catch (Exception)
-            {
-                return Lang.GlobalServerError;
-            }
-
-            if (success)
-            {
-                ActionManager.RegisterSuccessfulMove(card, cellId);
-                BoardManager.PlayerHand.Remove(card);
-                RemainingMoves--;
-                return null;
-            }
-            else
-            {
-                return "El servidor rechazó el movimiento.";
-            }
-        }
-
-        private string GetDrawCardErrorMessage(DrawCardResultCode result)
-        {
-            switch (result)
-            {
-                case DrawCardResultCode.NotYourTurn: 
-                    return Lang.Match_NotYourTurn;
-                case DrawCardResultCode.DrawPileEmpty: 
-                    return Lang.Match_DeckCardsEmpty;
-                case DrawCardResultCode.AlreadyDrewThisTurn: 
-                    return Lang.Match_AlreadyUsedRolls;
-                default: return Lang.GlobalServerError;
-            }
-        }
-
-        public async Task InitializeAndStartGameAsync()
-        {
-            if (isInitializing || isInitialized) return;
-            isInitializing = true;
-            try
-            {
-                await Task.Delay(500);
-                await gameServiceClient.InitializeGameAsync(matchId);
-                isInitialized = true;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show(Lang.GlobalServerError);
-                isInitializing = false;
-            }
         }
 
         private void OnGameInitialized(GameInitializedDTO data)
         {
-            Application.Current.Dispatcher.Invoke(() => RemainingCardsInDeck = data.RemainingCardsInDeck);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                RemainingCardsInDeck = data.RemainingCardsInDeck;
+            });
         }
 
         private void OnGameStarted(GameStartedDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (gameStartedProcessed) return;
-                gameStartedProcessed = true;
+                if (isGameStartedReceived)
+                {
+                    return;
+                }
+                isGameStartedReceived = true;
 
                 int myUserId = DetermineMyUserId();
-
                 BoardManager.UpdatePlayerHand(data.PlayersHands.ToList(), myUserId);
                 BoardManager.UpdateInitialBoard(data.InitialBoard);
 
@@ -257,8 +239,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     RemainingMoves = 0;
                 }
-
-                MessageBox.Show($"{Lang.Match_InfoBegin1} {data.FirstPlayerUsername} {Lang.Match_InfoBegin2}\n\n🎴 Cartas: {BoardManager.PlayerHand.Count}");
             });
         }
 
@@ -274,30 +254,65 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     CurrentPoints = data.PlayerScores[myUserId];
                 }
 
-                IsMyTurn = data.CurrentPlayerUsername == currentUsername;
-                RemainingMoves = IsMyTurn ? 3 : 0;
-                TurnChangedForUI?.Invoke(data.CurrentPlayerUsername);
+                int currentPlayerId = data.CurrentPlayerUserId;
+                IsMyTurn = (currentPlayerId == myUserId);
+
+                if (IsMyTurn)
+                {
+                    RemainingMoves = 3;
+                }
+                else
+                {
+                    RemainingMoves = 0;
+                }
+
+                string currentPlayerName = GetUsernameById(currentPlayerId);
+                TurnChangedForUI?.Invoke(currentPlayerName);
             });
+        }
+
+        private void OnServiceError(string title, string msg)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(msg, title, MessageBoxButton.OK, MessageBoxImage.Error);
+            });
+        }
+
+        private string GetUsernameById(int userId)
+        {
+            var player = allPlayers.FirstOrDefault(p => p.IdPlayer == userId);
+            if (player != null)
+            {
+                return player.Nickname;
+            }
+            return "Desconocido";
         }
 
         private int DetermineMyUserId()
         {
-            var myPlayer = allPlayers?.FirstOrDefault(player => player.Username == currentUsername);
-            int userId = myPlayer?.IdPlayer ?? 0;
-
-            if (userId == 0 && !string.IsNullOrEmpty(currentUsername))
+            var p = allPlayers?.FirstOrDefault(x => x.Username == currentUsername);
+            if (p != null)
             {
-                userId = currentUsername.GetHashCode();
+                return p.IdPlayer;
             }
-            return userId;
+
+            if (!string.IsNullOrEmpty(currentUsername))
+            {
+                return currentUsername.GetHashCode();
+            }
+            return 0;
         }
 
-        private void OnConnectionError(string title, string message)
+        protected void OnPropertyChanged(string name)
         {
-            Application.Current.Dispatcher.Invoke(() => MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public async void InitializeAndStartGameAsync()
+        {
+            await Task.CompletedTask;
+        }
 
         public void Dispose()
         {
@@ -307,17 +322,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.GameInitialized -= OnGameInitialized;
                 gameServiceClient.GameStarted -= OnGameStarted;
                 gameServiceClient.TurnChanged -= OnTurnChanged;
-                gameServiceClient.ConnectionError -= OnConnectionError;
                 gameServiceClient.CardDrawn -= OnCardDrawn;
-
-                if (gameServiceClient is ICommunicationObject comm)
-                {
-                    try { comm.Close(); } catch { comm.Abort(); }
-                }
-                else
-                {
-                    gameServiceClient.Dispose();
-                }
+                gameServiceClient.ServiceError -= OnServiceError;
             }
         }
     }

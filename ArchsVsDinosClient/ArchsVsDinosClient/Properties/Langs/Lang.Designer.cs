@@ -916,6 +916,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Sala llena, intente después.
+        /// </summary>
+        public static string Lobby_LobbyFull {
+            get {
+                return ResourceManager.GetString("Lobby_LobbyFull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Sala no encontrada, intente de nuevo.
+        /// </summary>
+        public static string Lobby_LobbyNotFound {
+            get {
+                return ResourceManager.GetString("Lobby_LobbyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Necesitas al menos 2 jugadores para comenzar la partida..
         /// </summary>
         public static string Lobby_MiniumPlayers {

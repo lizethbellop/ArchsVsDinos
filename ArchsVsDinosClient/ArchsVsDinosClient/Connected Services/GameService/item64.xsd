@@ -1,64 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:simpleType name="GameSetupResultCode">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Success" />
-      <xs:enumeration value="MatchNotFound" />
-      <xs:enumeration value="GameAlreadyInitialized" />
-      <xs:enumeration value="NotEnoughPlayers" />
-      <xs:enumeration value="DatabaseError" />
-      <xs:enumeration value="UnexpectedError" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="GameSetupResultCode" nillable="true" type="tns:GameSetupResultCode" />
-  <xs:simpleType name="DrawCardResultCode">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Success" />
-      <xs:enumeration value="NotYourTurn" />
-      <xs:enumeration value="DrawPileEmpty" />
-      <xs:enumeration value="InvalidDrawPile" />
-      <xs:enumeration value="AlreadyDrewThisTurn" />
-      <xs:enumeration value="GameNotStarted" />
-      <xs:enumeration value="DatabaseError" />
-      <xs:enumeration value="UnexpectedError" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="DrawCardResultCode" nillable="true" type="tns:DrawCardResultCode" />
-  <xs:simpleType name="PlayCardResultCode">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Success" />
-      <xs:enumeration value="NotYourTurn" />
-      <xs:enumeration value="CardNotInHand" />
-      <xs:enumeration value="InvalidCardType" />
-      <xs:enumeration value="AlreadyPlayedTwoCards" />
-      <xs:enumeration value="MustAttachToHead" />
-      <xs:enumeration value="InvalidDinoHead" />
-      <xs:enumeration value="ArmyTypeMismatch" />
-      <xs:enumeration value="DatabaseError" />
-      <xs:enumeration value="UnexpectedError" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="PlayCardResultCode" nillable="true" type="tns:PlayCardResultCode" />
-  <xs:simpleType name="ProvokeResultCode">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Success" />
-      <xs:enumeration value="NotYourTurn" />
-      <xs:enumeration value="InvalidArmyType" />
-      <xs:enumeration value="NoArchsInArmy" />
-      <xs:enumeration value="AlreadyTookAction" />
-      <xs:enumeration value="DatabaseError" />
-      <xs:enumeration value="UnexpectedError" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="ProvokeResultCode" nillable="true" type="tns:ProvokeResultCode" />
-  <xs:simpleType name="EndTurnResultCode">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Success" />
-      <xs:enumeration value="NotYourTurn" />
-      <xs:enumeration value="GameEnded" />
-      <xs:enumeration value="DatabaseError" />
-      <xs:enumeration value="UnexpectedError" />
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:element name="EndTurnResultCode" nillable="true" type="tns:EndTurnResultCode" />
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="AttachBodyPartDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CardId" type="xs:int" />
+      <xs:element minOccurs="0" name="DinoHeadCardId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="AttachBodyPartDTO" nillable="true" type="tns:AttachBodyPartDTO" />
+  <xs:complexType name="ExchangeCardDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="OfferedCardId" type="xs:int" />
+      <xs:element minOccurs="0" name="RequestedCardId" type="xs:int" />
+      <xs:element minOccurs="0" name="TargetUserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ExchangeCardDTO" nillable="true" type="tns:ExchangeCardDTO" />
+  <xs:complexType name="GameInitializedDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Players" nillable="true" type="tns:ArrayOfPlayerInGameDTO" />
+      <xs:element minOccurs="0" name="RemainingCardsInDeck" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GameInitializedDTO" nillable="true" type="tns:GameInitializedDTO" />
+  <xs:complexType name="ArrayOfPlayerInGameDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerInGameDTO" nillable="true" type="tns:PlayerInGameDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerInGameDTO" nillable="true" type="tns:ArrayOfPlayerInGameDTO" />
+  <xs:complexType name="PlayerInGameDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TurnOrder" type="xs:int" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerInGameDTO" nillable="true" type="tns:PlayerInGameDTO" />
+  <xs:complexType name="GameStartedDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DrawPile1Count" type="xs:int" />
+      <xs:element minOccurs="0" name="DrawPile2Count" type="xs:int" />
+      <xs:element minOccurs="0" name="DrawPile3Count" type="xs:int" />
+      <xs:element minOccurs="0" name="FirstPlayerUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="FirstPlayerUsername" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" minOccurs="0" name="InitialBoard" nillable="true" type="q1:CentralBoardDTO" />
+      <xs:element minOccurs="0" name="MatchId" type="xs:int" />
+      <xs:element minOccurs="0" name="MyUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayersHands" nillable="true" type="tns:ArrayOfPlayerHandDTO" />
+      <xs:element minOccurs="0" name="StartTime" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GameStartedDTO" nillable="true" type="tns:GameStartedDTO" />
+  <xs:complexType name="ArrayOfCardDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CardDTO" nillable="true" type="tns:CardDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCardDTO" nillable="true" type="tns:ArrayOfCardDTO" />
+  <xs:complexType name="CardDTO">
+    <xs:sequence>
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="Element" type="q2:ArmyType" />
+      <xs:element minOccurs="0" name="HasBottomJoint" type="xs:boolean" />
+      <xs:element minOccurs="0" name="HasLeftJoint" type="xs:boolean" />
+      <xs:element minOccurs="0" name="HasRightJoint" type="xs:boolean" />
+      <xs:element minOccurs="0" name="HasTopJoint" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IdCard" type="xs:int" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="PartType" type="q3:DinoPartType" />
+      <xs:element minOccurs="0" name="Power" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CardDTO" nillable="true" type="tns:CardDTO" />
+  <xs:complexType name="ArrayOfPlayerHandDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerHandDTO" nillable="true" type="tns:PlayerHandDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerHandDTO" nillable="true" type="tns:ArrayOfPlayerHandDTO" />
+  <xs:complexType name="PlayerHandDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Cards" nillable="true" type="tns:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerHandDTO" nillable="true" type="tns:PlayerHandDTO" />
+  <xs:complexType name="TurnChangedDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CurrentPlayerUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerScores" nillable="true" type="q4:ArrayOfKeyValueOfintint" />
+      <xs:element minOccurs="0" name="RemainingTime" type="ser:duration" />
+      <xs:element minOccurs="0" name="TurnNumber" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TurnChangedDTO" nillable="true" type="tns:TurnChangedDTO" />
+  <xs:complexType name="CardDrawnDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Card" nillable="true" type="tns:CardDTO" />
+      <xs:element minOccurs="0" name="DrawPileNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PlayerUserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CardDrawnDTO" nillable="true" type="tns:CardDrawnDTO" />
+  <xs:complexType name="DinoPlayedDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ArmyType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DinoInstanceId" type="xs:int" />
+      <xs:element minOccurs="0" name="HeadCard" nillable="true" type="tns:CardDTO" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PlayerUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerUsername" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DinoPlayedDTO" nillable="true" type="tns:DinoPlayedDTO" />
+  <xs:complexType name="BodyPartAttachedDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BodyCard" nillable="true" type="tns:CardDTO" />
+      <xs:element minOccurs="0" name="DinoInstanceId" type="xs:int" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NewTotalPower" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerUserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BodyPartAttachedDTO" nillable="true" type="tns:BodyPartAttachedDTO" />
+  <xs:complexType name="ArchAddedToBoardDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ArchCard" nillable="true" type="tns:CardDTO" />
+      <xs:element minOccurs="0" name="ArmyType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MatchId" type="xs:int" />
+      <xs:element minOccurs="0" name="NewArchCount" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerUsername" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArchAddedToBoardDTO" nillable="true" type="tns:ArchAddedToBoardDTO" />
+  <xs:complexType name="ArchArmyProvokedDTO">
+    <xs:sequence>
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="ArmyType" type="q5:ArmyType" />
+      <xs:element minOccurs="0" name="BattleResult" nillable="true" type="tns:BattleResultDTO" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProvokerUserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArchArmyProvokedDTO" nillable="true" type="tns:ArchArmyProvokedDTO" />
+  <xs:complexType name="BattleResultDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ArchCards" nillable="true" type="tns:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="ArchPower" type="xs:int" />
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="ArmyType" type="q6:ArmyType" />
+      <xs:element minOccurs="0" name="DinosWon" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerPowers" nillable="true" type="q7:ArrayOfKeyValueOfintint" />
+      <xs:element minOccurs="0" name="PointsAwarded" type="xs:int" />
+      <xs:element minOccurs="0" name="WinnerPower" type="xs:int" />
+      <xs:element minOccurs="0" name="WinnerUserId" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="WinnerUsername" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BattleResultDTO" nillable="true" type="tns:BattleResultDTO" />
+  <xs:complexType name="GameEndedDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FinalScores" nillable="true" type="tns:ArrayOfPlayerScoreDTO" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Reason" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="WinnerPoints" type="xs:int" />
+      <xs:element minOccurs="0" name="WinnerUserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GameEndedDTO" nillable="true" type="tns:GameEndedDTO" />
+  <xs:complexType name="ArrayOfPlayerScoreDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerScoreDTO" nillable="true" type="tns:PlayerScoreDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerScoreDTO" nillable="true" type="tns:ArrayOfPlayerScoreDTO" />
+  <xs:complexType name="PlayerScoreDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Points" type="xs:int" />
+      <xs:element minOccurs="0" name="Position" type="xs:int" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerScoreDTO" nillable="true" type="tns:PlayerScoreDTO" />
+  <xs:complexType name="CardExchangedDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CardFromPlayerA" nillable="true" type="tns:CardDTO" />
+      <xs:element minOccurs="0" name="CardFromPlayerB" nillable="true" type="tns:CardDTO" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PlayerAUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerBUserId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CardExchangedDTO" nillable="true" type="tns:CardExchangedDTO" />
 </xs:schema>

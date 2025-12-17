@@ -4,6 +4,7 @@ using ArchsVsDinosServer.Interfaces.Lobby;
 using ArchsVsDinosServer.Services.Interfaces;
 using Contracts;
 using Contracts.DTO;
+using Contracts.DTO.Response;
 using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace ArchsVsDinosServer.Services
     {
         private readonly ILobbyLogic lobbyLogic;
         private readonly ILoggerHelper logger;
+        private readonly IInvitationSendHelper invitationSendHelper;
 
         public LobbyManager(
         ILobbyLogic lobbyLogic,
@@ -29,6 +31,23 @@ namespace ArchsVsDinosServer.Services
         }
 
         public LobbyManager() { }
+
+        public async Task<MatchCreationResponse> CreateLobby(MatchSettings settings)
+        {
+            return await lobbyLogic.CreateLobby(settings);
+        }
+
+        public async Task<MatchJoinResponse> JoinLobby(string lobbyCode, int userId, string nickname)
+        {
+            return await lobbyLogic.JoinLobby(lobbyCode, userId, nickname);
+        }
+
+        public async Task<bool> SendInvitations(string lobbyCode, string sender, List<string> guests)
+        {
+            return await invitationSendHelper.SendInvitation(lobbyCode, sender, guests);
+        }
+ 
+
         public void ConnectToLobby(string lobbyCode, string nickname)
         {
             if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))

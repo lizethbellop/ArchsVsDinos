@@ -30,36 +30,31 @@ namespace ArchsVsDinosClient.Views.MatchViews
         private readonly string currentUsername;
         private readonly List<LobbyPlayerDTO> playersInMatch;
         private readonly string gameMatchCode;
-        private readonly int matchId;
+
         private DispatcherTimer errorNotificationTimer;
         private CardCell lastHoveredCardCell;
 
         public MainMatch(List<LobbyPlayerDTO> players, string myUsername, string gameMatchCode)
         {
             InitializeComponent();
-            currentUsername = myUsername;
-            playersInMatch = players;
+            this.currentUsername = myUsername;
+            this.playersInMatch = players;
             this.gameMatchCode = gameMatchCode;
-            var service = new GameServiceClient();
-            matchId = ExtractMatchIdFromCode(gameMatchCode);
 
             try
             {
                 chatViewModel = new ChatViewModel(new ChatServiceClient());
                 Gr_Chat.DataContext = chatViewModel;
             }
-            catch (EndpointNotFoundException)
+            catch (Exception)
             {
-                MessageBox.Show("Chat service is not available.", "Chat Unavailable", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            catch (CommunicationException)
-            {
-                MessageBox.Show("Failed to initialize chat service.", "Chat Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Chat no disponible.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             try
             {
-                gameViewModel = new GameViewModel(new GameServiceClient(), matchId, currentUsername, players);
+                var gameService = new GameServiceClient();
+                gameViewModel = new GameViewModel(gameService, this.gameMatchCode, currentUsername, players);
                 DataContext = gameViewModel;
             }
             catch (Exception)
@@ -72,8 +67,35 @@ namespace ArchsVsDinosClient.Views.MatchViews
             InitializePlayersVisuals(playersInMatch, currentUsername);
             InitializeErrorTimer();
             InitializeDragAndDrop();
+
             gameViewModel.PropertyChanged += GameViewModelPropertyChanged;
             Loaded += MatchLoaded;
+        }
+
+        private async void MatchLoaded(object sender, RoutedEventArgs e)
+        {
+            if (chatViewModel != null)
+            {
+                try
+                {
+                    await chatViewModel.ConnectAsync(currentUsername).ConfigureAwait(true);
+                }
+                catch
+                {
+
+                }
+            }
+
+            if (gameViewModel != null)
+            {
+                gameViewModel.BoardManager.PlayerHand.CollectionChanged += PlayerHandCollectionChanged;
+                gameViewModel.TurnChangedForUI += UpdateTurnGlow;
+                MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
+
+                await gameViewModel.ConnectToGameAsync();
+
+                await Application.Current.Dispatcher.InvokeAsync(() => UpdatePlayerHandVisual(), DispatcherPriority.Loaded);
+            }
         }
 
         public void ManualDragOver(Point windowMousePosition, Card cardBeingDragged)
@@ -98,10 +120,17 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     gameViewModel.IsMyTurn);
 
                 bool isLogicallyValid = logicError == null;
-
                 int targetSubIndex = GetCorrectIndexForCard(cardBeingDragged);
 
-                Color highlightColor = isLogicallyValid ? Colors.Lime : Colors.Red;
+                Color highlightColor;
+                if (isLogicallyValid)
+                {
+                    highlightColor = Colors.Lime;
+                }
+                else
+                {
+                    highlightColor = Colors.Red;
+                }
 
                 if (targetSubIndex != -1)
                 {
@@ -140,6 +169,23 @@ namespace ArchsVsDinosClient.Views.MatchViews
             return false;
         }
 
+        private async void Click_BtnTakeACard(object sender, RoutedEventArgs e)
+        {
+            const int mainDrawPileIndex = 0;
+
+            if (sender is Button button)
+            {
+                button.IsEnabled = false;
+                string errorMessage = await gameViewModel.ExecuteDrawCardFromView(mainDrawPileIndex);
+
+                if (errorMessage != null)
+                {
+                    ShowErrorNotification(errorMessage);
+                }
+                CheckDrawButtonState();
+            }
+        }
+
         private int GetCorrectIndexForCard(Card card)
         {
             if (card.Category == CardCategory.DinoHead)
@@ -151,10 +197,14 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 switch (card.BodyPartType)
                 {
-                    case BodyPartType.LeftArm: return 4;
-                    case BodyPartType.Chest: return 5;
-                    case BodyPartType.RightArm: return 6;
-                    case BodyPartType.Legs: return 8;
+                    case BodyPartType.LeftArm:
+                        return 4;
+                    case BodyPartType.Chest:
+                        return 5;
+                    case BodyPartType.RightArm:
+                        return 6;
+                    case BodyPartType.Legs:
+                        return 8;
                 }
             }
             return -1;
@@ -183,34 +233,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 }
             }
             return null;
-        }
-
-        private int GetSubCellIndexFromMouse(CardCell cell, Point mousePositionRelativeToCell)
-        {
-            double columnWidth = cell.ActualWidth / 3.0;
-            double rowHeight = cell.ActualHeight / 3.0;
-
-            int columnIndex = (int)(mousePositionRelativeToCell.X / columnWidth);
-            int rowIndex = (int)(mousePositionRelativeToCell.Y / rowHeight);
-
-            if (columnIndex < 0)
-            {
-                columnIndex = 0;
-            }
-            if (columnIndex > 2)
-            {
-                columnIndex = 2;
-            }
-            if (rowIndex < 0)
-            {
-                rowIndex = 0;
-            }
-            if (rowIndex > 2)
-            {
-                rowIndex = 2;
-            }
-
-            return (rowIndex * 3) + columnIndex + 1;
         }
 
         private void ApplyNeonEffect(CardCell cell, int index, Color color)
@@ -247,13 +269,36 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
-        private int ExtractMatchIdFromCode(string gameMatchCode)
+        private void PlaceCardImageInGrid(CardCell cell, Card card)
         {
-            if (string.IsNullOrWhiteSpace(gameMatchCode))
+            Border targetBorder = null;
+
+            if (card.Category == CardCategory.DinoHead)
             {
-                throw new ArgumentException(Lang.GlobalSystemError);
+                targetBorder = cell.Part_Head;
             }
-            return Math.Abs(gameMatchCode.GetHashCode());
+            else if (card.BodyPartType == BodyPartType.Chest)
+            {
+                targetBorder = cell.Part_Chest;
+            }
+            else if (card.BodyPartType == BodyPartType.LeftArm)
+            {
+                targetBorder = cell.Part_LeftArm;
+            }
+            else if (card.BodyPartType == BodyPartType.RightArm)
+            {
+                targetBorder = cell.Part_RightArm;
+            }
+            else if (card.BodyPartType == BodyPartType.Legs)
+            {
+                targetBorder = cell.Part_Legs;
+            }
+
+            if (targetBorder != null)
+            {
+                var brush = new ImageBrush(new BitmapImage(new Uri(card.CardRoute)));
+                targetBorder.Background = brush;
+            }
         }
 
         private void InitializePlayersVisuals(List<LobbyPlayerDTO> players, string myUsername)
@@ -312,29 +357,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
-        private async void MatchLoaded(object sender, RoutedEventArgs e)
-        {
-            if (chatViewModel != null)
-            {
-                try
-                {
-                    await chatViewModel.ConnectAsync(currentUsername).ConfigureAwait(true);
-                }
-                catch
-                {
-                }
-            }
-
-            if (gameViewModel != null)
-            {
-                gameViewModel.BoardManager.PlayerHand.CollectionChanged += PlayerHandCollectionChanged;
-                gameViewModel.TurnChangedForUI += UpdateTurnGlow;
-                MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
-                await gameViewModel.InitializeAndStartGameAsync();
-                await Application.Current.Dispatcher.InvokeAsync(() => UpdatePlayerHandVisual(), DispatcherPriority.Loaded);
-            }
-        }
-
         private void PlayerHandCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -342,10 +364,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 UpdatePlayerHandVisual();
                 CheckDrawButtonState();
             });
-        }
-
-        private void OnCardDragEnter(object sender, DragEventArgs e)
-        {
         }
 
         private void OnCardDragLeave(object sender, DragEventArgs e)
@@ -373,6 +391,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 ClearAllCellEffects(cell);
                 var card = (Card)e.Data.GetData(typeof(Card));
+
                 string error = await gameViewModel.TryPlayCardAsync(card, cell.CellId);
                 if (error == null)
                 {
@@ -385,52 +404,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
-        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
-        {
-            DependencyObject parentObject = VisualTreeHelper.GetParent(child);
-            if (parentObject == null)
-            {
-                return null;
-            }
-
-            if (parentObject is T parent)
-            {
-                return parent;
-            }
-            return FindParent<T>(parentObject);
-        }
-
-        private void PlaceCardImageInGrid(CardCell cell, Card card)
-        {
-            System.Windows.Controls.Border targetBorder = null;
-
-            if (card.Category == CardCategory.DinoHead)
-            {
-                targetBorder = cell.Part_Head;
-            }
-            else if (card.BodyPartType == BodyPartType.Chest)
-            {
-                targetBorder = cell.Part_Chest;
-            }
-            else if (card.BodyPartType == BodyPartType.LeftArm)
-            {
-                targetBorder = cell.Part_LeftArm;
-            }
-            else if (card.BodyPartType == BodyPartType.RightArm)
-            {
-                targetBorder = cell.Part_RightArm;
-            }
-            else if (card.BodyPartType == BodyPartType.Legs)
-            {
-                targetBorder = cell.Part_Legs;
-            }
-
-            if (targetBorder != null)
-            {
-                var brush = new ImageBrush(new BitmapImage(new Uri(card.CardRoute)));
-                targetBorder.Background = brush;
-            }
-        }
         private void GameViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(GameViewModel.RemainingMoves) ||
@@ -486,12 +459,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 To = 0.0,
                 Duration = new Duration(TimeSpan.FromSeconds(0.5))
             };
-
-            fadeOut.Completed += (s, e) =>
-            {
-                Gr_ErrorNotification.Visibility = Visibility.Collapsed;
-            };
-
+            fadeOut.Completed += (s, e) => Gr_ErrorNotification.Visibility = Visibility.Collapsed;
             Gr_ErrorNotification.BeginAnimation(OpacityProperty, fadeOut);
         }
 
@@ -577,43 +545,25 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void Click_BtnSeeDeckP1(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayMovingRockSound();
-            new MatchSeeDeckHorizontal().ShowDialog();
-        }
-
-        private async void Click_BtnTakeACard (object sender, RoutedEventArgs e)
-        {
-
-            const int mainDrawPileIndex = 0;
-
-            if (sender is Button button)
-            {
-                button.IsEnabled = false;
-
-                string errorMessage = await gameViewModel.ExecuteDrawCardFromView(mainDrawPileIndex);
-
-                if (errorMessage != null)
-                {
-                    ShowErrorNotification(errorMessage);
-                }
-
-                CheckDrawButtonState();
-            }
+            ShowDeckWindow();
         }
 
         private void Click_BtnSeeDeckP2(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayMovingRockSound();
-            new MatchSeeDeckHorizontal().ShowDialog();
+            ShowDeckWindow();
         }
 
         private void Click_BtnSeeDeckP3(object sender, RoutedEventArgs e)
         {
-            SoundButton.PlayMovingRockSound();
-            new MatchSeeDeckHorizontal().ShowDialog();
+            ShowDeckWindow();
         }
 
         private void Click_BtnSeeDeckP4(object sender, RoutedEventArgs e)
+        {
+            ShowDeckWindow();
+        }
+
+        private void ShowDeckWindow()
         {
             SoundButton.PlayMovingRockSound();
             new MatchSeeDeckHorizontal().ShowDialog();
@@ -642,6 +592,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 }
                 catch
                 {
+
                 }
             }
 
@@ -654,6 +605,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 }
                 catch
                 {
+
                 }
             }
             base.OnClosing(e);

@@ -3,10 +3,7 @@ using ArchsVsDinosClient.Logging;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,11 +12,8 @@ namespace ArchsVsDinosClient.Services
     public class GameServiceClient : IGameServiceClient
     {
         private readonly GameManagerClient client;
-        private readonly InstanceContext context;
         private readonly GameCallbackHandler callback;
         private readonly WcfConnectionGuardian guardian;
-        private readonly SynchronizationContext syncContext;
-        private bool isDisposed;
 
         public event Action<GameInitializedDTO> GameInitialized;
         public event Action<GameStartedDTO> GameStarted;
@@ -27,199 +21,108 @@ namespace ArchsVsDinosClient.Services
         public event Action<CardDrawnDTO> CardDrawn;
         public event Action<DinoPlayedDTO> DinoHeadPlayed;
         public event Action<BodyPartAttachedDTO> BodyPartAttached;
-        public event Action<ArchAddedToBoardDTO> ArchAddedToBoard;
-        public event Action<ArchArmyProvokedDTO> ArchArmyProvoked;
+        public event Action<ArchAddedToBoardDTO> ArchAdded;
+        public event Action<ArchArmyProvokedDTO> ArchProvoked;
         public event Action<BattleResultDTO> BattleResolved;
         public event Action<GameEndedDTO> GameEnded;
-        public event Action<string, string> ConnectionError;
         public event Action<PlayerExpelledDTO> PlayerExpelled;
+        public event Action<CardExchangedDTO> CardExchanged;
+        public event Action<string, string> ServiceError;
 
         public GameServiceClient()
         {
-            syncContext = SynchronizationContext.Current;
+            var syncContext = SynchronizationContext.Current;
             callback = new GameCallbackHandler();
 
-            callback.GameInitialized += OnGameInitialized;
-            callback.GameStarted += OnGameStarted;
-            callback.TurnChanged += OnTurnChanged;
-            callback.CardDrawn += OnCardDrawn;
-            callback.DinoHeadPlayed += OnDinoHeadPlayed;
-            callback.BodyPartAttached += OnBodyPartAttached;
-            callback.ArchAddedToBoard += OnArchAddedToBoard;
-            callback.ArchArmyProvoked += OnArchArmyProvoked;
-            callback.BattleResolved += OnBattleResolved;
-            callback.GameEnded += OnGameEnded;
-            callback.PlayerExpelled += OnPlayerExpelled;
+            callback.OnGameInitializedEvent += (d) => GameInitialized?.Invoke(d);
+            callback.OnGameStartedEvent += (d) => GameStarted?.Invoke(d);
+            callback.OnTurnChangedEvent += (d) => TurnChanged?.Invoke(d);
+            callback.OnCardDrawnEvent += (d) => CardDrawn?.Invoke(d);
+            callback.OnDinoPlayedEvent += (d) => DinoHeadPlayed?.Invoke(d);
+            callback.OnBodyPartAttachedEvent += (d) => BodyPartAttached?.Invoke(d);
+            callback.OnArchAddedEvent += (d) => ArchAdded?.Invoke(d);
+            callback.OnArchProvokedEvent += (d) => ArchProvoked?.Invoke(d);
+            callback.OnBattleResolvedEvent += (d) => BattleResolved?.Invoke(d);
+            callback.OnGameEndedEvent += (d) => GameEnded?.Invoke(d);
+            callback.OnPlayerExpelledEvent += (d) => PlayerExpelled?.Invoke(d);
+            callback.OnCardExchangedEvent += (d) => CardExchanged?.Invoke(d);
 
-            context = new InstanceContext(callback);
-            context.SynchronizationContext = syncContext;
+            var context = new InstanceContext(callback);
+
+            if (syncContext != null)
+            {
+                context.SynchronizationContext = syncContext;
+            }
+
             client = new GameManagerClient(context);
 
             guardian = new WcfConnectionGuardian(
-                onError: (title, msg) => ConnectionError?.Invoke(title, msg),
+                onError: (title, msg) => ServiceError?.Invoke(title, msg),
                 logger: new Logger()
             );
             guardian.MonitorClientState(client);
         }
 
-        public async Task<GameSetupResultCode> InitializeGameAsync(int matchId)
+        public async Task InitializeGameAsync(string matchCode)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.InitializeGame(matchId))
-            );
+            await Task.CompletedTask;
         }
 
-        public async Task<GameSetupResultCode> StartGameAsync(int matchId)
+        public async Task StartGameAsync(string matchCode)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.StartGame(matchId))
-
-            );
+            await Task.CompletedTask;
         }
 
-        public async Task<DrawCardResultCode> DrawCardAsync(int matchId, int userId, int drawPileNumber)
+        public async Task DrawCardAsync(string matchCode, int userId, int drawPileNumber)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.DrawCard(matchId, userId, drawPileNumber))
-            );
+            await ExecuteAsync(() => client.DrawCard(matchCode, userId, drawPileNumber));
         }
 
-        public async Task<PlayCardResultCode> PlayDinoHeadAsync(int matchId, int userId, int cardId)
+        public async Task PlayDinoHeadAsync(string matchCode, int userId, int cardId)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.PlayDinoHead(matchId, userId, cardId))
-            );
+            await ExecuteAsync(() => client.PlayDinoHead(matchCode, userId, cardId));
         }
 
-        public async Task<PlayCardResultCode> AttachBodyPartToDinoAsync(int matchId, int userId, int cardId, int dinoHeadCardId)
+        public async Task AttachBodyPartAsync(string matchCode, int userId, AttachBodyPartDTO attachmentData)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.AttachBodyPartToDino(matchId, userId, cardId, dinoHeadCardId))
-            );
+            await ExecuteAsync(() => client.AttachBodyPartToDino(matchCode, userId, attachmentData));
         }
 
-        public async Task<ProvokeResultCode> ProvokeArchArmyAsync(int matchId, int userId, string armyType)
+        public async Task ProvokeArchArmyAsync(string matchCode, int userId, ArmyType armyType)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.ProvokeArchArmy(matchId, userId, armyType))
-            );
+            await ExecuteAsync(() => client.ProvokeArchArmy(matchCode, userId, armyType));
         }
 
-        public async Task<EndTurnResultCode> EndTurnAsync(int matchId, int userId)
+        public async Task EndTurnAsync(string matchCode, int userId)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.EndTurn(matchId, userId))
-            );
+            await ExecuteAsync(() => client.EndTurn(matchCode, userId));
         }
 
-        public async Task<GameStateDTO> GetGameStateAsync(int matchId)
+        public async Task SwapCardWithPlayerAsync(string matchCode, int initiatorUserId, ExchangeCardDTO request)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetGameState(matchId))
-            );
+            await ExecuteAsync(() => client.SwapCardWithPlayer(matchCode, initiatorUserId, request));
         }
 
-        public async Task<PlayerHandDTO> GetPlayerHandAsync(int matchId, int userId)
+        public async Task ConnectToGameAsync(string matchCode, int userId)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetPlayerHand(matchId, userId))
-            );
+            await ExecuteAsync(() => client.ConnectToGame(matchCode, userId));
         }
 
-        public async Task<CentralBoardDTO> GetCentralBoardAsync(int matchId)
+        private async Task ExecuteAsync(Action action)
         {
-            return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetCentralBoard(matchId))
-            );
-        }
-
-        private void OnGameInitialized(GameInitializedDTO data)
-        {
-            GameInitialized?.Invoke(data);
-        }
-
-        private void OnGameStarted(GameStartedDTO data)
-        {
-            GameStarted?.Invoke(data);
-        }
-
-        private void OnTurnChanged(TurnChangedDTO data)
-        {
-            TurnChanged?.Invoke(data);
-        }
-
-        private void OnCardDrawn(CardDrawnDTO data)
-        {
-            CardDrawn?.Invoke(data);
-        }
-
-        private void OnDinoHeadPlayed(DinoPlayedDTO data)
-        {
-            DinoHeadPlayed?.Invoke(data);
-        }
-
-        private void OnBodyPartAttached(BodyPartAttachedDTO data)
-        {
-            BodyPartAttached?.Invoke(data);
-        }
-
-        private void OnArchAddedToBoard(ArchAddedToBoardDTO data)
-        {
-            ArchAddedToBoard?.Invoke(data);
-        }
-
-        private void OnArchArmyProvoked(ArchArmyProvokedDTO data)
-        {
-            ArchArmyProvoked?.Invoke(data);
-        }
-
-        private void OnBattleResolved(BattleResultDTO data)
-        {
-            BattleResolved?.Invoke(data);
-        }
-
-        private void OnGameEnded(GameEndedDTO data)
-        {
-            GameEnded?.Invoke(data);
-        }
-
-        private void OnPlayerExpelled(PlayerExpelledDTO data)
-        {
-            PlayerExpelled?.Invoke(data);
-        }
-
-        public void Dispose()
-        {
-            if (isDisposed) return;
-
-            if (callback != null)
-            {
-                callback.GameInitialized -= OnGameInitialized;
-                callback.GameStarted -= OnGameStarted;
-                callback.TurnChanged -= OnTurnChanged;
-                callback.CardDrawn -= OnCardDrawn;
-                callback.DinoHeadPlayed -= OnDinoHeadPlayed;
-                callback.BodyPartAttached -= OnBodyPartAttached;
-                callback.ArchAddedToBoard -= OnArchAddedToBoard;
-                callback.ArchArmyProvoked -= OnArchArmyProvoked;
-                callback.BattleResolved -= OnBattleResolved;
-                callback.GameEnded -= OnGameEnded;
-                callback.PlayerExpelled -= OnPlayerExpelled;
-            }
-
             try
             {
-                if (client?.State == CommunicationState.Opened)
-                    client.Close();
-                else if (client?.State == CommunicationState.Faulted)
-                    client.Abort();
+                await Task.Run(action);
             }
-            catch
+            catch (FaultException fault)
             {
-                client?.Abort();
+                string errorMessage = fault.Message;
+                ServiceError?.Invoke("Error de Juego", errorMessage);
             }
-
-            isDisposed = true;
+            catch (Exception ex)
+            {
+                ServiceError?.Invoke("Error de Conexión", ex.Message);
+            }
         }
     }
 }

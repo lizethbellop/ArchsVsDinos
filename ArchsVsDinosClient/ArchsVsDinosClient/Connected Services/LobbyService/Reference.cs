@@ -15,33 +15,18 @@ namespace ArchsVsDinosClient.LobbyService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="UserAccountDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MatchSettings", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
     [System.SerializableAttribute()]
-    public partial class UserAccountDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class MatchSettings : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string EmailField;
+        private string HostNicknameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdConfigurationField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdPlayerField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NicknameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PasswordField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UsernameField;
+        private int MaxPlayersField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -54,92 +39,104 @@ namespace ArchsVsDinosClient.LobbyService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Email {
+        public string HostNickname {
             get {
-                return this.EmailField;
+                return this.HostNicknameField;
             }
             set {
-                if ((object.ReferenceEquals(this.EmailField, value) != true)) {
-                    this.EmailField = value;
-                    this.RaisePropertyChanged("Email");
+                if ((object.ReferenceEquals(this.HostNicknameField, value) != true)) {
+                    this.HostNicknameField = value;
+                    this.RaisePropertyChanged("HostNickname");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int IdConfiguration {
+        public int MaxPlayers {
             get {
-                return this.IdConfigurationField;
+                return this.MaxPlayersField;
             }
             set {
-                if ((this.IdConfigurationField.Equals(value) != true)) {
-                    this.IdConfigurationField = value;
-                    this.RaisePropertyChanged("IdConfiguration");
+                if ((this.MaxPlayersField.Equals(value) != true)) {
+                    this.MaxPlayersField = value;
+                    this.RaisePropertyChanged("MaxPlayers");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MatchCreationResponse", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response")]
+    [System.SerializableAttribute()]
+    public partial class MatchCreationResponse : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string LobbyCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ArchsVsDinosClient.LobbyService.MatchCreationResultCode ResultCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool SuccessField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LobbyCode {
+            get {
+                return this.LobbyCodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LobbyCodeField, value) != true)) {
+                    this.LobbyCodeField = value;
+                    this.RaisePropertyChanged("LobbyCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int IdPlayer {
+        public ArchsVsDinosClient.LobbyService.MatchCreationResultCode ResultCode {
             get {
-                return this.IdPlayerField;
+                return this.ResultCodeField;
             }
             set {
-                if ((this.IdPlayerField.Equals(value) != true)) {
-                    this.IdPlayerField = value;
-                    this.RaisePropertyChanged("IdPlayer");
+                if ((this.ResultCodeField.Equals(value) != true)) {
+                    this.ResultCodeField = value;
+                    this.RaisePropertyChanged("ResultCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Name {
+        public bool Success {
             get {
-                return this.NameField;
+                return this.SuccessField;
             }
             set {
-                if ((object.ReferenceEquals(this.NameField, value) != true)) {
-                    this.NameField = value;
-                    this.RaisePropertyChanged("Name");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Nickname {
-            get {
-                return this.NicknameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.NicknameField, value) != true)) {
-                    this.NicknameField = value;
-                    this.RaisePropertyChanged("Nickname");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Password {
-            get {
-                return this.PasswordField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.PasswordField, value) != true)) {
-                    this.PasswordField = value;
-                    this.RaisePropertyChanged("Password");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Username {
-            get {
-                return this.UsernameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
-                    this.UsernameField = value;
-                    this.RaisePropertyChanged("Username");
+                if ((this.SuccessField.Equals(value) != true)) {
+                    this.SuccessField = value;
+                    this.RaisePropertyChanged("Success");
                 }
             }
         }
@@ -155,90 +152,48 @@ namespace ArchsVsDinosClient.LobbyService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="LobbyResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
-    public enum LobbyResultCode : int {
+    [System.Runtime.Serialization.DataContractAttribute(Name="MatchCreationResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum MatchCreationResultCode : int {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyCreated = 0,
+        MatchCreation_Success = 0,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyJoined = 1,
+        MatchCreation_Failure = 1,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyCreationError = 2,
+        MatchCreation_InvalidParameters = 2,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyJoinedError = 3,
+        MatchCreation_ServerBusy = 3,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_ConnectionError = 4,
+        MatchCreation_Timeout = 4,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_NotExist = 5,
+        MatchCreation_InvalidSettings = 5,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_NotHost = 6,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyCancelled = 7,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyCancelationError = 8,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyLeft = 9,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_LobbyLeftError = 10,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_PlayerExpelled = 11,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_PlayerExpelledError = 12,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_FullLobby = 13,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_GameStarted = 14,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_IncompleteLobby = 15,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_ErrorGame = 16,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_EmailSended = 17,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Lobby_EmailSendError = 18,
+        MatchCreation_UnexpectedError = 6,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="LobbyPlayerDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="MatchJoinResponse", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response")]
     [System.SerializableAttribute()]
-    public partial class LobbyPlayerDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class MatchJoinResponse : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int IdPlayerField;
+        private string LobbyCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private bool IsHostField;
+        private ArchsVsDinosClient.LobbyService.JoinMatchResultCode ResultCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string NicknameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ProfilePictureField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string UsernameField;
+        private bool SuccessField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -251,27 +206,117 @@ namespace ArchsVsDinosClient.LobbyService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int IdPlayer {
+        public string LobbyCode {
             get {
-                return this.IdPlayerField;
+                return this.LobbyCodeField;
             }
             set {
-                if ((this.IdPlayerField.Equals(value) != true)) {
-                    this.IdPlayerField = value;
-                    this.RaisePropertyChanged("IdPlayer");
+                if ((object.ReferenceEquals(this.LobbyCodeField, value) != true)) {
+                    this.LobbyCodeField = value;
+                    this.RaisePropertyChanged("LobbyCode");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public bool IsHost {
+        public ArchsVsDinosClient.LobbyService.JoinMatchResultCode ResultCode {
             get {
-                return this.IsHostField;
+                return this.ResultCodeField;
             }
             set {
-                if ((this.IsHostField.Equals(value) != true)) {
-                    this.IsHostField = value;
-                    this.RaisePropertyChanged("IsHost");
+                if ((this.ResultCodeField.Equals(value) != true)) {
+                    this.ResultCodeField = value;
+                    this.RaisePropertyChanged("ResultCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool Success {
+            get {
+                return this.SuccessField;
+            }
+            set {
+                if ((this.SuccessField.Equals(value) != true)) {
+                    this.SuccessField = value;
+                    this.RaisePropertyChanged("Success");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="JoinMatchResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum JoinMatchResultCode : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        JoinMatch_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        JoinMatch_LobbyNotFound = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        JoinMatch_LobbyFull = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        JoinMatch_InvalidParameters = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        JoinMatch_Timeout = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        JoinMatch_InvalidSettings = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        JoinMatch_UnexpectedError = 6,
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LobbyPlayerDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.SerializableAttribute()]
+    public partial class LobbyPlayerDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool IsReadyField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NicknameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int UserIdField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsReady {
+            get {
+                return this.IsReadyField;
+            }
+            set {
+                if ((this.IsReadyField.Equals(value) != true)) {
+                    this.IsReadyField = value;
+                    this.RaisePropertyChanged("IsReady");
                 }
             }
         }
@@ -290,27 +335,14 @@ namespace ArchsVsDinosClient.LobbyService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string ProfilePicture {
+        public int UserId {
             get {
-                return this.ProfilePictureField;
+                return this.UserIdField;
             }
             set {
-                if ((object.ReferenceEquals(this.ProfilePictureField, value) != true)) {
-                    this.ProfilePictureField = value;
-                    this.RaisePropertyChanged("ProfilePicture");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string Username {
-            get {
-                return this.UsernameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
-                    this.UsernameField = value;
-                    this.RaisePropertyChanged("Username");
+                if ((this.UserIdField.Equals(value) != true)) {
+                    this.UserIdField = value;
+                    this.RaisePropertyChanged("UserId");
                 }
             }
         }
@@ -330,68 +362,65 @@ namespace ArchsVsDinosClient.LobbyService {
     public interface ILobbyManager {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CreateLobby", ReplyAction="http://tempuri.org/ILobbyManager/CreateLobbyResponse")]
-        ArchsVsDinosClient.LobbyService.LobbyResultCode CreateLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO);
+        ArchsVsDinosClient.LobbyService.MatchCreationResponse CreateLobby(ArchsVsDinosClient.LobbyService.MatchSettings settings);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CreateLobby", ReplyAction="http://tempuri.org/ILobbyManager/CreateLobbyResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchCreationResponse> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.MatchSettings settings);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/JoinLobby", ReplyAction="http://tempuri.org/ILobbyManager/JoinLobbyResponse")]
-        ArchsVsDinosClient.LobbyService.LobbyResultCode JoinLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode);
+        ArchsVsDinosClient.LobbyService.MatchJoinResponse JoinLobby(string lobbyCode, int userId, string nickname);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/JoinLobby", ReplyAction="http://tempuri.org/ILobbyManager/JoinLobbyResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> JoinLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchJoinResponse> JoinLobbyAsync(string lobbyCode, int userId, string nickname);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CancelLobby", ReplyAction="http://tempuri.org/ILobbyManager/CancelLobbyResponse")]
-        ArchsVsDinosClient.LobbyService.LobbyResultCode CancelLobby(string matchCode, string usernameRequester);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SendInvitations", ReplyAction="http://tempuri.org/ILobbyManager/SendInvitationsResponse")]
+        bool SendInvitations(string lobbyCode, string sender, string[] guests);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/CancelLobby", ReplyAction="http://tempuri.org/ILobbyManager/CancelLobbyResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CancelLobbyAsync(string matchCode, string usernameRequester);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SendInvitations", ReplyAction="http://tempuri.org/ILobbyManager/SendInvitationsResponse")]
+        System.Threading.Tasks.Task<bool> SendInvitationsAsync(string lobbyCode, string sender, string[] guests);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/LeaveLobby", ReplyAction="http://tempuri.org/ILobbyManager/LeaveLobbyResponse")]
-        ArchsVsDinosClient.LobbyService.LobbyResultCode LeaveLobby(string username);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/ConnectToLobby", ReplyAction="http://tempuri.org/ILobbyManager/ConnectToLobbyResponse")]
+        void ConnectToLobby(string lobbyCode, string nickname);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/LeaveLobby", ReplyAction="http://tempuri.org/ILobbyManager/LeaveLobbyResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> LeaveLobbyAsync(string username);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/ConnectToLobby", ReplyAction="http://tempuri.org/ILobbyManager/ConnectToLobbyResponse")]
+        System.Threading.Tasks.Task ConnectToLobbyAsync(string lobbyCode, string nickname);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/ExpelPlayerLobby", ReplyAction="http://tempuri.org/ILobbyManager/ExpelPlayerLobbyResponse")]
-        ArchsVsDinosClient.LobbyService.LobbyResultCode ExpelPlayerLobby(string username, string hostUsername);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/DisconnectFromLobby", ReplyAction="http://tempuri.org/ILobbyManager/DisconnectFromLobbyResponse")]
+        void DisconnectFromLobby(string lobbyCode, string nickname);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/ExpelPlayerLobby", ReplyAction="http://tempuri.org/ILobbyManager/ExpelPlayerLobbyResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> ExpelPlayerLobbyAsync(string username, string hostUsername);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/DisconnectFromLobby", ReplyAction="http://tempuri.org/ILobbyManager/DisconnectFromLobbyResponse")]
+        System.Threading.Tasks.Task DisconnectFromLobbyAsync(string lobbyCode, string nickname);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SetReadyStatus", ReplyAction="http://tempuri.org/ILobbyManager/SetReadyStatusResponse")]
+        void SetReadyStatus(string lobbyCode, string nickname, bool isReady);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SetReadyStatus", ReplyAction="http://tempuri.org/ILobbyManager/SetReadyStatusResponse")]
+        System.Threading.Tasks.Task SetReadyStatusAsync(string lobbyCode, string nickname, bool isReady);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
-        ArchsVsDinosClient.LobbyService.LobbyResultCode StartGame(string matchCode, string hostUsername);
+        void StartGame(string lobbyCode);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> StartGameAsync(string matchCode, string hostUsername);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/InviteByEmailToLobby", ReplyAction="http://tempuri.org/ILobbyManager/InviteByEmailToLobbyResponse")]
-        ArchsVsDinosClient.LobbyService.LobbyResultCode InviteByEmailToLobby(string email, string matchCode, string inviterUsername);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/InviteByEmailToLobby", ReplyAction="http://tempuri.org/ILobbyManager/InviteByEmailToLobbyResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> InviteByEmailToLobbyAsync(string email, string matchCode, string inviterUsername);
+        System.Threading.Tasks.Task StartGameAsync(string lobbyCode);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface ILobbyManagerCallback {
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/CreatedLobby")]
-        void CreatedLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO hostLobbyPlayerDTO, string matchCode);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/PlayerJoinedLobby")]
+        void PlayerJoinedLobby(string nickname);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/JoinedLobby")]
-        void JoinedLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO userAccountDTO);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/PlayerLeftLobby")]
+        void PlayerLeftLobby(string nickname);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/LobbyCancelled")]
-        void LobbyCancelled(string matchCode);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/UpdateListOfPlayers")]
+        void UpdateListOfPlayers(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO[] players);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/LeftLobby")]
-        void LeftLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO playerWhoLeft);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/PlayerReadyStatusChanged")]
+        void PlayerReadyStatusChanged(string nickname, bool isReady);
         
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/ExpelledFromLobby")]
-        void ExpelledFromLobby(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO expelledPlayer);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/GameStarted")]
-        void GameStarted(string matchCode, ArchsVsDinosClient.LobbyService.LobbyPlayerDTO[] players);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/GameStarting")]
+        void GameStarting();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -422,60 +451,60 @@ namespace ArchsVsDinosClient.LobbyService {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public ArchsVsDinosClient.LobbyService.LobbyResultCode CreateLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO) {
-            return base.Channel.CreateLobby(hostUserAccountDTO);
+        public ArchsVsDinosClient.LobbyService.MatchCreationResponse CreateLobby(ArchsVsDinosClient.LobbyService.MatchSettings settings) {
+            return base.Channel.CreateLobby(settings);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO hostUserAccountDTO) {
-            return base.Channel.CreateLobbyAsync(hostUserAccountDTO);
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchCreationResponse> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.MatchSettings settings) {
+            return base.Channel.CreateLobbyAsync(settings);
         }
         
-        public ArchsVsDinosClient.LobbyService.LobbyResultCode JoinLobby(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode) {
-            return base.Channel.JoinLobby(userAccountDTO, matchCode);
+        public ArchsVsDinosClient.LobbyService.MatchJoinResponse JoinLobby(string lobbyCode, int userId, string nickname) {
+            return base.Channel.JoinLobby(lobbyCode, userId, nickname);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> JoinLobbyAsync(ArchsVsDinosClient.LobbyService.UserAccountDTO userAccountDTO, string matchCode) {
-            return base.Channel.JoinLobbyAsync(userAccountDTO, matchCode);
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchJoinResponse> JoinLobbyAsync(string lobbyCode, int userId, string nickname) {
+            return base.Channel.JoinLobbyAsync(lobbyCode, userId, nickname);
         }
         
-        public ArchsVsDinosClient.LobbyService.LobbyResultCode CancelLobby(string matchCode, string usernameRequester) {
-            return base.Channel.CancelLobby(matchCode, usernameRequester);
+        public bool SendInvitations(string lobbyCode, string sender, string[] guests) {
+            return base.Channel.SendInvitations(lobbyCode, sender, guests);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> CancelLobbyAsync(string matchCode, string usernameRequester) {
-            return base.Channel.CancelLobbyAsync(matchCode, usernameRequester);
+        public System.Threading.Tasks.Task<bool> SendInvitationsAsync(string lobbyCode, string sender, string[] guests) {
+            return base.Channel.SendInvitationsAsync(lobbyCode, sender, guests);
         }
         
-        public ArchsVsDinosClient.LobbyService.LobbyResultCode LeaveLobby(string username) {
-            return base.Channel.LeaveLobby(username);
+        public void ConnectToLobby(string lobbyCode, string nickname) {
+            base.Channel.ConnectToLobby(lobbyCode, nickname);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> LeaveLobbyAsync(string username) {
-            return base.Channel.LeaveLobbyAsync(username);
+        public System.Threading.Tasks.Task ConnectToLobbyAsync(string lobbyCode, string nickname) {
+            return base.Channel.ConnectToLobbyAsync(lobbyCode, nickname);
         }
         
-        public ArchsVsDinosClient.LobbyService.LobbyResultCode ExpelPlayerLobby(string username, string hostUsername) {
-            return base.Channel.ExpelPlayerLobby(username, hostUsername);
+        public void DisconnectFromLobby(string lobbyCode, string nickname) {
+            base.Channel.DisconnectFromLobby(lobbyCode, nickname);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> ExpelPlayerLobbyAsync(string username, string hostUsername) {
-            return base.Channel.ExpelPlayerLobbyAsync(username, hostUsername);
+        public System.Threading.Tasks.Task DisconnectFromLobbyAsync(string lobbyCode, string nickname) {
+            return base.Channel.DisconnectFromLobbyAsync(lobbyCode, nickname);
         }
         
-        public ArchsVsDinosClient.LobbyService.LobbyResultCode StartGame(string matchCode, string hostUsername) {
-            return base.Channel.StartGame(matchCode, hostUsername);
+        public void SetReadyStatus(string lobbyCode, string nickname, bool isReady) {
+            base.Channel.SetReadyStatus(lobbyCode, nickname, isReady);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> StartGameAsync(string matchCode, string hostUsername) {
-            return base.Channel.StartGameAsync(matchCode, hostUsername);
+        public System.Threading.Tasks.Task SetReadyStatusAsync(string lobbyCode, string nickname, bool isReady) {
+            return base.Channel.SetReadyStatusAsync(lobbyCode, nickname, isReady);
         }
         
-        public ArchsVsDinosClient.LobbyService.LobbyResultCode InviteByEmailToLobby(string email, string matchCode, string inviterUsername) {
-            return base.Channel.InviteByEmailToLobby(email, matchCode, inviterUsername);
+        public void StartGame(string lobbyCode) {
+            base.Channel.StartGame(lobbyCode);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.LobbyResultCode> InviteByEmailToLobbyAsync(string email, string matchCode, string inviterUsername) {
-            return base.Channel.InviteByEmailToLobbyAsync(email, matchCode, inviterUsername);
+        public System.Threading.Tasks.Task StartGameAsync(string lobbyCode) {
+            return base.Channel.StartGameAsync(lobbyCode);
         }
     }
 }

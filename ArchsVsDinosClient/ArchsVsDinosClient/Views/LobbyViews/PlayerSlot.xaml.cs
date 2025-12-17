@@ -91,8 +91,9 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
+        
         private void Click_BtnKick(object sender, RoutedEventArgs e)
-        {
+        {/*
 
             Button clickedButton = sender as Button;
             if (clickedButton != null)
@@ -119,7 +120,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                         MessageBox.Show(Lang.Lobby_OnlyHostCanKick);
                     }
                 }
-            }
+            }*/
         }
     }
 }

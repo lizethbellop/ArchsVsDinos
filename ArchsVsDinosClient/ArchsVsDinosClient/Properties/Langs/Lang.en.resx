@@ -819,4 +819,10 @@
   <data name="Login_IForgotMyPassword" xml:space="preserve">
     <value>I forgot my password</value>
   </data>
+  <data name="Lobby_LobbyFull" xml:space="preserve">
+    <value>Lobby full, try again later</value>
+  </data>
+  <data name="Lobby_LobbyNotFound" xml:space="preserve">
+    <value>Lobby not found, try again</value>
+  </data>
 </root>

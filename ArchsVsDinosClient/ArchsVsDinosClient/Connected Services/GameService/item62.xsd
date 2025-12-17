@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
-  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" />
-  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" />
   <xs:import schemaLocation="http://localhost:8087/?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
-  <xs:element name="InitializeGame">
+  <xs:element name="ConnectToGame">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="userId" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="InitializeGameResponse">
+  <xs:element name="ConnectToGameResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LeaveGame">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="InitializeGameResult" type="q1:GameSetupResultCode" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="userId" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="StartGame">
+  <xs:element name="LeaveGameResponse">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="StartGameResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="StartGameResult" type="q2:GameSetupResultCode" />
-      </xs:sequence>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="DrawCard">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="userId" type="xs:int" />
         <xs:element minOccurs="0" name="drawPileNumber" type="xs:int" />
       </xs:sequence>
@@ -43,15 +40,13 @@
   </xs:element>
   <xs:element name="DrawCardResponse">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="DrawCardResult" type="q3:DrawCardResultCode" />
-      </xs:sequence>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="PlayDinoHead">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="userId" type="xs:int" />
         <xs:element minOccurs="0" name="cardId" type="xs:int" />
       </xs:sequence>
@@ -59,176 +54,145 @@
   </xs:element>
   <xs:element name="PlayDinoHeadResponse">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="PlayDinoHeadResult" type="q4:PlayCardResultCode" />
-      </xs:sequence>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="AttachBodyPartToDino">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="userId" type="xs:int" />
-        <xs:element minOccurs="0" name="cardId" type="xs:int" />
-        <xs:element minOccurs="0" name="dinoHeadCardId" type="xs:int" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="attachmentData" nillable="true" type="q1:AttachBodyPartDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="AttachBodyPartToDinoResponse">
     <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SwapCardWithPlayer">
+    <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="AttachBodyPartToDinoResult" type="q5:PlayCardResultCode" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="initiatorUserId" type="xs:int" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="request" nillable="true" type="q2:ExchangeCardDTO" />
       </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SwapCardWithPlayerResponse">
+    <xs:complexType>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="ProvokeArchArmy">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="userId" type="xs:int" />
-        <xs:element minOccurs="0" name="armyType" nillable="true" type="xs:string" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="armyType" type="q3:ArmyType" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="ProvokeArchArmyResponse">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="ProvokeArchArmyResult" type="q6:ProvokeResultCode" />
-      </xs:sequence>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="EndTurn">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="userId" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="EndTurnResponse">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="EndTurnResult" type="q7:EndTurnResultCode" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetGameState">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetGameStateResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" minOccurs="0" name="GetGameStateResult" nillable="true" type="q8:GameStateDTO" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetPlayerHand">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
-        <xs:element minOccurs="0" name="userId" type="xs:int" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetPlayerHandResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="GetPlayerHandResult" nillable="true" type="q9:PlayerHandDTO" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetCentralBoard">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GetCentralBoardResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" minOccurs="0" name="GetCentralBoardResult" nillable="true" type="q10:CentralBoardDTO" />
-      </xs:sequence>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="OnGameInitialized">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q11:GameInitializedDTO" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q4:GameInitializedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnGameStarted">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q12:GameStartedDTO" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q5:GameStartedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnTurnChanged">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q13:TurnChangedDTO" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q6:TurnChangedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnCardDrawn">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q14:CardDrawnDTO" />
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q7:CardDrawnDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnDinoHeadPlayed">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q15:DinoPlayedDTO" />
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q8:DinoPlayedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnBodyPartAttached">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q16:BodyPartAttachedDTO" />
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q9:BodyPartAttachedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnArchAddedToBoard">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q17:ArchAddedToBoardDTO" />
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q10:ArchAddedToBoardDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnArchArmyProvoked">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q18="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q18:ArchArmyProvokedDTO" />
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q11:ArchArmyProvokedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnBattleResolved">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q19="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q19:BattleResultDTO" />
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q12:BattleResultDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnGameEnded">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q20="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q20:GameEndedDTO" />
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q13:GameEndedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="OnPlayerExpelled">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q21="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="dto" nillable="true" type="q21:PlayerExpelledDTO" />
+        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="dto" nillable="true" type="q14:PlayerExpelledDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OnCardExchanged">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="dto" nillable="true" type="q15:CardExchangedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

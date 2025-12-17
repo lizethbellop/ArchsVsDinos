@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.LobbyService;
 using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
@@ -33,6 +34,10 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         public Lobby(bool isHost, ILobbyServiceClient client = null)
         {
             InitializeComponent();
+            if (client == null)
+            {
+                client = new LobbyServiceClient();
+            }
             viewModel = new LobbyViewModel(isHost, client);
             DataContext = viewModel;
 
@@ -67,7 +72,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
 
         private void Click_BtnCancelMatch(object sender, RoutedEventArgs e)
-        {
+        {/*
             SoundButton.PlayDestroyingRockSound();
 
             if (UserSession.Instance.CurrentUser == null)
@@ -95,7 +100,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 var main = new MainWindow();
                 main.Show();
                 this.Close();
-            }
+            }*/
 
         }
 

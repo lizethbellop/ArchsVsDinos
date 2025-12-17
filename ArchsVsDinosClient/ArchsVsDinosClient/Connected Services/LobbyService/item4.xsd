@@ -1,153 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost:8083/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
-  <xs:import schemaLocation="http://localhost:8083/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+  <xs:import schemaLocation="http://localhost:8083/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" />
+  <xs:import schemaLocation="http://localhost:8083/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
   <xs:element name="CreateLobby">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="hostUserAccountDTO" nillable="true" type="q1:UserAccountDTO" />
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="settings" nillable="true" type="q1:MatchSettings" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="CreateLobbyResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="CreateLobbyResult" type="q2:LobbyResultCode" />
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="CreateLobbyResult" nillable="true" type="q2:MatchCreationResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="JoinLobby">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="userAccountDTO" nillable="true" type="q3:UserAccountDTO" />
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="userId" type="xs:int" />
+        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="JoinLobbyResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="JoinLobbyResult" type="q4:LobbyResultCode" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="JoinLobbyResult" nillable="true" type="q3:MatchJoinResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="CancelLobby">
+  <xs:element name="SendInvitations">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="usernameRequester" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sender" nillable="true" type="xs:string" />
+        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="guests" nillable="true" type="q4:ArrayOfstring" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="CancelLobbyResponse">
+  <xs:element name="SendInvitationsResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="CancelLobbyResult" type="q5:LobbyResultCode" />
+        <xs:element minOccurs="0" name="SendInvitationsResult" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="LeaveLobby">
+  <xs:element name="ConnectToLobby">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="LeaveLobbyResponse">
+  <xs:element name="ConnectToLobbyResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DisconnectFromLobby">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="LeaveLobbyResult" type="q6:LobbyResultCode" />
+        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="ExpelPlayerLobby">
+  <xs:element name="DisconnectFromLobbyResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SetReadyStatus">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="hostUsername" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="isReady" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="ExpelPlayerLobbyResponse">
+  <xs:element name="SetReadyStatusResponse">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="ExpelPlayerLobbyResult" type="q7:LobbyResultCode" />
-      </xs:sequence>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
   <xs:element name="StartGame">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="hostUsername" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="StartGameResponse">
     <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PlayerJoinedLobby">
+    <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="StartGameResult" type="q8:LobbyResultCode" />
+        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="InviteByEmailToLobby">
+  <xs:element name="PlayerLeftLobby">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="inviterUsername" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="InviteByEmailToLobbyResponse">
+  <xs:element name="UpdateListOfPlayers">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="InviteByEmailToLobbyResult" type="q9:LobbyResultCode" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="players" nillable="true" type="q5:ArrayOfLobbyPlayerDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="CreatedLobby">
+  <xs:element name="PlayerReadyStatusChanged">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="hostLobbyPlayerDTO" nillable="true" type="q10:LobbyPlayerDTO" />
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="isReady" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="JoinedLobby">
+  <xs:element name="GameStarting">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="userAccountDTO" nillable="true" type="q11:LobbyPlayerDTO" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="LobbyCancelled">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="LeftLobby">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="playerWhoLeft" nillable="true" type="q12:LobbyPlayerDTO" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="ExpelledFromLobby">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="expelledPlayer" nillable="true" type="q13:LobbyPlayerDTO" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GameStarted">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
-        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="players" nillable="true" type="q14:ArrayOfLobbyPlayerDTO" />
-      </xs:sequence>
+      <xs:sequence />
     </xs:complexType>
   </xs:element>
 </xs:schema>

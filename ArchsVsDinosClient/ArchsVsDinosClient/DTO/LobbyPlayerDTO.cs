@@ -16,5 +16,6 @@ namespace ArchsVsDinosClient.DTO
         public int TotalLosses { get; set; }
 
         public bool IsHost { get; set; }
+        public bool IsReady { get; set; }
     }
 }

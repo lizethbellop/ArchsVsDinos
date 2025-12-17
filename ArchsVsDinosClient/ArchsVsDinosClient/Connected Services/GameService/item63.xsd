@@ -1,35 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
-  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-  <xs:complexType name="GameStateDTO">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="CentralBoard" nillable="true" type="tns:CentralBoardDTO" />
-      <xs:element minOccurs="0" name="CurrentTurnUserId" type="xs:int" />
-      <xs:element minOccurs="0" name="DiscardPileCount" type="xs:int" />
-      <xs:element minOccurs="0" name="DrawPile1Count" type="xs:int" />
-      <xs:element minOccurs="0" name="DrawPile2Count" type="xs:int" />
-      <xs:element minOccurs="0" name="DrawPile3Count" type="xs:int" />
-      <xs:element minOccurs="0" name="IsStarted" type="xs:boolean" />
-      <xs:element minOccurs="0" name="MatchId" type="xs:int" />
-      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="Players" nillable="true" type="q1:ArrayOfPlayerInGameDTO" />
-      <xs:element minOccurs="0" name="RemainingTime" type="ser:duration" />
-      <xs:element minOccurs="0" name="TurnNumber" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="GameStateDTO" nillable="true" type="tns:GameStateDTO" />
-  <xs:complexType name="CentralBoardDTO">
-    <xs:sequence>
-      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="SandArmy" nillable="true" type="q2:ArrayOfCardDTO" />
-      <xs:element minOccurs="0" name="SandArmyCount" type="xs:int" />
-      <xs:element minOccurs="0" name="SandArmyPower" type="xs:int" />
-      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="WaterArmy" nillable="true" type="q3:ArrayOfCardDTO" />
-      <xs:element minOccurs="0" name="WaterArmyCount" type="xs:int" />
-      <xs:element minOccurs="0" name="WaterArmyPower" type="xs:int" />
-      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="WindArmy" nillable="true" type="q4:ArrayOfCardDTO" />
-      <xs:element minOccurs="0" name="WindArmyCount" type="xs:int" />
-      <xs:element minOccurs="0" name="WindArmyPower" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="CentralBoardDTO" nillable="true" type="tns:CentralBoardDTO" />
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="ArmyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Water" />
+      <xs:enumeration value="Land" />
+      <xs:enumeration value="Air" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ArmyType" nillable="true" type="tns:ArmyType" />
+  <xs:simpleType name="DinoPartType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Head" />
+      <xs:enumeration value="Torso" />
+      <xs:enumeration value="Legs" />
+      <xs:enumeration value="Arms" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DinoPartType" nillable="true" type="tns:DinoPartType" />
 </xs:schema>

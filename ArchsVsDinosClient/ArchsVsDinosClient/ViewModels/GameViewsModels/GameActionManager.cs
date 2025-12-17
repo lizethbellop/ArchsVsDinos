@@ -1,10 +1,6 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 {
@@ -20,16 +16,27 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             }
         }
 
+        public int GetHeadIdFromCell(string cellId)
+        {
+            if (dinoSlots.ContainsKey(cellId) && dinoSlots[cellId].HasHead)
+            {
+                return dinoSlots[cellId].Head.IdCard;
+            }
+            return 0;
+        }
+
         public string ValidateDrop(Card card, string cellId, int remainingMoves, bool isMyTurn)
         {
             if (!isMyTurn)
             {
                 return Lang.Match_NotYourTurn;
             }
+
             if (remainingMoves <= 0)
             {
                 return Lang.Match_AlreadyUsedRolls;
             }
+
             if (!dinoSlots.ContainsKey(cellId))
             {
                 return Lang.Match_InvalidCell;
@@ -44,7 +51,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     {
                         return Lang.Match_AlreadyHeadInSpace;
                     }
-                    return null; 
+                    return null;
 
                 case CardCategory.BodyPart:
                     if (!dino.HasHead)
@@ -66,7 +73,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     return Lang.Match_DinosaurAlreadyHasChest;
                 }
-                return null; 
+                return null;
             }
 
             if (!dino.HasChest)
@@ -110,7 +117,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     break;
             }
 
-            return null; 
+            return null;
         }
 
         public void RegisterSuccessfulMove(Card card, string cellId)
@@ -118,7 +125,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             if (dinoSlots.ContainsKey(cellId))
             {
                 var dino = dinoSlots[cellId];
-
                 switch (card.Category)
                 {
                     case CardCategory.DinoHead:
