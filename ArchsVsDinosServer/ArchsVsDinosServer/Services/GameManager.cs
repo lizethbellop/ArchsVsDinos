@@ -2,6 +2,7 @@
 using ArchsVsDinosServer.BusinessLogic.GameManagement;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Interfaces.Game;
 using ArchsVsDinosServer.Services.GameService;
 using ArchsVsDinosServer.Services.Interfaces;
 using ArchsVsDinosServer.Utils;
@@ -27,23 +28,15 @@ namespace ArchsVsDinosServer.Services
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession)]
     public class GameManager : IGameManager
     {
-        private readonly GameLogic gameLogic;
-        private readonly IGameManagerCallback callback;
-        private readonly GameNotifier notifier;
+        private readonly IGameLogic gameLogic;
         private readonly ILoggerHelper logger;
 
         public GameManager()
         {
-            callback = OperationContext.Current.GetCallbackChannel<IGameManagerCallback>();
-            logger = new LoggerHelperWrapper();
-            var sessions = new GameSessionManager(logger);
-            var setupHandler = new GameSetupHandler();
-            var core = new GameCoreContext(sessions, setupHandler);
-            notifier = new GameNotifier(logger);
-            var statistics = new StatisticsManager();
-
-            gameLogic = new GameLogic(core, logger, notifier, statistics);
+            logger = ServiceContext.Logger;
+            gameLogic = ServiceContext.GameLogic;
         }
+
 
         public void AttachBodyPartToDino(string matchCode, int userId, AttachBodyPartDTO attachmentData)
         {

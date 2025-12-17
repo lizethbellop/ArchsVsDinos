@@ -1,7 +1,11 @@
 ﻿using ArchsVsDinosServer.BusinessLogic;
+using ArchsVsDinosServer.BusinessLogic.GameManagement;
+using ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Interfaces.Lobby;
 using ArchsVsDinosServer.Services.Interfaces;
+using ArchsVsDinosServer.Utils;
+using ArchsVsDinosServer.Wrappers;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Response;
@@ -20,18 +24,12 @@ namespace ArchsVsDinosServer.Services
     {
         private readonly ILobbyLogic lobbyLogic;
         private readonly ILoggerHelper logger;
-        private readonly IInvitationSendHelper invitationSendHelper;
-
-        public LobbyManager(
-        ILobbyLogic lobbyLogic,
-        ILoggerHelper logger)
+        public LobbyManager()
         {
-            this.lobbyLogic = lobbyLogic;
-            this.logger = logger;
+            logger = ServiceContext.Logger;
+            lobbyLogic = ServiceContext.LobbyLogic;
         }
-
-        public LobbyManager() { }
-
+        
         public async Task<MatchCreationResponse> CreateLobby(MatchSettings settings)
         {
             return await lobbyLogic.CreateLobby(settings);
@@ -44,7 +42,7 @@ namespace ArchsVsDinosServer.Services
 
         public async Task<bool> SendInvitations(string lobbyCode, string sender, List<string> guests)
         {
-            return await invitationSendHelper.SendInvitation(lobbyCode, sender, guests);
+            return await ServiceContext.InvitationSender.SendInvitation(lobbyCode, sender, guests);
         }
  
 

@@ -287,6 +287,7 @@
     <Compile Include="Utils\RegisterServiceDependencies.cs" />
     <Compile Include="Utils\SafeCodeGenerator.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
+    <Compile Include="Utils\ServiceContext.cs" />
     <Compile Include="Utils\ServiceDependencies.cs" />
     <Compile Include="Utils\ServiceLocator.cs" />
     <Compile Include="Utils\StrikeServiceDependencies.cs" />
