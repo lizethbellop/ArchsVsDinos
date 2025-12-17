@@ -40,6 +40,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             try
             {
                 var userAccount = BuildUserAccount();
+                UserSession.Instance.CurrentMatchCode = code;
                 var lobbyWindow = new Lobby(false, lobbyServiceClient);
                 var lobbyViewModel = (LobbyViewModel)lobbyWindow.DataContext;
 
@@ -47,8 +48,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     lobbyViewModel.SetWaitingForGuestCallback(true);
                 }
-
-                UserSession.Instance.CurrentMatchCode = code;
 
                 var result = await Task.Run(() => lobbyServiceClient.JoinLobbyAsync(userAccount, code));
 

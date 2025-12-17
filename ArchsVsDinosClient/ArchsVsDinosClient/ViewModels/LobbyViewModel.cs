@@ -33,6 +33,7 @@ namespace ArchsVsDinosClient.ViewModels
             this.lobbyServiceClient = client;
             Slots = new ObservableCollection<SlotLobby>();
             InitializeSlots();
+            this.MatchCode = UserSession.Instance.CurrentMatchCode;
 
             if (this.lobbyServiceClient != null)
             {
@@ -87,11 +88,31 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                for (int i = 0; i < 4; i++) Slots[i] = new SlotLobby { Username = "" };
+                string myNickname = UserSession.Instance.CurrentUser.Nickname;
+                var orderedPlayers = new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
+                var localPlayer = players.FirstOrDefault(p => p.Nickname == myNickname);
 
-                for (int i = 0; i < players.Count && i < 4; i++)
+                if (localPlayer == null)
                 {
-                    UpdateSlot(i, players[i]);
+                    localPlayer = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+                    {
+                        Nickname = myNickname,
+                        IsReady = false,
+                        IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
+                    };
+                }
+
+                orderedPlayers.Add(localPlayer);
+                orderedPlayers.AddRange(players.Where(p => p.Nickname != myNickname));
+
+                for (int i = 0; i < 4; i++)
+                {
+                    Slots[i] = new SlotLobby { Username = "" };
+                }
+
+                for (int i = 0; i < orderedPlayers.Count && i < 4; i++)
+                {
+                    UpdateSlot(i, orderedPlayers[i]);
                 }
             });
         }

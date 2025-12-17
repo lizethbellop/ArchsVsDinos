@@ -21,6 +21,10 @@ namespace ArchsVsDinosServer.Model
             LobbyCode = lobbyCode;
             Settings = settings;
             Players = new List<LobbyPlayer>();
+            Players.Add(new LobbyPlayer(0, settings.HostNickname)
+            {
+                IsReady = true 
+            });
         }
 
         public ActiveLobbyData() { }
