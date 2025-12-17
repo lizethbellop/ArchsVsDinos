@@ -144,7 +144,7 @@ namespace ArchsVsDinosServer.Services
         }
 
 
-        public void StartGame(string lobbyCode)
+        public void StartGame(string lobbyCode, int userId)
         {
             if (string.IsNullOrWhiteSpace(lobbyCode))
             {
@@ -153,7 +153,7 @@ namespace ArchsVsDinosServer.Services
 
             try
             {
-                lobbyLogic.EvaluateGameStart(lobbyCode);
+                lobbyLogic.EvaluateGameStart(lobbyCode, userId);
             }
             catch (InvalidOperationException ex)
             {

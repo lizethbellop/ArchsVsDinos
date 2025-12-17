@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="LobbyManager" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="NetTcpBinding_ILobbyManager_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:8083/?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8083/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8083/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
+      <xsd:import schemaLocation="http://localhost:8083/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" />
+      <xsd:import schemaLocation="http://localhost:8083/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+      <xsd:import schemaLocation="http://localhost:8083/?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ILobbyManager_CreateLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_CreateLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateLobbyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_JoinLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:JoinLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_JoinLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:JoinLobbyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_SendInvitations_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendInvitations" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_SendInvitations_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SendInvitationsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_ConnectToLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:ConnectToLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_ConnectToLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ConnectToLobbyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_DisconnectFromLobby_InputMessage">
+    <wsdl:part name="parameters" element="tns:DisconnectFromLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_DisconnectFromLobby_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DisconnectFromLobbyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_SetReadyStatus_InputMessage">
+    <wsdl:part name="parameters" element="tns:SetReadyStatus" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_SetReadyStatus_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SetReadyStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_StartGame_InputMessage">
+    <wsdl:part name="parameters" element="tns:StartGame" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_StartGame_OutputMessage">
+    <wsdl:part name="parameters" element="tns:StartGameResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_PlayerJoinedLobby_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:PlayerJoinedLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_PlayerLeftLobby_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:PlayerLeftLobby" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_UpdateListOfPlayers_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:UpdateListOfPlayers" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_PlayerReadyStatusChanged_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:PlayerReadyStatusChanged" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_GameStarting_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:GameStarting" />
+  </wsdl:message>
+  <wsdl:portType name="ILobbyManager">
+    <wsdl:operation name="CreateLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/CreateLobby" message="tns:ILobbyManager_CreateLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/CreateLobbyResponse" message="tns:ILobbyManager_CreateLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="JoinLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/JoinLobby" message="tns:ILobbyManager_JoinLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/JoinLobbyResponse" message="tns:ILobbyManager_JoinLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SendInvitations">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/SendInvitations" message="tns:ILobbyManager_SendInvitations_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/SendInvitationsResponse" message="tns:ILobbyManager_SendInvitations_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ConnectToLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/ConnectToLobby" message="tns:ILobbyManager_ConnectToLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/ConnectToLobbyResponse" message="tns:ILobbyManager_ConnectToLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DisconnectFromLobby">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/DisconnectFromLobby" message="tns:ILobbyManager_DisconnectFromLobby_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/DisconnectFromLobbyResponse" message="tns:ILobbyManager_DisconnectFromLobby_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SetReadyStatus">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/SetReadyStatus" message="tns:ILobbyManager_SetReadyStatus_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/SetReadyStatusResponse" message="tns:ILobbyManager_SetReadyStatus_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="StartGame">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/StartGame" message="tns:ILobbyManager_StartGame_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/StartGameResponse" message="tns:ILobbyManager_StartGame_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PlayerJoinedLobby">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/PlayerJoinedLobby" message="tns:ILobbyManager_PlayerJoinedLobby_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PlayerLeftLobby">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/PlayerLeftLobby" message="tns:ILobbyManager_PlayerLeftLobby_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateListOfPlayers">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/UpdateListOfPlayers" message="tns:ILobbyManager_UpdateListOfPlayers_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="PlayerReadyStatusChanged">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/PlayerReadyStatusChanged" message="tns:ILobbyManager_PlayerReadyStatusChanged_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GameStarting">
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/GameStarting" message="tns:ILobbyManager_GameStarting_OutputCallbackMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NetTcpBinding_ILobbyManager" type="tns:ILobbyManager">
+    <wsp:PolicyReference URI="#NetTcpBinding_ILobbyManager_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
+    <wsdl:operation name="CreateLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/CreateLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="JoinLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/JoinLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendInvitations">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/SendInvitations" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectToLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/ConnectToLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DisconnectFromLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/DisconnectFromLobby" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetReadyStatus">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/SetReadyStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StartGame">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/StartGame" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlayerJoinedLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/PlayerJoinedLobby" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlayerLeftLobby">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/PlayerLeftLobby" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateListOfPlayers">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/UpdateListOfPlayers" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlayerReadyStatusChanged">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/PlayerReadyStatusChanged" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GameStarting">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/GameStarting" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LobbyManager">
+    <wsdl:port name="NetTcpBinding_ILobbyManager" binding="tns:NetTcpBinding_ILobbyManager">
+      <soap12:address location="net.tcp://localhost:8094/MatchLobbyManager" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.tcp://localhost:8094/MatchLobbyManager</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

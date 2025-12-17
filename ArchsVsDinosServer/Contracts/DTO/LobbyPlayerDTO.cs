@@ -18,5 +18,8 @@ namespace Contracts.DTO
         [DataMember]
         public bool IsReady { get; set; }
 
+        [DataMember]
+        public bool IsHost { get; set; }
+
     }
 }

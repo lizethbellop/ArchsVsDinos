@@ -635,6 +635,12 @@
     <None Include="Connected Services\LobbyService\item42.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\LobbyService\item44.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\LobbyService\item45.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\LobbyService\item5.xsd">
       <SubType>Designer</SubType>
     </None>

@@ -26,6 +26,9 @@ namespace ArchsVsDinosClient.LobbyService {
         private string HostNicknameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int HostUserIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int MaxPlayersField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
@@ -47,6 +50,19 @@ namespace ArchsVsDinosClient.LobbyService {
                 if ((object.ReferenceEquals(this.HostNicknameField, value) != true)) {
                     this.HostNicknameField = value;
                     this.RaisePropertyChanged("HostNickname");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int HostUserId {
+            get {
+                return this.HostUserIdField;
+            }
+            set {
+                if ((this.HostUserIdField.Equals(value) != true)) {
+                    this.HostUserIdField = value;
+                    this.RaisePropertyChanged("HostUserId");
                 }
             }
         }
@@ -290,6 +306,9 @@ namespace ArchsVsDinosClient.LobbyService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool IsHostField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool IsReadyField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -305,6 +324,19 @@ namespace ArchsVsDinosClient.LobbyService {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsHost {
+            get {
+                return this.IsHostField;
+            }
+            set {
+                if ((this.IsHostField.Equals(value) != true)) {
+                    this.IsHostField = value;
+                    this.RaisePropertyChanged("IsHost");
+                }
             }
         }
         
@@ -398,10 +430,10 @@ namespace ArchsVsDinosClient.LobbyService {
         System.Threading.Tasks.Task SetReadyStatusAsync(string lobbyCode, string nickname, bool isReady);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
-        void StartGame(string lobbyCode);
+        void StartGame(string lobbyCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
-        System.Threading.Tasks.Task StartGameAsync(string lobbyCode);
+        System.Threading.Tasks.Task StartGameAsync(string lobbyCode, int userId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -499,12 +531,12 @@ namespace ArchsVsDinosClient.LobbyService {
             return base.Channel.SetReadyStatusAsync(lobbyCode, nickname, isReady);
         }
         
-        public void StartGame(string lobbyCode) {
-            base.Channel.StartGame(lobbyCode);
+        public void StartGame(string lobbyCode, int userId) {
+            base.Channel.StartGame(lobbyCode, userId);
         }
         
-        public System.Threading.Tasks.Task StartGameAsync(string lobbyCode) {
-            return base.Channel.StartGameAsync(lobbyCode);
+        public System.Threading.Tasks.Task StartGameAsync(string lobbyCode, int userId) {
+            return base.Channel.StartGameAsync(lobbyCode, userId);
         }
     }
 }

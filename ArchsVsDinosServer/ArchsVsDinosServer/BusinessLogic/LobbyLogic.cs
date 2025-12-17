@@ -194,7 +194,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 var player = lobby.Players.FirstOrDefault(p => p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
                 core.Session.Broadcast(lobbyCode, cb => cb.PlayerJoinedLobby(playerNickname));
-                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby.Players)));
+                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
 
             }
             catch (CommunicationException ex)
@@ -246,12 +246,18 @@ namespace ArchsVsDinosServer.BusinessLogic
             return Task.CompletedTask;
         }
 
-        public async Task EvaluateGameStart(string lobbyCode)
+        public async Task EvaluateGameStart(string lobbyCode, int userId)
         {
             var lobby = core.Session.GetLobby(lobbyCode);
             if (lobby == null)
             {
                 logger.LogWarning($"EvaluateGameStart: Lobby {lobbyCode} not found.");
+                return;
+            }
+
+            if (lobby.HostUserId != userId)
+            {
+                logger.LogWarning($"User {userId} tried to start game but is not host. Host is {lobby.HostUserId}");
                 return;
             }
 
@@ -267,6 +273,10 @@ namespace ArchsVsDinosServer.BusinessLogic
             if (shouldStart)
             {
                 await TryStartingGame(lobbyCode);
+            }
+            else
+            {
+                logger.LogInfo($"Game start blocked: not all players ready in {lobbyCode}");
             }
         }
 
@@ -326,20 +336,50 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             try
             {
+                var lobby = core.Session.GetLobby(lobbyCode);
+                if (lobby == null) return;
+
+                var leavingPlayer = lobby.Players.FirstOrDefault(p =>
+                    p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
+
+                if (leavingPlayer == null) return;
+
+                // ✅ NUEVO: Guarda si era el host
+                bool wasHost = (lobby.HostUserId == leavingPlayer.UserId);
+
                 core.Session.DisconnectPlayerCallback(lobbyCode, playerNickname);
                 HandlePlayerExit(lobbyCode, playerNickname);
+
+                // ✅ NUEVO: Transferir host si se va
+                if (wasHost && lobby.Players.Count > 0)
+                {
+                    lobby.TransferHostToNextPlayer();
+                    var newHost = lobby.Players.First(p => p.UserId == lobby.HostUserId);
+
+                    logger.LogInfo($"Host transferred to {newHost.Nickname} in lobby {lobbyCode}");
+
+                    // Notifica a todos (actualiza la lista con el nuevo isHost)
+                    core.Session.Broadcast(lobbyCode, cb =>
+                        cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
+                }
+                // ✅ NUEVO: Si no quedan jugadores, limpia
+                else if (lobby.Players.Count == 0)
+                {
+                    core.Session.RemoveLobby(lobbyCode);
+                    logger.LogInfo($"Lobby {lobbyCode} removed - empty");
+                }
             }
             catch (CommunicationException ex)
             {
-                logger.LogWarning($"Communication error registering connection: {ex.Message}");
+                logger.LogWarning($"Communication error disconnecting player: {ex.Message}");
             }
             catch (TimeoutException ex)
             {
-                logger.LogWarning($"Timeout registering connection: {ex.Message}");
+                logger.LogWarning($"Timeout disconnecting player: {ex.Message}");
             }
             catch (Exception ex)
             {
-                logger.LogWarning($"Critical error registering connection: {ex.Message}");
+                logger.LogWarning($"Error disconnecting player: {ex.Message}");
             }
         }
 
@@ -392,7 +432,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             try
             {
                 var players = activeLobbyData.Players;
-                callback.UpdateListOfPlayers(MapPlayersToDTOs(players));
+                callback.UpdateListOfPlayers(MapPlayersToDTOs(activeLobbyData));
             }
             catch (CommunicationException ex)
             {
@@ -418,17 +458,20 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             lobby.RemovePlayer(nickname);
             core.Session.Broadcast(lobbyCode, cb => cb.PlayerLeftLobby(nickname));
-            core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby.Players)));
+            core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
 
         }
 
-        private LobbyPlayerDTO[] MapPlayersToDTOs(IEnumerable<LobbyPlayer> players)
+        private LobbyPlayerDTO[] MapPlayersToDTOs(ActiveLobbyData lobby)
         {
-            return players.Select(p => new LobbyPlayerDTO
+            if (lobby == null) return new LobbyPlayerDTO[0];
+
+            return lobby.Players.Select(p => new LobbyPlayerDTO
             {
                 UserId = p.UserId,
                 Nickname = p.Nickname,
-                IsReady = p.IsReady
+                IsReady = p.IsReady,
+                IsHost = (p.UserId == lobby.HostUserId)
             }).ToArray();
         }
     }

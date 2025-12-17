@@ -16,15 +16,16 @@ namespace ArchsVsDinosServer.Model
 
         public readonly object LobbyLock = new object();
 
+        public int HostUserId { get; private set; }
+
         public ActiveLobbyData(string lobbyCode, MatchSettings settings)
         {
             LobbyCode = lobbyCode;
             Settings = settings;
             Players = new List<LobbyPlayer>();
-            Players.Add(new LobbyPlayer(0, settings.HostNickname)
-            {
-                IsReady = true 
-            });
+            LobbyLock = new object();
+
+            HostUserId = settings.HostUserId;
         }
 
         public ActiveLobbyData() { }
@@ -43,6 +44,16 @@ namespace ArchsVsDinosServer.Model
 
                 Players.Add(new LobbyPlayer(userId, nickname));
                 return true;
+            }
+        }
+
+        public void TransferHostToNextPlayer()
+        {
+            if (Players.Count > 0)
+            {
+                var newHost = Players.FirstOrDefault(p => p.UserId != HostUserId)
+                              ?? Players.First();
+                HostUserId = newHost.UserId;
             }
         }
 

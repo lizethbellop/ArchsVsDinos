@@ -32,7 +32,7 @@ namespace Contracts
         void SetReadyStatus(string lobbyCode, string nickname, bool isReady);
 
         [OperationContract]
-        void StartGame(string lobbyCode);
+        void StartGame(string lobbyCode, int userId);
     }
 
 }
