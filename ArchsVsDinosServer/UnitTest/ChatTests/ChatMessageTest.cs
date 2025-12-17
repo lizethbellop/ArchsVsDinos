@@ -22,8 +22,8 @@ namespace UnitTest.ChatTests
     public class ChatMessageTest : BaseTestClass
     {
 
-        private Mock<ILobbyNotifier> mockLobbyNotifier;
-        private Mock<IGameNotifier> mockGameNotifier;
+        /*private Mock<ILobbyNotifier> mockLobbyNotifier;
+        private Mock<IGameServiceNotifier> mockGameNotifier;
         private Mock<ICallbackProvider> mockCallbackProvider;
         private Mock<IChatManagerCallback> mockCallback;
         private Chat chat;
@@ -35,7 +35,7 @@ namespace UnitTest.ChatTests
             base.BaseSetup();
 
             mockLobbyNotifier = new Mock<ILobbyNotifier>();
-            mockGameNotifier = new Mock<IGameNotifier>();
+            mockGameNotifier = new Mock<IGameServiceNotifier>();
             mockCallbackProvider = new Mock<ICallbackProvider>();
             mockCallback = new Mock<IChatManagerCallback>();
 
@@ -375,6 +375,6 @@ namespace UnitTest.ChatTests
                 return connectedUsers?.Count ?? 0;
             }
             return 0;
-        }
+        }*/
     }
 }

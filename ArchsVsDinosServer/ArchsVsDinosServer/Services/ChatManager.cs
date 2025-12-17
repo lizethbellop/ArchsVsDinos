@@ -19,15 +19,19 @@ namespace ArchsVsDinosServer.Services
     public class ChatManager : IChatManager
     {
         private Chat ChatBusinessLogic;
-        private static ILobbyNotifier lobbyNotifier;
-        private static IGameNotifier gameNotifier;
+        private static ILobbyServiceNotifier lobbyNotifier;
+        private static IGameServiceNotifier gameNotifier;
         private ILoggerHelper loggerHelper = new LoggerHelperWrapper();
+        private static IModerationManager moderationManager;
 
-        public static void RegisterNotifiers(ILobbyNotifier lobby, IGameNotifier game)
+
+        public static void RegisterNotifiers(ILobbyServiceNotifier lobby, IGameServiceNotifier game, IModerationManager moderation)
         {
             lobbyNotifier = lobby;
             gameNotifier = game;
+            moderationManager = moderation;
         }
+
 
         public ChatManager()
         {
@@ -40,8 +44,10 @@ namespace ArchsVsDinosServer.Services
             ChatBusinessLogic = new Chat(
                 dependencies,
                 lobbyNotifier,
-                gameNotifier
-            );
+                gameNotifier,
+                moderationManager
+               );
+
         }
 
         public void Connect(ChatConnectionRequest request)

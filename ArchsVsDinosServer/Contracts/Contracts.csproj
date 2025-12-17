@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\ChatConnectionRequest.cs" />
+    <Compile Include="DTO\ChatContext.cs" />
     <Compile Include="DTO\ConfigurationDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchAddedToBoardDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchArmyDTO.cs" />
@@ -76,6 +77,8 @@
     <Compile Include="DTO\GamePlayerInitDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
     <Compile Include="DTO\MatchSettings.cs" />
+    <Compile Include="DTO\ModerationRequestDTO.cs" />
+    <Compile Include="DTO\ModerationResult.cs" />
     <Compile Include="DTO\PlayerExpelledDTO.cs" />
     <Compile Include="DTO\Response\FriendCheckResponse.cs" />
     <Compile Include="DTO\Response\FriendListResponse.cs" />
@@ -127,6 +130,7 @@
     <Compile Include="ILobbyManager.cs" />
     <Compile Include="ILobbyManagerCallback.cs" />
     <Compile Include="IMatchCreationManager.cs" />
+    <Compile Include="IModerationManager.cs" />
     <Compile Include="IProfileManager.cs" />
     <Compile Include="IRegisterManager.cs" />
     <Compile Include="IStatisticsManager.cs" />

@@ -66,7 +66,15 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 logger.LogInfo($"Jugador {userId} adjuntó carta {card.IdCard} al Dino {dino.DinoInstanceId} en {matchCode}.");
 
-                var dto = CreateBodyPartAttachedDTO(session, player, dino, card);
+                var context = new AttachBodyPartContext
+                {
+                    Session = session,
+                    Player = player,
+                    Dino = dino,
+                    Card = card
+                };
+
+                var dto = CreateBodyPartAttachedDTO(context);
                 notifier.NotifyBodyPartAttached(dto);
                 return true;
             }
@@ -82,10 +90,10 @@ namespace ArchsVsDinosServer.BusinessLogic
                     throw new InvalidOperationException("No quedan movimientos.");
 
                 var drawnIds = session.DrawFromPile(pileIndex, 1);
-                if (drawnIds == null || drawnIds.Count == 0) return null;
+                if (drawnIds == null || drawnIds.Count == 0) throw new InvalidOperationException("No hay cartas disponibles en el mazo.");
 
                 var card = CardInGame.FromDefinition(drawnIds[0]);
-                if (card == null) return null;
+                if (card == null) throw new InvalidOperationException("La carta robada no es válida.");
 
                 if (card.IsArch())
                 {
@@ -158,17 +166,31 @@ namespace ArchsVsDinosServer.BusinessLogic
                 if (cardA.PartType != cardB.PartType)
                     return false;
 
-                playerA.RemoveCard(cardA);
-                playerB.RemoveCard(cardB);
+                var exchangeContext = new CardExchangeContext
+                {
+                    MatchCode = matchCode,
+                    PlayerA = playerA,
+                    PlayerB = playerB,
+                    CardFromA = cardA,
+                    CardFromB = cardB
+                };
 
-                playerA.AddCard(cardB);
-                playerB.AddCard(cardA);
-
-                NotifyCardExchange(matchCode, playerA, playerB, cardA, cardB);
-
+                ExecuteCardExchange(exchangeContext);
                 return true;
             }
         }
+
+        private void ExecuteCardExchange(CardExchangeContext context)
+        {
+            context.PlayerA.RemoveCard(context.CardFromA);
+            context.PlayerB.RemoveCard(context.CardFromB);
+
+            context.PlayerA.AddCard(context.CardFromB);
+            context.PlayerB.AddCard(context.CardFromA);
+
+            NotifyCardExchange(context);
+        }
+
 
 
         public Task<bool> InitializeMatch(string matchCode, List<GamePlayerInitDTO> players)
@@ -549,27 +571,18 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         }
 
-        private BodyPartAttachedDTO CreateBodyPartAttachedDTO(GameSession session, PlayerSession player, DinoInstance dino, CardInGame card)
+        private BodyPartAttachedDTO CreateBodyPartAttachedDTO(AttachBodyPartContext context)
         {
             return new BodyPartAttachedDTO
             {
-                MatchCode = session.MatchCode,
-                PlayerUserId = player.UserId,
-                DinoInstanceId = dino.DinoInstanceId,
-                BodyCard = new CardDTO
-                {
-                    IdCard = card.IdCard,
-                    Power = card.Power,
-                    Element = card.Element,
-                    PartType = card.PartType,
-                    HasTopJoint = card.HasTopJoint,
-                    HasBottomJoint = card.HasBottomJoint,
-                    HasLeftJoint = card.HasLeftJoint,
-                    HasRightJoint = card.HasRightJoint
-                },
-                NewTotalPower = dino.TotalPower
+                MatchCode = context.Session.MatchCode,
+                PlayerUserId = context.Player.UserId,
+                DinoInstanceId = context.Dino.DinoInstanceId,
+                BodyCard = CreateCardDTO(context.Card),
+                NewTotalPower = context.Dino.TotalPower
             };
         }
+
 
         private CardDrawnDTO CreateCardDrawnDTO(GameSession session, PlayerSession player, CardInGame card)
         {
@@ -614,7 +627,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         private BattleResultDTO CreateBattleResultDTO(string matchCode, BattleResult result)
         {
-            if (result == null) return null;
+            if (result == null) throw new InvalidOperationException("BattleResult no puede ser null.");
 
             var archCardsDTO = result.ArchCardIds.Select(CardInGame.FromDefinition)
                                                  .Where(c => c != null)
@@ -662,42 +675,20 @@ namespace ArchsVsDinosServer.BusinessLogic
             return points;
         }
 
-        private CardInGame RemoveCardToDiscard(PlayerSession player, GameSession session, int cardId)
-        {
-            var card = player.RemoveCardById(cardId);
-            if (card == null)
-            {
-                session.RestoreMoves(1);
-                return null;
-            }
-            session.AddToDiscard(card.IdCard);
-            return card;
-        }
-
-        private CardInGame DrawNewCard(PlayerSession player, GameSession session, int pileIndex)
-        {
-            var drawnIds = session.DrawFromPile(pileIndex, 1);
-            if (drawnIds == null || drawnIds.Count == 0) return null;
-
-            var card = CardInGame.FromDefinition(drawnIds[0]);
-            if (card != null) player.AddCard(card);
-
-            return card;
-        }
-
-        private void NotifyCardExchange(string matchCode, PlayerSession playerA, PlayerSession playerB, CardInGame cardFromA, CardInGame cardFromB)
+        private void NotifyCardExchange(CardExchangeContext context)
         {
             var dto = new CardExchangedDTO
             {
-                MatchCode = matchCode,
-                PlayerAUserId = playerA.UserId,
-                PlayerBUserId = playerB.UserId,
-                CardFromPlayerA = CreateCardDTO(cardFromA),
-                CardFromPlayerB = CreateCardDTO(cardFromB)
+                MatchCode = context.MatchCode,
+                PlayerAUserId = context.PlayerA.UserId,
+                PlayerBUserId = context.PlayerB.UserId,
+                CardFromPlayerA = CreateCardDTO(context.CardFromA),
+                CardFromPlayerB = CreateCardDTO(context.CardFromB)
             };
 
             notifier.NotifyCardExchanged(dto);
         }
+
 
 
         private CardDTO CreateCardDTO(CardInGame card)

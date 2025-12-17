@@ -431,8 +431,5 @@ namespace ArchsVsDinosServer.BusinessLogic
                 IsReady = p.IsReady
             }).ToArray();
         }
-
-
-
     }
 }

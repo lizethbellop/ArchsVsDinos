@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Model;
 using ArchsVsDinosServer.Services;
 using ArchsVsDinosServer.Services.Interfaces;
 using ArchsVsDinosServer.Utils;
@@ -20,12 +21,6 @@ namespace ArchsVsDinosServer.BusinessLogic
 
     public class Chat
     {
-        public enum ChatContext
-        {
-            Lobby,
-            InGame
-        }
-
         private class UserConnection
         {
             public int UserId { get; set; }
@@ -38,16 +33,17 @@ namespace ArchsVsDinosServer.BusinessLogic
         private const string DefaultRoom = "Lobby";
         private const int MinimumPlayersRequired = 2;
         private readonly ILoggerHelper loggerHelper;
-        private readonly StrikeManager strikeManager;
         private readonly Func<IDbContext> contextFactory;
-        private readonly ILobbyNotifier lobbyNotifier;
-        private readonly IGameNotifier gameNotifier;
+        private readonly ILobbyServiceNotifier lobbyNotifier;
+        private readonly IGameServiceNotifier gameNotifier;
         private readonly ICallbackProvider callbackProvider;
+        private readonly IModerationManager moderationManager;
 
         public Chat(
         BasicServiceDependencies dependencies,
-        ILobbyNotifier lobbyNotifier,
-        IGameNotifier gameNotifier)
+        ILobbyServiceNotifier lobbyNotifier,
+        IGameServiceNotifier gameNotifier,
+        IModerationManager moderationManager)
         {
             this.loggerHelper = dependencies.loggerHelper;
             this.contextFactory = dependencies.contextFactory;
@@ -71,8 +67,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 BannedWordsFile
             );
 
-            var profanityFilter = new ProfanityFilter(dependencies.loggerHelper, bannedWordsPath);
-            this.strikeManager = new StrikeManager(new StrikeServiceDependencies());
+            this.moderationManager = moderationManager;
         }
 
         public void Connect(ChatConnectionRequest request)
@@ -130,7 +125,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 if (userConnection.Context == ChatContext.Lobby)
                 {
-                    CheckMinimumPlayersInLobby();
+                    CheckMinimumPlayersInLobby(userConnection.MatchCode);
                 }
                 else if (userConnection.Context == ChatContext.InGame)
                 {
@@ -142,54 +137,51 @@ namespace ArchsVsDinosServer.BusinessLogic
         public void SendMessageToRoom(string message, string username)
         {
             if (string.IsNullOrWhiteSpace(message) || string.IsNullOrWhiteSpace(username))
+                return;
+
+            if (!ConnectedUsers.TryGetValue(username, out var user))
             {
+                loggerHelper.LogWarning($"User {username} not found");
                 return;
             }
 
-            try
+            var moderationRequest = new ModerationRequestDTO
             {
-                if (!ConnectedUsers.TryGetValue(username, out var userConnection))
+                UserId = user.UserId,
+                Username = username,
+                Message = message,
+                Context = user.Context,
+                MatchCode = user.MatchCode
+            };
+
+            var result = moderationManager.ModerateMessage(moderationRequest);
+
+            if (!result.CanSendMessage)
+            {
+                if (result.ShouldBan)
                 {
-                    loggerHelper.LogWarning($"User {username} not found in connected users");
-                    return;
+                    HandleUserBan(username, result.CurrentStrikes, user.Context, user.MatchCode);
+                }
+                else
+                {
+                    NotifyUserMessageBlocked(username, result.CurrentStrikes);
                 }
 
-                // USAR EL NUEVO ProcessStrike
-                var banResult = strikeManager.ProcessStrike(userConnection.UserId, message);
-
-                if (!banResult.CanSendMessage)
-                {
-                    if (banResult.ShouldBan)
-                    {
-                        // Usuario alcanzó 3 strikes - EXPULSAR
-                        HandleUserBan(username, banResult.CurrentStrikes, userConnection.Context, userConnection.MatchCode);
-                    }
-                    else
-                    {
-                        NotifyUserMessageBlocked(username, banResult.CurrentStrikes);
-                    }
-
-                    loggerHelper.LogInfo($"Message from {username} blocked. Strikes: {banResult.CurrentStrikes}/3");
-                    return;
-                }
-
-                BroadcastMessageToAll(username, message);
+                return;
             }
-            catch (Exception ex)
-            {
-                loggerHelper.LogError($"Error sending message from {username}: {ex.Message}", ex);
-            }
+
+            BroadcastMessageToAll(username, message);
         }
 
         private void HandleUserBan(string username, int strikes, ChatContext context, string matchCode)
         {
-            loggerHelper.LogWarning($"User {username} reached {strikes} strikes in {context}");
+            loggerHelper.LogWarning($"User {username} banned with {strikes} strikes");
 
-            if (ConnectedUsers.TryGetValue(username, out var userConnection))
+            if (ConnectedUsers.TryGetValue(username, out var user))
             {
                 SafeCallbackInvoke(username, () =>
                 {
-                    userConnection.Callback.UserBannedFromChat(username, strikes);
+                    user.Callback.UserBannedFromChat(username, strikes);
                 });
             }
 
@@ -199,28 +191,21 @@ namespace ArchsVsDinosServer.BusinessLogic
             );
 
             if (context == ChatContext.Lobby)
-            {
-                lobbyNotifier?.NotifyPlayerExpelled(username, "Inappropriate language");
-            }
-            else if (context == ChatContext.InGame)
-            {
-                gameNotifier?.NotifyPlayerExpelled(matchCode, username, "Inappropriate language");
-            }
+                lobbyNotifier?.NotifyPlayerExpelled(user.MatchCode, user.UserId, "Inappropriate language");
+            else
+                gameNotifier?.NotifyPlayerExpelled(matchCode, user.UserId, "Inappropriate language");
 
             ConnectedUsers.TryRemove(username, out _);
             UpdateUserList();
 
             if (context == ChatContext.Lobby)
-            {
-                CheckMinimumPlayersInLobby();
-            }
-            else if (context == ChatContext.InGame)
-            {
+                CheckMinimumPlayersInLobby(matchCode);
+            else
                 CheckMinimumPlayersInGame(matchCode);
-            }
         }
 
-        private void CheckMinimumPlayersInLobby()
+        private void CheckMinimumPlayersInLobby(string lobbyCode)
+
         {
             int lobbyPlayers = ConnectedUsers.Count(u => u.Value.Context == ChatContext.Lobby);
 
@@ -228,9 +213,9 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 loggerHelper.LogWarning($"Insufficient players in lobby. Current: {lobbyPlayers}");
 
-                NotifyLobbyClosing("Insufficient players. Minimum required: 2 players");
+                NotifyLobbyClosing(lobbyCode, "Insufficient players. Minimum required: 2 players");
 
-                lobbyNotifier?.NotifyLobbyClosure("Insufficient players");
+                lobbyNotifier?.NotifyLobbyClosure(lobbyCode, "Insufficient players");
 
                 DisconnectLobbyUsers();
             }
@@ -248,7 +233,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 NotifyGameClosing(matchCode, "Insufficient players to continue");
 
-                gameNotifier?.NotifyGameClosure(matchCode, "Insufficient players");
+                gameNotifier?.NotifyGameClosure(matchCode,GameEndType.Aborted,"Insufficient players");
+
 
                 DisconnectGameUsers(matchCode);
             }
@@ -265,7 +251,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private void NotifyLobbyClosing(string reason)
+        private void NotifyLobbyClosing(string lobbyCode, string reason)
         {
             foreach (var user in ConnectedUsers.Where(u => u.Value.Context == ChatContext.Lobby).ToArray())
             {

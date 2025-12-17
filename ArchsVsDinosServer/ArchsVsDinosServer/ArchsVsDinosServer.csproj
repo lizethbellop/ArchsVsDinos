@@ -168,6 +168,7 @@
     <Compile Include="BusinessLogic\GameManagement\Session\PlayerSession.cs" />
     <Compile Include="BusinessLogic\LobbyLogic.cs" />
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyCoreContext.cs" />
+    <Compile Include="BusinessLogic\Moderation\ModerationEngine.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\BaseProfileService.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\PasswordManager.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\ProfileInformation.cs" />
@@ -219,6 +220,8 @@
       <DependentUpon>ArchsVsDinosModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Model\ActiveLobbyData.cs" />
+    <Compile Include="Model\AttachBodyPartContext.cs" />
+    <Compile Include="Model\CardExchangeContext.cs" />
     <Compile Include="Model\GameEndType.cs" />
     <Compile Include="Model\LobbyPlayer.cs" />
     <Compile Include="Music.cs">
@@ -232,7 +235,10 @@
     <Compile Include="Services\AuthenticationManager.cs" />
     <Compile Include="Services\ChatManager.cs" />
     <Compile Include="Services\GameCallbackManager.cs" />
+    <Compile Include="Services\GameServiceNotifier.cs" />
+    <Compile Include="Services\LobbyServiceNotifier.cs" />
     <Compile Include="Services\MatchCreationManager.cs" />
+    <Compile Include="Services\ModerationManager.cs" />
     <Compile Include="Services\StrikeService\BanService.cs" />
     <Compile Include="Services\StrikeService\ContextExecutor.cs" />
     <Compile Include="Services\StrikeService\ProfanityService.cs" />
@@ -248,8 +254,8 @@
     <Compile Include="Services\GameService\GameExpulsionHandler.cs" />
     <Compile Include="Services\GameService\GameNotificationService.cs" />
     <Compile Include="Services\GameService\GameQueryService.cs" />
-    <Compile Include="Services\Interfaces\IGameNotifier.cs" />
-    <Compile Include="Services\Interfaces\ILobbyNotifier.cs" />
+    <Compile Include="Services\Interfaces\IGameServiceNotifier.cs" />
+    <Compile Include="Services\Interfaces\ILobbyServiceNotifier.cs" />
     <Compile Include="Services\StatisticsManager.cs" />
     <Compile Include="Services\StrikeManager.cs" />
     <Compile Include="Services\FriendRequestCallbackManager.cs" />
