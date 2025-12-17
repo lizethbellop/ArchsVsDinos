@@ -117,7 +117,14 @@ namespace ArchsVsDinosServer.BusinessLogic
                     });
                 }
 
-                var joined = lobby.AddPlayer(userId, nickname);
+                int finalUserId = userId;
+                if (userId == 0)
+                {
+                    finalUserId = -Math.Abs(nickname.GetHashCode() ^ DateTime.UtcNow.Ticks.GetHashCode());
+                    logger.LogInfo($"Guest '{nickname}' assigned temporary userId: {finalUserId}");
+                }
+
+                var joined = lobby.AddPlayer(finalUserId, nickname);
 
                 if (!joined)
                 {
@@ -344,13 +351,11 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 if (leavingPlayer == null) return;
 
-                // ✅ NUEVO: Guarda si era el host
                 bool wasHost = (lobby.HostUserId == leavingPlayer.UserId);
 
                 core.Session.DisconnectPlayerCallback(lobbyCode, playerNickname);
                 HandlePlayerExit(lobbyCode, playerNickname);
 
-                // ✅ NUEVO: Transferir host si se va
                 if (wasHost && lobby.Players.Count > 0)
                 {
                     lobby.TransferHostToNextPlayer();
@@ -358,11 +363,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     logger.LogInfo($"Host transferred to {newHost.Nickname} in lobby {lobbyCode}");
 
-                    // Notifica a todos (actualiza la lista con el nuevo isHost)
                     core.Session.Broadcast(lobbyCode, cb =>
                         cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
                 }
-                // ✅ NUEVO: Si no quedan jugadores, limpia
                 else if (lobby.Players.Count == 0)
                 {
                     core.Session.RemoveLobby(lobbyCode);

@@ -7,6 +7,7 @@ using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using System;
+using System.Diagnostics;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +25,11 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             InitializeComponent();
             lobbyServiceClient = new LobbyServiceClient();
+
+            if (UserSession.Instance.CurrentUser == null)
+            {
+                UserSession.Instance.LoginAsGuest();
+            }
         }
 
         private async void Click_BtnAccept(object sender, RoutedEventArgs e)
@@ -69,6 +75,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     lobbyWindow.Close();
                     string msg = LobbyResultCodeHelper.GetMessage(result);
+                    Debug.WriteLine(msg);
                     MessageBox.Show(msg);
                 }
             }
@@ -85,9 +92,13 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
             if (user == null)
             {
+                string guestNickname = "Guest_" + new Random().Next(1000, 9999);
+
+                UserSession.Instance.SetGuestSession(guestNickname, guestNickname);
+
                 return new UserAccountDTO
                 {
-                    Nickname = string.Empty,
+                    Nickname = guestNickname,
                     IdPlayer = 0
                 };
             }

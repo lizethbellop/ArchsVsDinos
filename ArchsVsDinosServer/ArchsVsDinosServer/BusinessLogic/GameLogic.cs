@@ -463,7 +463,10 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 MatchId = session.MatchCode,
                 MatchDate = session.StartTime ?? DateTime.UtcNow,
-                PlayerResults = session.Players.Select(p =>
+
+                PlayerResults = session.Players
+                .Where(p => p.UserId > 0)  
+                .Select(p =>
                 {
                     int archaeologistsEliminated = p.Dinos.Sum(d => d.ArchaeologistsEliminated);
                     int supremeBossesEliminated = p.Dinos.Sum(d => d.SupremeBossesEliminated);
@@ -478,6 +481,12 @@ namespace ArchsVsDinosServer.BusinessLogic
                     };
                 }).ToList()
             };
+
+            if (matchResultDto.PlayerResults.Count == 0)
+            {
+                logger.LogInfo($"No registered players in match {session.MatchCode}, skipping statistics save");
+                return;
+            }
 
             var saveCode = statisticsManager.SaveMatchStatistics(matchResultDto);
             if (saveCode != SaveMatchResultCode.Success)

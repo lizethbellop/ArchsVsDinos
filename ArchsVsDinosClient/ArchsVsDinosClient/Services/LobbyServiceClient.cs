@@ -82,8 +82,8 @@ namespace ArchsVsDinosClient.Services
             {
                 var matchJoinResponse = await Task.Run(() => lobbyManagerClient.JoinLobby(
                     matchCode,
-                    UserSession.Instance.CurrentPlayer.IdPlayer,
-                    UserSession.Instance.CurrentUser.Nickname
+                    userAccount.IdPlayer,
+                    userAccount.Nickname
                 ));
 
                 return matchJoinResponse.ResultCode;

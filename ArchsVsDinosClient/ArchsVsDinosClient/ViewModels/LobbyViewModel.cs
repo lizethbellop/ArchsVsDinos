@@ -88,7 +88,13 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                string myNickname = UserSession.Instance.CurrentUser.Nickname;
+                string myNickname = UserSession.Instance.GetNickname();
+
+                if (string.IsNullOrEmpty(myNickname) && players.Count > 0)
+                {
+                    myNickname = players.First().Nickname;
+                }
+
                 var orderedPlayers = new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
                 var localPlayer = players.FirstOrDefault(p => p.Nickname == myNickname);
 
@@ -98,7 +104,7 @@ namespace ArchsVsDinosClient.ViewModels
                     {
                         Nickname = myNickname,
                         IsReady = false,
-                        IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
+                        IdPlayer = UserSession.Instance.GetPlayerId()  // ✅ También usa el método
                     };
                 }
 
