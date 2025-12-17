@@ -988,6 +988,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Olvidé mi contraseña.
+        /// </summary>
+        public static string Login_IForgotMyPassword {
+            get {
+                return ResourceManager.GetString("Login_IForgotMyPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Credenciales incorrectas, intente de nuevo.
         /// </summary>
         public static string Login_IncorrectCredentials {

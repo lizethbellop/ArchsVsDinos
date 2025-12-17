@@ -79,10 +79,15 @@
             </Border>
         </StackPanel>
         <StackPanel Grid.Row="3" Margin="0,15" HorizontalAlignment="Center">
-            <Label Content="{x:Static language:Lang.Login_PasswordText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
-            <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <PasswordBox Name ="PB_Password" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
-            </Border>
+            <StackPanel>
+                <Label Content="{x:Static language:Lang.Login_PasswordText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" HorizontalAlignment="Left"/>
+                <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1" Width="268" Height="29" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <PasswordBox Name ="PB_Password" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
+                </Border>
+            </StackPanel>
+            <!--.<UniformGrid>
+                <Button Content="{x:Static language:Lang.Login_IForgotMyPassword}" Background="{x:Null}" Foreground="#FF6A3D00" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" RenderTransformOrigin="0.531,0.268"/>
+            </UniformGrid>-->
         </StackPanel>
         <UniformGrid Grid.Row="4" Margin="0,10,0,-20" HorizontalAlignment="Center">
             <Label Content="{x:Static language:Lang.Login_DontYouHaveAccount}" FontFamily="Trebuchet MS" FontWeight="Bold"/>
