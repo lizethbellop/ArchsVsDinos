@@ -816,4 +816,7 @@
   <data name="Match_AlreadyUsedRolls" xml:space="preserve">
     <value>Ya has agotado tus tiradas</value>
   </data>
+  <data name="Login_IForgotMyPassword" xml:space="preserve">
+    <value>Olvidé mi contraseña</value>
+  </data>
 </root>

@@ -816,4 +816,7 @@
   <data name="Match_AlreadyUsedRolls" xml:space="preserve">
     <value>You have already used up your rolls</value>
   </data>
+  <data name="Login_IForgotMyPassword" xml:space="preserve">
+    <value>I forgot my password</value>
+  </data>
 </root>

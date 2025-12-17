@@ -27,6 +27,8 @@ namespace ArchsVsDinosServer.Services
             this.lobbyLogic = lobbyLogic;
             this.logger = logger;
         }
+
+        public LobbyManager() { }
         public void ConnectToLobby(string lobbyCode, string nickname)
         {
             if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
