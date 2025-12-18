@@ -50,24 +50,19 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)
         {
-            if (!viewModel.CurrentClientIsHost())
+            int totalPlayers = viewModel.GetPlayersCount(); 
+
+            if (totalPlayers < 2)
             {
-                MessageBox.Show(Lang.Lobby_LobbyBeginHost);
+                Btn_Begin.IsChecked = false;
+                MessageBox.Show(Lang.Lobby_MiniumPlayers);
             }
             else
             {
-                int totalPlayers = viewModel.GetPlayersCount(); 
-
-                if (totalPlayers < 2)
-                {
-                    MessageBox.Show(Lang.Lobby_MiniumPlayers);
-                }
-                else
-                {
-                    SoundButton.PlayDestroyingRockSound();
-                    viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
-                }
+                SoundButton.PlayDestroyingRockSound();
+                viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
             }
+            
         }
 
 

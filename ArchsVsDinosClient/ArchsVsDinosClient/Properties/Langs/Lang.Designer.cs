@@ -790,6 +790,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Cancelar.
+        /// </summary>
+        public static string Lobby_Cancel {
+            get {
+                return ResourceManager.GetString("Lobby_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¿Está segur@ que quiere cancelar la partida?.
         /// </summary>
         public static string Lobby_CancellationLobbyConfirmation {
@@ -966,6 +975,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_QuestKick {
             get {
                 return ResourceManager.GetString("Lobby_QuestKick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Listo!.
+        /// </summary>
+        public static string Lobby_Ready {
+            get {
+                return ResourceManager.GetString("Lobby_Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Jugadores listos.
+        /// </summary>
+        public static string Lobby_ReadyPlayers {
+            get {
+                return ResourceManager.GetString("Lobby_ReadyPlayers", resourceCulture);
             }
         }
         

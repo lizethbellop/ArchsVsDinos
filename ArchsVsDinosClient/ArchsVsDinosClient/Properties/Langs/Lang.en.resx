@@ -825,4 +825,13 @@
   <data name="Lobby_LobbyNotFound" xml:space="preserve">
     <value>Lobby not found, try again</value>
   </data>
+  <data name="Lobby_ReadyPlayers" xml:space="preserve">
+    <value>Ready players</value>
+  </data>
+  <data name="Lobby_Ready" xml:space="preserve">
+    <value>Ready!</value>
+  </data>
+  <data name="Lobby_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

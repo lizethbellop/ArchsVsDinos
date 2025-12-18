@@ -142,27 +142,51 @@
                 </StackPanel>
             </StackPanel>
 
-            <StackPanel VerticalAlignment="Bottom" Margin="5,5,5,5">
+            <StackPanel VerticalAlignment="Bottom" Margin="5">
+                <CheckBox x:Name="Btn_Begin" 
+          Click="Click_BtnBegin"
+          Height="200" Width="300" Foreground="White" FontWeight="Bold" 
+          FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="50">
+                    <CheckBox.Template>
+                        <ControlTemplate TargetType="CheckBox">
+                            <Border x:Name="border" Background="Transparent">
+                                <Grid>
+                                    <Image x:Name="BoneImage" Source="/Resources/Images/Begin.png" Stretch="Uniform"/>
+                                    <Rectangle x:Name="RedTint" Fill="Red" Opacity="0" IsHitTestVisible="False">
+                                        <Rectangle.OpacityMask>
+                                            <ImageBrush ImageSource="/Resources/Images/Begin.png" Stretch="Uniform"/>
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
 
-                <Button Click="Click_BtnBegin" Name="Btn_Begin" Content="{x:Static language:Lang.Lobby_BeginText}" Height="200" Foreground="White" FontWeight="Bold" 
-                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="50">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Resources/Images/Begin.png"/>
-                    </Button.Background>
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                    CornerRadius="5" BorderThickness="0">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <ContentPresenter x:Name="contentPresenter" 
+                                      Content="{TemplateBinding Content}"
+                                      HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                                </Grid>
                             </Border>
+
                             <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter Property="Content" Value="{x:Static language:Lang.Lobby_Ready}"/>
+                                </Trigger>
+
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Content" Value="{x:Static language:Lang.Lobby_Cancel}"/>
+                                    <Setter TargetName="RedTint" Property="Opacity" Value="0.6"/>
+                                    <Setter TargetName="border" Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Color="Red" BlurRadius="20" ShadowDepth="0"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border" Property="Opacity" Value="0.8"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                    </CheckBox.Template>
+                </CheckBox>
             </StackPanel>
 
             <Grid Margin="0,0,-30,0" Name="Gr_MyFriends" Visibility="Collapsed">
