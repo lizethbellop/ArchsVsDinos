@@ -68,7 +68,11 @@ namespace ArchsVsDinosClient.Services
                 if (response.Success)
                 {
                     UserSession.Instance.CurrentMatchCode = response.LobbyCode;
+
+                    // ✅ AGREGAR ESTA LÍNEA
+                    await ConnectToLobbyAsync(response.LobbyCode, matchSettings.HostNickname);
                 }
+
                 return response.ResultCode;
             }
             catch (Exception)

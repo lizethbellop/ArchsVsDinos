@@ -51,6 +51,10 @@ namespace ArchsVsDinosServer.BusinessLogic
                 core.Validation.ValidateCreateLobby(settings);
                 var lobbyCode = core.CodeGenerator.GenerateLobbyCode(code => core.Session.LobbyExists(code));
                 var lobbyData = new ActiveLobbyData(lobbyCode, settings);
+
+                // ✅ AGREGAR AL HOST AUTOMÁTICAMENTE
+                lobbyData.AddPlayer(settings.HostUserId, settings.HostNickname);
+
                 core.Session.CreateLobby(lobbyCode, lobbyData);
                 logger.LogInfo($"Lobby {lobbyCode} created by {settings.HostNickname}");
 
@@ -64,7 +68,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (InvalidOperationException ex)
             {
                 logger.LogError("Failed to generate lobby code.", ex);
-
                 return Task.FromResult(new MatchCreationResponse
                 {
                     Success = false,
@@ -74,7 +77,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (ArgumentException ex)
             {
                 logger.LogError($"CreateLobby failed, invalid settings: {ex.Message}", ex);
-
                 return Task.FromResult(new MatchCreationResponse
                 {
                     Success = false,
@@ -188,7 +190,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                     return;
                 }
 
-                core.Session.ConnectPlayerCallback(lobbyCode, playerNickname, callback);
                 var lobby = core.Session.GetLobby(lobbyCode);
 
                 if (lobby == null)
@@ -197,21 +198,45 @@ namespace ArchsVsDinosServer.BusinessLogic
                     return;
                 }
 
-                SendInitialState(callback, lobby, playerNickname);
+                // ✅ 1. Registra el callback PRIMERO
+                core.Session.ConnectPlayerCallback(lobbyCode, playerNickname, callback);
 
-                var player = lobby.Players.FirstOrDefault(p => p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
-                core.Session.Broadcast(lobbyCode, cb => cb.PlayerJoinedLobby(playerNickname));
-                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
+                // ✅ 2. Asegúrate de que el jugador esté en la lista
+                lock (lobby.LobbyLock)
+                {
+                    var existingPlayer = lobby.Players.FirstOrDefault(p =>
+                        p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
 
+                    if (existingPlayer == null)
+                    {
+                        logger.LogWarning($"Player {playerNickname} not found in lobby {lobbyCode} players list!");
+                        return;
+                    }
+                }
+
+                // ✅ 3. Envía el estado completo AL JUGADOR que se conecta
                 try
                 {
-                    callback.UpdateListOfPlayers(MapPlayersToDTOs(lobby));
-                    logger.LogInfo($"Sent complete player list to {playerNickname} after connection");
+                    var currentList = MapPlayersToDTOs(lobby);
+                    callback.UpdateListOfPlayers(currentList);
+                    logger.LogInfo($"Sent initial state to {playerNickname}: {currentList.Length} players");
                 }
                 catch (Exception ex)
                 {
-                    logger.LogWarning($"Failed to send individual list to {playerNickname}: {ex.Message}");
+                    logger.LogWarning($"Failed to send initial state to {playerNickname}: {ex.Message}");
                 }
+
+                // ✅ 4. Notifica a OTROS que este jugador se conectó (no a todos)
+                core.Session.Broadcast(lobbyCode, cb =>
+                {
+                    if (cb != callback) // No notificar al que acaba de conectarse
+                    {
+                        cb.PlayerJoinedLobby(playerNickname);
+                    }
+                });
+
+                // ✅ 5. Envía la lista actualizada a TODOS
+                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
             }
             catch (CommunicationException ex)
             {

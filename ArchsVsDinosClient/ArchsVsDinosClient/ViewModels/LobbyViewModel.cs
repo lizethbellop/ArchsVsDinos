@@ -65,8 +65,6 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 this.MatchCode = UserSession.Instance.CurrentMatchCode;
 
-                await lobbyServiceClient.ConnectToLobbyAsync(this.MatchCode, userAccount.Nickname);
-
                 UpdateSlot(0, new ArchsVsDinosClient.DTO.LobbyPlayerDTO
                 {
                     Nickname = userAccount.Nickname,
@@ -88,7 +86,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void OnPlayerListUpdated(List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
         {
-            // ✅ AGREGA ESTE LOG AL INICIO
             Debug.WriteLine($"[LOBBY] OnPlayerListUpdated called with {players.Count} players");
             foreach (var p in players)
             {
