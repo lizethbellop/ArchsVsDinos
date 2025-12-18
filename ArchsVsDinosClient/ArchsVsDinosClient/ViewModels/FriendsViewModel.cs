@@ -92,7 +92,7 @@ namespace ArchsVsDinosClient.ViewModels
 
             if (response == null || !response.Success)
             {
-                if (response != null) // Si no es null, mostrar mensaje de error de negocio
+                if (response != null) 
                 {
                     string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
                     messageService.ShowMessage(message);
