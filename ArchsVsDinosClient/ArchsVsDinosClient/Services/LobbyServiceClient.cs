@@ -5,6 +5,7 @@ using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,6 +101,20 @@ namespace ArchsVsDinosClient.Services
             {
                 await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
             });
+        }
+
+        public async Task ConnectToLobbyAsync(string matchCode, string nickname)
+        {
+            Debug.WriteLine($"[CLIENT] ConnectToLobbyAsync: matchCode={matchCode}, nickname={nickname}");
+
+            await connectionGuardian.ExecuteAsync(async () =>
+            {
+                Debug.WriteLine($"[CLIENT] Calling server ConnectToLobby...");
+                await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
+                Debug.WriteLine($"[CLIENT] Server call completed");
+            });
+
+            Debug.WriteLine($"[CLIENT] ConnectToLobbyAsync finished");
         }
 
         public void LeaveLobby(string username)

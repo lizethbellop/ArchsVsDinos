@@ -7,6 +7,7 @@ using ArchsVsDinosClient.Utils;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -63,7 +64,8 @@ namespace ArchsVsDinosClient.ViewModels
             if (result == MatchCreationResultCode.MatchCreation_Success)
             {
                 this.MatchCode = UserSession.Instance.CurrentMatchCode;
-                lobbyServiceClient.ConnectToLobby(this.MatchCode, userAccount.Nickname);
+
+                await lobbyServiceClient.ConnectToLobbyAsync(this.MatchCode, userAccount.Nickname);
 
                 UpdateSlot(0, new ArchsVsDinosClient.DTO.LobbyPlayerDTO
                 {
@@ -86,13 +88,22 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void OnPlayerListUpdated(List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
         {
+            // ✅ AGREGA ESTE LOG AL INICIO
+            Debug.WriteLine($"[LOBBY] OnPlayerListUpdated called with {players.Count} players");
+            foreach (var p in players)
+            {
+                Debug.WriteLine($"[LOBBY]   - {p.Nickname} (IsHost: {p.IsHost}, IsReady: {p.IsReady})");
+            }
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 string myNickname = UserSession.Instance.GetNickname();
+                Debug.WriteLine($"[LOBBY] My nickname: {myNickname}");
 
                 if (string.IsNullOrEmpty(myNickname) && players.Count > 0)
                 {
                     myNickname = players.First().Nickname;
+                    Debug.WriteLine($"[LOBBY] Using first player nickname: {myNickname}");
                 }
 
                 var orderedPlayers = new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
@@ -100,16 +111,23 @@ namespace ArchsVsDinosClient.ViewModels
 
                 if (localPlayer == null)
                 {
+                    Debug.WriteLine($"[LOBBY] Local player NOT found in list, creating placeholder");
                     localPlayer = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
                     {
                         Nickname = myNickname,
                         IsReady = false,
-                        IdPlayer = UserSession.Instance.GetPlayerId()  // ✅ También usa el método
+                        IdPlayer = UserSession.Instance.GetPlayerId()
                     };
+                }
+                else
+                {
+                    Debug.WriteLine($"[LOBBY] Local player found in list");
                 }
 
                 orderedPlayers.Add(localPlayer);
                 orderedPlayers.AddRange(players.Where(p => p.Nickname != myNickname));
+
+                Debug.WriteLine($"[LOBBY] Final ordered list: {orderedPlayers.Count} players");
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -118,6 +136,7 @@ namespace ArchsVsDinosClient.ViewModels
 
                 for (int i = 0; i < orderedPlayers.Count && i < 4; i++)
                 {
+                    Debug.WriteLine($"[LOBBY] Updating slot {i} with {orderedPlayers[i].Nickname}");
                     UpdateSlot(i, orderedPlayers[i]);
                 }
             });
@@ -127,17 +146,16 @@ namespace ArchsVsDinosClient.ViewModels
         {
             if (index < 0 || index >= Slots.Count) return;
 
-            string currentNickname = UserSession.Instance.CurrentUser.Nickname;
+            string currentNickname = UserSession.Instance.GetNickname();
             bool isMe = player.Nickname == currentNickname;
 
             Slots[index] = new SlotLobby
             {
-                Username = player.Nickname, 
+                Username = player.Nickname,
                 Nickname = player.Nickname,
                 IsReady = player.IsReady,
                 IsLocalPlayer = isMe,
                 CanKick = this.isHost && !isMe
-
             };
         }
 

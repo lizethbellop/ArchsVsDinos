@@ -15,6 +15,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         Task<JoinMatchResultCode> JoinLobbyAsync(UserAccountDTO userAccount, string matchCode);
 
         void ConnectToLobby(string matchCode, string nickname);
+        Task ConnectToLobbyAsync(string matchCode, string nickname);
         void LeaveLobby(string username);
         //void ExpelPlayer(string targetUsername, string hostUsername);
         //void CancellLobby(string matchCode, string usernameRequester);

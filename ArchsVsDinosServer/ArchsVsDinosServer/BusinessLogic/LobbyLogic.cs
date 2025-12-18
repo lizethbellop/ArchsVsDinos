@@ -182,7 +182,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 var callback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
 
-                if(callback == null)
+                if (callback == null)
                 {
                     logger.LogWarning("RegisterConnection failed to get callback channel.");
                     return;
@@ -191,7 +191,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 core.Session.ConnectPlayerCallback(lobbyCode, playerNickname, callback);
                 var lobby = core.Session.GetLobby(lobbyCode);
 
-                if(lobby == null)
+                if (lobby == null)
                 {
                     logger.LogWarning($"Player registered connection but lobby {lobbyCode} was not found.");
                     return;
@@ -203,6 +203,15 @@ namespace ArchsVsDinosServer.BusinessLogic
                 core.Session.Broadcast(lobbyCode, cb => cb.PlayerJoinedLobby(playerNickname));
                 core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
 
+                try
+                {
+                    callback.UpdateListOfPlayers(MapPlayersToDTOs(lobby));
+                    logger.LogInfo($"Sent complete player list to {playerNickname} after connection");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning($"Failed to send individual list to {playerNickname}: {ex.Message}");
+                }
             }
             catch (CommunicationException ex)
             {

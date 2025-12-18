@@ -47,19 +47,24 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             {
                 var userAccount = BuildUserAccount();
                 UserSession.Instance.CurrentMatchCode = code;
-                var lobbyWindow = new Lobby(false, lobbyServiceClient);
-                var lobbyViewModel = (LobbyViewModel)lobbyWindow.DataContext;
 
-                if (userAccount.IdPlayer == 0)
-                {
-                    lobbyViewModel.SetWaitingForGuestCallback(true);
-                }
-
-                var result = await Task.Run(() => lobbyServiceClient.JoinLobbyAsync(userAccount, code));
+                var result = await lobbyServiceClient.JoinLobbyAsync(userAccount, code);
 
                 if (result == JoinMatchResultCode.JoinMatch_Success)
                 {
-                    lobbyServiceClient.ConnectToLobby(code, userAccount.Nickname);
+                    string nickname = UserSession.Instance.GetNickname();
+
+                    var lobbyWindow = new Lobby(false, lobbyServiceClient);
+                    var lobbyViewModel = (LobbyViewModel)lobbyWindow.DataContext;
+
+                    if (userAccount.IdPlayer == 0)
+                    {
+                        lobbyViewModel.SetWaitingForGuestCallback(true);
+                    }
+
+                    Debug.WriteLine($"[JOINCODE] Connecting to lobby {code} as {nickname}...");
+                    await lobbyServiceClient.ConnectToLobbyAsync(code, nickname);
+                    Debug.WriteLine($"[JOINCODE] Connected successfully");
 
                     lobbyWindow.Show();
                     IsCancelled = false;
@@ -67,20 +72,25 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
                     foreach (Window window in Application.Current.Windows)
                     {
-                        if (window is MainWindow) { window.Close(); break; }
+                        if (window is MainWindow)
+                        {
+                            window.Close();
+                            break;
+                        }
                     }
+
                     this.Close();
                 }
                 else
                 {
-                    lobbyWindow.Close();
                     string msg = LobbyResultCodeHelper.GetMessage(result);
-                    Debug.WriteLine(msg);
+                    Debug.WriteLine($"[JOINCODE] Join failed: {msg}");
                     MessageBox.Show(msg);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine($"[JOINCODE] Error joining lobby: {ex.Message}");
                 MessageBox.Show(Lang.JoinMatch_ErrorJoinMatch);
             }
         }
@@ -95,6 +105,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 string guestNickname = "Guest_" + new Random().Next(1000, 9999);
 
                 UserSession.Instance.SetGuestSession(guestNickname, guestNickname);
+
+                Debug.WriteLine($"[JOINCODE] Guest session created: {guestNickname}");
 
                 return new UserAccountDTO
                 {
