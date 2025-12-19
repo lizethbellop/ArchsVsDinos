@@ -198,10 +198,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                     return;
                 }
 
-                // ✅ 1. Registra el callback PRIMERO
                 core.Session.ConnectPlayerCallback(lobbyCode, playerNickname, callback);
 
-                // ✅ 2. Asegúrate de que el jugador esté en la lista
                 lock (lobby.LobbyLock)
                 {
                     var existingPlayer = lobby.Players.FirstOrDefault(p =>
@@ -214,7 +212,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                     }
                 }
 
-                // ✅ 3. Envía el estado completo AL JUGADOR que se conecta
                 try
                 {
                     var currentList = MapPlayersToDTOs(lobby);
@@ -226,7 +223,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                     logger.LogWarning($"Failed to send initial state to {playerNickname}: {ex.Message}");
                 }
 
-                // ✅ 4. Notifica a OTROS que este jugador se conectó (no a todos)
                 core.Session.Broadcast(lobbyCode, cb =>
                 {
                     if (cb != callback) // No notificar al que acaba de conectarse
@@ -235,7 +231,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                     }
                 });
 
-                // ✅ 5. Envía la lista actualizada a TODOS
                 core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
             }
             catch (CommunicationException ex)
@@ -306,9 +301,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             lock (lobby.LobbyLock)
             {
-                shouldStart =
-                    lobby.Players.Count >= 2 &&
-                    lobby.Players.All(p => p.IsReady);
+                shouldStart = lobby.Players.Count >= 2;
+
+                logger.LogInfo($"EvaluateGameStart: Lobby {lobbyCode} has {lobby.Players.Count} players");
             }
 
             if (shouldStart)
@@ -317,7 +312,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             else
             {
-                logger.LogInfo($"Game start blocked: not all players ready in {lobbyCode}");
+                logger.LogInfo($"Game start blocked: need at least 2 players in {lobbyCode}");
             }
         }
 
@@ -336,12 +331,11 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             List<GamePlayerInitDTO> playersToStart;
 
-
             lock (lobby.LobbyLock)
             {
-                if (lobby.Players.Count < 2 || lobby.Players.Any(p => !p.IsReady))
+                if (lobby.Players.Count < 2)
                 {
-                    logger.LogInfo($"Game start cancelled for {lobbyCode}. Players not ready.");
+                    logger.LogInfo($"Game start cancelled for {lobbyCode}. Not enough players.");
                     return;
                 }
 
