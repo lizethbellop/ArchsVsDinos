@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="ChatResultCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Chat_UserConnected" />
+      <xs:enumeration value="Chat_UserDisconnected" />
+      <xs:enumeration value="Chat_UserAlreadyConnected" />
+      <xs:enumeration value="Chat_ConnectionError" />
+      <xs:enumeration value="Chat_MessageBlocked" />
+      <xs:enumeration value="Chat_UserBanned" />
+      <xs:enumeration value="Chat_Error" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ChatResultCode" nillable="true" type="tns:ChatResultCode" />
+</xs:schema>

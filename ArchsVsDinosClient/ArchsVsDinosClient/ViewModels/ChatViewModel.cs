@@ -27,6 +27,9 @@ namespace ArchsVsDinosClient.ViewModels
         public ObservableCollection<string> Messages { get; }
         public ObservableCollection<string> OnlineUsers { get; }
 
+        // ✅ NUEVO: Evento para notificar cierre de ventana
+        public event Action<string, string> RequestWindowClose;
+
         public string MessageInput
         {
             get => messageInput;
@@ -82,6 +85,11 @@ namespace ArchsVsDinosClient.ViewModels
             chatService.SystemNotificationReceived += OnSystemNotificationReceived;
             chatService.UserListUpdated += OnUserListUpdated;
             chatService.ConnectionError += OnConnectionError;
+
+            // ✅ Suscribirse a eventos críticos
+            chatService.UserBanned += OnUserBanned;
+            chatService.UserExpelled += OnUserExpelled;
+            chatService.LobbyClosed += OnLobbyClosed;
         }
 
         public ChatViewModel() : this(new ChatServiceClient()) { }
@@ -89,7 +97,9 @@ namespace ArchsVsDinosClient.ViewModels
         // ------------------------------------------------------
         //  CONNECTION
         // ------------------------------------------------------
-        public async Task ConnectAsync(string username)
+
+        // ✅ NUEVO: Ahora acepta context y matchCode
+        public async Task ConnectAsync(string username, int context = 0, string matchCode = null)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -100,7 +110,7 @@ namespace ArchsVsDinosClient.ViewModels
             IsBusy = true;
             currentUsername = username;
 
-            await chatService.ConnectAsync(username);
+            await chatService.ConnectAsync(username, context, matchCode);
             IsConnected = true;
             IsBusy = false;
         }
@@ -131,12 +141,75 @@ namespace ArchsVsDinosClient.ViewModels
             return IsConnected && !string.IsNullOrWhiteSpace(MessageInput) && !IsBusy;
         }
 
+        // ✅ NUEVO: Manejar cuando el usuario actual es baneado
+        private void OnUserBanned(string username, int strikes)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (username == currentUsername)
+                {
+                    AddSystemMessage($"⚠️ Has sido expulsado del chat ({strikes} strikes)");
+                    IsConnected = false;
+
+                    // Notificar cierre después de mostrar mensaje
+                    Task.Delay(2000).ContinueWith(_ =>
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            RequestWindowClose?.Invoke(
+                                "Expulsado del chat",
+                                "Has sido expulsado por comportamiento inapropiado."
+                            );
+                        });
+                    });
+                }
+                else
+                {
+                    AddSystemMessage($"⚠️ {username} fue expulsado del chat");
+                }
+            });
+        }
+
+        // ✅ NUEVO: Manejar expulsión de otros jugadores
+        private void OnUserExpelled(string username, string reason)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                AddSystemMessage($"⚠️ {username} fue expulsado: {reason}");
+            });
+        }
+
+        // ✅ NUEVO: Manejar cierre de lobby/game
+        private void OnLobbyClosed(string reason)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                AddSystemMessage($"⚠️ {reason}");
+                IsConnected = false;
+
+                // Notificar cierre
+                Task.Delay(2000).ContinueWith(_ =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        RequestWindowClose?.Invoke(
+                            "Lobby cerrado",
+                            reason
+                        );
+                    });
+                });
+            });
+        }
+
         private void OnConnectionError(string title, string message)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 IsConnected = false;
-                AddSystemMessage($"! {title}: {message}");
+                AddSystemMessage($"❌ {title}: {message}");
+
+                // Notificar error crítico
+                RequestWindowClose?.Invoke(title, message);
             });
         }
 
@@ -193,6 +266,11 @@ namespace ArchsVsDinosClient.ViewModels
                 chatService.SystemNotificationReceived -= OnSystemNotificationReceived;
                 chatService.UserListUpdated -= OnUserListUpdated;
                 chatService.ConnectionError -= OnConnectionError;
+
+                chatService.UserBanned -= OnUserBanned;
+                chatService.UserExpelled -= OnUserExpelled;
+                chatService.LobbyClosed -= OnLobbyClosed;
+
                 chatService.Dispose();
             }
 

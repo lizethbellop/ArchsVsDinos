@@ -20,7 +20,7 @@ namespace Contracts.DTO
         public string Message { get; set; }
 
         [DataMember]
-        public ChatContext Context { get; set; }
+        public int Context { get; set; }
 
         [DataMember]
         public string MatchCode { get; set; }

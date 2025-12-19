@@ -21,24 +21,27 @@ namespace ArchsVsDinosServer.Services
         private Chat ChatBusinessLogic;
         private static ILobbyServiceNotifier lobbyNotifier;
         private static IGameServiceNotifier gameNotifier;
-        private ILoggerHelper loggerHelper = new LoggerHelperWrapper();
         private static IModerationManager moderationManager;
+        private ILoggerHelper loggerHelper = new LoggerHelperWrapper();
 
-
-        public static void RegisterNotifiers(ILobbyServiceNotifier lobby, IGameServiceNotifier game, IModerationManager moderation)
+        public static void RegisterNotifiers(
+            ILobbyServiceNotifier lobby,
+            IGameServiceNotifier game,
+            IModerationManager moderation)
         {
             lobbyNotifier = lobby;
             gameNotifier = game;
             moderationManager = moderation;
         }
 
-
         public ChatManager()
         {
             var dependencies = new BasicServiceDependencies
             {
                 loggerHelper = loggerHelper,
-                contextFactory = () => new DbContextWrapper()
+                contextFactory = () => new DbContextWrapper(),
+                // ✅ IMPORTANTE: Agregar el callback provider
+                callbackProvider = new CallbackProviderWrapper()
             };
 
             ChatBusinessLogic = new Chat(
@@ -46,15 +49,13 @@ namespace ArchsVsDinosServer.Services
                 lobbyNotifier,
                 gameNotifier,
                 moderationManager
-               );
-
+            );
         }
 
         public void Connect(ChatConnectionRequest request)
         {
             ChatBusinessLogic.Connect(request);
         }
-
 
         public void SendMessageToRoom(string message, string username)
         {
@@ -64,6 +65,14 @@ namespace ArchsVsDinosServer.Services
         public void Disconnect(string username)
         {
             ChatBusinessLogic.Disconnect(username);
+        }
+    }
+
+    public class CallbackProviderWrapper : ICallbackProvider
+    {
+        public IChatManagerCallback GetCallback()
+        {
+            return OperationContext.Current.GetCallbackChannel<IChatManagerCallback>();
         }
     }
 }

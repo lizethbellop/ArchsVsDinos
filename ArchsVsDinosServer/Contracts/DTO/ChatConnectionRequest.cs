@@ -14,7 +14,7 @@ namespace Contracts.DTO
         public string Username { get; set; }
 
         [DataMember]
-        public int Context { get; set; } // 0 = Lobby, 1 = InGame
+        public int Context { get; set; } 
 
         [DataMember]
         public string MatchCode { get; set; }
