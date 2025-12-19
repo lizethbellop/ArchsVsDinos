@@ -40,9 +40,13 @@ namespace ArchsVsDinosServer.Services
             {
                 loggerHelper = loggerHelper,
                 contextFactory = () => new DbContextWrapper(),
-                // ✅ IMPORTANTE: Agregar el callback provider
                 callbackProvider = new CallbackProviderWrapper()
             };
+
+            if (moderationManager == null)
+            {
+                moderationManager = new ModerationManager();
+            }
 
             ChatBusinessLogic = new Chat(
                 dependencies,
@@ -51,6 +55,7 @@ namespace ArchsVsDinosServer.Services
                 moderationManager
             );
         }
+
 
         public void Connect(ChatConnectionRequest request)
         {

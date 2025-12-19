@@ -9,6 +9,8 @@ using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views.MatchViews;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -28,12 +30,16 @@ namespace ArchsVsDinosClient.Views.LobbyViews
     {
 
         private readonly LobbyViewModel viewModel;
+        private string currentUsername;
+
 
         public Lobby() : this(true) { }
 
         public Lobby(bool isHost, ILobbyServiceClient client = null)
         {
             InitializeComponent();
+            currentUsername = UserSession.Instance.CurrentUser.Username;
+
             if (client == null)
             {
                 client = new LobbyServiceClient();
@@ -41,12 +47,16 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             viewModel = new LobbyViewModel(isHost, client);
             DataContext = viewModel;
 
+
+
             if (isHost)
             {
                 viewModel.InitializeLobby();
             }
 
+
         }
+
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)
         {
@@ -128,6 +138,12 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             SoundButton.PlayDestroyingRockSound();
             Gr_InviteByEmail.Visibility = Visibility.Collapsed;
         }
+
+        private async void LobbyLoaded(object sender, RoutedEventArgs e)
+        {
+            await viewModel.ConnectChatAsync();
+        }
+
 
     }
 }

@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.LobbyService;
 using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace ArchsVsDinosClient.ViewModels
@@ -19,6 +21,8 @@ namespace ArchsVsDinosClient.ViewModels
         private readonly ILobbyServiceClient lobbyServiceClient;
         private readonly bool isHost;
         private string matchCode;
+        public ChatViewModel Chat { get; }
+
 
         public ObservableCollection<SlotLobby> Slots { get; set; }
 
@@ -41,6 +45,8 @@ namespace ArchsVsDinosClient.ViewModels
                 this.lobbyServiceClient.PlayerListUpdated += OnPlayerListUpdated;
                 this.lobbyServiceClient.GameStartedEvent += OnGameStarted;
             }
+
+            Chat = new ChatViewModel(new ChatServiceClient());
         }
 
         public async void InitializeLobby()
@@ -201,5 +207,15 @@ namespace ArchsVsDinosClient.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
+
+        public async Task ConnectChatAsync()
+        {
+            await Chat.ConnectAsync(
+                UserSession.Instance.CurrentUser.Username,
+                context: 0, // lobby
+                matchCode: MatchCode
+            );
+        }
+
     }
 }
