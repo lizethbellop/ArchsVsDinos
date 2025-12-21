@@ -505,5 +505,88 @@ namespace ArchsVsDinosServer.BusinessLogic
                 IsHost = (p.UserId == lobby.HostUserId)
             }).ToArray();
         }
+
+        public void KickPlayer(string lobbyCode, int hostUserId, string targetNickname)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(targetNickname))
+            {
+                throw new ArgumentException("LobbyCode and targetNickname cannot be empty.");
+            }
+
+            try
+            {
+                var lobby = core.Session.GetLobby(lobbyCode);
+                if (lobby == null)
+                {
+                    logger.LogWarning($"KickPlayer: Lobby {lobbyCode} not found.");
+                    throw new InvalidOperationException("Lobby not found.");
+                }
+
+                lock (lobby.LobbyLock)
+                {
+                    // ✅ Verificar que quien expulsa es el host
+                    if (lobby.HostUserId != hostUserId)
+                    {
+                        logger.LogWarning($"User {hostUserId} tried to kick but is not host.");
+                        throw new UnauthorizedAccessException("Only the host can kick players.");
+                    }
+
+                    // ✅ Buscar el jugador a expulsar
+                    var targetPlayer = lobby.Players.FirstOrDefault(p =>
+                        p.Nickname.Equals(targetNickname, StringComparison.OrdinalIgnoreCase));
+
+                    if (targetPlayer == null)
+                    {
+                        logger.LogWarning($"KickPlayer: Player {targetNickname} not found in lobby.");
+                        throw new InvalidOperationException("Player not found in lobby.");
+                    }
+
+                    // ✅ No se puede expulsar al host
+                    if (targetPlayer.UserId == lobby.HostUserId)
+                    {
+                        logger.LogWarning($"Attempt to kick host {targetNickname} in lobby {lobbyCode}.");
+                        throw new InvalidOperationException("Cannot kick the host.");
+                    }
+                }
+
+                // ✅ Notificar al jugador expulsado específicamente usando Broadcast con condición
+                core.Session.Broadcast(lobbyCode, cb =>
+                {
+                    try
+                    {
+                        // Intentar notificar solo al jugador expulsado
+                        // El callback será cerrado, así que intentamos avisarle antes
+                        cb.PlayerKicked(targetNickname, "Expulsado por el anfitrión");
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning($"Failed to notify kicked player: {ex.Message}");
+                    }
+                });
+
+               System.Threading.Thread.Sleep(100);
+
+                core.Session.DisconnectPlayerCallback(lobbyCode, targetNickname);
+                HandlePlayerExit(lobbyCode, targetNickname);
+
+                logger.LogInfo($"Player {targetNickname} was kicked from lobby {lobbyCode} by host.");
+
+                core.Session.Broadcast(lobbyCode, cb =>
+                    cb.PlayerLeftLobby(targetNickname));
+
+                core.Session.Broadcast(lobbyCode, cb =>
+                    cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error kicking player: {ex.Message}");
+                throw;
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout kicking player: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

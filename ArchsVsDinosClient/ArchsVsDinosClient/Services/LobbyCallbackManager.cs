@@ -11,6 +11,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO> OnJoinedLobby;
         public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO> OnPlayerLeftLobby;
         public event Action<List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>> OnPlayerListUpdated;
+        public event Action<string, string> OnPlayerKicked;
         public event Action<string, bool> OnPlayerReady;
         public event Action OnGameStart;
 
@@ -57,6 +58,11 @@ namespace ArchsVsDinosClient.Services
         public void GameStarting()
         {
             OnGameStart?.Invoke();
+        }
+
+        public void PlayerKicked(string nickname, string reason)
+        {
+            OnPlayerKicked?.Invoke(nickname, reason);
         }
     }
 }

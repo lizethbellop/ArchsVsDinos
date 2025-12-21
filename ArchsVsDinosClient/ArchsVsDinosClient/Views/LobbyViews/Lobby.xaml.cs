@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -28,10 +29,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 {
     public partial class Lobby : Window
     {
-
         private readonly LobbyViewModel viewModel;
         private string currentUsername;
-
 
         public Lobby() : this(true) { }
 
@@ -44,24 +43,47 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             {
                 client = new LobbyServiceClient();
             }
+
             viewModel = new LobbyViewModel(isHost, client);
             DataContext = viewModel;
 
-
+            // ✅ CRÍTICO: Suscribirse al evento de cierre forzado
+            viewModel.LobbyConnectionLost += OnLobbyConnectionLost;
 
             if (isHost)
             {
                 viewModel.InitializeLobby();
             }
-
-
         }
 
+        private void OnLobbyConnectionLost(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                try
+                {
+                    MainWindow mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LOBBY] Error opening MainWindow: {ex.Message}");
+                    this.Close();
+                }
+            });
+        }
+
+        private async void LobbyLoaded(object sender, RoutedEventArgs e)
+        {
+            await viewModel.ConnectChatAsync();
+        }
 
         private void Click_BtnBegin(object sender, RoutedEventArgs e)
         {
-            int totalPlayers = viewModel.GetPlayersCount(); 
-
+            int totalPlayers = viewModel.GetPlayersCount();
             if (totalPlayers < 2)
             {
                 Btn_Begin.IsChecked = false;
@@ -72,12 +94,10 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 SoundButton.PlayDestroyingRockSound();
                 viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
             }
-            
         }
 
-
         private void Click_BtnCancelMatch(object sender, RoutedEventArgs e)
-        {/*
+        {
             SoundButton.PlayDestroyingRockSound();
 
             if (UserSession.Instance.CurrentUser == null)
@@ -96,17 +116,19 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    viewModel.CancellTheLobby(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
+                    viewModel.LeaveOfTheLobby(UserSession.Instance.CurrentUser.Username);
+                    MainWindow main = new MainWindow();
+                    main.Show();
+                    this.Close();
                 }
             }
             else
             {
                 viewModel.LeaveOfTheLobby(UserSession.Instance.CurrentUser.Username);
-                var main = new MainWindow();
+                MainWindow main = new MainWindow();
                 main.Show();
                 this.Close();
-            }*/
-
+            }
         }
 
         private void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
@@ -129,7 +151,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
         private void Click_BtnInviteAPlayerByEmail(object sender, RoutedEventArgs e)
         {
-            var email = TxtB_InviteByEmail.Text.Trim();
+            string email = TxtB_InviteByEmail.Text.Trim();
             viewModel.InvitePlayerByEmail(email);
         }
 
@@ -139,11 +161,28 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             Gr_InviteByEmail.Visibility = Visibility.Collapsed;
         }
 
-        private async void LobbyLoaded(object sender, RoutedEventArgs e)
+        protected override async void OnClosing(CancelEventArgs e)
         {
-            await viewModel.ConnectChatAsync();
+            if (viewModel != null)
+            {
+                viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;
+                viewModel.Cleanup();
+            }
+
+            if (viewModel?.Chat != null)
+            {
+                try
+                {
+                    await viewModel.Chat.DisconnectAsync();
+                    viewModel.Chat.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LOBBY] Error disconnecting chat: {ex.Message}");
+                }
+            }
+
+            base.OnClosing(e);
         }
-
-
     }
 }

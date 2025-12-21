@@ -173,5 +173,42 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
+        public void KickPlayer(string lobbyCode, int hostUserId, string targetNickname)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(targetNickname))
+            {
+                return;
+            }
+
+            try
+            {
+                lobbyLogic.KickPlayer(lobbyCode, hostUserId, targetNickname);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                logger.LogWarning($"Unauthorized kick attempt: {ex.Message}");
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogError($"Invalid kick request: {ex.Message}", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogWarning($"Kick operation failed: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout kicking player {targetNickname} - {ex.Message}");
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error kicking player: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Unexpected error in KickPlayer.", ex);
+            }
+        }
+
     }
 }

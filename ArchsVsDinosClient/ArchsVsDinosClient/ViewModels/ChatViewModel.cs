@@ -27,8 +27,8 @@ namespace ArchsVsDinosClient.ViewModels
         public ObservableCollection<string> Messages { get; }
         public ObservableCollection<string> OnlineUsers { get; }
 
-        // ✅ NUEVO: Evento para notificar cierre de ventana
         public event Action<string, string> RequestWindowClose;
+        public event Action<string> ChatDegraded;
 
         public string MessageInput
         {
@@ -86,7 +86,6 @@ namespace ArchsVsDinosClient.ViewModels
             chatService.UserListUpdated += OnUserListUpdated;
             chatService.ConnectionError += OnConnectionError;
 
-            // ✅ Suscribirse a eventos críticos
             chatService.UserBanned += OnUserBanned;
             chatService.UserExpelled += OnUserExpelled;
             chatService.LobbyClosed += OnLobbyClosed;
@@ -208,8 +207,14 @@ namespace ArchsVsDinosClient.ViewModels
                 IsConnected = false;
                 AddSystemMessage($"❌ {title}: {message}");
 
-                // Notificar error crítico
-                RequestWindowClose?.Invoke(title, message);
+                if (title.Contains("Conexión perdida") || title.Contains("Servidor no disponible"))
+                {
+                    RequestWindowClose?.Invoke(title, message);
+                }
+                else
+                {
+                    ChatDegraded?.Invoke($"Chat no disponible: {message}");
+                }
             });
         }
 

@@ -19,5 +19,7 @@ namespace ArchsVsDinosServer.Interfaces.Lobby
         Task UpdatePlayerReadyStatus(string lobbyCode, string playerName, bool isReady);
 
         Task EvaluateGameStart(string lobbyCode, int userID);
+
+        void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
     }
 }

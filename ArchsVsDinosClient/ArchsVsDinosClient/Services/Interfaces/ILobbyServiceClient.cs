@@ -20,6 +20,8 @@ namespace ArchsVsDinosClient.Services.Interfaces
         //void ExpelPlayer(string targetUsername, string hostUsername);
         //void CancellLobby(string matchCode, string usernameRequester);
         void StartGame(string matchCode);
+
+        void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
         Task<bool> SendLobbyInviteByEmail(string email, string matchCode, string senderUsername);
 
         event Action<LobbyPlayerDTO, string> LobbyCreated;
@@ -29,5 +31,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<string, bool> PlayerReadyEvent;
         event Action<string, string> ConnectionError;
         event Action<List<LobbyPlayerDTO>> PlayerListUpdated;
+        event Action<string, string> PlayerKickedEvent;
+
     }
 }

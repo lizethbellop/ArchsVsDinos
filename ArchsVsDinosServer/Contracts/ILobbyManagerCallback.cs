@@ -26,5 +26,8 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void GameStarting();
 
+        [OperationContract(IsOneWay = true)]
+        void PlayerKicked(string nickname, string reason);
+
     }
 }

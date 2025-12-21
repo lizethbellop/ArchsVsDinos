@@ -5,6 +5,7 @@ using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,6 +23,7 @@ namespace ArchsVsDinosClient.ViewModels
         private readonly bool isHost;
         private string matchCode;
         public ChatViewModel Chat { get; }
+        public event Action<string, string> LobbyConnectionLost;
 
 
         public ObservableCollection<SlotLobby> Slots { get; set; }
@@ -44,9 +46,79 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 this.lobbyServiceClient.PlayerListUpdated += OnPlayerListUpdated;
                 this.lobbyServiceClient.GameStartedEvent += OnGameStarted;
+                this.lobbyServiceClient.ConnectionError += OnLobbyConnectionError;
+                this.lobbyServiceClient.PlayerKickedEvent += OnPlayerKicked;
             }
 
             Chat = new ChatViewModel(new ChatServiceClient());
+
+            Chat.ChatDegraded += OnChatDegraded;
+            Chat.RequestWindowClose += OnChatRequestWindowClose;
+        }
+
+        private void OnPlayerKicked(string nickname, string reason)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                string myNickname = UserSession.Instance.GetNickname();
+
+                if (nickname == myNickname)
+                {
+                    // Fui expulsado
+                    if (LobbyConnectionLost != null)
+                    {
+                        LobbyConnectionLost(
+                            "Expulsado del lobby",
+                            reason
+                        );
+                    }
+                }
+                else
+                {
+                    // Otro jugador fue expulsado
+                    MessageBox.Show(
+                        $"{nickname} fue expulsado del lobby.",
+                        "Jugador expulsado",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
+            });
+        }
+
+        private void OnChatDegraded(string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(
+                    message + "\n\nEl lobby seguirá funcionando.",
+                    "Warning",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+            });
+        }
+
+        private void OnChatRequestWindowClose(string title, string message)
+        {
+            // El chat decidió que es crítico, propagar al Lobby
+            LobbyConnectionLost?.Invoke(title, message);
+        }
+
+        private void OnLobbyConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine($"[LOBBY VM] ConnectionError: {title} - {message}");
+
+                if (LobbyConnectionLost != null)
+                {
+                    LobbyConnectionLost(
+                        "Conexión perdida",
+                        "Se perdió la conexión con el servidor. Serás redirigido al menú principal."
+                    );
+                }
+            });
         }
 
         public async void InitializeLobby()
@@ -82,6 +154,17 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 string msg = LobbyResultCodeHelper.GetMessage(result);
                 MessageBox.Show(msg);
+
+                if (result == MatchCreationResultCode.MatchCreation_Failure)
+                {
+                    if (LobbyConnectionLost != null)
+                    {
+                        LobbyConnectionLost(
+                            "Error al crear lobby",
+                            "No se pudo conectar con el servidor. Intenta nuevamente."
+                        );
+                    }
+                }
             }
         }
 
@@ -210,11 +293,40 @@ namespace ArchsVsDinosClient.ViewModels
 
         public async Task ConnectChatAsync()
         {
-            await Chat.ConnectAsync(
-                UserSession.Instance.CurrentUser.Username,
-                context: 0, // lobby
-                matchCode: MatchCode
-            );
+            try
+            {
+                await Chat.ConnectAsync(
+                    UserSession.Instance.CurrentUser.Username,
+                    context: 0,
+                    matchCode: MatchCode
+                );
+            }
+            catch (Exception ex)
+            {
+                OnChatDegraded($"No se pudo conectar al chat: {ex.Message}");
+            }
+        }
+
+        public void Cleanup()
+        {
+            if (lobbyServiceClient != null)
+            {
+                lobbyServiceClient.ConnectionError -= OnLobbyConnectionError;
+            }
+
+            if (Chat != null)
+            {
+                Chat.ChatDegraded -= OnChatDegraded;
+                Chat.RequestWindowClose -= OnChatRequestWindowClose;
+            }
+        }
+
+        public void KickPlayer(string targetNickname)
+        {
+            if (!isHost) return;
+
+            int hostUserId = UserSession.Instance.CurrentUser.IdUser;
+            lobbyServiceClient.KickPlayer(MatchCode, hostUserId, targetNickname);
         }
 
     }

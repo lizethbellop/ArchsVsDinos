@@ -33,6 +33,9 @@ namespace Contracts
 
         [OperationContract]
         void StartGame(string lobbyCode, int userId);
+
+        [OperationContract]
+        void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
     }
 
 }

@@ -434,6 +434,12 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/StartGame", ReplyAction="http://tempuri.org/ILobbyManager/StartGameResponse")]
         System.Threading.Tasks.Task StartGameAsync(string lobbyCode, int userId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/KickPlayer", ReplyAction="http://tempuri.org/ILobbyManager/KickPlayerResponse")]
+        void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/KickPlayer", ReplyAction="http://tempuri.org/ILobbyManager/KickPlayerResponse")]
+        System.Threading.Tasks.Task KickPlayerAsync(string lobbyCode, int hostUserId, string targetNickname);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -453,6 +459,9 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/GameStarting")]
         void GameStarting();
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/PlayerKicked")]
+        void PlayerKicked(string nickname, string reason);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -537,6 +546,14 @@ namespace ArchsVsDinosClient.LobbyService {
         
         public System.Threading.Tasks.Task StartGameAsync(string lobbyCode, int userId) {
             return base.Channel.StartGameAsync(lobbyCode, userId);
+        }
+        
+        public void KickPlayer(string lobbyCode, int hostUserId, string targetNickname) {
+            base.Channel.KickPlayer(lobbyCode, hostUserId, targetNickname);
+        }
+        
+        public System.Threading.Tasks.Task KickPlayerAsync(string lobbyCode, int hostUserId, string targetNickname) {
+            return base.Channel.KickPlayerAsync(lobbyCode, hostUserId, targetNickname);
         }
     }
 }

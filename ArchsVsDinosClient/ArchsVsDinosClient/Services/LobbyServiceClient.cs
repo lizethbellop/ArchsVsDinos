@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ArchsVsDinosClient.Services
 {
@@ -25,6 +26,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<string, bool> PlayerReadyEvent;
         public event Action<string, string> ConnectionError;
         public event Action<List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>> PlayerListUpdated;
+        public event Action<string, string> PlayerKickedEvent;
 
         public LobbyServiceClient()
         {
@@ -36,6 +38,11 @@ namespace ArchsVsDinosClient.Services
             lobbyCallbackManager.OnPlayerListUpdated += (playerList) => PlayerListUpdated?.Invoke(playerList);
             lobbyCallbackManager.OnPlayerReady += (nickname, isReady) => PlayerReadyEvent?.Invoke(nickname, isReady);
             lobbyCallbackManager.OnGameStart += () => GameStartedEvent?.Invoke("");
+
+            lobbyCallbackManager.OnPlayerKicked += (nickname, reason) =>
+            {
+                if (PlayerKickedEvent != null) PlayerKickedEvent(nickname, reason);
+            };
 
             var instanceContext = new InstanceContext(lobbyCallbackManager);
             if (synchronizationContext != null)
@@ -52,6 +59,7 @@ namespace ArchsVsDinosClient.Services
             connectionGuardian.MonitorClientState(lobbyManagerClient);
         }
 
+        // ✅ MÉTODO 1: CreateLobbyAsync con excepciones específicas
         public async Task<MatchCreationResultCode> CreateLobbyAsync(ArchsVsDinosClient.DTO.UserAccountDTO userAccount)
         {
             var matchSettings = new ArchsVsDinosClient.LobbyService.MatchSettings
@@ -63,42 +71,125 @@ namespace ArchsVsDinosClient.Services
 
             try
             {
-                var response = await Task.Run(() => lobbyManagerClient.CreateLobby(matchSettings));
+                var response = await connectionGuardian.ExecuteAsync(async () =>
+                {
+                    return await Task.Run(() => lobbyManagerClient.CreateLobby(matchSettings));
+                });
 
                 if (response.Success)
                 {
                     UserSession.Instance.CurrentMatchCode = response.LobbyCode;
-
-                    // ✅ AGREGAR ESTA LÍNEA
                     await ConnectToLobbyAsync(response.LobbyCode, matchSettings.HostNickname);
                 }
 
                 return response.ResultCode;
             }
-            catch (Exception)
+            catch (EndpointNotFoundException endpointEx)
             {
+                // El endpoint del servidor no está disponible
+                ConnectionError?.Invoke("Servidor no disponible", "No se encontró el servidor del lobby.");
+                Debug.WriteLine($"[LOBBY CLIENT] EndpointNotFoundException: {endpointEx.Message}");
+                return MatchCreationResultCode.MatchCreation_ServerBusy;
+            }
+            catch (FaultException faultEx)
+            {
+                // Error del servidor (fault enviado por el servicio)
+                ConnectionError?.Invoke("Error del servidor", $"El servidor reportó un error: {faultEx.Message}");
+                Debug.WriteLine($"[LOBBY CLIENT] FaultException: {faultEx.Message}");
+                return MatchCreationResultCode.MatchCreation_UnexpectedError;
+            }
+            catch (CommunicationException commEx)
+            {
+                // Error de comunicación con el servidor
+                ConnectionError?.Invoke("Error de comunicación", "No se pudo conectar con el servidor del lobby.");
+                Debug.WriteLine($"[LOBBY CLIENT] CommunicationException: {commEx.Message}");
+                return MatchCreationResultCode.MatchCreation_Failure;
+            }
+            catch (TimeoutException timeoutEx)
+            {
+                // Timeout al intentar crear el lobby
+                ConnectionError?.Invoke("Tiempo agotado", "El servidor no respondió a tiempo.");
+                Debug.WriteLine($"[LOBBY CLIENT] TimeoutException: {timeoutEx.Message}");
+                return MatchCreationResultCode.MatchCreation_Timeout;
+            }
+            catch (ObjectDisposedException objEx)
+            {
+                // El cliente fue cerrado/disposed antes de completar
+                ConnectionError?.Invoke("Conexión cerrada", "La conexión con el servidor fue cerrada inesperadamente.");
+                Debug.WriteLine($"[LOBBY CLIENT] ObjectDisposedException: {objEx.Message}");
+                return MatchCreationResultCode.MatchCreation_UnexpectedError;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                // Operación inválida (el canal está en mal estado)
+                ConnectionError?.Invoke("Estado inválido", "La conexión con el servidor está en un estado inválido.");
+                Debug.WriteLine($"[LOBBY CLIENT] InvalidOperationException: {invEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
         }
 
+        // ✅ MÉTODO 2: JoinLobbyAsync con excepciones específicas
         public async Task<JoinMatchResultCode> JoinLobbyAsync(ArchsVsDinosClient.DTO.UserAccountDTO userAccount, string matchCode)
         {
             try
             {
-                var matchJoinResponse = await Task.Run(() => lobbyManagerClient.JoinLobby(
-                    matchCode,
-                    userAccount.IdPlayer,
-                    userAccount.Nickname
-                ));
+                var matchJoinResponse = await connectionGuardian.ExecuteAsync(async () =>
+                {
+                    return await Task.Run(() => lobbyManagerClient.JoinLobby(
+                        matchCode,
+                        userAccount.IdPlayer,
+                        userAccount.Nickname
+                    ));
+                });
 
                 return matchJoinResponse.ResultCode;
             }
-            catch (Exception)
+            catch (EndpointNotFoundException endpointEx)
             {
+                ConnectionError?.Invoke("Servidor no disponible", "No se pudo encontrar el servidor del lobby.");
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby EndpointNotFoundException: {endpointEx.Message}");
+                return JoinMatchResultCode.JoinMatch_UnexpectedError;
+            }
+            catch (FaultException<string> faultEx)
+            {
+                // Fault específico con string (el servidor puede enviar mensajes específicos)
+                ConnectionError?.Invoke("Error del lobby", faultEx.Detail);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException<string>: {faultEx.Detail}");
+                return JoinMatchResultCode.JoinMatch_LobbyFull; // o el código que corresponda
+            }
+            catch (FaultException faultEx)
+            {
+                ConnectionError?.Invoke("Error del servidor", $"Error al unirse: {faultEx.Message}");
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException: {faultEx.Message}");
+                return JoinMatchResultCode.JoinMatch_UnexpectedError;
+            }
+            catch (CommunicationException commEx)
+            {
+                ConnectionError?.Invoke("Error de comunicación", "No se pudo unir al lobby. Verifica tu conexión.");
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby CommunicationException: {commEx.Message}");
+                return JoinMatchResultCode.JoinMatch_UnexpectedError;
+            }
+            catch (TimeoutException timeoutEx)
+            {
+                ConnectionError?.Invoke("Tiempo agotado", "El servidor tardó demasiado en responder.");
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby TimeoutException: {timeoutEx.Message}");
+                return JoinMatchResultCode.JoinMatch_Timeout;
+            }
+            catch (ObjectDisposedException objEx)
+            {
+                ConnectionError?.Invoke("Conexión cerrada", "La conexión fue cerrada antes de unirse al lobby.");
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby ObjectDisposedException: {objEx.Message}");
+                return JoinMatchResultCode.JoinMatch_UnexpectedError;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                ConnectionError?.Invoke("Operación inválida", "No se puede realizar la operación en este momento.");
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby InvalidOperationException: {invEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
         }
 
+        // ✅ Ya están bien (usan connectionGuardian)
         public void ConnectToLobby(string matchCode, string nickname)
         {
             Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
@@ -138,17 +229,66 @@ namespace ArchsVsDinosClient.Services
             });
         }
 
+        // ✅ MÉTODO 3: SendLobbyInviteByEmail con excepciones específicas
         public async Task<bool> SendLobbyInviteByEmail(string email, string matchCode, string senderUsername)
         {
             try
             {
                 string[] guestsList = new string[] { email };
-                return await Task.Run(() => lobbyManagerClient.SendInvitations(matchCode, senderUsername, guestsList));
+
+                var result = await connectionGuardian.ExecuteAsync(async () =>
+                {
+                    return await Task.Run(() => lobbyManagerClient.SendInvitations(matchCode, senderUsername, guestsList));
+                });
+
+                return result;
             }
-            catch
+            catch (EndpointNotFoundException endpointEx)
             {
+                Debug.WriteLine($"[LOBBY CLIENT] SendInvite EndpointNotFoundException: {endpointEx.Message}");
+                MessageBox.Show("El servidor de invitaciones no está disponible.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
+            catch (FaultException faultEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendInvite FaultException: {faultEx.Message}");
+                MessageBox.Show($"Error del servidor: {faultEx.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            catch (CommunicationException commEx)
+            {
+                // No disparamos ConnectionError aquí porque no es crítico
+                Debug.WriteLine($"[LOBBY CLIENT] SendInvite CommunicationException: {commEx.Message}");
+                MessageBox.Show("No se pudo enviar la invitación. Verifica tu conexión.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            catch (TimeoutException timeoutEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendInvite TimeoutException: {timeoutEx.Message}");
+                MessageBox.Show("El servidor tardó demasiado en responder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            catch (FormatException formatEx)
+            {
+                // Email inválido
+                Debug.WriteLine($"[LOBBY CLIENT] SendInvite FormatException: {formatEx.Message}");
+                MessageBox.Show("El formato del email es inválido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            catch (ArgumentNullException argEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendInvite ArgumentNullException: {argEx.Message}");
+                MessageBox.Show("Datos incompletos para enviar la invitación.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+        }
+
+        public void KickPlayer(string lobbyCode, int hostUserId, string targetNickname)
+        {
+            Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
+            {
+                await Task.Run(() => lobbyManagerClient.KickPlayer(lobbyCode, hostUserId, targetNickname));
+            });
         }
     }
 }
