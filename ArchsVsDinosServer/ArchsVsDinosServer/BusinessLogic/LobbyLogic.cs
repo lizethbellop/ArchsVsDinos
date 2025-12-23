@@ -381,8 +381,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 bool wasHost = (lobby.HostUserId == leavingPlayer.UserId);
 
-                core.Session.DisconnectPlayerCallback(lobbyCode, playerNickname);
                 HandlePlayerExit(lobbyCode, playerNickname);
+                core.Session.DisconnectPlayerCallback(lobbyCode, playerNickname);
 
                 if (wasHost && lobby.Players.Count > 0)
                 {
@@ -487,8 +487,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                 logger.LogWarning($"HandlePlayerExit: Lobby {lobbyCode} not found.");
                 return;
             }
-            lobby.RemovePlayer(nickname);
+
             core.Session.Broadcast(lobbyCode, cb => cb.PlayerLeftLobby(nickname));
+            lobby.RemovePlayer(nickname);
             core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
 
         }
@@ -524,14 +525,12 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 lock (lobby.LobbyLock)
                 {
-                    // ✅ Verificar que quien expulsa es el host
                     if (lobby.HostUserId != hostUserId)
                     {
                         logger.LogWarning($"User {hostUserId} tried to kick but is not host.");
                         throw new UnauthorizedAccessException("Only the host can kick players.");
                     }
 
-                    // ✅ Buscar el jugador a expulsar
                     var targetPlayer = lobby.Players.FirstOrDefault(p =>
                         p.Nickname.Equals(targetNickname, StringComparison.OrdinalIgnoreCase));
 
@@ -541,7 +540,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                         throw new InvalidOperationException("Player not found in lobby.");
                     }
 
-                    // ✅ No se puede expulsar al host
                     if (targetPlayer.UserId == lobby.HostUserId)
                     {
                         logger.LogWarning($"Attempt to kick host {targetNickname} in lobby {lobbyCode}.");
@@ -549,13 +547,10 @@ namespace ArchsVsDinosServer.BusinessLogic
                     }
                 }
 
-                // ✅ Notificar al jugador expulsado específicamente usando Broadcast con condición
                 core.Session.Broadcast(lobbyCode, cb =>
                 {
                     try
                     {
-                        // Intentar notificar solo al jugador expulsado
-                        // El callback será cerrado, así que intentamos avisarle antes
                         cb.PlayerKicked(targetNickname, "Expulsado por el anfitrión");
                     }
                     catch (Exception ex)

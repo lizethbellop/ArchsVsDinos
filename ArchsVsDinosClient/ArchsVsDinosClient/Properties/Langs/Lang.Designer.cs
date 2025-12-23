@@ -799,7 +799,7 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a ¿Está segur@ que quiere cancelar la partida?.
+        ///   Busca una cadena traducida similar a ¿Estás segur@ de que quieres salir? .
         /// </summary>
         public static string Lobby_CancellationLobbyConfirmation {
             get {
@@ -831,6 +831,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_ErrorSendingEmail {
             get {
                 return ResourceManager.GetString("Lobby_ErrorSendingEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo enviar la solicitud (puede que ya haya una pendiente).
+        /// </summary>
+        public static string Lobby_ErrorSendingFriendRequest {
+            get {
+                return ResourceManager.GetString("Lobby_ErrorSendingFriendRequest", resourceCulture);
             }
         }
         
@@ -993,6 +1002,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_ReadyPlayers {
             get {
                 return ResourceManager.GetString("Lobby_ReadyPlayers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Solicitud de amistad enviada correctamente.
+        /// </summary>
+        public static string Lobby_SendFriendRequest {
+            get {
+                return ResourceManager.GetString("Lobby_SendFriendRequest", resourceCulture);
             }
         }
         

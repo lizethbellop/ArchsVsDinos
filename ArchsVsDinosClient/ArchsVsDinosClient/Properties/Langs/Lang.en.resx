@@ -661,7 +661,7 @@
     <value>Only the host can start the match</value>
   </data>
   <data name="Lobby_CancellationLobbyConfirmation" xml:space="preserve">
-    <value>Are you sure you want to cancel the match?</value>
+    <value>Are you sure you want to exit?</value>
   </data>
   <data name="Lobby_OnlyHostCanKick" xml:space="preserve">
     <value>Only the host can kick players.</value>
@@ -833,5 +833,11 @@
   </data>
   <data name="Lobby_Cancel" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="Lobby_SendFriendRequest" xml:space="preserve">
+    <value>Friend request sent successfully</value>
+  </data>
+  <data name="Lobby_ErrorSendingFriendRequest" xml:space="preserve">
+    <value>The request could not be sent (There may already be one pending)</value>
   </data>
 </root>

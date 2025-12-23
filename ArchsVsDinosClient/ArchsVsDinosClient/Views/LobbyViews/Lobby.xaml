@@ -53,44 +53,53 @@
 
             <StackPanel VerticalAlignment="Bottom">
                 <Label Content="{x:Static language:Lang.GlobalGroupChatText}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" Foreground="Black"/>
-                <Border Background="White" BorderBrush="#FF00730B" BorderThickness="1" Height="350" CornerRadius="5">
+                <Border Background="#CCFFFFFF" BorderBrush="#FF00730B" BorderThickness="1" Height="400" CornerRadius="5">
                     <ListBox ItemsSource="{Binding Chat.Messages}"
                         BorderThickness="0"
-                        Background="#80FFFFFF">
+                        Background="Transparent"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}"
                                     TextWrapping="Wrap"
+                                    MaxWidth="330"
                                     Padding="5"
                                     FontFamily="Trebuchet MS"
-                                    FontSize="12"/>
+                                    FontSize="12"
+                                    Foreground="Black"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-
                     </ListBox>
                 </Border>
             </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom">
-                <TextBox
-                    Height="30"
-                    Margin="0,5,0,0"
-                    FontFamily="Trebuchet MS"
-                    BorderBrush="#FF029700"
-                    BorderThickness="1"
-                    Padding="5"
-                    Text="{Binding Chat.MessageInput, UpdateSourceTrigger=PropertyChanged}">
+                <Grid>
+                    <TextBox x:Name="TxtMessageInput"
+                        Height="40"
+                        Margin="0,5,0,0"
+                        FontFamily="Trebuchet MS"
+                        BorderBrush="#FF029700"
+                        BorderThickness="1"
+                        Padding="5,5,60,5"
+                        MaxLength="140"
+                        TextWrapping="Wrap"
+                        Text="{Binding Chat.MessageInput, UpdateSourceTrigger=PropertyChanged}">
 
-                    <TextBox.InputBindings>
-                        <KeyBinding Key="Enter"
-                                    Command="{Binding Chat.SendMessageCommand}" />
-                    </TextBox.InputBindings>
-
-                </TextBox>
-
-
-
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Enter"
+                                        Command="{Binding Chat.SendMessageCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" IsHitTestVisible="False">
+                        <TextBlock Text="{Binding Text.Length, ElementName=TxtMessageInput}"
+                            FontSize="13" Foreground="#FF005F25"/>
+                        <TextBlock Text="/140" 
+                       FontSize="13" Foreground="#FF686868"/>
+                    </StackPanel>
+                </Grid>
             </StackPanel>
 
         </Grid>

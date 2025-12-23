@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -20,11 +21,12 @@ namespace ArchsVsDinosClient.ViewModels
     public class LobbyViewModel : INotifyPropertyChanged
     {
         private readonly ILobbyServiceClient lobbyServiceClient;
-        private readonly bool isHost;
+        private bool isHost;
         private string matchCode;
+        private int myCurrentLobbyId;
         public ChatViewModel Chat { get; }
+        public FriendRequestViewModel Friends { get; private set; }
         public event Action<string, string> LobbyConnectionLost;
-
 
         public ObservableCollection<SlotLobby> Slots { get; set; }
 
@@ -32,6 +34,24 @@ namespace ArchsVsDinosClient.ViewModels
         {
             get => matchCode;
             set { matchCode = value; OnPropertyChanged(); }
+        }
+
+        public bool IsHost
+        {
+            get => isHost;
+            set
+            {
+                if (isHost != value)
+                {
+                    isHost = value;
+                    OnPropertyChanged();
+
+                    foreach (var slot in Slots)
+                    {
+                        slot.CanKick = isHost && !slot.IsLocalPlayer && !string.IsNullOrEmpty(slot.Username);
+                    }
+                }
+            }
         }
 
         public LobbyViewModel(bool isHost, ILobbyServiceClient client)
@@ -48,12 +68,34 @@ namespace ArchsVsDinosClient.ViewModels
                 this.lobbyServiceClient.GameStartedEvent += OnGameStarted;
                 this.lobbyServiceClient.ConnectionError += OnLobbyConnectionError;
                 this.lobbyServiceClient.PlayerKickedEvent += OnPlayerKicked;
+                this.lobbyServiceClient.PlayerLeft += OnPlayerLeft;
             }
+
+            this.lobbyServiceClient = client;
+            string myUsername = UserSession.Instance.CurrentUser.Username;
+            this.Friends = new FriendRequestViewModel(myUsername);
+            this.Friends.Subscribe(myUsername);
+            this.Friends.RequestSent += (sender, e) => OnFriendRequestSentResult(true);
 
             Chat = new ChatViewModel(new ChatServiceClient());
 
             Chat.ChatDegraded += OnChatDegraded;
             Chat.RequestWindowClose += OnChatRequestWindowClose;
+        }
+
+        private void OnFriendRequestSentResult(bool success)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (success)
+                {
+                    MessageBox.Show(Lang.FriendRequest_SentSuccess);
+                }
+                else
+                {
+                    MessageBox.Show(Lang.FriendRequest_SentError);
+                }
+            });
         }
 
         private void OnPlayerKicked(string nickname, string reason)
@@ -64,7 +106,6 @@ namespace ArchsVsDinosClient.ViewModels
 
                 if (nickname == myNickname)
                 {
-                    // Fui expulsado
                     if (LobbyConnectionLost != null)
                     {
                         LobbyConnectionLost(
@@ -75,12 +116,10 @@ namespace ArchsVsDinosClient.ViewModels
                 }
                 else
                 {
-                    // Otro jugador fue expulsado
                     MessageBox.Show(
                         $"{nickname} fue expulsado del lobby.",
                         "Jugador expulsado",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
+                        MessageBoxButton.OK
                     );
                 }
             });
@@ -101,7 +140,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void OnChatRequestWindowClose(string title, string message)
         {
-            // El chat decidió que es crítico, propagar al Lobby
             LobbyConnectionLost?.Invoke(title, message);
         }
 
@@ -168,6 +206,35 @@ namespace ArchsVsDinosClient.ViewModels
             }
         }
 
+        public void SendFriendRequest(string targetUsername)
+        {
+            if (string.IsNullOrEmpty(targetUsername)) return;
+
+            string myUsername = UserSession.Instance.CurrentUser.Username;
+
+            if (myUsername == targetUsername) return;
+            if (Friends != null)
+            {
+                try
+                {
+                    Friends.Subscribe(myUsername);
+                }
+                catch (CommunicationException ex)
+                {
+                    Debug.WriteLine($"[LobbyVM] Error de comunicación WCF al renovar suscripción: {ex.Message}");
+                }
+                catch (TimeoutException ex)
+                {
+                    Debug.WriteLine($"[LobbyVM] Timeout al renovar suscripción: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LobbyVM] Error inesperado al renovar suscripción: {ex.Message}");
+                }
+                Friends.SendFriendRequest(myUsername, targetUsername);
+            }
+        }
+
         private void InitializeSlots()
         {
             for (int i = 0; i < 4; i++) Slots.Add(new SlotLobby { Username = "" });
@@ -192,38 +259,46 @@ namespace ArchsVsDinosClient.ViewModels
                     Debug.WriteLine($"[LOBBY] Using first player nickname: {myNickname}");
                 }
 
+                var meInList = players.FirstOrDefault(p => p.Nickname == myNickname);
+                if (meInList != null)
+                {
+                    this.isHost = meInList.IsHost;
+                    this.myCurrentLobbyId = meInList.IdPlayer;
+                }
+
                 var orderedPlayers = new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
-                var localPlayer = players.FirstOrDefault(p => p.Nickname == myNickname);
 
-                if (localPlayer == null)
+                var localPlayerDto = meInList ?? new ArchsVsDinosClient.DTO.LobbyPlayerDTO
                 {
-                    Debug.WriteLine($"[LOBBY] Local player NOT found in list, creating placeholder");
-                    localPlayer = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
-                    {
-                        Nickname = myNickname,
-                        IsReady = false,
-                        IdPlayer = UserSession.Instance.GetPlayerId()
-                    };
-                }
-                else
-                {
-                    Debug.WriteLine($"[LOBBY] Local player found in list");
-                }
+                    Nickname = myNickname,
+                    IsReady = false,
+                    IdPlayer = UserSession.Instance.GetPlayerId(),
+                    IsHost = false
+                };
 
-                orderedPlayers.Add(localPlayer);
+                orderedPlayers.Add(localPlayerDto);
                 orderedPlayers.AddRange(players.Where(p => p.Nickname != myNickname));
-
-                Debug.WriteLine($"[LOBBY] Final ordered list: {orderedPlayers.Count} players");
 
                 for (int i = 0; i < 4; i++)
                 {
-                    Slots[i] = new SlotLobby { Username = "" };
-                }
+                    if (i >= Slots.Count) Slots.Add(new SlotLobby());
 
-                for (int i = 0; i < orderedPlayers.Count && i < 4; i++)
-                {
-                    Debug.WriteLine($"[LOBBY] Updating slot {i} with {orderedPlayers[i].Nickname}");
-                    UpdateSlot(i, orderedPlayers[i]);
+                    if (i < orderedPlayers.Count)
+                    {
+                        UpdateSlot(i, orderedPlayers[i]);
+                    }
+                    else
+                    {
+                        SlotLobby emptySlot = Slots[i];
+
+                        emptySlot.Username = "";
+                        emptySlot.Nickname = "";
+                        emptySlot.IsReady = false;
+                        emptySlot.IsLocalPlayer = false;
+                        emptySlot.CanKick = false;
+                        emptySlot.IsFriend = false;
+                        emptySlot.ProfilePicture = null;
+                    }
                 }
             });
         }
@@ -232,39 +307,39 @@ namespace ArchsVsDinosClient.ViewModels
         {
             if (index < 0 || index >= Slots.Count) return;
 
+            SlotLobby currentSlot = Slots[index];
             string currentNickname = UserSession.Instance.GetNickname();
             bool isMe = player.Nickname == currentNickname;
 
-            Slots[index] = new SlotLobby
-            {
-                Username = player.Nickname,
-                Nickname = player.Nickname,
-                IsReady = player.IsReady,
-                IsLocalPlayer = isMe,
-                CanKick = this.isHost && !isMe
-            };
-        }
+            string finalUsername = player.Username;
 
+            if (isMe)
+            {
+                finalUsername = UserSession.Instance.CurrentUser.Username;
+            }
+            else if (string.IsNullOrEmpty(finalUsername))
+            {
+                finalUsername = player.Nickname;
+            }
+
+            currentSlot.Username = finalUsername;
+            currentSlot.Nickname = player.Nickname;
+            currentSlot.IsReady = player.IsReady;
+            currentSlot.IsLocalPlayer = isMe;
+            currentSlot.CanKick = this.isHost && !isMe;
+            currentSlot.IsGuest = player.IdPlayer <= 0;
+            currentSlot.LocalUserIsGuest = UserSession.Instance.GetPlayerId() <= 0;
+        }
 
         public void StartTheGame(string matchCode, string username)
         {
             lobbyServiceClient.StartGame(matchCode);
         }
 
-        /*public void CancellTheLobby(string matchCode, string username)
+        public void LeaveOfTheLobby(string nickname)
         {
-            lobbyServiceClient.CancellLobby(matchCode, username);
-        }*/
-
-        public void LeaveOfTheLobby(string username)
-        {
-            lobbyServiceClient.LeaveLobby(username);
+            lobbyServiceClient.LeaveLobby(nickname);
         }
-
-        /*public void ExpelThePlayer(string targetUsername, string hostUsername)
-        {
-            lobbyServiceClient.ExpelPlayer(targetUsername, hostUsername);
-        }*/
 
         public void InvitePlayerByEmail(string email)
         {
@@ -319,14 +394,56 @@ namespace ArchsVsDinosClient.ViewModels
                 Chat.ChatDegraded -= OnChatDegraded;
                 Chat.RequestWindowClose -= OnChatRequestWindowClose;
             }
+
+            if (Friends != null)
+            {
+                string myUsername = UserSession.Instance.CurrentUser?.Username;
+
+                if (!string.IsNullOrEmpty(myUsername))
+                {
+                    Friends.Unsubscribe(myUsername);
+                }
+
+                Friends.Dispose();
+            }
         }
 
         public void KickPlayer(string targetNickname)
         {
-            if (!isHost) return;
+            if (!IsHost)
+            {
+                MessageBox.Show(Lang.Lobby_OnlyHostCanKick);
+                return;
+            }
 
-            int hostUserId = UserSession.Instance.CurrentUser.IdUser;
+            int hostUserId = this.myCurrentLobbyId;
             lobbyServiceClient.KickPlayer(MatchCode, hostUserId, targetNickname);
+        }
+
+        private void OnPlayerLeft(ArchsVsDinosClient.DTO.LobbyPlayerDTO playerDto)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine($"[LOBBY VM] Jugador salió: {playerDto.Nickname}");
+
+                var slotToRemove = Slots.FirstOrDefault(s =>
+                    string.Equals(s.Nickname?.Trim(), playerDto.Nickname?.Trim(), StringComparison.CurrentCultureIgnoreCase));
+
+                if (slotToRemove != null)
+                {
+                    int index = Slots.IndexOf(slotToRemove);
+
+                    if (index >= 0)
+                    {
+                        Slots[index] = new SlotLobby
+                        {
+                            Username = "",
+                            Nickname = "",
+                            IsReady = false
+                        };
+                    }
+                }
+            });
         }
 
     }

@@ -59,7 +59,6 @@ namespace ArchsVsDinosClient.Services
             connectionGuardian.MonitorClientState(lobbyManagerClient);
         }
 
-        // ✅ MÉTODO 1: CreateLobbyAsync con excepciones específicas
         public async Task<MatchCreationResultCode> CreateLobbyAsync(ArchsVsDinosClient.DTO.UserAccountDTO userAccount)
         {
             var matchSettings = new ArchsVsDinosClient.LobbyService.MatchSettings
@@ -86,49 +85,42 @@ namespace ArchsVsDinosClient.Services
             }
             catch (EndpointNotFoundException endpointEx)
             {
-                // El endpoint del servidor no está disponible
                 ConnectionError?.Invoke("Servidor no disponible", "No se encontró el servidor del lobby.");
                 Debug.WriteLine($"[LOBBY CLIENT] EndpointNotFoundException: {endpointEx.Message}");
                 return MatchCreationResultCode.MatchCreation_ServerBusy;
             }
             catch (FaultException faultEx)
             {
-                // Error del servidor (fault enviado por el servicio)
                 ConnectionError?.Invoke("Error del servidor", $"El servidor reportó un error: {faultEx.Message}");
                 Debug.WriteLine($"[LOBBY CLIENT] FaultException: {faultEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
             catch (CommunicationException commEx)
             {
-                // Error de comunicación con el servidor
                 ConnectionError?.Invoke("Error de comunicación", "No se pudo conectar con el servidor del lobby.");
                 Debug.WriteLine($"[LOBBY CLIENT] CommunicationException: {commEx.Message}");
                 return MatchCreationResultCode.MatchCreation_Failure;
             }
             catch (TimeoutException timeoutEx)
             {
-                // Timeout al intentar crear el lobby
                 ConnectionError?.Invoke("Tiempo agotado", "El servidor no respondió a tiempo.");
                 Debug.WriteLine($"[LOBBY CLIENT] TimeoutException: {timeoutEx.Message}");
                 return MatchCreationResultCode.MatchCreation_Timeout;
             }
             catch (ObjectDisposedException objEx)
             {
-                // El cliente fue cerrado/disposed antes de completar
                 ConnectionError?.Invoke("Conexión cerrada", "La conexión con el servidor fue cerrada inesperadamente.");
                 Debug.WriteLine($"[LOBBY CLIENT] ObjectDisposedException: {objEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
             catch (InvalidOperationException invEx)
             {
-                // Operación inválida (el canal está en mal estado)
                 ConnectionError?.Invoke("Estado inválido", "La conexión con el servidor está en un estado inválido.");
                 Debug.WriteLine($"[LOBBY CLIENT] InvalidOperationException: {invEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
         }
 
-        // ✅ MÉTODO 2: JoinLobbyAsync con excepciones específicas
         public async Task<JoinMatchResultCode> JoinLobbyAsync(ArchsVsDinosClient.DTO.UserAccountDTO userAccount, string matchCode)
         {
             try
@@ -152,10 +144,9 @@ namespace ArchsVsDinosClient.Services
             }
             catch (FaultException<string> faultEx)
             {
-                // Fault específico con string (el servidor puede enviar mensajes específicos)
                 ConnectionError?.Invoke("Error del lobby", faultEx.Detail);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException<string>: {faultEx.Detail}");
-                return JoinMatchResultCode.JoinMatch_LobbyFull; // o el código que corresponda
+                return JoinMatchResultCode.JoinMatch_LobbyFull; 
             }
             catch (FaultException faultEx)
             {
@@ -189,7 +180,6 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        // ✅ Ya están bien (usan connectionGuardian)
         public void ConnectToLobby(string matchCode, string nickname)
         {
             Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
@@ -229,7 +219,6 @@ namespace ArchsVsDinosClient.Services
             });
         }
 
-        // ✅ MÉTODO 3: SendLobbyInviteByEmail con excepciones específicas
         public async Task<bool> SendLobbyInviteByEmail(string email, string matchCode, string senderUsername)
         {
             try
@@ -257,7 +246,6 @@ namespace ArchsVsDinosClient.Services
             }
             catch (CommunicationException commEx)
             {
-                // No disparamos ConnectionError aquí porque no es crítico
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite CommunicationException: {commEx.Message}");
                 MessageBox.Show("No se pudo enviar la invitación. Verifica tu conexión.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
@@ -270,7 +258,6 @@ namespace ArchsVsDinosClient.Services
             }
             catch (FormatException formatEx)
             {
-                // Email inválido
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite FormatException: {formatEx.Message}");
                 MessageBox.Show("El formato del email es inválido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;

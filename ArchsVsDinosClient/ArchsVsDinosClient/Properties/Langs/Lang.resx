@@ -661,7 +661,7 @@
     <value>Sólo el host puede iniciar partida</value>
   </data>
   <data name="Lobby_CancellationLobbyConfirmation" xml:space="preserve">
-    <value>¿Está segur@ que quiere cancelar la partida?</value>
+    <value>¿Estás segur@ de que quieres salir? </value>
   </data>
   <data name="Lobby_OnlyHostCanKick" xml:space="preserve">
     <value>Sólo el host puede expulsar jugadores</value>
@@ -833,5 +833,11 @@
   </data>
   <data name="Lobby_Cancel" xml:space="preserve">
     <value>Cancelar</value>
+  </data>
+  <data name="Lobby_SendFriendRequest" xml:space="preserve">
+    <value>Solicitud de amistad enviada correctamente</value>
+  </data>
+  <data name="Lobby_ErrorSendingFriendRequest" xml:space="preserve">
+    <value>No se pudo enviar la solicitud (puede que ya haya una pendiente)</value>
   </data>
 </root>

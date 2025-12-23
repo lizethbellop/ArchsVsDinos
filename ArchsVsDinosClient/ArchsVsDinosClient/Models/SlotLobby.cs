@@ -17,23 +17,38 @@ namespace ArchsVsDinosClient.Models
         private bool canKick;
         private bool isLocalPlayer;
         private bool isReady;
+        private bool isGuest;
+        private bool localUserIsGuest;
 
         public string Username
         {
             get => username;
-            set { username = value; OnPropertyChanged(nameof(Username)); OnPropertyChanged(nameof(IsOccupied)); }
+            set 
+            { 
+                username = value; 
+                OnPropertyChanged(nameof(Username)); 
+                OnPropertyChanged(nameof(IsOccupied)); 
+            }
         }
 
         public string Nickname
         {
             get => nickname;
-            set { nickname = value; OnPropertyChanged(nameof(Nickname)); }
+            set 
+            { 
+                nickname = value; 
+                OnPropertyChanged(nameof(Nickname)); 
+            }
         }
 
         public bool IsFriend
         {
             get => isFriend;
-            set { isFriend = value; OnPropertyChanged(nameof(IsFriend)); }
+            set 
+            { 
+                isFriend = value; 
+                OnPropertyChanged(nameof(IsFriend)); 
+            }
         }
 
         public string ProfilePicture
@@ -49,19 +64,47 @@ namespace ArchsVsDinosClient.Models
         public bool CanKick
         {
             get => canKick;
-            set { canKick = value; OnPropertyChanged(nameof(CanKick)); }
+            set 
+            { 
+                canKick = value; 
+                OnPropertyChanged(nameof(CanKick)); 
+            }
         }
 
         public bool IsLocalPlayer
         {
             get => isLocalPlayer;
-            set { isLocalPlayer = value; OnPropertyChanged(nameof(IsLocalPlayer)); }
+            set 
+            { 
+                isLocalPlayer = value; 
+                OnPropertyChanged(nameof(IsLocalPlayer)); 
+            }
         }
 
         public bool IsReady
         {
             get => isReady;
-            set { isReady = value; OnPropertyChanged(nameof(IsReady)); }
+            set 
+            { 
+                isReady = value; 
+                OnPropertyChanged(nameof(IsReady)); 
+            }
+        }
+
+        public bool IsGuest
+        {
+            get => isGuest;
+            set
+            {
+                isGuest = value;
+                OnPropertyChanged(nameof(IsGuest));
+            }
+        }
+
+        public bool LocalUserIsGuest
+        {
+            get => localUserIsGuest;
+            set { localUserIsGuest = value; OnPropertyChanged(nameof(LocalUserIsGuest)); }
         }
 
         public bool IsOccupied => !string.IsNullOrWhiteSpace(Username);

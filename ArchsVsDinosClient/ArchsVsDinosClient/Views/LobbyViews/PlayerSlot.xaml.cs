@@ -91,36 +91,40 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        
-        private void Click_BtnKick(object sender, RoutedEventArgs e)
-        {/*
+        private void Click_BtnAddFriend(object sender, RoutedEventArgs e)
+        {
+            var slotData = this.DataContext as SlotLobby;
 
-            Button clickedButton = sender as Button;
-            if (clickedButton != null)
+            if (slotData != null && !string.IsNullOrEmpty(slotData.Username))
             {
-                string targetUsername = clickedButton.Tag as string;
-                if (!string.IsNullOrEmpty(targetUsername))
+                var window = Window.GetWindow(this);
+                if (window != null && window.DataContext is LobbyViewModel viewModel)
                 {
-                    bool currentUserIsHost = ViewModel.CurrentClientIsHost();
+                    viewModel.SendFriendRequest(slotData.Username);
+                }
+            }
+        }
 
-                    if (currentUserIsHost)
+        private void Click_BtnKick(object sender, RoutedEventArgs e)
+        {
+            Button clickedButton = sender as Button;
+
+            if (clickedButton != null && clickedButton.Tag is string targetNickname && !string.IsNullOrEmpty(targetNickname))
+            {
+                MessageBoxResult confirmation = MessageBox.Show(
+                    string.Format(Lang.Lobby_QuestKick + " {0}?", targetNickname), 
+                    Lang.GlobalAcceptText,
+                    MessageBoxButton.YesNo);
+
+                if (confirmation == MessageBoxResult.Yes)
+                {
+                    if (ViewModel != null)
                     {
-                        MessageBoxResult confirmation = MessageBox.Show($"{Lang.Lobby_QuestKick} {targetUsername}?", Lang.GlobalAcceptText, MessageBoxButton.YesNo);
-
-                        if (confirmation == MessageBoxResult.Yes)
-                        {
-                            string currentUsername = UserSession.Instance.CurrentUser.Username;
-
-                            ViewModel.ExpelThePlayer(targetUsername, currentUsername);
-
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show(Lang.Lobby_OnlyHostCanKick);
+                        ViewModel.KickPlayer(targetNickname);
                     }
                 }
-            }*/
+            }
+
         }
     }
 }

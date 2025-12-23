@@ -106,6 +106,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 return;
             }
 
+            string nicknameToSend = UserSession.Instance.GetNickname();
+
             if (viewModel.CurrentClientIsHost())
             {
                 var result = MessageBox.Show(
@@ -116,7 +118,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    viewModel.LeaveOfTheLobby(UserSession.Instance.CurrentUser.Username);
+                    viewModel.LeaveOfTheLobby(nicknameToSend);
                     MainWindow main = new MainWindow();
                     main.Show();
                     this.Close();
@@ -124,7 +126,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
             else
             {
-                viewModel.LeaveOfTheLobby(UserSession.Instance.CurrentUser.Username);
+                viewModel.LeaveOfTheLobby(nicknameToSend);
                 MainWindow main = new MainWindow();
                 main.Show();
                 this.Close();
