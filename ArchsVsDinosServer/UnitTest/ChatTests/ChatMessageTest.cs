@@ -21,11 +21,11 @@ namespace UnitTest.ChatTests
     [TestClass]
     public class ChatMessageTest : BaseTestClass
     {
-
-        /*private Mock<ILobbyNotifier> mockLobbyNotifier;
+        private Mock<ILobbyServiceNotifier> mockLobbyNotifier;
         private Mock<IGameServiceNotifier> mockGameNotifier;
         private Mock<ICallbackProvider> mockCallbackProvider;
         private Mock<IChatManagerCallback> mockCallback;
+        private Mock<IModerationManager> mockModerationManager;
         private Chat chat;
         private FieldInfo connectedUsersField;
 
@@ -34,21 +34,27 @@ namespace UnitTest.ChatTests
         {
             base.BaseSetup();
 
-            mockLobbyNotifier = new Mock<ILobbyNotifier>();
+            mockLobbyNotifier = new Mock<ILobbyServiceNotifier>();
             mockGameNotifier = new Mock<IGameServiceNotifier>();
             mockCallbackProvider = new Mock<ICallbackProvider>();
             mockCallback = new Mock<IChatManagerCallback>();
+            mockModerationManager = new Mock<IModerationManager>();
 
             mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback.Object);
 
-            BasicServiceDependencies dependencies = new BasicServiceDependencies
+            ChatServiceDependencies dependencies = new ChatServiceDependencies
             {
-                loggerHelper = mockLoggerHelper.Object,
-                contextFactory = () => mockDbContext.Object,
-                callbackProvider = mockCallbackProvider.Object
+                LoggerHelper = mockLoggerHelper.Object,
+                ContextFactory = () => mockDbContext.Object,
+                CallbackProvider = mockCallbackProvider.Object,
+                ModerationManager = mockModerationManager.Object
             };
 
-            chat = new Chat(dependencies, mockLobbyNotifier.Object, mockGameNotifier.Object);
+            chat = new Chat(
+                dependencies,
+                mockLobbyNotifier.Object,
+                mockGameNotifier.Object
+            );
 
             connectedUsersField = typeof(Chat).GetField("ConnectedUsers",
                 BindingFlags.NonPublic | BindingFlags.Static);
@@ -62,7 +68,7 @@ namespace UnitTest.ChatTests
         }
 
         [TestMethod]
-        public void TestSendMessageUsernameEmpty()
+        public void TestSendMessageWithEmptyUsernameDoesNotSend()
         {
             string username = "";
             string message = "Hello";
@@ -76,7 +82,7 @@ namespace UnitTest.ChatTests
         }
 
         [TestMethod]
-        public void TestSendMessageMessageEmpty()
+        public void TestSendMessageWithEmptyMessageDoesNotSend()
         {
             string username = "user1";
             string message = "";
@@ -90,7 +96,7 @@ namespace UnitTest.ChatTests
         }
 
         [TestMethod]
-        public void TestSendMessageUserNotConnected()
+        public void TestSendMessageWithUserNotConnectedDoesNotSend()
         {
             string username = "user1";
             string message = "Hello";
@@ -104,19 +110,29 @@ namespace UnitTest.ChatTests
         }
 
         [TestMethod]
-        public void TestSendMessageSuccess()
+        public void TestSendMessageSuccessCallsReceiveMessage()
         {
             string username = "user1";
             string message = "Hello everyone";
+            string lobbyCode = "LOBBY123";
             UserAccount user = new UserAccount { idUser = 1, username = username };
 
             SetupMockUserSet(new List<UserAccount> { user });
+
+            mockModerationManager.Setup(m => m.ModerateMessage(It.IsAny<ModerationRequestDTO>()))
+                .Returns(new ModerationResult
+                {
+                    CanSendMessage = true,
+                    ShouldBan = false,
+                    CurrentStrikes = 0,
+                    Reason = ""
+                });
 
             ChatConnectionRequest request = new ChatConnectionRequest
             {
                 Username = username,
                 Context = 0,
-                MatchCode = null
+                MatchCode = lobbyCode
             };
             chat.Connect(request);
 
@@ -129,7 +145,7 @@ namespace UnitTest.ChatTests
         }
 
         [TestMethod]
-        public void TestSendMessageBroadcastsToAllUsers()
+        public void TestSendMessageBroadcastsToFirstUser()
         {
             var mockCallback1 = new Mock<IChatManagerCallback>();
             var mockCallback2 = new Mock<IChatManagerCallback>();
@@ -137,225 +153,71 @@ namespace UnitTest.ChatTests
             string username1 = "user1";
             string username2 = "user2";
             string message = "Hello all";
+            string lobbyCode = "LOBBY123";
 
             UserAccount user1 = new UserAccount { idUser = 1, username = username1 };
             UserAccount user2 = new UserAccount { idUser = 2, username = username2 };
 
             SetupMockUserSet(new List<UserAccount> { user1, user2 });
 
+            mockModerationManager.Setup(m => m.ModerateMessage(It.IsAny<ModerationRequestDTO>()))
+                .Returns(new ModerationResult
+                {
+                    CanSendMessage = true,
+                    ShouldBan = false,
+                    CurrentStrikes = 0,
+                    Reason = ""
+                });
+
             mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback1.Object);
-            ChatConnectionRequest request1 = new ChatConnectionRequest { Username = username1, Context = 0, MatchCode = null };
+            ChatConnectionRequest request1 = new ChatConnectionRequest { Username = username1, Context = 0, MatchCode = lobbyCode };
             chat.Connect(request1);
 
             mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback2.Object);
-            ChatConnectionRequest request2 = new ChatConnectionRequest { Username = username2, Context = 0, MatchCode = null };
+            ChatConnectionRequest request2 = new ChatConnectionRequest { Username = username2, Context = 0, MatchCode = lobbyCode };
             chat.Connect(request2);
 
             chat.SendMessageToRoom(message, username1);
 
             mockCallback1.Verify(c => c.ReceiveMessage("Lobby", username1, message), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestSendMessageBroadcastsToSecondUser()
+        {
+            var mockCallback1 = new Mock<IChatManagerCallback>();
+            var mockCallback2 = new Mock<IChatManagerCallback>();
+
+            string username1 = "user1";
+            string username2 = "user2";
+            string message = "Hello all";
+            string lobbyCode = "LOBBY123";
+
+            UserAccount user1 = new UserAccount { idUser = 1, username = username1 };
+            UserAccount user2 = new UserAccount { idUser = 2, username = username2 };
+
+            SetupMockUserSet(new List<UserAccount> { user1, user2 });
+
+            mockModerationManager.Setup(m => m.ModerateMessage(It.IsAny<ModerationRequestDTO>()))
+                .Returns(new ModerationResult
+                {
+                    CanSendMessage = true,
+                    ShouldBan = false,
+                    CurrentStrikes = 0,
+                    Reason = ""
+                });
+
+            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback1.Object);
+            ChatConnectionRequest request1 = new ChatConnectionRequest { Username = username1, Context = 0, MatchCode = lobbyCode };
+            chat.Connect(request1);
+
+            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback2.Object);
+            ChatConnectionRequest request2 = new ChatConnectionRequest { Username = username2, Context = 0, MatchCode = lobbyCode };
+            chat.Connect(request2);
+
+            chat.SendMessageToRoom(message, username1);
+
             mockCallback2.Verify(c => c.ReceiveMessage("Lobby", username1, message), Times.Once);
-        }
-
-        [TestMethod]
-        public void TestSendMessageBlockedFirstStrike()
-        {
-            string username = "user1";
-            string badMessage = "badword";
-            UserAccount user = new UserAccount { idUser = 1, username = username };
-
-            SetupMockUserSet(new List<UserAccount> { user });
-
-            ChatConnectionRequest request = new ChatConnectionRequest
-            {
-                Username = username,
-                Context = 0,
-                MatchCode = null
-            };
-            chat.Connect(request);
-
-            chat.SendMessageToRoom(badMessage, username);
-
-            mockCallback.Verify(c => c.ReceiveSystemNotification(
-                ChatResultCode.Chat_MessageBlocked,
-                It.Is<string>(s => s.Contains("Warning 1/3"))), Times.Once);
-
-            mockCallback.Verify(c => c.ReceiveMessage(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                badMessage), Times.Never);
-        }
-
-        [TestMethod]
-        public void TestSendMessageBlockedSecondStrike()
-        {
-            string username = "user1";
-            string badMessage = "badword";
-            UserAccount user = new UserAccount { idUser = 1, username = username };
-
-            SetupMockUserSet(new List<UserAccount> { user });
-
-            ChatConnectionRequest request = new ChatConnectionRequest
-            {
-                Username = username,
-                Context = 0,
-                MatchCode = null
-            };
-            chat.Connect(request);
-
-            chat.SendMessageToRoom(badMessage, username);
-            chat.SendMessageToRoom(badMessage, username);
-
-            mockCallback.Verify(c => c.ReceiveSystemNotification(
-                ChatResultCode.Chat_MessageBlocked,
-                It.Is<string>(s => s.Contains("Warning 2/3"))), Times.Once);
-        }
-
-        [TestMethod]
-        public void TestSendMessageBannedThirdStrikeInLobby()
-        {
-            string username = "user1";
-            string badMessage = "badword";
-            UserAccount user = new UserAccount { idUser = 1, username = username };
-
-            SetupMockUserSet(new List<UserAccount> { user });
-
-            ChatConnectionRequest request = new ChatConnectionRequest
-            {
-                Username = username,
-                Context = 0,
-                MatchCode = null
-            };
-            chat.Connect(request);
-
-            chat.SendMessageToRoom(badMessage, username);
-            chat.SendMessageToRoom(badMessage, username);
-            chat.SendMessageToRoom(badMessage, username);
-
-            mockCallback.Verify(c => c.UserBannedFromChat(username, 3), Times.Once);
-            mockLobbyNotifier.Verify(n => n.NotifyPlayerExpelled(username, "Inappropriate language"), Times.Once);
-            Assert.AreEqual(0, GetConnectedUsersCount());
-        }
-
-        [TestMethod]
-        public void TestSendMessageBannedThirdStrikeInGame()
-        {
-            string username = "user1";
-            string matchCode = "MATCH123";
-            string badMessage = "badword";
-            UserAccount user = new UserAccount { idUser = 1, username = username };
-
-            SetupMockUserSet(new List<UserAccount> { user });
-
-            ChatConnectionRequest request = new ChatConnectionRequest
-            {
-                Username = username,
-                Context = 1,
-                MatchCode = matchCode
-            };
-            chat.Connect(request);
-
-            chat.SendMessageToRoom(badMessage, username);
-            chat.SendMessageToRoom(badMessage, username);
-            chat.SendMessageToRoom(badMessage, username);
-
-            mockCallback.Verify(c => c.UserBannedFromChat(username, 3), Times.Once);
-            mockGameNotifier.Verify(n => n.NotifyPlayerExpelled(matchCode, username, "Inappropriate language"), Times.Once);
-            Assert.AreEqual(0, GetConnectedUsersCount());
-        }
-
-        [TestMethod]
-        public void TestSendMessageBanBroadcastsToAllUsers()
-        {
-            var mockCallback1 = new Mock<IChatManagerCallback>();
-            var mockCallback2 = new Mock<IChatManagerCallback>();
-
-            string username1 = "user1";
-            string username2 = "user2";
-            string badMessage = "badword";
-
-            UserAccount user1 = new UserAccount { idUser = 1, username = username1 };
-            UserAccount user2 = new UserAccount { idUser = 2, username = username2 };
-
-            SetupMockUserSet(new List<UserAccount> { user1, user2 });
-
-            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback1.Object);
-            ChatConnectionRequest request1 = new ChatConnectionRequest { Username = username1, Context = 0, MatchCode = null };
-            chat.Connect(request1);
-
-            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback2.Object);
-            ChatConnectionRequest request2 = new ChatConnectionRequest { Username = username2, Context = 0, MatchCode = null };
-            chat.Connect(request2);
-
-            chat.SendMessageToRoom(badMessage, username1);
-            chat.SendMessageToRoom(badMessage, username1);
-            chat.SendMessageToRoom(badMessage, username1);
-
-            mockCallback2.Verify(c => c.ReceiveSystemNotification(
-                ChatResultCode.Chat_UserBanned,
-                It.Is<string>(s => s.Contains(username1) && s.Contains("expelled"))), Times.Once);
-        }
-
-        [TestMethod]
-        public void TestSendMessageAfterBanUserRemoved()
-        {
-            string username = "user1";
-            string badMessage = "badword";
-            string normalMessage = "Hello";
-            UserAccount user = new UserAccount { idUser = 1, username = username };
-
-            SetupMockUserSet(new List<UserAccount> { user });
-
-            ChatConnectionRequest request = new ChatConnectionRequest
-            {
-                Username = username,
-                Context = 0,
-                MatchCode = null
-            };
-            chat.Connect(request);
-
-            chat.SendMessageToRoom(badMessage, username);
-            chat.SendMessageToRoom(badMessage, username);
-            chat.SendMessageToRoom(badMessage, username);
-
-            Assert.AreEqual(0, GetConnectedUsersCount());
-
-            chat.SendMessageToRoom(normalMessage, username);
-
-            mockCallback.Verify(c => c.ReceiveMessage(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                normalMessage), Times.Never);
-        }
-
-        [TestMethod]
-        public void TestSendMessageBanTriggersMinimumPlayersCheckInLobby()
-        {
-            var mockCallback1 = new Mock<IChatManagerCallback>();
-            var mockCallback2 = new Mock<IChatManagerCallback>();
-
-            string username1 = "user1";
-            string username2 = "user2";
-            string badMessage = "badword";
-
-            UserAccount user1 = new UserAccount { idUser = 1, username = username1 };
-            UserAccount user2 = new UserAccount { idUser = 2, username = username2 };
-
-            SetupMockUserSet(new List<UserAccount> { user1, user2 });
-
-            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback1.Object);
-            ChatConnectionRequest request1 = new ChatConnectionRequest { Username = username1, Context = 0, MatchCode = null };
-            chat.Connect(request1);
-
-            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback2.Object);
-            ChatConnectionRequest request2 = new ChatConnectionRequest { Username = username2, Context = 0, MatchCode = null };
-            chat.Connect(request2);
-
-            chat.SendMessageToRoom(badMessage, username1);
-            chat.SendMessageToRoom(badMessage, username1);
-            chat.SendMessageToRoom(badMessage, username1);
-
-            mockLobbyNotifier.Verify(n => n.NotifyLobbyClosure(It.IsAny<string>()), Times.Once);
         }
 
         private void ClearConnectedUsers()
@@ -375,6 +237,6 @@ namespace UnitTest.ChatTests
                 return connectedUsers?.Count ?? 0;
             }
             return 0;
-        }*/
+        }
     }
 }

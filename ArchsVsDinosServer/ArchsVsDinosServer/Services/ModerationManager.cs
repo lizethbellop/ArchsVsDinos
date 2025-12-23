@@ -1,10 +1,12 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.Moderation;
 using ArchsVsDinosServer.Interfaces;
+using ArchsVsDinosServer.Utils;
 using ArchsVsDinosServer.Wrappers;
 using Contracts;
 using Contracts.DTO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -23,8 +25,18 @@ namespace ArchsVsDinosServer.Services
 
         public ModerationManager()
         {
-            moderationEngine = new ModerationEngine();
             logger = new LoggerHelperWrapper();
+
+            const string DataFolder = "Data";
+            const string BannedWordsFile = "bannedWords.txt";
+            string bannedWordsPath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                DataFolder,
+                BannedWordsFile
+            );
+
+            var profanityFilter = new ProfanityFilter(logger, bannedWordsPath);
+            moderationEngine = new ModerationEngine(profanityFilter);
         }
 
         public ModerationResult ModerateMessage(ModerationRequestDTO request)

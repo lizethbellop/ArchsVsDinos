@@ -13,9 +13,13 @@ namespace ArchsVsDinosServer.BusinessLogic.Moderation
     {
         private readonly StrikeManager strikeManager;
 
-        public ModerationEngine()
+        public ModerationEngine(ProfanityFilter profanityFilter)
         {
-            strikeManager = new StrikeManager(new StrikeServiceDependencies());
+            var deps = new StrikeServiceDependencies
+            {
+                ProfanityFilter = profanityFilter
+            };
+            strikeManager = new StrikeManager(deps);
         }
 
         public ModerationResult Moderate(ModerationRequestDTO request)

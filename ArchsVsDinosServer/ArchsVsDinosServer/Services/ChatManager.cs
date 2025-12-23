@@ -36,23 +36,23 @@ namespace ArchsVsDinosServer.Services
 
         public ChatManager()
         {
-            var dependencies = new BasicServiceDependencies
-            {
-                loggerHelper = loggerHelper,
-                contextFactory = () => new DbContextWrapper(),
-                callbackProvider = new CallbackProviderWrapper()
-            };
-
             if (moderationManager == null)
             {
                 moderationManager = new ModerationManager();
             }
 
+            var dependencies = new ChatServiceDependencies
+            {
+                LoggerHelper = loggerHelper,
+                ContextFactory = () => new DbContextWrapper(),
+                CallbackProvider = new CallbackProviderWrapper(),
+                ModerationManager = moderationManager
+            };
+
             ChatBusinessLogic = new Chat(
                 dependencies,
                 lobbyNotifier,
-                gameNotifier,
-                moderationManager
+                gameNotifier
             );
         }
 

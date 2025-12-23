@@ -42,34 +42,16 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly IModerationManager moderationManager;
 
         public Chat(
-        BasicServiceDependencies dependencies,
+        ChatServiceDependencies dependencies,
         ILobbyServiceNotifier lobbyNotifier,
-        IGameServiceNotifier gameNotifier,
-        IModerationManager moderationManager)
+        IGameServiceNotifier gameNotifier)
         {
-            this.loggerHelper = dependencies.loggerHelper;
-            this.contextFactory = dependencies.contextFactory;
+            this.loggerHelper = dependencies.LoggerHelper;
+            this.contextFactory = dependencies.ContextFactory;
             this.lobbyNotifier = lobbyNotifier;
             this.gameNotifier = gameNotifier;
-            this.callbackProvider = dependencies.callbackProvider;
-
-            var serviceDeps = new ServiceDependencies
-            {
-                securityHelper = new Wrappers.SecurityHelperWrapper(),
-                validationHelper = new Wrappers.ValidationHelperWrapper(),
-                loggerHelper = dependencies.loggerHelper,
-                contextFactory = dependencies.contextFactory
-            };
-
-            const string DataFolder = "Data";
-            const string BannedWordsFile = "bannedWords.txt";
-            string bannedWordsPath = Path.Combine(
-                AppDomain.CurrentDomain.BaseDirectory,
-                DataFolder,
-                BannedWordsFile
-            );
-
-            this.moderationManager = moderationManager;
+            this.callbackProvider = dependencies.CallbackProvider;
+            this.moderationManager = dependencies.ModerationManager;
         }
 
         public void Connect(ChatConnectionRequest request)

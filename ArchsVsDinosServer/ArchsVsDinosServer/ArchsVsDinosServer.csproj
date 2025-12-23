@@ -246,6 +246,7 @@
     <Compile Include="Services\StrikeService\StrikeRepository.cs" />
     <Compile Include="Services\StrikeService\UserFetcher.cs" />
     <Compile Include="Utils\BasicServiceDependencies.cs" />
+    <Compile Include="Utils\ChatServiceDependencies.cs" />
     <Compile Include="Utils\CoreDependencies.cs" />
     <Compile Include="Utils\EmailNotificationSender.cs" />
     <Compile Include="Utils\EmailService.cs" />
