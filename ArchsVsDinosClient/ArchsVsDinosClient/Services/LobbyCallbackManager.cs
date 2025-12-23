@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosClient.LobbyService;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ArchsVsDinosClient.Services
@@ -40,9 +41,16 @@ namespace ArchsVsDinosClient.Services
         {
             if (servicePlayersArray == null) return;
 
+            Debug.WriteLine($"[CALLBACK] Recibido del servidor {servicePlayersArray.Length} jugadores:");
+            foreach (var sp in servicePlayersArray)
+            {
+                Debug.WriteLine($"  - Nickname: {sp.Nickname}, Username: '{sp.Username}'");
+            }
+
             var localPlayersList = servicePlayersArray.Select(servicePlayer => new ArchsVsDinosClient.DTO.LobbyPlayerDTO
             {
                 IdPlayer = servicePlayer.UserId,
+                Username = servicePlayer.Username,
                 Nickname = servicePlayer.Nickname,
                 IsReady = servicePlayer.IsReady,
                 IsHost = servicePlayer.IsHost

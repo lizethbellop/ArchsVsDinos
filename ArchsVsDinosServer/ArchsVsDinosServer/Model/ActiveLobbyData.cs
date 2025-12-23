@@ -30,7 +30,7 @@ namespace ArchsVsDinosServer.Model
 
         public ActiveLobbyData() { }
 
-        public bool AddPlayer(int userId, string nickname)
+        public bool AddPlayer(int userId, string username, string nickname)
         {
             lock (LobbyLock)
             {
@@ -39,12 +39,12 @@ namespace ArchsVsDinosServer.Model
 
                 if (Players.Any(p =>
                     p.UserId == userId ||
-                    p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase)))
+                    p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrEmpty(username) && p.Username.Equals(username, StringComparison.OrdinalIgnoreCase))))
                     return false;
 
-                Players.Add(new LobbyPlayer(userId, nickname));
+                Players.Add(new LobbyPlayer(userId, username, nickname));
                 return true;
-
             }
         }
 

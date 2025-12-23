@@ -60,9 +60,11 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
-        public async Task<MatchJoinResponse> JoinMatch(string lobbyCode, int userId, string nickname)
+        public async Task<MatchJoinResponse> JoinMatch(JoinLobbyRequest request) 
         {
-            if(string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
+            if (request == null ||
+               string.IsNullOrWhiteSpace(request.LobbyCode) ||
+               string.IsNullOrWhiteSpace(request.Nickname) || string.IsNullOrWhiteSpace(request.Username))
             {
                 return new MatchJoinResponse
                 {
@@ -73,11 +75,11 @@ namespace ArchsVsDinosServer.Services
 
             try
             {
-                return await lobbyLogic.JoinLobby(lobbyCode, userId,nickname);
+                return await lobbyLogic.JoinLobby(request);
             }
             catch (TimeoutException ex)
             {
-                logger.LogWarning($"CreateMatch timeout: {ex.Message}");
+                logger.LogWarning($"JoinMatch timeout: {ex.Message}");
                 return new MatchJoinResponse
                 {
                     Success = false,
@@ -86,7 +88,7 @@ namespace ArchsVsDinosServer.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("Unexpected error while creating match.", ex);
+                logger.LogError("Unexpected error while joining match.", ex);
                 return new MatchJoinResponse
                 {
                     Success = false,

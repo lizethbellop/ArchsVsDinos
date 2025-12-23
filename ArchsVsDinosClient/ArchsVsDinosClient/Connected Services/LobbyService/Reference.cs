@@ -29,6 +29,9 @@ namespace ArchsVsDinosClient.LobbyService {
         private int HostUserIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string HostUsernameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int MaxPlayersField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
@@ -63,6 +66,19 @@ namespace ArchsVsDinosClient.LobbyService {
                 if ((this.HostUserIdField.Equals(value) != true)) {
                     this.HostUserIdField = value;
                     this.RaisePropertyChanged("HostUserId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string HostUsername {
+            get {
+                return this.HostUsernameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.HostUsernameField, value) != true)) {
+                    this.HostUsernameField = value;
+                    this.RaisePropertyChanged("HostUsername");
                 }
             }
         }
@@ -191,6 +207,99 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         MatchCreation_UnexpectedError = 6,
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="JoinLobbyRequest", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.SerializableAttribute()]
+    public partial class JoinLobbyRequest : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string LobbyCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NicknameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int UserIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string UsernameField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LobbyCode {
+            get {
+                return this.LobbyCodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LobbyCodeField, value) != true)) {
+                    this.LobbyCodeField = value;
+                    this.RaisePropertyChanged("LobbyCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Nickname {
+            get {
+                return this.NicknameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NicknameField, value) != true)) {
+                    this.NicknameField = value;
+                    this.RaisePropertyChanged("Nickname");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int UserId {
+            get {
+                return this.UserIdField;
+            }
+            set {
+                if ((this.UserIdField.Equals(value) != true)) {
+                    this.UserIdField = value;
+                    this.RaisePropertyChanged("UserId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Username {
+            get {
+                return this.UsernameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.UsernameField, value) != true)) {
+                    this.UsernameField = value;
+                    this.RaisePropertyChanged("Username");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -416,10 +525,10 @@ namespace ArchsVsDinosClient.LobbyService {
         System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchCreationResponse> CreateLobbyAsync(ArchsVsDinosClient.LobbyService.MatchSettings settings);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/JoinLobby", ReplyAction="http://tempuri.org/ILobbyManager/JoinLobbyResponse")]
-        ArchsVsDinosClient.LobbyService.MatchJoinResponse JoinLobby(string lobbyCode, int userId, string nickname);
+        ArchsVsDinosClient.LobbyService.MatchJoinResponse JoinLobby(ArchsVsDinosClient.LobbyService.JoinLobbyRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/JoinLobby", ReplyAction="http://tempuri.org/ILobbyManager/JoinLobbyResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchJoinResponse> JoinLobbyAsync(string lobbyCode, int userId, string nickname);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchJoinResponse> JoinLobbyAsync(ArchsVsDinosClient.LobbyService.JoinLobbyRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SendInvitations", ReplyAction="http://tempuri.org/ILobbyManager/SendInvitationsResponse")]
         bool SendInvitations(string lobbyCode, string sender, string[] guests);
@@ -516,12 +625,12 @@ namespace ArchsVsDinosClient.LobbyService {
             return base.Channel.CreateLobbyAsync(settings);
         }
         
-        public ArchsVsDinosClient.LobbyService.MatchJoinResponse JoinLobby(string lobbyCode, int userId, string nickname) {
-            return base.Channel.JoinLobby(lobbyCode, userId, nickname);
+        public ArchsVsDinosClient.LobbyService.MatchJoinResponse JoinLobby(ArchsVsDinosClient.LobbyService.JoinLobbyRequest request) {
+            return base.Channel.JoinLobby(request);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchJoinResponse> JoinLobbyAsync(string lobbyCode, int userId, string nickname) {
-            return base.Channel.JoinLobbyAsync(lobbyCode, userId, nickname);
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.LobbyService.MatchJoinResponse> JoinLobbyAsync(ArchsVsDinosClient.LobbyService.JoinLobbyRequest request) {
+            return base.Channel.JoinLobbyAsync(request);
         }
         
         public bool SendInvitations(string lobbyCode, string sender, string[] guests) {

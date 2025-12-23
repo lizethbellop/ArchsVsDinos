@@ -12,6 +12,10 @@ namespace Contracts.DTO
     {
         [DataMember]
         public string HostNickname { get; set; }
+
+        [DataMember]
+        public string HostUsername { get; set; }
+
         [DataMember]
         public int MaxPlayers { get; set; }
 

@@ -64,6 +64,7 @@ namespace ArchsVsDinosClient.Services
             var matchSettings = new ArchsVsDinosClient.LobbyService.MatchSettings
             {
                 HostNickname = UserSession.Instance.CurrentUser.Nickname,
+                HostUsername = UserSession.Instance.CurrentUser.Username,
                 MaxPlayers = 4,
                 HostUserId = UserSession.Instance.CurrentUser.IdUser
             };
@@ -125,13 +126,17 @@ namespace ArchsVsDinosClient.Services
         {
             try
             {
+                var request = new ArchsVsDinosClient.LobbyService.JoinLobbyRequest
+                {
+                    LobbyCode = matchCode,
+                    UserId = userAccount.IdPlayer,
+                    Nickname = userAccount.Nickname,
+                    Username = userAccount.Username
+                };
+
                 var matchJoinResponse = await connectionGuardian.ExecuteAsync(async () =>
                 {
-                    return await Task.Run(() => lobbyManagerClient.JoinLobby(
-                        matchCode,
-                        userAccount.IdPlayer,
-                        userAccount.Nickname
-                    ));
+                    return await Task.Run(() => lobbyManagerClient.JoinLobby(request));
                 });
 
                 return matchJoinResponse.ResultCode;

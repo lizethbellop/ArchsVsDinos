@@ -9,12 +9,14 @@ namespace ArchsVsDinosServer.Model
     public class LobbyPlayer
     {
         public int UserId { get; }
+        public string Username { get; }
         public string Nickname { get; }
         public bool IsReady { get; set; }
 
-        public LobbyPlayer(int userId, string nickname)
+        public LobbyPlayer(int userId, string username, string nickname)
         {
             UserId = userId;
+            Username = username;
             Nickname = nickname;
         }
     }

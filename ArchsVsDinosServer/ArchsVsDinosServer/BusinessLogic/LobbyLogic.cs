@@ -52,7 +52,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 var lobbyCode = core.CodeGenerator.GenerateLobbyCode(code => core.Session.LobbyExists(code));
                 var lobbyData = new ActiveLobbyData(lobbyCode, settings);
 
-                lobbyData.AddPlayer(settings.HostUserId, settings.HostNickname);
+                lobbyData.AddPlayer(settings.HostUserId, settings.HostUsername, settings.HostNickname);
 
                 core.Session.CreateLobby(lobbyCode, lobbyData);
                 logger.LogInfo($"Lobby {lobbyCode} created by {settings.HostNickname}");
@@ -93,9 +93,11 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        public Task<MatchJoinResponse> JoinLobby(string lobbyCode, int userId, string nickname)
+        public Task<MatchJoinResponse> JoinLobby(JoinLobbyRequest request)  // ← CAMBIAR firma
         {
-            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(nickname))
+            if (request == null ||
+                string.IsNullOrWhiteSpace(request.LobbyCode) ||
+                string.IsNullOrWhiteSpace(request.Nickname))
             {
                 return Task.FromResult(new MatchJoinResponse
                 {
@@ -106,10 +108,10 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             try
             {
-                core.Validation.ValidateJoinLobby(lobbyCode, nickname);
-                var lobby = core.Session.GetLobby(lobbyCode);
+                core.Validation.ValidateJoinLobby(request.LobbyCode, request.Nickname);
+                var lobby = core.Session.GetLobby(request.LobbyCode);
 
-                if(lobby == null)
+                if (lobby == null)
                 {
                     return Task.FromResult(new MatchJoinResponse
                     {
@@ -118,14 +120,17 @@ namespace ArchsVsDinosServer.BusinessLogic
                     });
                 }
 
-                int finalUserId = userId;
-                if (userId == 0)
+                int finalUserId = request.UserId;
+                string finalUsername = request.Username;
+
+                if (request.UserId == 0)
                 {
-                    finalUserId = -Math.Abs(nickname.GetHashCode() ^ DateTime.UtcNow.Ticks.GetHashCode());
-                    logger.LogInfo($"Guest '{nickname}' assigned temporary userId: {finalUserId}");
+                    finalUserId = -Math.Abs(request.Nickname.GetHashCode() ^ DateTime.UtcNow.Ticks.GetHashCode());
+                    finalUsername = request.Nickname;
+                    logger.LogInfo($"Guest '{request.Nickname}' assigned temporary userId: {finalUserId}");
                 }
 
-                var joined = lobby.AddPlayer(finalUserId, nickname);
+                var joined = lobby.AddPlayer(finalUserId, finalUsername, request.Nickname);
 
                 if (!joined)
                 {
@@ -136,18 +141,17 @@ namespace ArchsVsDinosServer.BusinessLogic
                     });
                 }
 
-                logger.LogInfo($"Player {nickname} joined lobby {lobbyCode}");
+                logger.LogInfo($"Player {request.Nickname} joined lobby {request.LobbyCode}");
                 return Task.FromResult(new MatchJoinResponse
                 {
                     Success = true,
                     ResultCode = JoinMatchResultCode.JoinMatch_Success,
-                    LobbyCode = lobbyCode
+                    LobbyCode = request.LobbyCode
                 });
             }
             catch (ArgumentException ex)
             {
                 logger.LogError($"JoinLobby validation failed: {ex.Message}", ex);
-
                 return Task.FromResult(new MatchJoinResponse
                 {
                     Success = false,
@@ -157,7 +161,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (TimeoutException ex)
             {
                 logger.LogWarning($"JoinLobby timeout: {ex.Message}");
-
                 return Task.FromResult(new MatchJoinResponse
                 {
                     Success = false,
@@ -500,6 +503,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             return lobby.Players.Select(p => new LobbyPlayerDTO
             {
                 UserId = p.UserId,
+                Username = p.Username,
                 Nickname = p.Nickname,
                 IsReady = p.IsReady,
                 IsHost = (p.UserId == lobby.HostUserId)

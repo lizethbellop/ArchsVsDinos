@@ -35,9 +35,9 @@ namespace ArchsVsDinosServer.Services
             return await lobbyLogic.CreateLobby(settings);
         }
 
-        public async Task<MatchJoinResponse> JoinLobby(string lobbyCode, int userId, string nickname)
+        public async Task<MatchJoinResponse> JoinLobby(JoinLobbyRequest request)
         {
-            return await lobbyLogic.JoinLobby(lobbyCode, userId, nickname);
+            return await lobbyLogic.JoinLobby(request);
         }
 
         public async Task<bool> SendInvitations(string lobbyCode, string sender, List<string> guests)

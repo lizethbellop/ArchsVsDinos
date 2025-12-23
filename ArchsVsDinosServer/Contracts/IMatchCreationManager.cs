@@ -16,10 +16,9 @@ namespace Contracts
         Task<MatchCreationResponse> CreateMatch(MatchSettings settings);
 
         [OperationContract]
-        Task<MatchJoinResponse> JoinMatch(string lobbyCode, int userId ,string nickname);
+        Task<MatchJoinResponse> JoinMatch(JoinLobbyRequest request);  // ← CAMBIAR AQUÍ
 
         [OperationContract]
         Task<bool> SendInvitation(string lobbyCode, string sender, List<string> guests);
-
     }
 }

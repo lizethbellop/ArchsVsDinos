@@ -8,22 +8,18 @@ using System.Threading.Tasks;
 namespace Contracts.DTO
 {
     [DataContract]
-    public class LobbyPlayerDTO
+    public class JoinLobbyRequest
     {
         [DataMember]
-        public int UserId { get; set; }
+        public string LobbyCode { get; set; }
 
         [DataMember]
-        public string Nickname { get; set; }
+        public int UserId { get; set; }
 
         [DataMember]
         public string Username { get; set; }
 
         [DataMember]
-        public bool IsReady { get; set; }
-
-        [DataMember]
-        public bool IsHost { get; set; }
-
+        public string Nickname { get; set; }
     }
 }
