@@ -355,9 +355,36 @@ namespace ArchsVsDinosClient.ViewModels
             MessageBox.Show(Lang.Lobby_EmailSended);
         }
 
+        public event Action NavigateToGame;
+
         private void OnGameStarted(string matchCode)
         {
-            Application.Current.Dispatcher.Invoke(() => MessageBox.Show("¡Juego Iniciado!"));
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                NavigateToGame?.Invoke();
+            });
+        }
+
+        public List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> GetCurrentPlayers()
+        {
+            var players = new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
+
+            foreach (var slot in Slots)
+            {
+                if (!string.IsNullOrEmpty(slot.Nickname))
+                {
+                    players.Add(new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+                    {
+                        Nickname = slot.Nickname,
+                        Username = slot.Username,
+                        IdPlayer = slot.IsGuest ? -1 : 0, 
+                        IsHost = slot.IsLocalPlayer && this.isHost,
+                        IsReady = slot.IsReady
+                    });
+                }
+            }
+
+            return players;
         }
 
         public bool CurrentClientIsHost() => isHost;

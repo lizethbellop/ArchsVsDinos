@@ -840,4 +840,7 @@
   <data name="Lobby_ErrorSendingFriendRequest" xml:space="preserve">
     <value>No se pudo enviar la solicitud (puede que ya haya una pendiente)</value>
   </data>
+  <data name="Lobby_ErrorStartingGame" xml:space="preserve">
+    <value>Error iniciando partida, intente de nuevo</value>
+  </data>
 </root>

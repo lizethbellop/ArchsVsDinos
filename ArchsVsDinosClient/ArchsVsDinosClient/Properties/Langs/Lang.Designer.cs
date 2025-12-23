@@ -844,6 +844,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error iniciando partida, intente de nuevo.
+        /// </summary>
+        public static string Lobby_ErrorStartingGame {
+            get {
+                return ResourceManager.GetString("Lobby_ErrorStartingGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Expulsar.
         /// </summary>
         public static string Lobby_ExpellText {

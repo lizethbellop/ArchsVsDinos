@@ -149,7 +149,6 @@
     <Compile Include="BusinessLogic\GameManagement\BattleResolver.cs" />
     <Compile Include="BusinessLogic\GameManagement\BattleResult.cs" />
     <Compile Include="BusinessLogic\GameManagement\Board\CentralBoard.cs" />
-    <Compile Include="BusinessLogic\GameManagement\CardHelper.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\CardConverter.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\CardDefinition.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\CardInGame.cs" />

@@ -47,8 +47,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             viewModel = new LobbyViewModel(isHost, client);
             DataContext = viewModel;
 
-            // ✅ CRÍTICO: Suscribirse al evento de cierre forzado
             viewModel.LobbyConnectionLost += OnLobbyConnectionLost;
+            viewModel.NavigateToGame += OnNavigateToGame;
 
             if (isHost)
             {
@@ -72,6 +72,27 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     Debug.WriteLine($"[LOBBY] Error opening MainWindow: {ex.Message}");
                     this.Close();
+                }
+            });
+        }
+
+        private void OnNavigateToGame()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    string matchCode = viewModel.MatchCode;
+                    string myUsername = UserSession.Instance.CurrentUser.Username;
+                    List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players = viewModel.GetCurrentPlayers();
+
+                    MainMatch gameWindow = new MainMatch(players, myUsername, matchCode);
+                    gameWindow.Show();
+                    this.Close();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show(Lang.Lobby_ErrorStartingGame);
                 }
             });
         }
@@ -176,6 +197,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 try
                 {
                     await viewModel.Chat.DisconnectAsync();
+                    viewModel.NavigateToGame -= OnNavigateToGame;
                     viewModel.Chat.Dispose();
                 }
                 catch (Exception ex)
