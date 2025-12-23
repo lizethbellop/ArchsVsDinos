@@ -20,6 +20,7 @@
       <xs:element minOccurs="0" name="IsReady" type="xs:boolean" />
       <xs:element minOccurs="0" name="Nickname" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="LobbyPlayerDTO" nillable="true" type="tns:LobbyPlayerDTO" />

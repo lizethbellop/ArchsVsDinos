@@ -52,7 +52,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 var lobbyCode = core.CodeGenerator.GenerateLobbyCode(code => core.Session.LobbyExists(code));
                 var lobbyData = new ActiveLobbyData(lobbyCode, settings);
 
-                // ✅ AGREGAR AL HOST AUTOMÁTICAMENTE
                 lobbyData.AddPlayer(settings.HostUserId, settings.HostNickname);
 
                 core.Session.CreateLobby(lobbyCode, lobbyData);
@@ -225,7 +224,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 core.Session.Broadcast(lobbyCode, cb =>
                 {
-                    if (cb != callback) // No notificar al que acaba de conectarse
+                    if (cb != callback) 
                     {
                         cb.PlayerJoinedLobby(playerNickname);
                     }

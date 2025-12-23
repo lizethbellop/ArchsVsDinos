@@ -44,6 +44,7 @@ namespace ArchsVsDinosServer.Model
 
                 Players.Add(new LobbyPlayer(userId, nickname));
                 return true;
+
             }
         }
 

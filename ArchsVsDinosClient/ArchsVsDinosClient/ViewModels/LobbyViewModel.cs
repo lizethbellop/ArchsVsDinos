@@ -75,7 +75,6 @@ namespace ArchsVsDinosClient.ViewModels
             string myUsername = UserSession.Instance.CurrentUser.Username;
             this.Friends = new FriendRequestViewModel(myUsername);
             this.Friends.Subscribe(myUsername);
-            this.Friends.RequestSent += (sender, e) => OnFriendRequestSentResult(true);
 
             Chat = new ChatViewModel(new ChatServiceClient());
 
@@ -208,30 +207,37 @@ namespace ArchsVsDinosClient.ViewModels
 
         public void SendFriendRequest(string targetUsername)
         {
+            MessageBox.Show($"Intentando enviar a: '{targetUsername}'");
             if (string.IsNullOrEmpty(targetUsername)) return;
 
             string myUsername = UserSession.Instance.CurrentUser.Username;
-
             if (myUsername == targetUsername) return;
+
             if (Friends != null)
             {
                 try
                 {
-                    Friends.Subscribe(myUsername);
+                    try
+                    {
+                        Friends.Subscribe(myUsername);
+                    }
+                    catch { }
+
+                    Friends.SendFriendRequest(myUsername, targetUsername);
+                    MessageBox.Show(Lang.FriendRequest_SentSuccess);
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException)
                 {
-                    Debug.WriteLine($"[LobbyVM] Error de comunicación WCF al renovar suscripción: {ex.Message}");
+                    MessageBox.Show(Lang.FriendRequest_SentError);
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException)
                 {
-                    Debug.WriteLine($"[LobbyVM] Timeout al renovar suscripción: {ex.Message}");
+                    MessageBox.Show(Lang.FriendRequest_SentError);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    Debug.WriteLine($"[LobbyVM] Error inesperado al renovar suscripción: {ex.Message}");
+                    MessageBox.Show(Lang.FriendRequest_SentError);
                 }
-                Friends.SendFriendRequest(myUsername, targetUsername);
             }
         }
 
