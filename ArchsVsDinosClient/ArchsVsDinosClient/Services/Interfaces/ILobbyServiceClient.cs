@@ -13,16 +13,13 @@ namespace ArchsVsDinosClient.Services.Interfaces
     {
         Task<MatchCreationResultCode> CreateLobbyAsync(UserAccountDTO userAccount);
         Task<JoinMatchResultCode> JoinLobbyAsync(UserAccountDTO userAccount, string matchCode);
-
         void ConnectToLobby(string matchCode, string nickname);
         Task ConnectToLobbyAsync(string matchCode, string nickname);
         void LeaveLobby(string username);
-        //void ExpelPlayer(string targetUsername, string hostUsername);
-        //void CancellLobby(string matchCode, string usernameRequester);
         void StartGame(string matchCode);
-
         void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
         Task<bool> SendLobbyInviteByEmail(string email, string matchCode, string senderUsername);
+        Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername); // ← NUEVO
 
         event Action<LobbyPlayerDTO, string> LobbyCreated;
         event Action<LobbyPlayerDTO> PlayerJoined;
@@ -32,6 +29,6 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<string, string> ConnectionError;
         event Action<List<LobbyPlayerDTO>> PlayerListUpdated;
         event Action<string, string> PlayerKickedEvent;
-
+        event Action<LobbyInvitationDTO> LobbyInvitationReceived;
     }
 }

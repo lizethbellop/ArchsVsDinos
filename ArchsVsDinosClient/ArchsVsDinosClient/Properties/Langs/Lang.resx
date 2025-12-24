@@ -843,4 +843,16 @@
   <data name="Lobby_ErrorStartingGame" xml:space="preserve">
     <value>Error iniciando partida, intente de nuevo</value>
   </data>
+  <data name="Lobby_NoFriendsOnline" xml:space="preserve">
+    <value>No hay amigos en línea</value>
+  </data>
+  <data name="Lobby_NoFriendsAvailable" xml:space="preserve">
+    <value>No hay amigos disponibles en este momento</value>
+  </data>
+  <data name="Lobby_TryEmailInvite" xml:space="preserve">
+    <value>¡Intenta invitarlos por correo!</value>
+  </data>
+  <data name="Lobby_InAnotherLobby" xml:space="preserve">
+    <value>Jugador en otro lobby</value>
+  </data>
 </root>

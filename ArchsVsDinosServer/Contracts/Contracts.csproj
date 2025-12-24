@@ -76,6 +76,7 @@
     <Compile Include="DTO\GameFaultCodes.cs" />
     <Compile Include="DTO\GamePlayerInitDTO.cs" />
     <Compile Include="DTO\JoinLobbyRequest.cs" />
+    <Compile Include="DTO\LobbyInvitationDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
     <Compile Include="DTO\MatchSettings.cs" />
     <Compile Include="DTO\ModerationRequestDTO.cs" />

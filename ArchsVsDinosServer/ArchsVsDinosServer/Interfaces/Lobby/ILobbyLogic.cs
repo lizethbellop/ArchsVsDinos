@@ -21,5 +21,7 @@ namespace ArchsVsDinosServer.Interfaces.Lobby
         Task EvaluateGameStart(string lobbyCode, int userID);
 
         void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
+
+        Task<bool> SendLobbyInviteToFriend(string lobbyCode, string senderNickname, string targetUsername);
     }
 }

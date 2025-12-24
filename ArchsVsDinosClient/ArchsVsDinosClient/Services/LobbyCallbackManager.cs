@@ -14,6 +14,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>> OnPlayerListUpdated;
         public event Action<string, string> OnPlayerKicked;
         public event Action<string, bool> OnPlayerReady;
+        public event Action<LobbyInvitationDTO> OnLobbyInvitationReceived;
         public event Action OnGameStart;
 
         public void PlayerJoinedLobby(string nickname)
@@ -73,5 +74,12 @@ namespace ArchsVsDinosClient.Services
         {
             OnPlayerKicked?.Invoke(nickname, reason);
         }
+
+        public void LobbyInvitationReceived(LobbyInvitationDTO invitation)
+        {
+            Debug.WriteLine($"[CALLBACK] Invitación recibida del lobby {invitation.LobbyCode} de {invitation.SenderNickname}");
+            OnLobbyInvitationReceived?.Invoke(invitation);
+        }
+
     }
 }

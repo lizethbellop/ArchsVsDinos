@@ -29,5 +29,8 @@ namespace Contracts
         [OperationContract(IsOneWay = true)]
         void PlayerKicked(string nickname, string reason);
 
+        [OperationContract(IsOneWay = true)]
+        void LobbyInvitationReceived(LobbyInvitationDTO invitation);
+
     }
 }

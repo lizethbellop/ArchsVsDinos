@@ -34,4 +34,12 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="LobbyPlayerDTO" nillable="true" type="tns:LobbyPlayerDTO" />
+  <xs:complexType name="LobbyInvitationDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LobbyCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SenderNickname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SentAt" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LobbyInvitationDTO" nillable="true" type="tns:LobbyInvitationDTO" />
 </xs:schema>

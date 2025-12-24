@@ -27,6 +27,7 @@ namespace ArchsVsDinosClient.ViewModels
         public ChatViewModel Chat { get; }
         public FriendRequestViewModel Friends { get; private set; }
         public event Action<string, string> LobbyConnectionLost;
+        private List<string> currentFriendsList;
 
         public ObservableCollection<SlotLobby> Slots { get; set; }
 
@@ -69,9 +70,9 @@ namespace ArchsVsDinosClient.ViewModels
                 this.lobbyServiceClient.ConnectionError += OnLobbyConnectionError;
                 this.lobbyServiceClient.PlayerKickedEvent += OnPlayerKicked;
                 this.lobbyServiceClient.PlayerLeft += OnPlayerLeft;
+                this.lobbyServiceClient.LobbyInvitationReceived += OnLobbyInvitationReceived;
             }
 
-            this.lobbyServiceClient = client;
             string myUsername = UserSession.Instance.CurrentUser.Username;
             this.Friends = new FriendRequestViewModel(myUsername);
             this.Friends.Subscribe(myUsername);
@@ -95,6 +96,41 @@ namespace ArchsVsDinosClient.ViewModels
                     MessageBox.Show(Lang.FriendRequest_SentError);
                 }
             });
+        }
+
+        // ========== MÉTODO PARA CARGAR AMIGOS (usa FriendServiceClient) ==========
+        public async Task<List<string>> LoadFriendsAsync()
+        {
+            try
+            {
+                string myUsername = UserSession.Instance.CurrentUser.Username;
+                var friendClient = new FriendServiceClient();
+
+                var response = await friendClient.GetFriendsAsync(myUsername);
+
+                if (response != null && response.Success && response.Friends != null)
+                {
+                    currentFriendsList = response.Friends.ToList();
+                    return currentFriendsList;
+                }
+
+                return new List<string>();
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[LOBBY] Communication error loading friends: {ex.Message}");
+                return new List<string>();
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[LOBBY] Timeout loading friends: {ex.Message}");
+                return new List<string>();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] Error loading friends: {ex.Message}");
+                return new List<string>();
+            }
         }
 
         private void OnPlayerKicked(string nickname, string reason)
@@ -376,7 +412,7 @@ namespace ArchsVsDinosClient.ViewModels
                     {
                         Nickname = slot.Nickname,
                         Username = slot.Username,
-                        IdPlayer = slot.IsGuest ? -1 : 0, 
+                        IdPlayer = slot.IsGuest ? -1 : 0,
                         IsHost = slot.IsLocalPlayer && this.isHost,
                         IsReady = slot.IsReady
                     });
@@ -419,6 +455,9 @@ namespace ArchsVsDinosClient.ViewModels
             if (lobbyServiceClient != null)
             {
                 lobbyServiceClient.ConnectionError -= OnLobbyConnectionError;
+                lobbyServiceClient.PlayerKickedEvent -= OnPlayerKicked;
+                lobbyServiceClient.PlayerLeft -= OnPlayerLeft;
+                lobbyServiceClient.LobbyInvitationReceived -= OnLobbyInvitationReceived;
             }
 
             if (Chat != null)
@@ -476,6 +515,117 @@ namespace ArchsVsDinosClient.ViewModels
                     }
                 }
             });
+        }
+
+        private void OnLobbyInvitationReceived(LobbyInvitationDTO invitation)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine($"[LOBBY VM] Invitación recibida de {invitation.SenderNickname} para lobby {invitation.LobbyCode}");
+                ShowInvitationDialog(invitation);
+            });
+        }
+
+        private async void ShowInvitationDialog(LobbyInvitationDTO invitation)
+        {
+            var result = MessageBox.Show(
+                $"{invitation.SenderNickname} te ha invitado a unirte a su lobby.\n\n¿Deseas aceptar la invitación?",
+                "Invitación de lobby",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+            if (result == MessageBoxResult.Yes)
+            {
+                await JoinInvitedLobby(invitation);
+            }
+        }
+
+        private async Task JoinInvitedLobby(LobbyInvitationDTO invitation)
+        {
+            string currentLobby = UserSession.Instance.CurrentMatchCode;
+            if (!string.IsNullOrEmpty(currentLobby) && currentLobby != invitation.LobbyCode)
+            {
+                LeaveOfTheLobby(UserSession.Instance.CurrentUser.Nickname);
+                await Task.Delay(500);
+            }
+
+            var userAccount = new ArchsVsDinosClient.DTO.UserAccountDTO
+            {
+                Nickname = UserSession.Instance.CurrentUser.Nickname,
+                Username = UserSession.Instance.CurrentUser.Username,
+                IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
+            };
+
+            var joinResult = await lobbyServiceClient.JoinLobbyAsync(userAccount, invitation.LobbyCode);
+
+            if (joinResult == JoinMatchResultCode.JoinMatch_Success)
+            {
+                UserSession.Instance.CurrentMatchCode = invitation.LobbyCode;
+                await lobbyServiceClient.ConnectToLobbyAsync(invitation.LobbyCode, userAccount.Nickname);
+
+                MessageBox.Show("Te has unido al lobby exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                string errorMsg = LobbyResultCodeHelper.GetMessage(joinResult);
+                MessageBox.Show($"No se pudo unir al lobby: {errorMsg}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public async void InviteFriendToLobby(string friendUsername)
+        {
+            if (string.IsNullOrWhiteSpace(MatchCode))
+            {
+                MessageBox.Show("No hay un lobby activo.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(friendUsername))
+            {
+                MessageBox.Show("Selecciona un amigo para invitar.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string senderNickname = UserSession.Instance.CurrentUser.Nickname;
+            bool sent = await lobbyServiceClient.SendLobbyInviteToFriendAsync(MatchCode, senderNickname, friendUsername);
+
+            if (sent)
+            {
+                MessageBox.Show($"Invitación enviada a {friendUsername}.", "Invitación enviada", MessageBoxButton.OK, MessageBoxImage.Information);
+                _ = CheckIfFriendJoined(friendUsername);
+            }
+            else
+            {
+                MessageBox.Show("No se pudo enviar la invitación.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async Task CheckIfFriendJoined(string friendUsername)
+        {
+            await Task.Delay(30000);
+
+            bool friendJoined = Slots.Any(s =>
+                !string.IsNullOrEmpty(s.Username) &&
+                s.Username.Equals(friendUsername, StringComparison.OrdinalIgnoreCase));
+
+            if (!friendJoined)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var result = MessageBox.Show(
+                        $"{friendUsername} no se ha unido al lobby.\n¿Deseas enviarle una invitación por correo?",
+                        "Sin respuesta",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question
+                    );
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        MessageBox.Show("Funcionalidad de envío de correo pendiente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                });
+            }
         }
     }
 }
