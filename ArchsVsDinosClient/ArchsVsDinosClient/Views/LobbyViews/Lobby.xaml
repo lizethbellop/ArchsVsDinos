@@ -232,33 +232,105 @@
                 <Grid.Background>
                     <ImageBrush ImageSource="/Resources/Images/emergentTable.png"/>
                 </Grid.Background>
-
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height= "*"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!-- Título -->
                 <StackPanel Grid.Row="0">
-                    <Label Content="{x:Static language:Lang.Friends_MyFriends}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" 
-                    Foreground="#FF94FF21" HorizontalAlignment="Center"  Margin="0,50,0,0"/>
+                    <Label Content="{x:Static language:Lang.Friends_MyFriends}" 
+                        FontFamily="{StaticResource Volcanic Dungeon}" 
+                        FontSize="20" 
+                        FontWeight="Bold" 
+                        Foreground="#FF94FF21" 
+                        HorizontalAlignment="Center"  
+                        Margin="0,50,0,0"/>
                 </StackPanel>
 
-                <StackPanel Grid.Row="1">
+                <!-- Lista de amigos -->
+                <ScrollViewer Grid.Row="1" Margin="20,10,20,10" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="FriendsList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#33000000" 
+                                    Margin="5" 
+                                    Padding="10" 
+                                    CornerRadius="8"
+                                    BorderBrush="#FF94FF21" 
+                                    BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                </StackPanel>
+                                        <TextBlock Grid.Column="0" 
+                                            Text="{Binding}" 
+                                            FontFamily="Tw Cen MT Condensed Extra Bold" 
+                                            FontSize="18" 
+                                            Foreground="White" 
+                                            VerticalAlignment="Center"
+                                            Margin="10,0,0,0"/>
 
+                                        <Button Grid.Column="1" 
+                                            Content="Invitar" 
+                                            Click="Click_BtnInviteFriend"
+                                            Tag="{Binding}"
+                                            Height="35" 
+                                            Width="100" 
+                                            FontFamily="Tw Cen MT Condensed Extra Bold" 
+                                            FontSize="16" 
+                                            Foreground="White" 
+                                            Background="#FF94FF21"
+                                            BorderBrush="{x:Null}"
+                                            Cursor="Hand">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="border" 
+                                               Background="{TemplateBinding Background}"
+                                               CornerRadius="8">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed" Value="True">
+                                                            <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <!-- Botón Cancelar -->
                 <StackPanel Margin="12,-230,0,0" Grid.Row="2">
-                    <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Click_BtnCancelInviteFriend" Height="80" Width="150" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="21" Foreground="White" BorderBrush="{x:Null}">
+                    <Button Content="{x:Static language:Lang.GlobalCancelText}" 
+                        Click="Click_BtnCancelInviteFriend" 
+                        Height="80" 
+                        Width="150" 
+                        FontFamily="Tw Cen MT Condensed Extra Bold" 
+                        FontSize="21" 
+                        Foreground="White" 
+                        BorderBrush="{x:Null}">
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
                         </Button.Background>
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" Background="{TemplateBinding Background}"
-                                     BorderBrush="{TemplateBinding BorderBrush}"
-                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                     CornerRadius="13">
+                                <Border x:Name="border" 
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="13">
                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -276,7 +348,6 @@
                         </Button.Template>
                     </Button>
                 </StackPanel>
-
             </Grid>
 
             <Grid Margin="0,0,-30,0" Name="Gr_InviteByEmail" Visibility="Collapsed">

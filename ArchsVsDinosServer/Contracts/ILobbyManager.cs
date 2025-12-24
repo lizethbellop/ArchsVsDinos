@@ -36,6 +36,9 @@ namespace Contracts
 
         [OperationContract]
         void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
+
+        [OperationContract]
+        Task<bool> SendLobbyInviteToFriend(string lobbyCode, string senderNickname, string targetUsername);
     }
 
 }

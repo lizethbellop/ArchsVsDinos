@@ -586,5 +586,128 @@ namespace ArchsVsDinosServer.BusinessLogic
                 throw;
             }
         }
+
+        public Task<bool> SendLobbyInviteToFriend(string lobbyCode, string senderNickname, string targetUsername)
+        {
+            if (!ValidateInvitationParameters(lobbyCode, senderNickname, targetUsername))
+            {
+                return Task.FromResult(false);
+            }
+
+            try
+            {
+                if (!TryGetLobby(lobbyCode, out var lobby))
+                {
+                    return Task.FromResult(false);
+                }
+
+                var targetCallback = core.Session.FindUserCallbackInAnyLobby(targetUsername);
+
+                if (targetCallback == null)
+                {
+                    logger.LogInfo($"User {targetUsername} is not connected. Invitation sent optimistically.");
+                    return Task.FromResult(true); 
+                }
+
+                return SendInvitationToCallback(targetCallback, lobbyCode, senderNickname, targetUsername);
+            }
+            catch (ArgumentNullException ex)
+            {
+                logger.LogError($"Null argument in SendLobbyInviteToFriend: {ex.ParamName}", ex);
+                return Task.FromResult(false);
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogError($"Invalid operation sending invite: {ex.Message}", ex);
+                return Task.FromResult(false);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Unexpected error sending lobby invite: {ex.Message}", ex);
+                return Task.FromResult(false);
+            }
+        }
+
+        private bool ValidateInvitationParameters(string lobbyCode, string senderNickname, string targetUsername)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode))
+            {
+                logger.LogWarning("SendLobbyInviteToFriend: lobbyCode is null or empty.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(senderNickname))
+            {
+                logger.LogWarning("SendLobbyInviteToFriend: senderNickname is null or empty.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(targetUsername))
+            {
+                logger.LogWarning("SendLobbyInviteToFriend: targetUsername is null or empty.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryGetLobby(string lobbyCode, out object lobby)
+        {
+            lobby = core.Session.GetLobby(lobbyCode);
+
+            if (lobby == null)
+            {
+                logger.LogWarning($"SendLobbyInviteToFriend: Lobby {lobbyCode} not found.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private Task<bool> SendInvitationToCallback(
+            ILobbyManagerCallback targetCallback,
+            string lobbyCode,
+            string senderNickname,
+            string targetUsername)
+        {
+            var invitation = CreateInvitation(lobbyCode, senderNickname);
+
+            try
+            {
+                targetCallback.LobbyInvitationReceived(invitation);
+                logger.LogInfo($"Lobby invitation successfully sent from {senderNickname} to {targetUsername}");
+                return Task.FromResult(true);
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error sending invitation to {targetUsername}: {ex.Message}");
+                return Task.FromResult(true);
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout sending invitation to {targetUsername}: {ex.Message}");
+                return Task.FromResult(true);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                logger.LogWarning($"Callback disposed for {targetUsername}: {ex.Message}");
+                return Task.FromResult(true); 
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"Failed to deliver invitation to {targetUsername}: {ex.Message}");
+                return Task.FromResult(true);
+            }
+        }
+
+        private LobbyInvitationDTO CreateInvitation(string lobbyCode, string senderNickname)
+        {
+            return new LobbyInvitationDTO
+            {
+                LobbyCode = lobbyCode,
+                SenderNickname = senderNickname,
+                SentAt = DateTime.UtcNow
+            };
+        }
     }
 }

@@ -514,6 +514,83 @@ namespace ArchsVsDinosClient.LobbyService {
         }
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="LobbyInvitationDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO")]
+    [System.SerializableAttribute()]
+    public partial class LobbyInvitationDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string LobbyCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SenderNicknameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime SentAtField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LobbyCode {
+            get {
+                return this.LobbyCodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LobbyCodeField, value) != true)) {
+                    this.LobbyCodeField = value;
+                    this.RaisePropertyChanged("LobbyCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SenderNickname {
+            get {
+                return this.SenderNicknameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SenderNicknameField, value) != true)) {
+                    this.SenderNicknameField = value;
+                    this.RaisePropertyChanged("SenderNickname");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime SentAt {
+            get {
+                return this.SentAtField;
+            }
+            set {
+                if ((this.SentAtField.Equals(value) != true)) {
+                    this.SentAtField = value;
+                    this.RaisePropertyChanged("SentAt");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="LobbyService.ILobbyManager", CallbackContract=typeof(ArchsVsDinosClient.LobbyService.ILobbyManagerCallback))]
     public interface ILobbyManager {
@@ -565,6 +642,12 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/KickPlayer", ReplyAction="http://tempuri.org/ILobbyManager/KickPlayerResponse")]
         System.Threading.Tasks.Task KickPlayerAsync(string lobbyCode, int hostUserId, string targetNickname);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriend", ReplyAction="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriendResponse")]
+        bool SendLobbyInviteToFriend(string lobbyCode, string senderNickname, string targetUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriend", ReplyAction="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriendResponse")]
+        System.Threading.Tasks.Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -587,6 +670,9 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/PlayerKicked")]
         void PlayerKicked(string nickname, string reason);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ILobbyManager/LobbyInvitationReceived")]
+        void LobbyInvitationReceived(ArchsVsDinosClient.LobbyService.LobbyInvitationDTO invitation);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -679,6 +765,14 @@ namespace ArchsVsDinosClient.LobbyService {
         
         public System.Threading.Tasks.Task KickPlayerAsync(string lobbyCode, int hostUserId, string targetNickname) {
             return base.Channel.KickPlayerAsync(lobbyCode, hostUserId, targetNickname);
+        }
+        
+        public bool SendLobbyInviteToFriend(string lobbyCode, string senderNickname, string targetUsername) {
+            return base.Channel.SendLobbyInviteToFriend(lobbyCode, senderNickname, targetUsername);
+        }
+        
+        public System.Threading.Tasks.Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername) {
+            return base.Channel.SendLobbyInviteToFriendAsync(lobbyCode, senderNickname, targetUsername);
         }
     }
 }

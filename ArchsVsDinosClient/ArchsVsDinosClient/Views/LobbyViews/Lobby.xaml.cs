@@ -154,16 +154,60 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        private void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
+        // Actualiza este método existente
+        private async void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
-            Gr_MyFriends.Visibility = Visibility.Visible;
+
+            try
+            {
+                var friends = await viewModel.LoadFriendsAsync();
+
+                if (friends == null || friends.Count == 0)
+                {
+                    MessageBox.Show(
+                        "No tienes amigos agregados aún.",
+                        "Sin amigos",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                    return;
+                }
+
+                FriendsList.ItemsSource = friends;
+                Gr_MyFriends.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] Error showing friends: {ex.Message}");
+                MessageBox.Show(
+                    "Error al cargar la lista de amigos.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
 
+        // Agrega este nuevo método
+        private void Click_BtnInviteFriend(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null) return;
+
+            string friendUsername = button.Tag as string;
+            if (string.IsNullOrEmpty(friendUsername)) return;
+
+            SoundButton.PlayMovingRockSound();
+            viewModel?.InviteFriendToLobby(friendUsername);
+        }
+
+        // Este ya lo tienes, solo actualízalo para limpiar el ItemsSource
         private void Click_BtnCancelInviteFriend(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             Gr_MyFriends.Visibility = Visibility.Collapsed;
+            FriendsList.ItemsSource = null; // Limpiar la lista
         }
 
         private void Click_BtnInvitePlayerByEmail(object sender, RoutedEventArgs e)

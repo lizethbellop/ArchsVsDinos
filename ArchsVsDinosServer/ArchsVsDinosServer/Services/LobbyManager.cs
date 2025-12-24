@@ -210,5 +210,32 @@ namespace ArchsVsDinosServer.Services
             }
         }
 
+        public async Task<bool> SendLobbyInviteToFriend(string lobbyCode, string senderNickname, string targetUsername)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) ||string.IsNullOrWhiteSpace(senderNickname) || string.IsNullOrWhiteSpace(targetUsername))
+            {
+                return false;
+            }
+
+            try
+            {
+                return await lobbyLogic.SendLobbyInviteToFriend(lobbyCode, senderNickname, targetUsername);
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Timeout sending lobby invite to {targetUsername} - {ex.Message}");
+                return false;
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Communication error sending lobby invite to {targetUsername} - {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Unexpected error in SendLobbyInviteToFriend.", ex);
+                return false;
+            }
+        }
     }
 }

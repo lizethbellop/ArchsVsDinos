@@ -171,5 +171,57 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             }
         }
 
+        public IEnumerable<ActiveLobbyData> GetAllLobbies()
+        {
+            lock (syncRoot)
+            {
+                return activeLobbies.Values.ToList();
+            }
+        }
+
+        public ILobbyManagerCallback GetPlayerCallbackByUsername(string lobbyCode, string username)
+        {
+            lock (syncRoot)
+            {
+                if (!lobbyCallbacks.ContainsKey(lobbyCode))
+                {
+                    return null;
+                }
+
+                var lobby = GetLobby(lobbyCode);
+                if (lobby == null)
+                {
+                    return null;
+                }
+
+                var player = lobby.Players.FirstOrDefault(p =>
+                    p.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+
+                if (player == null)
+                {
+                    return null;
+                }
+
+                return lobbyCallbacks[lobbyCode].TryGetValue(player.Nickname, out var callback)
+                    ? callback
+                    : null;
+            }
+        }
+
+        public ILobbyManagerCallback FindUserCallbackInAnyLobby(string username)
+        {
+            lock (syncRoot)
+            {
+                foreach (var lobbyCode in activeLobbies.Keys)
+                {
+                    var callback = GetPlayerCallbackByUsername(lobbyCode, username);
+                    if (callback != null)
+                    {
+                        return callback;
+                    }
+                }
+                return null;
+            }
+        }
     }
 }

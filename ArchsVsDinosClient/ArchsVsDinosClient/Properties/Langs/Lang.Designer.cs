@@ -871,6 +871,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Jugador en otro lobby.
+        /// </summary>
+        public static string Lobby_InAnotherLobby {
+            get {
+                return ResourceManager.GetString("Lobby_InAnotherLobby", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Invitar.
         /// </summary>
         public static string Lobby_Invite {
@@ -970,6 +979,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No hay amigos disponibles en este momento.
+        /// </summary>
+        public static string Lobby_NoFriendsAvailable {
+            get {
+                return ResourceManager.GetString("Lobby_NoFriendsAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No hay amigos en línea.
+        /// </summary>
+        public static string Lobby_NoFriendsOnline {
+            get {
+                return ResourceManager.GetString("Lobby_NoFriendsOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Sólo el host puede expulsar jugadores.
         /// </summary>
         public static string Lobby_OnlyHostCanKick {
@@ -1020,6 +1047,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_SendFriendRequest {
             get {
                 return ResourceManager.GetString("Lobby_SendFriendRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Intenta invitarlos por correo!.
+        /// </summary>
+        public static string Lobby_TryEmailInvite {
+            get {
+                return ResourceManager.GetString("Lobby_TryEmailInvite", resourceCulture);
             }
         }
         

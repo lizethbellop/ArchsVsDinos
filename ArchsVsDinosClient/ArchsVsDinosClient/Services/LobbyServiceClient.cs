@@ -27,6 +27,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<string, string> ConnectionError;
         public event Action<List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>> PlayerListUpdated;
         public event Action<string, string> PlayerKickedEvent;
+        public event Action<LobbyInvitationDTO> LobbyInvitationReceived;
 
         public LobbyServiceClient()
         {
@@ -38,6 +39,7 @@ namespace ArchsVsDinosClient.Services
             lobbyCallbackManager.OnPlayerListUpdated += (playerList) => PlayerListUpdated?.Invoke(playerList);
             lobbyCallbackManager.OnPlayerReady += (nickname, isReady) => PlayerReadyEvent?.Invoke(nickname, isReady);
             lobbyCallbackManager.OnGameStart += () => GameStartedEvent?.Invoke("");
+            lobbyCallbackManager.OnLobbyInvitationReceived += (invitation) => LobbyInvitationReceived?.Invoke(invitation);
 
             lobbyCallbackManager.OnPlayerKicked += (nickname, reason) =>
             {
@@ -281,6 +283,61 @@ namespace ArchsVsDinosClient.Services
             {
                 await Task.Run(() => lobbyManagerClient.KickPlayer(lobbyCode, hostUserId, targetNickname));
             });
+        }
+
+        public async Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername)
+        {
+            try
+            {
+                var result = await connectionGuardian.ExecuteAsync(async () =>
+                {
+                    return await lobbyManagerClient.SendLobbyInviteToFriendAsync(lobbyCode, senderNickname, targetUsername);
+                });
+
+                return result;
+            }
+            catch (EndpointNotFoundException endpointEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend EndpointNotFoundException: {endpointEx.Message}");
+                ConnectionError?.Invoke("Servidor no disponible", "No se pudo enviar la invitación al amigo.");
+                return false;
+            }
+            catch (FaultException faultEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend FaultException: {faultEx.Message}");
+                ConnectionError?.Invoke("Error del servidor", $"Error al invitar: {faultEx.Message}");
+                return false;
+            }
+            catch (CommunicationException commEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend CommunicationException: {commEx.Message}");
+                ConnectionError?.Invoke("Error de comunicación", "No se pudo enviar la invitación. Verifica tu conexión.");
+                return false;
+            }
+            catch (TimeoutException timeoutEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend TimeoutException: {timeoutEx.Message}");
+                ConnectionError?.Invoke("Tiempo agotado", "El servidor tardó demasiado en responder.");
+                return false;
+            }
+            catch (ObjectDisposedException objEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend ObjectDisposedException: {objEx.Message}");
+                ConnectionError?.Invoke("Conexión cerrada", "La conexión fue cerrada inesperadamente.");
+                return false;
+            }
+            catch (InvalidOperationException invEx)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend InvalidOperationException: {invEx.Message}");
+                ConnectionError?.Invoke("Operación inválida", "No se puede realizar la operación en este momento.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend Exception: {ex.Message}");
+                ConnectionError?.Invoke("Error inesperado", "No se pudo completar la invitación.");
+                return false;
+            }
         }
     }
 }
