@@ -30,5 +30,10 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Profile_SameUsernameValue,
         [EnumMember] Profile_DatabaseError,
         [EnumMember] Profile_UnexpectedError,
+        [EnumMember] Profile_PasswordTooLong,
+        [EnumMember] Profile_PasswordNeedsLowercase,
+        [EnumMember] Profile_PasswordNeedsUppercase,
+        [EnumMember] Profile_PasswordNeedsNumber,
+        [EnumMember] Profile_PasswordNeedsSpecialCharacter
     }
 }

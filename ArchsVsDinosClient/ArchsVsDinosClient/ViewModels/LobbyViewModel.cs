@@ -28,6 +28,7 @@ namespace ArchsVsDinosClient.ViewModels
         public FriendRequestViewModel Friends { get; private set; }
         public event Action<string, string> LobbyConnectionLost;
         private List<string> currentFriendsList;
+        public event Action<string> NavigateToLobbyAsGuest;
 
         public ObservableCollection<SlotLobby> Slots { get; set; }
 
@@ -98,7 +99,6 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        // ========== MÉTODO PARA CARGAR AMIGOS (usa FriendServiceClient) ==========
         public async Task<List<string>> LoadFriendsAsync()
         {
             try
@@ -222,6 +222,8 @@ namespace ArchsVsDinosClient.ViewModels
                     IsHost = true,
                     IsReady = false
                 });
+
+                await ConnectChatAsync();
             }
             else
             {
@@ -437,6 +439,11 @@ namespace ArchsVsDinosClient.ViewModels
 
         public async Task ConnectChatAsync()
         {
+            if (string.IsNullOrEmpty(MatchCode))
+            {
+                return;
+            }
+
             try
             {
                 await Chat.ConnectAsync(
@@ -445,9 +452,17 @@ namespace ArchsVsDinosClient.ViewModels
                     matchCode: MatchCode
                 );
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
             {
                 OnChatDegraded($"No se pudo conectar al chat: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                OnChatDegraded($"Timeout al conectar al chat: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                OnChatDegraded($"Error al conectar al chat: {ex.Message}");
             }
         }
 
@@ -518,8 +533,6 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        // ========== MÉTODOS PARA INVITACIONES ==========
-
         private void OnLobbyInvitationReceived(LobbyInvitationDTO invitation)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -546,34 +559,218 @@ namespace ArchsVsDinosClient.ViewModels
 
         private async Task JoinInvitedLobby(LobbyInvitationDTO invitation)
         {
-            string currentLobby = UserSession.Instance.CurrentMatchCode;
-            if (!string.IsNullOrEmpty(currentLobby) && currentLobby != invitation.LobbyCode)
+            try
             {
-                LeaveOfTheLobby(UserSession.Instance.CurrentUser.Nickname);
-                await Task.Delay(500);
+                await LeavePreviousLobbyIfNeeded(invitation.LobbyCode);
+
+                var userAccount = CreateUserAccountDTO();
+                var joinResult = await JoinNewLobby(userAccount, invitation.LobbyCode);
+
+                if (joinResult == JoinMatchResultCode.JoinMatch_Success)
+                {
+                    await CompleteSuccessfulJoin(invitation.LobbyCode, userAccount.Nickname);
+                }
+                else
+                {
+                    HandleJoinFailure(joinResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleJoinException(ex);
+            }
+        }
+
+        private async Task LeavePreviousLobbyIfNeeded(string newLobbyCode)
+        {
+            string currentLobby = UserSession.Instance.CurrentMatchCode;
+
+            if (string.IsNullOrEmpty(currentLobby) || currentLobby == newLobbyCode)
+            {
+                return;
             }
 
-            var userAccount = new ArchsVsDinosClient.DTO.UserAccountDTO
+            string myNickname = UserSession.Instance.CurrentUser.Nickname;
+            lobbyServiceClient.LeaveLobby(myNickname);
+
+            UserSession.Instance.CurrentMatchCode = null;
+
+            await Task.Delay(1000);
+        }
+
+        private ArchsVsDinosClient.DTO.UserAccountDTO CreateUserAccountDTO()
+        {
+            return new ArchsVsDinosClient.DTO.UserAccountDTO
             {
                 Nickname = UserSession.Instance.CurrentUser.Nickname,
                 Username = UserSession.Instance.CurrentUser.Username,
                 IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
             };
+        }
 
-            var joinResult = await lobbyServiceClient.JoinLobbyAsync(userAccount, invitation.LobbyCode);
+        private async Task<JoinMatchResultCode> JoinNewLobby(ArchsVsDinosClient.DTO.UserAccountDTO userAccount, string lobbyCode)
+        {
+            return await lobbyServiceClient.JoinLobbyAsync(userAccount, lobbyCode);
+        }
 
-            if (joinResult == JoinMatchResultCode.JoinMatch_Success)
+        private async Task ForcePlayerListRefresh()
+        {
+            Debug.WriteLine("[LOBBY VM] Forzando actualización de lista de jugadores...");
+
+            try
             {
-                UserSession.Instance.CurrentMatchCode = invitation.LobbyCode;
-                await lobbyServiceClient.ConnectToLobbyAsync(invitation.LobbyCode, userAccount.Nickname);
+                // Opción 1: Si tu servicio tiene un método para obtener jugadores
+                // var players = await lobbyServiceClient.GetPlayersInLobby(MatchCode);
+                // if (players != null)
+                // {
+                //     OnPlayerListUpdated(players);
+                // }
 
-                MessageBox.Show("Te has unido al lobby exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Opción 2: Si no tienes ese método, al menos verifica el estado
+                await Task.Delay(1500);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Debug.WriteLine($"[LOBBY VM] Estado actual:");
+                    Debug.WriteLine($"  - MatchCode: {MatchCode}");
+                    Debug.WriteLine($"  - IsHost: {IsHost}");
+                    Debug.WriteLine($"  - Slots con datos: {Slots.Count(s => !string.IsNullOrEmpty(s.Nickname))}");
+
+                    // Si después de 1.5 segundos aún no hay jugadores, hay un problema
+                    if (Slots.All(s => string.IsNullOrEmpty(s.Nickname)))
+                    {
+                        Debug.WriteLine("[LOBBY VM] ERROR: No se recibió actualización de jugadores del servidor");
+                        MessageBox.Show(
+                            "No se pudieron cargar los jugadores del lobby. Intenta salir y volver a unirte.",
+                            "Error de sincronización",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning
+                        );
+                    }
+                });
             }
-            else
+            catch (Exception ex)
             {
-                string errorMsg = LobbyResultCodeHelper.GetMessage(joinResult);
-                MessageBox.Show($"No se pudo unir al lobby: {errorMsg}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Debug.WriteLine($"[LOBBY VM] Error en ForcePlayerListRefresh: {ex.Message}");
             }
+        }
+
+        private async Task CompleteSuccessfulJoin(string lobbyCode, string nickname)
+        {
+            UserSession.Instance.CurrentMatchCode = lobbyCode;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                this.MatchCode = lobbyCode;
+                this.IsHost = false;
+            });
+
+            await lobbyServiceClient.ConnectToLobbyAsync(lobbyCode, nickname);
+            await Task.Delay(1500);
+            await ReconnectChatToNewLobby(lobbyCode);
+            await VerifyLobbyState();
+        }
+
+        private async Task VerifyLobbyState()
+        {
+            await Task.Delay(1000);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                int playersInSlots = Slots.Count(s => !string.IsNullOrEmpty(s.Nickname));
+
+                if (playersInSlots == 0)
+                {
+                    MessageBox.Show(
+                        "Error de sincronización: No se cargaron los jugadores del lobby.\n\nPor favor, sal y vuelve a unirte al lobby.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+            });
+        }
+
+        private async Task ReloadCurrentLobby(string newLobbyCode)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine($"[LOBBY VM] Recargando lobby con código: {newLobbyCode}");
+
+                this.MatchCode = newLobbyCode;
+
+                foreach (var slot in Slots)
+                {
+                    slot.Username = "";
+                    slot.Nickname = "";
+                    slot.IsReady = false;
+                    slot.IsLocalPlayer = false;
+                    slot.CanKick = false;
+                    slot.IsFriend = false;
+                    slot.ProfilePicture = null;
+                }
+
+                this.IsHost = false;
+            });
+
+            await Task.Delay(500);
+
+            Debug.WriteLine("[LOBBY VM] Lobby recargado, esperando actualización de jugadores del servidor...");
+        }
+
+        private async Task ReconnectChatToNewLobby(string lobbyCode)
+        {
+            if (Chat == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await Chat.DisconnectAsync();
+                await Task.Delay(500);
+                await Chat.ConnectAsync(
+                    UserSession.Instance.CurrentUser.Username,
+                    context: 0,
+                    matchCode: lobbyCode
+                );
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY VM] Error reconectando chat: {ex.Message}");
+            }
+        }
+
+        private void ShowSuccessMessage()
+        {
+            MessageBox.Show(
+                "Te has unido al lobby exitosamente.",
+                "Éxito",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+        }
+
+        private void HandleJoinFailure(JoinMatchResultCode resultCode)
+        {
+            string errorMsg = LobbyResultCodeHelper.GetMessage(resultCode);
+            MessageBox.Show(
+                $"No se pudo unir al lobby: {errorMsg}",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+        }
+
+        private void HandleJoinException(Exception ex)
+        {
+            Debug.WriteLine($"[LOBBY VM] Error en JoinInvitedLobby: {ex.Message}");
+            MessageBox.Show(
+                "Ocurrió un error al intentar unirse al lobby.",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
         }
 
         public async void InviteFriendToLobby(string friendUsername)

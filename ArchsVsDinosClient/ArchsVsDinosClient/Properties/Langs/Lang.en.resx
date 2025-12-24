@@ -855,4 +855,28 @@
   <data name="Lobby_InAnotherLobby" xml:space="preserve">
     <value>Player in another lobby</value>
   </data>
+  <data name="Profile_PasswordTooLong" xml:space="preserve">
+    <value>Password is too long, verify it</value>
+  </data>
+  <data name="Profile_PasswordNeedsLowercase" xml:space="preserve">
+    <value>You need at least one lowercase letter</value>
+  </data>
+  <data name="Profile_PasswordNeedsUppercase" xml:space="preserve">
+    <value>The password needs at least one uppercase letter</value>
+  </data>
+  <data name="Profile_PasswordNeedsNumber" xml:space="preserve">
+    <value>You need at least one number</value>
+  </data>
+  <data name="Profile_PasswordNeedsSpecialCharacter" xml:space="preserve">
+    <value>The password needs at least one special character</value>
+  </data>
+  <data name="GlobalServerUnavailable" xml:space="preserve">
+    <value>The service is not available for now</value>
+  </data>
+  <data name="GlobalServerTimeout" xml:space="preserve">
+    <value>Some time has passed and no information about the server</value>
+  </data>
+  <data name="Login_UnexpectedError" xml:space="preserve">
+    <value>Unexpected error with the system, b patient</value>
+  </data>
 </root>

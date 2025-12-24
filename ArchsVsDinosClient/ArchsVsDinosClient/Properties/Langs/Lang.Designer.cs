@@ -691,6 +691,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ha pasado un tiempo y no se obtiene respuesta del servidor.
+        /// </summary>
+        public static string GlobalServerTimeout {
+            get {
+                return ResourceManager.GetString("GlobalServerTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El servicio no está disponible por ahora.
+        /// </summary>
+        public static string GlobalServerUnavailable {
+            get {
+                return ResourceManager.GetString("GlobalServerUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Pista de audio no encontrada.
         /// </summary>
         public static string GlobalSoundNotFound {
@@ -1177,6 +1195,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error ineperado con el sistema, agradecemos tu paciencia.
+        /// </summary>
+        public static string Login_UnexpectedError {
+            get {
+                return ResourceManager.GetString("Login_UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No existe una cuenta con esos datos.
         /// </summary>
         public static string Login_UserNotFoundText {
@@ -1497,6 +1524,51 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Profile_NicknameExists {
             get {
                 return ResourceManager.GetString("Profile_NicknameExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se necesita al menos una letra minúscula.
+        /// </summary>
+        public static string Profile_PasswordNeedsLowercase {
+            get {
+                return ResourceManager.GetString("Profile_PasswordNeedsLowercase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña necesita al menos un número.
+        /// </summary>
+        public static string Profile_PasswordNeedsNumber {
+            get {
+                return ResourceManager.GetString("Profile_PasswordNeedsNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña necesita al menos un caracter especial.
+        /// </summary>
+        public static string Profile_PasswordNeedsSpecialCharacter {
+            get {
+                return ResourceManager.GetString("Profile_PasswordNeedsSpecialCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña necesita al menos una mayúscula.
+        /// </summary>
+        public static string Profile_PasswordNeedsUppercase {
+            get {
+                return ResourceManager.GetString("Profile_PasswordNeedsUppercase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La contraseña proporcionada es muy larga, verifique.
+        /// </summary>
+        public static string Profile_PasswordTooLong {
+            get {
+                return ResourceManager.GetString("Profile_PasswordTooLong", resourceCulture);
             }
         }
         

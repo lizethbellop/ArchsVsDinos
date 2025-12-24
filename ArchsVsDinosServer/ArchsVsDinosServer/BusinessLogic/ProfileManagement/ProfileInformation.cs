@@ -196,13 +196,11 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         return DefaultAvatarPath;
                     }
 
-                    // Si no tiene avatar configurado, devolver el por defecto
                     if (string.IsNullOrEmpty(player.profilePicture))
                     {
                         return DefaultAvatarPath;
                     }
 
-                    // Devolver la ruta guardada en la BD
                     return player.profilePicture;
                 }
             }

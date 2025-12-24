@@ -42,9 +42,9 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly IModerationManager moderationManager;
 
         public Chat(
-        ChatServiceDependencies dependencies,
-        ILobbyServiceNotifier lobbyNotifier,
-        IGameServiceNotifier gameNotifier)
+            ChatServiceDependencies dependencies,
+            ILobbyServiceNotifier lobbyNotifier,
+            IGameServiceNotifier gameNotifier)
         {
             this.loggerHelper = dependencies.LoggerHelper;
             this.contextFactory = dependencies.ContextFactory;
@@ -96,16 +96,60 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return;
             }
 
-            BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserConnected, $"{request.Username} has joined");
-            UpdateUserList();
+            // NUEVO: Primero envía la lista actual al usuario que se acaba de conectar
+            var existingUsersInMatch = ConnectedUsers
+                .Where(u => u.Value.MatchCode == request.MatchCode)
+                .Select(u => u.Key)
+                .ToList();
+
+            SafeCallbackInvoke(request.Username, () =>
+            {
+                callback.UpdateUserList(existingUsersInMatch);
+            });
+
+            // Luego notifica a los DEMÁS usuarios del mismo match que alguien se unió
+            BroadcastSystemNotificationToMatch(
+                ChatResultCode.Chat_UserConnected,
+                $"{request.Username} has joined",
+                request.MatchCode
+            );
+
+            UpdateUserListForMatch(request.MatchCode);
+        }
+
+        private void UpdateUserListForMatch(string matchCode)
+        {
+            if (string.IsNullOrEmpty(matchCode)) return;
+
+            var usersInMatch = ConnectedUsers
+                .Where(u => u.Value.MatchCode == matchCode)
+                .Select(u => u.Key)
+                .ToList();
+
+            var targetUsers = ConnectedUsers
+                .Where(u => u.Value.MatchCode == matchCode)
+                .ToArray();
+
+            foreach (var user in targetUsers)
+            {
+                SafeCallbackInvoke(user.Key, () =>
+                {
+                    user.Value.Callback.UpdateUserList(usersInMatch);
+                });
+            }
         }
 
         public void Disconnect(string username)
         {
             if (ConnectedUsers.TryRemove(username, out var userConnection))
             {
-                BroadcastSystemNotificationWithEnum(ChatResultCode.Chat_UserDisconnected, $"{username} has left");
-                UpdateUserList();
+                BroadcastSystemNotificationToMatch(
+                    ChatResultCode.Chat_UserDisconnected,
+                    $"{username} has left",
+                    userConnection.MatchCode
+                );
+
+                UpdateUserListForMatch(userConnection.MatchCode);
 
                 if (userConnection.Context == ContextLobby)
                 {
@@ -154,7 +198,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return;
             }
 
-            BroadcastMessageToAll(username, message);
+            BroadcastMessageToMatch(username, message, user.MatchCode);
         }
 
         private void HandleUserBan(string username, int strikes, int context, string matchCode)
@@ -169,13 +213,14 @@ namespace ArchsVsDinosServer.BusinessLogic
                 });
             }
 
-            BroadcastSystemNotificationWithEnum(
+            BroadcastSystemNotificationToMatch(
                 ChatResultCode.Chat_UserBanned,
-                $"{username} has been expelled for inappropriate behavior"
+                $"{username} has been expelled for inappropriate behavior",
+                matchCode
             );
 
             if (context == ContextLobby)
-                lobbyNotifier?.NotifyPlayerExpelled(user.MatchCode, user.UserId, "Inappropriate language");
+                lobbyNotifier?.NotifyPlayerExpelled(matchCode, user.UserId, "Inappropriate language");
             else
                 gameNotifier?.NotifyPlayerExpelled(matchCode, user.UserId, "Inappropriate language");
 
@@ -199,14 +244,10 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogWarning($"Insufficient players in lobby {lobbyCode}. Current: {lobbyPlayers}");
 
                 NotifyLobbyClosing(lobbyCode, "Insufficient players. Minimum required: 2 players");
-
                 lobbyNotifier?.NotifyLobbyClosure(lobbyCode, "Insufficient players");
-
-                DisconnectLobbyUsers(lobbyCode); // ✅ También debe recibir el código
+                DisconnectLobbyUsers(lobbyCode);
             }
         }
-
-
 
         private void CheckMinimumPlayersInGame(string matchCode)
         {
@@ -219,10 +260,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogWarning($"Insufficient players in game {matchCode}. Current: {gamePlayers}");
 
                 NotifyGameClosing(matchCode, "Insufficient players to continue");
-
-                gameNotifier?.NotifyGameClosure(matchCode,GameEndType.Aborted,"Insufficient players");
-
-
+                gameNotifier?.NotifyGameClosure(matchCode, GameEndType.Aborted, "Insufficient players");
                 DisconnectGameUsers(matchCode);
             }
         }
@@ -308,7 +346,9 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private void BroadcastSystemNotificationWithEnum(ChatResultCode code, string message)
+        // ========== MÉTODOS DE BROADCAST ESPECÍFICOS ==========
+
+        private void BroadcastSystemNotificationGlobal(ChatResultCode code, string message)
         {
             foreach (var user in ConnectedUsers.ToArray())
             {
@@ -319,9 +359,32 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private void BroadcastMessageToAll(string fromUser, string message)
+        private void BroadcastSystemNotificationToMatch(ChatResultCode code, string message, string matchCode)
         {
-            foreach (var user in ConnectedUsers.ToArray())
+            if (string.IsNullOrEmpty(matchCode)) return;
+
+            var targetUsers = ConnectedUsers
+                .Where(u => u.Value.MatchCode == matchCode)
+                .ToArray();
+
+            foreach (var user in targetUsers)
+            {
+                SafeCallbackInvoke(user.Key, () =>
+                {
+                    user.Value.Callback.ReceiveSystemNotification(code, message);
+                });
+            }
+        }
+
+        private void BroadcastMessageToMatch(string fromUser, string message, string matchCode)
+        {
+            if (string.IsNullOrEmpty(matchCode)) return;
+
+            var targetUsers = ConnectedUsers
+                .Where(u => u.Value.MatchCode == matchCode)
+                .ToArray();
+
+            foreach (var user in targetUsers)
             {
                 SafeCallbackInvoke(user.Key, () =>
                 {
@@ -332,14 +395,24 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         private void UpdateUserList()
         {
-            var users = ConnectedUsers.Keys.ToList();
+            // Agrupar usuarios por MatchCode
+            var groupedUsers = ConnectedUsers
+                .GroupBy(u => u.Value.MatchCode)
+                .ToList();
 
-            foreach (var user in ConnectedUsers.ToArray())
+            foreach (var group in groupedUsers)
             {
-                SafeCallbackInvoke(user.Key, () =>
+                // Obtener solo los usuarios de ESTE grupo específico
+                var usersInThisGroup = group.Select(u => u.Key).ToList();
+
+                // Notificar solo a los usuarios de este grupo
+                foreach (var user in group)
                 {
-                    user.Value.Callback.UpdateUserList(users);
-                });
+                    SafeCallbackInvoke(user.Key, () =>
+                    {
+                        user.Value.Callback.UpdateUserList(usersInThisGroup);
+                    });
+                }
             }
         }
 

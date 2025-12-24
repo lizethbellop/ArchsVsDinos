@@ -171,6 +171,7 @@
     <Compile Include="Utils\MusicPlayer.cs" />
     <Compile Include="Utils\MusicTracks.cs" />
     <Compile Include="Utils\NavigationUtils.cs" />
+    <Compile Include="Utils\PasswordValidator.cs" />
     <Compile Include="Utils\ServerStateChangedEventArgs.cs" />
     <Compile Include="Utils\ServiceOperationHelper.cs" />
     <Compile Include="Utils\SocialMediaHelper.cs" />

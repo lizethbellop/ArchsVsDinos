@@ -27,6 +27,7 @@ namespace ArchsVsDinosServer.Interfaces.Lobby
         IEnumerable<ActiveLobbyData> GetAllLobbies();
         ILobbyManagerCallback GetPlayerCallbackByUsername(string lobbyCode, string username);
         ILobbyManagerCallback FindUserCallbackInAnyLobby(string username);
+        ActiveLobbyData FindLobbyByPlayerNickname(string playerNickname);
 
     }
 }

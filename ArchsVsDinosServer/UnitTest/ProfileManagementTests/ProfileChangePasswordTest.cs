@@ -21,6 +21,7 @@ namespace UnitTest.ProfileManagementTests
     public class ProfileChangePasswordTest : ProfileManagementTestBase
     {
         private PasswordManager passwordManager;
+        private Mock<IPasswordValidator> mockPasswordValidator;
 
         [TestInitialize]
         public void Setup()
@@ -30,6 +31,7 @@ namespace UnitTest.ProfileManagementTests
             mockLoggerHelper = new Mock<ILoggerHelper>();
             mockDbContext = new Mock<IDbContext>();
             mockUserSet = new Mock<DbSet<UserAccount>>();
+            mockPasswordValidator = new Mock<IPasswordValidator>();
 
             CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
@@ -42,7 +44,7 @@ namespace UnitTest.ProfileManagementTests
                 () => mockDbContext.Object
             );
 
-            passwordManager = new PasswordManager(dependencies);
+            passwordManager = new PasswordManager(dependencies, mockPasswordValidator.Object);
         }
 
         [TestMethod]
@@ -57,7 +59,7 @@ namespace UnitTest.ProfileManagementTests
             UpdateResponse expectedResult = new UpdateResponse
             {
                 Success = false,
-                ResultCode =UpdateResultCode.Profile_EmptyFields
+                ResultCode = UpdateResultCode.Profile_EmptyFields
             };
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
@@ -87,10 +89,12 @@ namespace UnitTest.ProfileManagementTests
         public void TestChangePasswordTooShort()
         {
             string username = "user123";
-            string currentPassword = "password123";
+            string currentPassword = "Password123!";
             string newPassword = "short";
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(false, UpdateResultCode.Profile_PasswordTooShort));
 
             UpdateResponse expectedResult = new UpdateResponse
             {
@@ -103,13 +107,99 @@ namespace UnitTest.ProfileManagementTests
         }
 
         [TestMethod]
+        public void TestChangePasswordMissingUppercase()
+        {
+            string username = "user123";
+            string currentPassword = "Password123!";
+            string newPassword = "password123!";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(false, UpdateResultCode.Profile_PasswordNeedsUppercase));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_PasswordNeedsUppercase
+            };
+
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestChangePasswordMissingLowercase()
+        {
+            string username = "user123";
+            string currentPassword = "Password123!";
+            string newPassword = "PASSWORD123!";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(false, UpdateResultCode.Profile_PasswordNeedsLowercase));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_PasswordNeedsLowercase
+            };
+
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestChangePasswordMissingNumber()
+        {
+            string username = "user123";
+            string currentPassword = "Password123!";
+            string newPassword = "Password!";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(false, UpdateResultCode.Profile_PasswordNeedsNumber));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_PasswordNeedsNumber
+            };
+
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void TestChangePasswordMissingSpecialCharacter()
+        {
+            string username = "user123";
+            string currentPassword = "Password123!";
+            string newPassword = "Password123";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(false, UpdateResultCode.Profile_PasswordNeedsSpecialCharacter));
+
+            UpdateResponse expectedResult = new UpdateResponse
+            {
+                Success = false,
+                ResultCode = UpdateResultCode.Profile_PasswordNeedsSpecialCharacter
+            };
+
+            UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
         public void TestChangePasswordUserNotFound()
         {
             string username = "nonExistentUser";
-            string currentPassword = "password123";
-            string newPassword = "newPassword123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
             SetupMockUserSet(new List<UserAccount>());
 
             UpdateResponse expectedResult = new UpdateResponse
@@ -127,7 +217,7 @@ namespace UnitTest.ProfileManagementTests
         {
             string username = "user123";
             string currentPassword = "wrongPassword";
-            string newPassword = "newPassword123";
+            string newPassword = "NewPassword123!";
             string storedHashedPassword = "hashedCorrect";
 
             UserAccount userAccount = new UserAccount()
@@ -138,6 +228,8 @@ namespace UnitTest.ProfileManagementTests
             };
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
             mockSecurityHelper.Setup(s => s.VerifyPassword(currentPassword, storedHashedPassword)).Returns(false);
             SetupMockUserSet(new List<UserAccount> { userAccount });
 
@@ -155,8 +247,8 @@ namespace UnitTest.ProfileManagementTests
         public void TestChangePasswordSuccess()
         {
             string username = "user123";
-            string currentPassword = "password123";
-            string newPassword = "newPassword123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
             string hashedCurrentPassword = "hashedCurrent";
             string hashedNewPassword = "hashedNew";
 
@@ -168,6 +260,8 @@ namespace UnitTest.ProfileManagementTests
             };
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
             mockSecurityHelper.Setup(s => s.VerifyPassword(currentPassword, hashedCurrentPassword)).Returns(true);
             mockSecurityHelper.Setup(s => s.HashPassword(newPassword)).Returns(hashedNewPassword);
             SetupMockUserSet(new List<UserAccount> { userAccount });
@@ -181,15 +275,14 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse result = passwordManager.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
-
         }
 
         [TestMethod]
         public void TestChangePasswordUpdatesUserPassword()
         {
             string username = "user123";
-            string currentPassword = "password123";
-            string newPassword = "newPassword123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
             string hashedCurrentPassword = "hashedCurrent";
             string hashedNewPassword = "hashedNew";
 
@@ -201,6 +294,8 @@ namespace UnitTest.ProfileManagementTests
             };
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
             mockSecurityHelper.Setup(s => s.VerifyPassword(currentPassword, hashedCurrentPassword))
                 .Returns(true);
             mockSecurityHelper.Setup(s => s.HashPassword(newPassword)).Returns(hashedNewPassword);
@@ -216,8 +311,8 @@ namespace UnitTest.ProfileManagementTests
         public void TestChangePasswordCallsSaveChanges()
         {
             string username = "user123";
-            string currentPassword = "password123";
-            string newPassword = "newPassword123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
             string hashedCurrentPassword = "hashedCurrent";
             string hashedNewPassword = "hashedNew";
 
@@ -229,6 +324,8 @@ namespace UnitTest.ProfileManagementTests
             };
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
             mockSecurityHelper.Setup(s => s.VerifyPassword(currentPassword, hashedCurrentPassword))
                 .Returns(true);
             mockSecurityHelper.Setup(s => s.HashPassword(newPassword)).Returns(hashedNewPassword);
@@ -244,8 +341,8 @@ namespace UnitTest.ProfileManagementTests
         public void TestChangePasswordDatabaseValidationException()
         {
             string username = "user123";
-            string currentPassword = "password123";
-            string newPassword = "newPassword123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new DbEntityValidationException("Validation error"));
@@ -261,7 +358,7 @@ namespace UnitTest.ProfileManagementTests
                     () => mockDbContext.Object
              );
 
-            PasswordManager passwordManagerException = new PasswordManager(dependencies);
+            PasswordManager passwordManagerException = new PasswordManager(dependencies, mockPasswordValidator.Object);
 
             UpdateResponse expectedResult = new UpdateResponse
             {
@@ -277,8 +374,8 @@ namespace UnitTest.ProfileManagementTests
         public void TestChangePasswordUnexpectedError()
         {
             string username = "user123";
-            string currentPassword = "password123";
-            string newPassword = "newPassword123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
@@ -294,7 +391,7 @@ namespace UnitTest.ProfileManagementTests
                     () => mockDbContext.Object
              );
 
-            PasswordManager passwordManagerException = new PasswordManager(dependencies);
+            PasswordManager passwordManagerException = new PasswordManager(dependencies, mockPasswordValidator.Object);
 
             UpdateResponse expectedResult = new UpdateResponse
             {
@@ -304,15 +401,14 @@ namespace UnitTest.ProfileManagementTests
 
             UpdateResponse result = passwordManagerException.ChangePassword(username, currentPassword, newPassword);
             Assert.AreEqual(expectedResult, result);
-
         }
 
         [TestMethod]
         public void TestChangePasswordCallsHashPasswordWithNewPassword()
         {
             string username = "user123";
-            string currentPassword = "password123";
-            string newPassword = "newPassword123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
             string hashedCurrentPassword = "hashedCurrent";
             string hashedNewPassword = "hashedNew";
 
@@ -324,6 +420,8 @@ namespace UnitTest.ProfileManagementTests
             };
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
             mockSecurityHelper.Setup(s => s.VerifyPassword(currentPassword, hashedCurrentPassword))
                 .Returns(true);
             mockSecurityHelper.Setup(s => s.HashPassword(newPassword)).Returns(hashedNewPassword);
@@ -333,6 +431,22 @@ namespace UnitTest.ProfileManagementTests
             passwordManager.ChangePassword(username, currentPassword, newPassword);
 
             mockSecurityHelper.Verify(s => s.HashPassword(newPassword), Times.Once);
+        }
+
+        [TestMethod]
+        public void TestChangePasswordCallsValidatorWithNewPassword()
+        {
+            string username = "user123";
+            string currentPassword = "Password123!";
+            string newPassword = "NewPassword123!";
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(false, UpdateResultCode.Profile_PasswordTooShort));
+
+            passwordManager.ChangePassword(username, currentPassword, newPassword);
+
+            mockPasswordValidator.Verify(v => v.ValidatePassword(newPassword), Times.Once);
         }
     }
 }

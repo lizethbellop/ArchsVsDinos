@@ -855,4 +855,28 @@
   <data name="Lobby_InAnotherLobby" xml:space="preserve">
     <value>Jugador en otro lobby</value>
   </data>
+  <data name="Profile_PasswordTooLong" xml:space="preserve">
+    <value>La contraseña proporcionada es muy larga, verifique</value>
+  </data>
+  <data name="Profile_PasswordNeedsLowercase" xml:space="preserve">
+    <value>Se necesita al menos una letra minúscula</value>
+  </data>
+  <data name="Profile_PasswordNeedsUppercase" xml:space="preserve">
+    <value>La contraseña necesita al menos una mayúscula</value>
+  </data>
+  <data name="Profile_PasswordNeedsNumber" xml:space="preserve">
+    <value>La contraseña necesita al menos un número</value>
+  </data>
+  <data name="Profile_PasswordNeedsSpecialCharacter" xml:space="preserve">
+    <value>La contraseña necesita al menos un caracter especial</value>
+  </data>
+  <data name="GlobalServerUnavailable" xml:space="preserve">
+    <value>El servicio no está disponible por ahora</value>
+  </data>
+  <data name="GlobalServerTimeout" xml:space="preserve">
+    <value>Ha pasado un tiempo y no se obtiene respuesta del servidor</value>
+  </data>
+  <data name="Login_UnexpectedError" xml:space="preserve">
+    <value>Error ineperado con el sistema, agradecemos tu paciencia</value>
+  </data>
 </root>

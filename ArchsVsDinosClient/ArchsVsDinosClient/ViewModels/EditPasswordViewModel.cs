@@ -39,6 +39,19 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
+            if (CurrentPassword == NewPassword)
+            {
+                messageService.ShowMessage(Lang.Profile_SamePasswordValue);
+                return;
+            }
+
+            var validationResult = PasswordValidator.ValidatePassword(NewPassword);
+            if (!validationResult.IsValid)
+            {
+                messageService.ShowMessage(validationResult.ErrorMessage);
+                return;
+            }
+
             string currentUsername = UserSession.Instance.CurrentUser.Username;
             UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
                 profileService,

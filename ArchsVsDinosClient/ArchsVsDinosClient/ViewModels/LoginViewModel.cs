@@ -25,7 +25,7 @@ namespace ArchsVsDinosClient.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
-        private readonly IAuthenticationServiceClient authenticationService;
+        private IAuthenticationServiceClient authenticationService;
         private readonly IMessageService messageService;
         private readonly ILogger log;
 
@@ -56,6 +56,28 @@ namespace ArchsVsDinosClient.ViewModels
             authenticationService.ConnectionError += OnConnectionError;
         }
 
+        private void ResetAuthenticationService()
+        {
+            if (authenticationService is ICommunicationObject comm)
+            {
+                try
+                {
+                    if (comm.State == CommunicationState.Faulted)
+                        comm.Abort();
+                    else
+                        comm.Close();
+                }
+                catch
+                {
+                    comm.Abort();
+                }
+            }
+
+            authenticationService = new AuthenticationServiceClient();
+            authenticationService.ConnectionError += OnConnectionError;
+        }
+
+
         public async Task LoginAsync()
         {
             if (!ValidateInputs(Username, Password))
@@ -64,35 +86,46 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            var response = await authenticationService.LoginAsync(Username, Password);
-
-            if (!authenticationService.IsServerAvailable)
+            try
             {
-                messageService.ShowMessage(
-                    authenticationService.LastErrorTitle + "\n" +
-                    authenticationService.LastErrorMessage
-                );
-                return;
-            }
+                var response = await authenticationService.LoginAsync(Username, Password);
 
-            if (response == null || !response.Success)
+                if (response == null || !response.Success)
+                {
+                    string message = LoginResultCodeHelper.GetMessage(
+                        response?.ResultCode ?? LoginResultCode.Authentication_UnexpectedError
+                    );
+                    messageService.ShowMessage(message);
+                    return;
+                }
+
+                string successMessage = LoginResultCodeHelper.GetMessage(response.ResultCode);
+                messageService.ShowMessage(successMessage);
+
+                var user = response.UserSession.ToUserDTO();
+                var player = response.AssociatedPlayer.ToPlayerDTO();
+
+                UserSession.Instance.Login(user, player);
+                RequestClose?.Invoke(this, EventArgs.Empty);
+            }
+            catch (CommunicationException)
             {
-                string message = LoginResultCodeHelper.GetMessage(
-                    response?.ResultCode ?? LoginResultCode.Authentication_UnexpectedError
-                );
-                messageService.ShowMessage(message);
-                return;
+                ResetAuthenticationService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
             }
-
-            string successMessage = LoginResultCodeHelper.GetMessage(response.ResultCode);
-            messageService.ShowMessage(successMessage);
-
-            var user = response.UserSession.ToUserDTO();
-            var player = response.AssociatedPlayer.ToPlayerDTO();
-
-            UserSession.Instance.Login(user, player);
-            RequestClose?.Invoke(this, EventArgs.Empty);
+            catch (TimeoutException)
+            {
+                ResetAuthenticationService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception ex)
+            {
+                ResetAuthenticationService();
+                log.LogError("Unexpected error: ", ex);
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
         }
+
 
         private void OnConnectionError(string title, string message)
         {

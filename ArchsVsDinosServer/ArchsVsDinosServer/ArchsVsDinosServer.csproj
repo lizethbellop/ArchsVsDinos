@@ -207,6 +207,7 @@
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\IInvitationSendHelper.cs" />
     <Compile Include="Interfaces\ILoggerHelper.cs" />
+    <Compile Include="Interfaces\IPasswordValidator.cs" />
     <Compile Include="Interfaces\ISecurityHelper.cs" />
     <Compile Include="Interfaces\IStrikeManager.cs" />
     <Compile Include="Interfaces\IValidationHelper.cs" />
@@ -283,6 +284,7 @@
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbySession.cs" />
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyValidationHelper.cs" />
     <Compile Include="Utils\LoggerHelper.cs" />
+    <Compile Include="Utils\PasswordValidator.cs" />
     <Compile Include="Utils\ProfanityFilter.cs" />
     <Compile Include="Utils\RegisterServiceDependencies.cs" />
     <Compile Include="Utils\SafeCodeGenerator.cs" />

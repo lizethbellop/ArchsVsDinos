@@ -14,14 +14,18 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
 {
     public class PasswordManager : BaseProfileService
     {
-        public PasswordManager(ServiceDependencies dependencies)
-        : base(dependencies)
+        private readonly IPasswordValidator passwordValidator;
+
+        public PasswordManager(ServiceDependencies dependencies, IPasswordValidator passwordValidator = null)
+            : base(dependencies)
         {
+            this.passwordValidator = passwordValidator ?? new PasswordValidator();
         }
 
         public PasswordManager()
             : base(new ServiceDependencies())
         {
+            this.passwordValidator = new PasswordValidator();
         }
 
         public UpdateResponse ChangePassword(string username, string currentPassword, string newPassword)
@@ -44,17 +48,17 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     return response;
                 }
 
-                if (newPassword.Length < 8)
+                var passwordValidation = passwordValidator.ValidatePassword(newPassword);
+                if (!passwordValidation.IsValid)
                 {
                     response.Success = false;
-                    response.ResultCode = UpdateResultCode.Profile_PasswordTooShort;
+                    response.ResultCode = passwordValidation.ResultCode;
                     return response;
                 }
 
                 using (var context = GetContext())
                 {
                     var userAccount = context.UserAccount.FirstOrDefault(u => u.username == username);
-
                     if (userAccount == null)
                     {
                         response.Success = false;
@@ -75,8 +79,6 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                     response.Success = true;
                     response.ResultCode = UpdateResultCode.Profile_ChangePasswordSuccess;
                     return response;
-
-
                 }
             }
             catch (DbEntityValidationException ex)
@@ -86,6 +88,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             }
             catch (Exception ex)
             {
+                loggerHelper.LogError("Error inesperado en ChangePassword", ex);
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }

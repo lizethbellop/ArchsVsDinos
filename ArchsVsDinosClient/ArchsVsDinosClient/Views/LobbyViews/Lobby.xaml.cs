@@ -49,11 +49,39 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
             viewModel.LobbyConnectionLost += OnLobbyConnectionLost;
             viewModel.NavigateToGame += OnNavigateToGame;
+            viewModel.NavigateToLobbyAsGuest += OnNavigateToLobbyAsGuest;
 
             if (isHost)
             {
                 viewModel.InitializeLobby();
             }
+        }
+
+        private void OnNavigateToLobbyAsGuest(string lobbyCode)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                try
+                {
+                    Debug.WriteLine($"[LOBBY] Navigating to new lobby as guest: {lobbyCode}");
+
+                    var lobbyServiceClient = new LobbyServiceClient();
+                    Lobby newLobbyWindow = new Lobby(false, lobbyServiceClient);
+
+                    newLobbyWindow.Show();
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LOBBY] Error navigating to new lobby: {ex.Message}");
+                    MessageBox.Show(
+                        "Error al abrir el nuevo lobby.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+            });
         }
 
         private void OnLobbyConnectionLost(string title, string message)
@@ -154,7 +182,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        // Actualiza este método existente
         private async void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
@@ -189,7 +216,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        // Agrega este nuevo método
         private void Click_BtnInviteFriend(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -202,7 +228,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             viewModel?.InviteFriendToLobby(friendUsername);
         }
 
-        // Este ya lo tienes, solo actualízalo para limpiar el ItemsSource
         private void Click_BtnCancelInviteFriend(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
@@ -233,6 +258,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             if (viewModel != null)
             {
                 viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;
+                viewModel.NavigateToGame -= OnNavigateToGame;
+                viewModel.NavigateToLobbyAsGuest -= OnNavigateToLobbyAsGuest; // ← AGREGAR ESTA LÍNEA
                 viewModel.Cleanup();
             }
 
@@ -241,7 +268,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 try
                 {
                     await viewModel.Chat.DisconnectAsync();
-                    viewModel.NavigateToGame -= OnNavigateToGame;
                     viewModel.Chat.Dispose();
                 }
                 catch (Exception ex)

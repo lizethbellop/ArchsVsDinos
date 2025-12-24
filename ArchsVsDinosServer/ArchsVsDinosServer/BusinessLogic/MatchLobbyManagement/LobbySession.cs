@@ -223,5 +223,34 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
                 return null;
             }
         }
+
+        public ActiveLobbyData FindLobbyByPlayerNickname(string playerNickname)
+        {
+            if (string.IsNullOrWhiteSpace(playerNickname))
+            {
+                return null;
+            }
+
+            lock (syncRoot)
+            {
+                foreach (var kvp in activeLobbies)
+                {
+                    var lobby = kvp.Value;
+                    lock (lobby.LobbyLock)
+                    {
+                        var player = lobby.Players.FirstOrDefault(p =>
+                            p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
+
+                        if (player != null)
+                        {
+                            return lobby;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
     }
 }

@@ -3,13 +3,14 @@ using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Interfaces.Game;
 using ArchsVsDinosServer.Interfaces.Lobby;
 using ArchsVsDinosServer.Model;
-using Contracts.DTO.Result_Codes;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Response;
+using Contracts.DTO.Result_Codes;
 using log4net.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -184,56 +185,22 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             try
             {
-                var callback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
-
+                var callback = GetPlayerCallback();
                 if (callback == null)
                 {
-                    logger.LogWarning("RegisterConnection failed to get callback channel.");
                     return;
                 }
 
-                var lobby = core.Session.GetLobby(lobbyCode);
+                DisconnectFromPreviousLobby(playerNickname, lobbyCode);
 
+                var lobby = ValidateAndGetLobby(lobbyCode, playerNickname);
                 if (lobby == null)
                 {
-                    logger.LogWarning($"Player registered connection but lobby {lobbyCode} was not found.");
                     return;
                 }
 
-                core.Session.ConnectPlayerCallback(lobbyCode, playerNickname, callback);
-
-                lock (lobby.LobbyLock)
-                {
-                    var existingPlayer = lobby.Players.FirstOrDefault(p =>
-                        p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
-
-                    if (existingPlayer == null)
-                    {
-                        logger.LogWarning($"Player {playerNickname} not found in lobby {lobbyCode} players list!");
-                        return;
-                    }
-                }
-
-                try
-                {
-                    var currentList = MapPlayersToDTOs(lobby);
-                    callback.UpdateListOfPlayers(currentList);
-                    logger.LogInfo($"Sent initial state to {playerNickname}: {currentList.Length} players");
-                }
-                catch (Exception ex)
-                {
-                    logger.LogWarning($"Failed to send initial state to {playerNickname}: {ex.Message}");
-                }
-
-                core.Session.Broadcast(lobbyCode, cb =>
-                {
-                    if (cb != callback) 
-                    {
-                        cb.PlayerJoinedLobby(playerNickname);
-                    }
-                });
-
-                core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
+                RegisterPlayerConnection(lobbyCode, playerNickname, callback, lobby);
+                NotifyPlayersAboutNewConnection(lobbyCode, playerNickname, callback, lobby);
             }
             catch (CommunicationException ex)
             {
@@ -247,6 +214,84 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 logger.LogWarning($"Critical error registering connection: {ex.Message}");
             }
+        }
+
+        private ILobbyManagerCallback GetPlayerCallback()
+        {
+            var callback = OperationContext.Current.GetCallbackChannel<ILobbyManagerCallback>();
+
+            if (callback == null)
+            {
+                logger.LogWarning("RegisterConnection failed to get callback channel.");
+            }
+
+            return callback;
+        }
+
+        private void DisconnectFromPreviousLobby(string playerNickname, string currentLobbyCode)
+        {
+            var existingLobby = core.Session.FindLobbyByPlayerNickname(playerNickname);
+
+            if (existingLobby != null && existingLobby.LobbyCode != currentLobbyCode)
+            {
+                logger.LogInfo($"Player {playerNickname} was in lobby {existingLobby.LobbyCode}, removing before connecting to {currentLobbyCode}");
+                core.Session.DisconnectPlayerCallback(existingLobby.LobbyCode, playerNickname);
+                HandlePlayerExit(existingLobby.LobbyCode, playerNickname);
+            }
+        }
+
+        private ActiveLobbyData ValidateAndGetLobby(string lobbyCode, string playerNickname)
+        {
+            var lobby = core.Session.GetLobby(lobbyCode);
+
+            if (lobby == null)
+            {
+                logger.LogWarning($"Player registered connection but lobby {lobbyCode} was not found.");
+                return null;
+            }
+
+            lock (lobby.LobbyLock)
+            {
+                var existingPlayer = lobby.Players.FirstOrDefault(p =>
+                    p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
+
+                if (existingPlayer == null)
+                {
+                    logger.LogWarning($"Player {playerNickname} not found in lobby {lobbyCode} players list!");
+                    return null;
+                }
+            }
+
+            return lobby;
+        }
+
+        private void RegisterPlayerConnection(string lobbyCode, string playerNickname, ILobbyManagerCallback callback, ActiveLobbyData lobby)
+        {
+            core.Session.ConnectPlayerCallback(lobbyCode, playerNickname, callback);
+
+            try
+            {
+                var currentList = MapPlayersToDTOs(lobby);
+                callback.UpdateListOfPlayers(currentList);
+                logger.LogInfo($"Sent initial state to {playerNickname}: {currentList.Length} players");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"Failed to send initial state to {playerNickname}: {ex.Message}");
+            }
+        }
+
+        private void NotifyPlayersAboutNewConnection(string lobbyCode, string playerNickname, ILobbyManagerCallback newPlayerCallback, ActiveLobbyData lobby)
+        {
+            core.Session.Broadcast(lobbyCode, cb =>
+            {
+                if (cb != newPlayerCallback)
+                {
+                    cb.PlayerJoinedLobby(playerNickname);
+                }
+            });
+
+            core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(MapPlayersToDTOs(lobby)));
         }
 
         public Task UpdatePlayerReadyStatus(string lobbyCode, string playerName, bool isReady)
