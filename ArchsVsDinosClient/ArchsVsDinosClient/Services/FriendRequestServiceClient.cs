@@ -19,12 +19,12 @@ namespace ArchsVsDinosClient.Services
         private readonly FriendRequestCallbackHandler callback;
         private readonly WcfConnectionGuardian guardian;
         private readonly SynchronizationContext syncContext;
-        private bool isDisposed;
         private readonly object clientLock = new object();
+        private bool isDisposed;
 
         private string currentUsername;
         private Timer reconnectionTimer;
-        private int reconnectionAttempts = 0;
+        private int reconnectionAttempts;
         private const int MaxReconnectionAttempts = 5;
         private const int ReconnectionIntervalMs = 5000;
 
@@ -62,26 +62,18 @@ namespace ArchsVsDinosClient.Services
         {
             lock (clientLock)
             {
-                try
+                context = new InstanceContext(callback)
                 {
-                    context = new InstanceContext(callback);
-                    context.SynchronizationContext = syncContext;
-                    client = new FriendRequestManagerClient(context);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error al inicializar cliente: {ex.Message}");
-                }
+                    SynchronizationContext = syncContext
+                };
+
+                client = new FriendRequestManagerClient(context);
             }
         }
 
         private bool IsClientUsable()
         {
-            lock (clientLock)
-            {
-                return client != null &&
-                       client.State == CommunicationState.Opened;
-            }
+            return client != null && client.State == CommunicationState.Opened;
         }
 
         private void EnsureClientIsUsable()
@@ -92,12 +84,7 @@ namespace ArchsVsDinosClient.Services
                     client.State == CommunicationState.Closed ||
                     client.State == CommunicationState.Faulted)
                 {
-                    try
-                    {
-                        client?.Abort();
-                    }
-                    catch { }
-
+                    try { client?.Abort(); } catch { }
                     InitializeClient();
                     guardian.MonitorClientState(client);
                 }
@@ -107,19 +94,14 @@ namespace ArchsVsDinosClient.Services
         private void OnServerStateChanged(object sender, ServerStateChangedEventArgs e)
         {
             if (!e.IsAvailable)
-            {
                 StartReconnectionProcess();
-            }
             else
-            {
-                StopReconnectionTimer();
-                reconnectionAttempts = 0;
-            }
+                StopReconnectionProcess();
         }
 
         private void StartReconnectionProcess()
         {
-            StopReconnectionTimer();
+            StopReconnectionProcess();
             reconnectionAttempts = 0;
 
             reconnectionTimer = new Timer(
@@ -130,58 +112,42 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
-        private void StopReconnectionTimer()
+        private void StopReconnectionProcess()
         {
             reconnectionTimer?.Dispose();
             reconnectionTimer = null;
+            reconnectionAttempts = 0;
         }
 
-        private async void TryReconnect(object state)
+        private void TryReconnect(object state)
         {
             if (reconnectionAttempts >= MaxReconnectionAttempts)
             {
-                StopReconnectionTimer();
-                Console.WriteLine("Máximo de intentos de reconexión alcanzado");
+                StopReconnectionProcess();
                 return;
             }
 
             reconnectionAttempts++;
-            Console.WriteLine($"Intento de reconexión {reconnectionAttempts}/{MaxReconnectionAttempts}");
 
             lock (clientLock)
             {
                 try
                 {
-                    if (client != null)
-                    {
-                        try
-                        {
-                            client.Abort();
-                        }
-                        catch { }
-                    }
-
+                    client?.Abort();
                     InitializeClient();
                     guardian.MonitorClientState(client);
 
                     if (!string.IsNullOrEmpty(currentUsername))
                     {
                         client.Subscribe(currentUsername);
-
-                        Console.WriteLine("Reconexión exitosa");
-                        guardian.RestoreNormalMode();
-                        StopReconnectionTimer();
-                        reconnectionAttempts = 0;
-
-                        ServerReconnected?.Invoke();
-
                         client.GetPendingRequests(currentUsername);
+
+                        guardian.RestoreNormalMode();
+                        StopReconnectionProcess();
+                        ServerReconnected?.Invoke();
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Fallo en reconexión: {ex.Message}");
-                }
+                catch { }
             }
         }
 
@@ -192,172 +158,108 @@ namespace ArchsVsDinosClient.Services
 
         public void SendFriendRequest(string fromUser, string toUser)
         {
-            _ = guardian.ExecuteAsync(
-                async () =>
-                {
-                    EnsureClientIsUsable();
-                    await Task.Run(() => client.SendFriendRequest(fromUser, toUser));
-                },
-                operationName: "enviar solicitud de amistad"
-            );
+            _ = guardian.ExecuteAsync(() =>
+            {
+                EnsureClientIsUsable();
+                client.SendFriendRequest(fromUser, toUser);
+                return Task.CompletedTask;
+            });
         }
 
         public void AcceptFriendRequest(string fromUser, string toUser)
         {
-            _ = guardian.ExecuteAsync(
-                async () =>
-                {
-                    EnsureClientIsUsable();
-                    await Task.Run(() => client.AcceptFriendRequest(fromUser, toUser));
-                },
-                operationName: "aceptar solicitud de amistad"
-            );
+            _ = guardian.ExecuteAsync(() =>
+            {
+                EnsureClientIsUsable();
+                client.AcceptFriendRequest(fromUser, toUser);
+                return Task.CompletedTask;
+            });
         }
 
         public void RejectFriendRequest(string fromUser, string toUser)
         {
-            _ = guardian.ExecuteAsync(
-                async () =>
-                {
-                    EnsureClientIsUsable();
-                    await Task.Run(() => client.RejectFriendRequest(fromUser, toUser));
-                },
-                operationName: "rechazar solicitud de amistad"
-            );
+            _ = guardian.ExecuteAsync(() =>
+            {
+                EnsureClientIsUsable();
+                client.RejectFriendRequest(fromUser, toUser);
+                return Task.CompletedTask;
+            });
         }
 
         public void GetPendingRequests(string username)
         {
-            _ = guardian.ExecuteAsync(
-                async () =>
-                {
-                    EnsureClientIsUsable();
-                    await Task.Run(() => client.GetPendingRequests(username));
-                },
-                operationName: "obtener solicitudes pendientes"
-            );
+            _ = guardian.ExecuteAsync(() =>
+            {
+                EnsureClientIsUsable();
+                client.GetPendingRequests(username);
+                return Task.CompletedTask;
+            });
         }
 
-        public void Subscribe(string username)
+        public async Task Subscribe(string username)
         {
             currentUsername = username;
 
-            _ = guardian.ExecuteAsync(
-                async () =>
-                {
-                    EnsureClientIsUsable();
-                    await Task.Run(() => client.Subscribe(username));
-                },
-                operationName: "suscribir a notificaciones"
-            );
+            await guardian.ExecuteAsync(() =>
+            {
+                EnsureClientIsUsable();
+                client.Subscribe(username);
+                return Task.CompletedTask;
+            });
         }
 
         public void Unsubscribe(string username)
         {
-            // Si el cliente no está usable, no hacer nada
             if (!IsClientUsable())
             {
                 currentUsername = null;
                 return;
             }
 
-            // Hacerlo directo con try-catch, sin guardián ni async
             try
             {
-                lock (clientLock)
-                {
-                    if (IsClientUsable())
-                    {
-                        client.Unsubscribe(username);
-                        currentUsername = null;
-                    }
-                }
-            }
-            catch (ObjectDisposedException ex)
-            {
-                Console.WriteLine($"Cliente ya desechado al desuscribir: {ex.Message}");
+                client.Unsubscribe(username);
                 currentUsername = null;
             }
-            catch (CommunicationException ex)
-            {
-                Console.WriteLine($"Error de comunicación al desuscribir: {ex.Message}");
-                currentUsername = null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al desuscribir: {ex.Message}");
-                currentUsername = null;
-            }
+            catch { }
         }
 
-        private void OnFriendRequestSent(bool success)
-        {
+        private void OnFriendRequestSent(bool success) =>
             FriendRequestSent?.Invoke(success);
-        }
 
-        private void OnFriendRequestAccepted(bool success)
-        {
+        private void OnFriendRequestAccepted(bool success) =>
             FriendRequestAccepted?.Invoke(success);
-        }
 
-        private void OnFriendRequestRejected(bool success)
-        {
+        private void OnFriendRequestRejected(bool success) =>
             FriendRequestRejected?.Invoke(success);
-        }
 
-        private void OnPendingRequestsReceived(string[] requests)
-        {
+        private void OnPendingRequestsReceived(string[] requests) =>
             PendingRequestsReceived?.Invoke(requests);
-        }
 
-        private void OnFriendRequestReceived(string fromUser)
-        {
+        private void OnFriendRequestReceived(string fromUser) =>
             FriendRequestReceived?.Invoke(fromUser);
-        }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
             if (isDisposed) return;
 
-            if (disposing)
+            StopReconnectionProcess();
+
+            lock (clientLock)
             {
-                StopReconnectionTimer();
-
-                lock (clientLock)
+                try
                 {
-                    if (callback != null)
-                    {
-                        callback.FriendRequestSent -= OnFriendRequestSent;
-                        callback.FriendRequestAccepted -= OnFriendRequestAccepted;
-                        callback.FriendRequestRejected -= OnFriendRequestRejected;
-                        callback.PendingRequestsReceived -= OnPendingRequestsReceived;
-                        callback.FriendRequestReceived -= OnFriendRequestReceived;
-                    }
-
-                    if (client != null)
-                    {
-                        try
-                        {
-                            if (client.State == CommunicationState.Opened)
-                                client.Close();
-                            else
-                                client.Abort();
-                        }
-                        catch
-                        {
-                            client.Abort();
-                        }
-                    }
+                    if (client?.State == CommunicationState.Opened)
+                        client.Close();
+                    else
+                        client?.Abort();
                 }
+                catch { }
             }
 
             isDisposed = true;
         }
+
     }
+
 }

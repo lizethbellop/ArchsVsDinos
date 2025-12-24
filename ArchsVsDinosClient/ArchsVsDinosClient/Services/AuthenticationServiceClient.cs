@@ -44,12 +44,12 @@ namespace ArchsVsDinosClient.Services
 
         public async Task<LoginResponse> LoginAsync(string username, string password)
         {
-            return await guardian.ExecuteAsync(
+            return await guardian.ExecuteWithThrowAsync(
                 () => Task.FromResult(client.Login(username, password)),
-                defaultValue: new LoginResponse { Success = false, ResultCode = LoginResultCode.Authentication_UnexpectedError },
                 operationName: "Login"
             );
         }
+
 
         public void Dispose()
         {

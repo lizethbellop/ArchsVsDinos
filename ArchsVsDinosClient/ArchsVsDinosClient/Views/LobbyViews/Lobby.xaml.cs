@@ -31,12 +31,14 @@ namespace ArchsVsDinosClient.Views.LobbyViews
     {
         private readonly LobbyViewModel viewModel;
         private string currentUsername;
+        private bool handledConnectionLost = false;
 
         public Lobby() : this(true) { }
 
         public Lobby(bool isHost, ILobbyServiceClient client = null)
         {
             InitializeComponent();
+
             currentUsername = UserSession.Instance.CurrentUser.Username;
 
             if (client == null)
@@ -51,11 +53,23 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             viewModel.NavigateToGame += OnNavigateToGame;
             viewModel.NavigateToLobbyAsGuest += OnNavigateToLobbyAsGuest;
 
-            if (isHost)
+            Loaded += async (_, __) =>
             {
-                viewModel.InitializeLobby();
-            }
+                if (isHost)
+                {
+                    bool success = await viewModel.InitializeLobbyAsync();
+
+                    if (!success)
+                    {
+                        Close();
+                    }
+                }
+            };
+
+
+
         }
+
 
         private void OnNavigateToLobbyAsGuest(string lobbyCode)
         {
@@ -86,21 +100,24 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
         private void OnLobbyConnectionLost(string title, string message)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (handledConnectionLost)
+                return;
+
+            handledConnectionLost = true;
+
+            Dispatcher.Invoke(() =>
             {
                 MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                try
+                var main = Application.Current.MainWindow;
+
+                if (main != null)
                 {
-                    MainWindow mainWindow = new MainWindow();
-                    mainWindow.Show();
-                    this.Close();
+                    main.Show();
+                    main.Activate();
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[LOBBY] Error opening MainWindow: {ex.Message}");
-                    this.Close();
-                }
+
+                this.Close();
             });
         }
 
@@ -232,7 +249,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             SoundButton.PlayDestroyingRockSound();
             Gr_MyFriends.Visibility = Visibility.Collapsed;
-            FriendsList.ItemsSource = null; 
+            FriendsList.ItemsSource = null;
         }
 
         private void Click_BtnInvitePlayerByEmail(object sender, RoutedEventArgs e)
@@ -259,7 +276,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             {
                 viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;
                 viewModel.NavigateToGame -= OnNavigateToGame;
-                viewModel.NavigateToLobbyAsGuest -= OnNavigateToLobbyAsGuest; // ← AGREGAR ESTA LÍNEA
+                viewModel.NavigateToLobbyAsGuest -= OnNavigateToLobbyAsGuest;
                 viewModel.Cleanup();
             }
 

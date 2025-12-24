@@ -31,6 +31,8 @@ namespace ArchsVsDinosClient.ViewModels
         private List<string> currentFriendsList;
         public event Action<string> NavigateToLobbyAsGuest;
 
+        private bool isInitializing = false;
+
         public ObservableCollection<SlotLobby> Slots { get; set; }
 
         public string MatchCode
@@ -83,21 +85,6 @@ namespace ArchsVsDinosClient.ViewModels
 
             Chat.ChatDegraded += OnChatDegraded;
             Chat.RequestWindowClose += OnChatRequestWindowClose;
-        }
-
-        private void OnFriendRequestSentResult(bool success)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (success)
-                {
-                    MessageBox.Show(Lang.FriendRequest_SentSuccess);
-                }
-                else
-                {
-                    MessageBox.Show(Lang.FriendRequest_SentError);
-                }
-            });
         }
 
         public async Task<List<string>> LoadFriendsAsync()
@@ -185,25 +172,29 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 Debug.WriteLine($"[LOBBY VM] ConnectionError: {title} - {message}");
 
-                if (LobbyConnectionLost != null)
+                if (!isInitializing && LobbyConnectionLost != null)
                 {
                     LobbyConnectionLost(
                         "Conexión perdida",
                         "Se perdió la conexión con el servidor. Serás redirigido al menú principal."
                     );
                 }
+                else
+                {
+                    Debug.WriteLine($"[LOBBY VM] Error ignorado durante inicialización");
+                }
             });
         }
 
-        public async void InitializeLobby()
+        public async Task<bool> InitializeLobbyAsync()
         {
-            if (UserSession.Instance.CurrentUser == null) return;
+            if (UserSession.Instance.CurrentUser == null)
+                return false;
 
             if (lobbyServiceClient == null)
-            {
-                MessageBox.Show("Error crítico: No hay conexión con el servicio del Lobby.");
-                return;
-            }
+                return false;
+
+            isInitializing = true;
 
             var userAccount = new ArchsVsDinosClient.DTO.UserAccountDTO
             {
@@ -211,38 +202,47 @@ namespace ArchsVsDinosClient.ViewModels
                 IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
             };
 
-            MatchCreationResultCode result = await lobbyServiceClient.CreateLobbyAsync(userAccount);
-
-            if (result == MatchCreationResultCode.MatchCreation_Success)
+            try
             {
-                this.MatchCode = UserSession.Instance.CurrentMatchCode;
+                MatchCreationResultCode result =
+                    await lobbyServiceClient.CreateLobbyAsync(userAccount);
 
-                UpdateSlot(0, new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+                if (result == MatchCreationResultCode.MatchCreation_Success)
                 {
-                    Nickname = userAccount.Nickname,
-                    IsHost = true,
-                    IsReady = false
-                });
+                    MatchCode = UserSession.Instance.CurrentMatchCode;
 
-                await ConnectChatAsync();
-            }
-            else
-            {
-                string msg = LobbyResultCodeHelper.GetMessage(result);
-                MessageBox.Show(msg);
-
-                if (result == MatchCreationResultCode.MatchCreation_Failure)
-                {
-                    if (LobbyConnectionLost != null)
+                    UpdateSlot(0, new ArchsVsDinosClient.DTO.LobbyPlayerDTO
                     {
-                        LobbyConnectionLost(
-                            "Error al crear lobby",
-                            "No se pudo conectar con el servidor. Intenta nuevamente."
-                        );
-                    }
+                        Nickname = userAccount.Nickname,
+                        IsHost = true,
+                        IsReady = false
+                    });
+
+                    await ConnectChatAsync();
+                    return true;
                 }
+
+                LobbyConnectionLost?.Invoke(
+                    "Error al crear lobby",
+                    LobbyResultCodeHelper.GetMessage(result)
+                );
+
+                return false;
+            }
+            catch
+            {
+                LobbyConnectionLost?.Invoke(
+                    "Error de conexión",
+                    "No se pudo conectar con el servidor."
+                );
+                return false;
+            }
+            finally
+            {
+                isInitializing = false;
             }
         }
+
 
         public void SendFriendRequest(string targetUsername)
         {
@@ -284,7 +284,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             for (int i = 0; i < 4; i++) Slots.Add(new SlotLobby { Username = "" });
         }
-        
+
         private void OnPlayerListUpdated(List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
         {
             Debug.WriteLine($"[LOBBY] OnPlayerListUpdated called with {players.Count} players");
@@ -704,33 +704,6 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        private async Task ReloadCurrentLobby(string newLobbyCode)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Debug.WriteLine($"[LOBBY VM] Recargando lobby con código: {newLobbyCode}");
-
-                this.MatchCode = newLobbyCode;
-
-                foreach (var slot in Slots)
-                {
-                    slot.Username = "";
-                    slot.Nickname = "";
-                    slot.IsReady = false;
-                    slot.IsLocalPlayer = false;
-                    slot.CanKick = false;
-                    slot.IsFriend = false;
-                    slot.ProfilePicture = null;
-                }
-
-                this.IsHost = false;
-            });
-
-            await Task.Delay(500);
-
-            Debug.WriteLine("[LOBBY VM] Lobby recargado, esperando actualización de jugadores del servidor...");
-        }
-
         private async Task ReconnectChatToNewLobby(string lobbyCode)
         {
             if (Chat == null)
@@ -752,16 +725,6 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 Debug.WriteLine($"[LOBBY VM] Error reconectando chat: {ex.Message}");
             }
-        }
-
-        private void ShowSuccessMessage()
-        {
-            MessageBox.Show(
-                "Te has unido al lobby exitosamente.",
-                "Éxito",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
-            );
         }
 
         private void HandleJoinFailure(JoinMatchResultCode resultCode)

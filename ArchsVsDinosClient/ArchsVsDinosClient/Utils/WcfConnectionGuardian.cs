@@ -56,6 +56,7 @@ namespace ArchsVsDinosClient.Utils
             }
         }
 
+        // ⭐ VERSIÓN ORIGINAL: Traga excepciones y retorna defaultValue (para fire-and-forget)
         public async Task<T> ExecuteAsync<T>(Func<Task<T>> operation, T defaultValue = default(T), string operationName = "Operación")
         {
             operationInProgress = true;
@@ -72,6 +73,30 @@ namespace ArchsVsDinosClient.Utils
             {
                 HandleException(ex, operationName);
                 return defaultValue;
+            }
+            finally
+            {
+                operationInProgress = false;
+            }
+        }
+
+        // ⭐ NUEVA VERSIÓN: Relanza excepciones para que el caller las maneje
+        public async Task<T> ExecuteWithThrowAsync<T>(Func<Task<T>> operation, string operationName = "Operación")
+        {
+            operationInProgress = true;
+
+            try
+            {
+                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación con throw: {operationName}");
+                var result = await operation();
+                UpdateServerState(true);
+                errorAlreadyReported = false;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex, operationName);
+                throw; // ⭐ RELANZA para que el caller la atrape
             }
             finally
             {

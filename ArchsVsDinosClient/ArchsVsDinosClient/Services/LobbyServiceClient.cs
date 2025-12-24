@@ -15,7 +15,7 @@ namespace ArchsVsDinosClient.Services
 {
     public class LobbyServiceClient : ILobbyServiceClient
     {
-        private readonly LobbyManagerClient lobbyManagerClient;
+        private LobbyManagerClient lobbyManagerClient;
         private readonly LobbyCallbackManager lobbyCallbackManager;
         private readonly WcfConnectionGuardian connectionGuardian;
 
@@ -73,10 +73,11 @@ namespace ArchsVsDinosClient.Services
 
             try
             {
-                var response = await connectionGuardian.ExecuteAsync(async () =>
-                {
-                    return await Task.Run(() => lobbyManagerClient.CreateLobby(matchSettings));
-                });
+                EnsureClientIsUsable();
+
+                var response = await connectionGuardian.ExecuteWithThrowAsync(() =>
+                    Task.FromResult(lobbyManagerClient.CreateLobby(matchSettings))
+                );
 
                 if (response.Success)
                 {
@@ -88,36 +89,42 @@ namespace ArchsVsDinosClient.Services
             }
             catch (EndpointNotFoundException endpointEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Servidor no disponible", "No se encontró el servidor del lobby.");
                 Debug.WriteLine($"[LOBBY CLIENT] EndpointNotFoundException: {endpointEx.Message}");
                 return MatchCreationResultCode.MatchCreation_ServerBusy;
             }
             catch (FaultException faultEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Error del servidor", $"El servidor reportó un error: {faultEx.Message}");
                 Debug.WriteLine($"[LOBBY CLIENT] FaultException: {faultEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
             catch (CommunicationException commEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Error de comunicación", "No se pudo conectar con el servidor del lobby.");
                 Debug.WriteLine($"[LOBBY CLIENT] CommunicationException: {commEx.Message}");
                 return MatchCreationResultCode.MatchCreation_Failure;
             }
             catch (TimeoutException timeoutEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Tiempo agotado", "El servidor no respondió a tiempo.");
                 Debug.WriteLine($"[LOBBY CLIENT] TimeoutException: {timeoutEx.Message}");
                 return MatchCreationResultCode.MatchCreation_Timeout;
             }
             catch (ObjectDisposedException objEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Conexión cerrada", "La conexión con el servidor fue cerrada inesperadamente.");
                 Debug.WriteLine($"[LOBBY CLIENT] ObjectDisposedException: {objEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
             catch (InvalidOperationException invEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Estado inválido", "La conexión con el servidor está en un estado inválido.");
                 Debug.WriteLine($"[LOBBY CLIENT] InvalidOperationException: {invEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
@@ -128,6 +135,7 @@ namespace ArchsVsDinosClient.Services
         {
             try
             {
+                EnsureClientIsUsable();
                 var request = new ArchsVsDinosClient.LobbyService.JoinLobbyRequest
                 {
                     LobbyCode = matchCode,
@@ -136,51 +144,56 @@ namespace ArchsVsDinosClient.Services
                     Username = userAccount.Username
                 };
 
-                var matchJoinResponse = await connectionGuardian.ExecuteAsync(async () =>
-                {
-                    return await Task.Run(() => lobbyManagerClient.JoinLobby(request));
-                });
+                var matchJoinResponse = await connectionGuardian.ExecuteWithThrowAsync(() =>
+                    Task.FromResult(lobbyManagerClient.JoinLobby(request)));
 
                 return matchJoinResponse.ResultCode;
             }
             catch (EndpointNotFoundException endpointEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Servidor no disponible", "No se pudo encontrar el servidor del lobby.");
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby EndpointNotFoundException: {endpointEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (FaultException<string> faultEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Error del lobby", faultEx.Detail);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException<string>: {faultEx.Detail}");
-                return JoinMatchResultCode.JoinMatch_LobbyFull; 
+                return JoinMatchResultCode.JoinMatch_LobbyFull;
             }
             catch (FaultException faultEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Error del servidor", $"Error al unirse: {faultEx.Message}");
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException: {faultEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (CommunicationException commEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Error de comunicación", "No se pudo unir al lobby. Verifica tu conexión.");
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby CommunicationException: {commEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (TimeoutException timeoutEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Tiempo agotado", "El servidor tardó demasiado en responder.");
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby TimeoutException: {timeoutEx.Message}");
                 return JoinMatchResultCode.JoinMatch_Timeout;
             }
             catch (ObjectDisposedException objEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Conexión cerrada", "La conexión fue cerrada antes de unirse al lobby.");
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby ObjectDisposedException: {objEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (InvalidOperationException invEx)
             {
+                ResetLobbyClient();
                 ConnectionError?.Invoke("Operación inválida", "No se puede realizar la operación en este momento.");
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby InvalidOperationException: {invEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
@@ -339,5 +352,50 @@ namespace ArchsVsDinosClient.Services
                 return false;
             }
         }
+
+        private void EnsureClientIsUsable()
+        {
+            if (lobbyManagerClient == null)
+            {
+                ResetLobbyClient();
+                return;
+            }
+
+            var state = ((ICommunicationObject)lobbyManagerClient).State;
+
+            if (state == CommunicationState.Faulted ||
+                state == CommunicationState.Closed)
+            {
+                ResetLobbyClient();
+            }
+        }
+
+        private void ResetLobbyClient()
+        {
+            if (lobbyManagerClient is ICommunicationObject comm)
+            {
+                try
+                {
+                    if (comm.State == CommunicationState.Faulted)
+                        comm.Abort();
+                    else
+                        comm.Close();
+                }
+                catch
+                {
+                    comm.Abort();
+                }
+            }
+
+            var synchronizationContext = SynchronizationContext.Current;
+            var instanceContext = new InstanceContext(lobbyCallbackManager);
+
+            if (synchronizationContext != null)
+                instanceContext.SynchronizationContext = synchronizationContext;
+
+            lobbyManagerClient = new LobbyManagerClient(instanceContext);
+            connectionGuardian.MonitorClientState(lobbyManagerClient);
+        }
+
     }
 }
