@@ -232,7 +232,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             SoundButton.PlayDestroyingRockSound();
             Gr_MyFriends.Visibility = Visibility.Collapsed;
-            FriendsList.ItemsSource = null; // Limpiar la lista
+            FriendsList.ItemsSource = null; 
         }
 
         private void Click_BtnInvitePlayerByEmail(object sender, RoutedEventArgs e)

@@ -94,7 +94,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        public Task<MatchJoinResponse> JoinLobby(JoinLobbyRequest request)  // ← CAMBIAR firma
+        public Task<MatchJoinResponse> JoinLobby(JoinLobbyRequest request)  
         {
             if (request == null ||
                 string.IsNullOrWhiteSpace(request.LobbyCode) ||

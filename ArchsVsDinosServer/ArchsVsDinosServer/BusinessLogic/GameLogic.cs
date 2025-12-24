@@ -3,12 +3,14 @@ using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Interfaces.Game;
+using ArchsVsDinosServer.Model;
 using ArchsVsDinosServer.Services;
 using ArchsVsDinosServer.Utils;
 using Contracts;
 using Contracts.DTO;
 using Contracts.DTO.Game_DTO;
 using Contracts.DTO.Game_DTO.Enums;
+using Contracts.DTO.Game_DTO.State;
 using Contracts.DTO.Result_Codes;
 using Contracts.DTO.Statistics;
 using System;
@@ -18,7 +20,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.SessionState;
-using ArchsVsDinosServer.Model;
 
 namespace ArchsVsDinosServer.BusinessLogic
 {

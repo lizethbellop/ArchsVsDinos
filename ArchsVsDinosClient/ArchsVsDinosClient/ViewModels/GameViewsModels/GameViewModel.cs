@@ -18,6 +18,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         private readonly string matchCode;
         private readonly string currentUsername;
         private readonly List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> allPlayers;
+        private readonly int forcedUserId;
 
         public GameTimerManager TimerManager { get; }
         public GameBoardManager BoardManager { get; }
@@ -226,7 +227,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 BoardManager.UpdateInitialBoard(data.InitialBoard);
 
                 RemainingCardsInDeck = data.DrawPile1Count + data.DrawPile2Count + data.DrawPile3Count;
-                IsMyTurn = data.FirstPlayerUsername == currentUsername;
+                IsMyTurn = data.FirstPlayerUserId == myUserId;
 
                 TimerManager.StartTimer(TimeSpan.FromMinutes(20));
 
@@ -289,12 +290,13 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             return "Desconocido";
         }
 
+        /*
         private int DetermineMyUserId()
         {
-            var p = allPlayers?.FirstOrDefault(x => x.Username == currentUsername);
-            if (p != null)
+            var player = allPlayers?.FirstOrDefault(x => x.Username == currentUsername);
+            if (player != null)
             {
-                return p.IdPlayer;
+                return player.IdPlayer;
             }
 
             if (!string.IsNullOrEmpty(currentUsername))
@@ -302,6 +304,19 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 return currentUsername.GetHashCode();
             }
             return 0;
+        }*/
+
+        private int DetermineMyUserId()
+        {
+            if (this.forcedUserId != 0)
+            {
+                return this.forcedUserId;
+            }
+
+            int playerId = UserSession.Instance.GetPlayerId();
+            if (playerId != 0) return playerId;
+
+            return UserSession.Instance.GetUserId();
         }
 
         protected void OnPropertyChanged(string name)
