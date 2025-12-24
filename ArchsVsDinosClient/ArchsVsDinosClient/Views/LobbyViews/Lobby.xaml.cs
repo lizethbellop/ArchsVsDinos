@@ -154,7 +154,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        // Actualiza este método existente
         private async void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
@@ -189,7 +188,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        // Agrega este nuevo método
         private void Click_BtnInviteFriend(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -202,12 +200,11 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             viewModel?.InviteFriendToLobby(friendUsername);
         }
 
-        // Este ya lo tienes, solo actualízalo para limpiar el ItemsSource
         private void Click_BtnCancelInviteFriend(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
             Gr_MyFriends.Visibility = Visibility.Collapsed;
-            FriendsList.ItemsSource = null; // Limpiar la lista
+            FriendsList.ItemsSource = null; 
         }
 
         private void Click_BtnInvitePlayerByEmail(object sender, RoutedEventArgs e)

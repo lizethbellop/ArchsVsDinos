@@ -96,6 +96,20 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
                 await Application.Current.Dispatcher.InvokeAsync(() => UpdatePlayerHandVisual(), DispatcherPriority.Loaded);
             }
+
+            if (chatViewModel != null)
+            {
+                try
+                {
+                    await Task.Delay(1000);
+
+                    await chatViewModel.ConnectAsync(currentUsername).ConfigureAwait(true);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error conecting chat in match: {ex.Message}");
+                }
+            }
         }
 
         public void ManualDragOver(Point windowMousePosition, Card cardBeingDragged)

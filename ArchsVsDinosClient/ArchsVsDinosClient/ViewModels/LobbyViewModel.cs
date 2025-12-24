@@ -23,6 +23,7 @@ namespace ArchsVsDinosClient.ViewModels
         private readonly ILobbyServiceClient lobbyServiceClient;
         private bool isHost;
         private string matchCode;
+        public int MyActualPlayerId { get; private set; }
         private int myCurrentLobbyId;
         public ChatViewModel Chat { get; }
         public FriendRequestViewModel Friends { get; private set; }
@@ -98,7 +99,6 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        // ========== MÉTODO PARA CARGAR AMIGOS (usa FriendServiceClient) ==========
         public async Task<List<string>> LoadFriendsAsync()
         {
             try
@@ -281,6 +281,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             for (int i = 0; i < 4; i++) Slots.Add(new SlotLobby { Username = "" });
         }
+        
         private void OnPlayerListUpdated(List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
         {
             Debug.WriteLine($"[LOBBY] OnPlayerListUpdated called with {players.Count} players");
@@ -304,7 +305,19 @@ namespace ArchsVsDinosClient.ViewModels
                 if (meInList != null)
                 {
                     this.isHost = meInList.IsHost;
+                    this.MyActualPlayerId = meInList.IdPlayer;
                     this.myCurrentLobbyId = meInList.IdPlayer;
+
+                    if (UserSession.Instance.GetPlayerId() == 0 && meInList.IdPlayer != 0)
+                    {
+                        if (UserSession.Instance.CurrentUser != null)
+                            UserSession.Instance.CurrentUser.IdUser = meInList.IdPlayer;
+
+                        if (UserSession.Instance.CurrentPlayer != null)
+                            UserSession.Instance.CurrentPlayer.IdPlayer = meInList.IdPlayer;
+
+                        Debug.WriteLine($"[LOBBY] ID Local Actualizado: {meInList.IdPlayer}");
+                    }
                 }
 
                 var orderedPlayers = new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
