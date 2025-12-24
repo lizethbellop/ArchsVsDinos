@@ -139,7 +139,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
         {
             return cards.TryGetValue(id, out var card) ? card : null;
         }
-
+        
         public static List<int> GetAllCardIds()
         {
             return new List<int>(cards.Keys);

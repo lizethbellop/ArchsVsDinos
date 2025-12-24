@@ -245,7 +245,6 @@ namespace ArchsVsDinosClient.ViewModels
         {
             for (int i = 0; i < 4; i++) Slots.Add(new SlotLobby { Username = "" });
         }
-
         private void OnPlayerListUpdated(List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
         {
             Debug.WriteLine($"[LOBBY] OnPlayerListUpdated called with {players.Count} players");
@@ -478,6 +477,5 @@ namespace ArchsVsDinosClient.ViewModels
                 }
             });
         }
-
     }
 }

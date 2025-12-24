@@ -49,6 +49,4 @@ namespace ArchsVsDinosServer.Services
             core.Session.RemoveLobby(lobbyCode);
         }
     }
-
-
 }
