@@ -200,35 +200,43 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        public void ConnectToLobby(string matchCode, string nickname)
+        public async Task<bool> ConnectToLobbyAsync(string matchCode, string nickname)
         {
-            Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
+            return await connectionGuardian.ExecuteAsync(async () =>
             {
                 await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
-            });
+            }, operationName: "ConnectToLobby");
         }
 
-        public async Task ConnectToLobbyAsync(string matchCode, string nickname)
-        {
-            Debug.WriteLine($"[CLIENT] ConnectToLobbyAsync: matchCode={matchCode}, nickname={nickname}");
-
-            await connectionGuardian.ExecuteAsync(async () =>
-            {
-                Debug.WriteLine($"[CLIENT] Calling server ConnectToLobby...");
-                await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
-                Debug.WriteLine($"[CLIENT] Server call completed");
-            });
-
-            Debug.WriteLine($"[CLIENT] ConnectToLobbyAsync finished");
-        }
 
         public void LeaveLobby(string username)
         {
             var currentMatchCode = UserSession.Instance.CurrentMatchCode;
-            Task ignoredTask = connectionGuardian.ExecuteAsync(async () =>
+
+            if (lobbyManagerClient != null)
             {
-                await Task.Run(() => lobbyManagerClient.DisconnectFromLobby(currentMatchCode, username));
-            });
+                var state = ((ICommunicationObject)lobbyManagerClient).State;
+
+                Debug.WriteLine($"[LOBBY CLIENT] LeaveLobby - Estado del cliente: {state}");
+
+                if (state == CommunicationState.Faulted ||
+                    state == CommunicationState.Closed)
+                {
+                    Debug.WriteLine($"[LOBBY CLIENT] ⚠️ No se puede desconectar: conexión en estado {state}");
+                    Debug.WriteLine($"[LOBBY CLIENT] Regenerando proxy...");
+                    ResetLobbyClient();
+                    return;
+                }
+            }
+
+            Task ignoredTask = connectionGuardian.ExecuteAsync(
+                operation: async () =>
+                {
+                    await Task.Run(() => lobbyManagerClient.DisconnectFromLobby(currentMatchCode, username));
+                },
+                operationName: "DisconnectFromLobby",
+                suppressErrors: true
+            );
         }
 
         public void StartGame(string matchCode)
@@ -396,6 +404,41 @@ namespace ArchsVsDinosClient.Services
             lobbyManagerClient = new LobbyManagerClient(instanceContext);
             connectionGuardian.MonitorClientState(lobbyManagerClient);
         }
+
+        public async Task<bool> TryReconnectToLobbyAsync(string matchCode, string nickname)
+        {
+            try
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] 🔄 Intentando reconectar al lobby {matchCode}...");
+
+                EnsureClientIsUsable();
+
+                bool connected = await connectionGuardian.ExecuteAsync(
+                    async () =>
+                    {
+                        await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
+                    },
+                    operationName: "ReconnectToLobby"
+                );
+
+                if (connected)
+                {
+                    Debug.WriteLine($"[LOBBY CLIENT] ✅ Reconexión exitosa al lobby {matchCode}");
+                    return true;
+                }
+                else
+                {
+                    Debug.WriteLine($"[LOBBY CLIENT] ❌ Fallo al reconectar al lobby");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] ❌ Error en reconexión: {ex.Message}");
+                return false;
+            }
+        }
+
 
     }
 }

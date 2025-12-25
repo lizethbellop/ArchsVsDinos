@@ -30,6 +30,11 @@ namespace ArchsVsDinosClient.ViewModels
         public event Action<string, string> LobbyConnectionLost;
         private List<string> currentFriendsList;
         public event Action<string> NavigateToLobbyAsGuest;
+        private System.Timers.Timer reconnectionTimer;
+        private bool isAttemptingReconnection = false;
+        private int reconnectionAttempts = 0;
+        private const int MAX_RECONNECTION_ATTEMPTS = 5;
+        private const int RECONNECTION_INTERVAL_MS = 5000;
 
         private bool isInitializing = false;
 
@@ -172,16 +177,23 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 Debug.WriteLine($"[LOBBY VM] ConnectionError: {title} - {message}");
 
-                if (!isInitializing && LobbyConnectionLost != null)
+                if (isInitializing)
+                {
+                    Debug.WriteLine($"[LOBBY VM] Error ignorado durante inicialización");
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(MatchCode) && !isAttemptingReconnection)
+                {
+                    Debug.WriteLine($"[LOBBY VM] 🔄 Lobby activo detectado, iniciando reconexión automática...");
+                    StartReconnectionAttempts();
+                }
+                else if (LobbyConnectionLost != null && !isAttemptingReconnection)
                 {
                     LobbyConnectionLost(
                         "Conexión perdida",
                         "Se perdió la conexión con el servidor. Serás redirigido al menú principal."
                     );
-                }
-                else
-                {
-                    Debug.WriteLine($"[LOBBY VM] Error ignorado durante inicialización");
                 }
             });
         }
@@ -395,7 +407,34 @@ namespace ArchsVsDinosClient.ViewModels
 
         public void LeaveOfTheLobby(string nickname)
         {
-            lobbyServiceClient.LeaveLobby(nickname);
+            try
+            {
+                Debug.WriteLine($"[LOBBY VM] Intentando salir del lobby: {nickname}");
+                lobbyServiceClient.LeaveLobby(nickname);
+                Debug.WriteLine($"[LOBBY VM] Comando de salida enviado");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY VM] ⚠️ Error al salir del lobby (ignorado): {ex.Message}");
+            }
+            finally
+            {
+                UserSession.Instance.CurrentMatchCode = null;
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (var slot in Slots)
+                    {
+                        slot.Username = "";
+                        slot.Nickname = "";
+                        slot.IsReady = false;
+                        slot.IsLocalPlayer = false;
+                        slot.CanKick = false;
+                    }
+                });
+
+                Debug.WriteLine($"[LOBBY VM] Estado local limpiado");
+            }
         }
 
         public void InvitePlayerByEmail(string email)
@@ -481,30 +520,97 @@ namespace ArchsVsDinosClient.ViewModels
 
         public void Cleanup()
         {
-            if (lobbyServiceClient != null)
-            {
-                lobbyServiceClient.ConnectionError -= OnLobbyConnectionError;
-                lobbyServiceClient.PlayerKickedEvent -= OnPlayerKicked;
-                lobbyServiceClient.PlayerLeft -= OnPlayerLeft;
-                lobbyServiceClient.LobbyInvitationReceived -= OnLobbyInvitationReceived;
-            }
+            Debug.WriteLine("[LOBBY VM] ═══════════════════════════════════════");
+            Debug.WriteLine("[LOBBY VM] Iniciando Cleanup...");
 
-            if (Chat != null)
+            try
             {
-                Chat.ChatDegraded -= OnChatDegraded;
-                Chat.RequestWindowClose -= OnChatRequestWindowClose;
-            }
-
-            if (Friends != null)
-            {
-                string myUsername = UserSession.Instance.CurrentUser?.Username;
-
-                if (!string.IsNullOrEmpty(myUsername))
+                // Detener reconexión automática si está activa
+                if (isAttemptingReconnection)
                 {
-                    Friends.Unsubscribe(myUsername);
+                    Debug.WriteLine("[LOBBY VM] Deteniendo intentos de reconexión...");
+                    StopReconnectionAttempts(success: false);
                 }
 
-                Friends.Dispose();
+                // Intentar desconectar del lobby
+                string myUsername = UserSession.Instance.CurrentUser?.Username;
+                if (!string.IsNullOrEmpty(myUsername))
+                {
+                    try
+                    {
+                        Debug.WriteLine($"[LOBBY VM] Intentando desconectar: {myUsername}");
+                        LeaveOfTheLobby(myUsername);
+                        Debug.WriteLine($"[LOBBY VM] ✅ Desconexión completada");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[LOBBY VM] ⚠️ Error en desconexión (ignorado): {ex.Message}");
+                    }
+                }
+
+                if (lobbyServiceClient != null)
+                {
+                    Debug.WriteLine("[LOBBY VM] Desuscribiendo eventos de lobby...");
+                    lobbyServiceClient.ConnectionError -= OnLobbyConnectionError;
+                    lobbyServiceClient.PlayerKickedEvent -= OnPlayerKicked;
+                    lobbyServiceClient.PlayerLeft -= OnPlayerLeft;
+                    lobbyServiceClient.LobbyInvitationReceived -= OnLobbyInvitationReceived;
+                    lobbyServiceClient.PlayerListUpdated -= OnPlayerListUpdated;
+                    lobbyServiceClient.GameStartedEvent -= OnGameStarted;
+                    Debug.WriteLine("[LOBBY VM] ✅ Eventos de lobby desuscritos");
+                }
+
+                // Limpiar chat
+                if (Chat != null)
+                {
+                    try
+                    {
+                        Debug.WriteLine("[LOBBY VM] Limpiando chat...");
+                        Chat.ChatDegraded -= OnChatDegraded;
+                        Chat.RequestWindowClose -= OnChatRequestWindowClose;
+
+                        // Fire-and-forget
+                        var disconnectTask = Chat.DisconnectAsync();
+                        Debug.WriteLine("[LOBBY VM] ✅ Chat desconectado");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[LOBBY VM] ⚠️ Error limpiando chat (ignorado): {ex.Message}");
+                    }
+                }
+
+                // Limpiar amigos
+                if (Friends != null)
+                {
+                    try
+                    {
+                        Debug.WriteLine("[LOBBY VM] Limpiando sistema de amigos...");
+                        string myUser = UserSession.Instance.CurrentUser?.Username;
+                        if (!string.IsNullOrEmpty(myUser))
+                        {
+                            Friends.Unsubscribe(myUser);
+                        }
+                        Friends.Dispose();
+                        Debug.WriteLine("[LOBBY VM] ✅ Sistema de amigos limpiado");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[LOBBY VM] ⚠️ Error limpiando Friends (ignorado): {ex.Message}");
+                    }
+                }
+
+                UserSession.Instance.CurrentMatchCode = null;
+                Debug.WriteLine("[LOBBY VM] ✅ Sesión limpiada");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY VM] ❌ Error general en Cleanup: {ex.Message}");
+                Debug.WriteLine($"[LOBBY VM] StackTrace: {ex.StackTrace}");
+            }
+            finally
+            {
+                Debug.WriteLine("[LOBBY VM] Cleanup finalizado");
+                Debug.WriteLine("[LOBBY VM] ═══════════════════════════════════════");
             }
         }
 
@@ -624,48 +730,6 @@ namespace ArchsVsDinosClient.ViewModels
         private async Task<JoinMatchResultCode> JoinNewLobby(ArchsVsDinosClient.DTO.UserAccountDTO userAccount, string lobbyCode)
         {
             return await lobbyServiceClient.JoinLobbyAsync(userAccount, lobbyCode);
-        }
-
-        private async Task ForcePlayerListRefresh()
-        {
-            Debug.WriteLine("[LOBBY VM] Forzando actualización de lista de jugadores...");
-
-            try
-            {
-                // Opción 1: Si tu servicio tiene un método para obtener jugadores
-                // var players = await lobbyServiceClient.GetPlayersInLobby(MatchCode);
-                // if (players != null)
-                // {
-                //     OnPlayerListUpdated(players);
-                // }
-
-                // Opción 2: Si no tienes ese método, al menos verifica el estado
-                await Task.Delay(1500);
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Debug.WriteLine($"[LOBBY VM] Estado actual:");
-                    Debug.WriteLine($"  - MatchCode: {MatchCode}");
-                    Debug.WriteLine($"  - IsHost: {IsHost}");
-                    Debug.WriteLine($"  - Slots con datos: {Slots.Count(s => !string.IsNullOrEmpty(s.Nickname))}");
-
-                    // Si después de 1.5 segundos aún no hay jugadores, hay un problema
-                    if (Slots.All(s => string.IsNullOrEmpty(s.Nickname)))
-                    {
-                        Debug.WriteLine("[LOBBY VM] ERROR: No se recibió actualización de jugadores del servidor");
-                        MessageBox.Show(
-                            "No se pudieron cargar los jugadores del lobby. Intenta salir y volver a unirte.",
-                            "Error de sincronización",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Warning
-                        );
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[LOBBY VM] Error en ForcePlayerListRefresh: {ex.Message}");
-            }
         }
 
         private async Task CompleteSuccessfulJoin(string lobbyCode, string nickname)
@@ -802,6 +866,111 @@ namespace ArchsVsDinosClient.ViewModels
                     }
                 });
             }
+        }
+
+        public void StartReconnectionAttempts()
+        {
+            if (string.IsNullOrEmpty(MatchCode))
+            {
+                Debug.WriteLine("[LOBBY VM] ⚠️ No hay matchCode para reconectar");
+                return;
+            }
+
+            if (isAttemptingReconnection)
+            {
+                Debug.WriteLine("[LOBBY VM] ⚠️ Ya hay un intento de reconexión en curso");
+                return;
+            }
+
+            Debug.WriteLine("[LOBBY VM] 🔄 Iniciando intentos de reconexión automática...");
+            isAttemptingReconnection = true;
+            reconnectionAttempts = 0;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(
+                    "Se perdió la conexión con el servidor.\n\n" +
+                    "Se intentará reconectar automáticamente durante los próximos 25 segundos.\n\n" +
+                    "Puedes quedarte aquí o regresar al menú principal.",
+                    "Reconexión automática",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+            });
+
+            reconnectionTimer = new System.Timers.Timer(RECONNECTION_INTERVAL_MS);
+            reconnectionTimer.Elapsed += OnReconnectionTimerElapsed;
+            reconnectionTimer.AutoReset = true;
+            reconnectionTimer.Start();
+        }
+
+        private async void OnReconnectionTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            reconnectionAttempts++;
+
+            Debug.WriteLine($"[LOBBY VM] 🔄 Intento de reconexión #{reconnectionAttempts}/{MAX_RECONNECTION_ATTEMPTS}");
+
+            if (reconnectionAttempts > MAX_RECONNECTION_ATTEMPTS)
+            {
+                StopReconnectionAttempts(success: false);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        "No se pudo restablecer la conexión después de varios intentos.\n\n" +
+                        "Serás redirigido al menú principal.",
+                        "Reconexión fallida",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning
+                    );
+
+                    LobbyConnectionLost?.Invoke(
+                        "Reconexión fallida",
+                        "No se pudo restablecer la conexión con el servidor."
+                    );
+                });
+
+                return;
+            }
+
+            string myNickname = UserSession.Instance.GetNickname();
+            bool reconnected = await lobbyServiceClient.TryReconnectToLobbyAsync(MatchCode, myNickname);
+
+            if (reconnected)
+            {
+                Debug.WriteLine($"[LOBBY VM] ✅ Reconexión exitosa después de {reconnectionAttempts} intentos");
+                StopReconnectionAttempts(success: true);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        "¡Conexión restablecida exitosamente!\n\n" +
+                        "Ya puedes continuar en el lobby.",
+                        "Reconexión exitosa",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                });
+
+                await Task.Delay(1000);
+                
+            }
+        }
+
+        private void StopReconnectionAttempts(bool success)
+        {
+            if (reconnectionTimer != null)
+            {
+                reconnectionTimer.Stop();
+                reconnectionTimer.Elapsed -= OnReconnectionTimerElapsed;
+                reconnectionTimer.Dispose();
+                reconnectionTimer = null;
+            }
+
+            isAttemptingReconnection = false;
+            reconnectionAttempts = 0;
+
+            Debug.WriteLine($"[LOBBY VM] Intentos de reconexión detenidos. Éxito: {success}");
         }
     }
 }

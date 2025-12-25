@@ -109,16 +109,37 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             {
                 MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                var main = Application.Current.MainWindow;
+                NavigateToMainWindow();
+            });
+        }
 
-                if (main != null)
+        private void NavigateToMainWindow()
+        {
+            try
+            {
+                MainWindow newMainWindow = new MainWindow();
+
+                var oldMain = Application.Current.MainWindow;
+                if (oldMain != null && oldMain != this)
                 {
-                    main.Show();
-                    main.Activate();
+                    oldMain.Close();
                 }
 
+                Application.Current.MainWindow = newMainWindow;
+                newMainWindow.Show();
+
                 this.Close();
-            });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] Error al navegar a MainWindow: {ex.Message}");
+                MessageBox.Show(
+                    "Error al regresar al menú principal.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
 
         private void OnNavigateToGame()

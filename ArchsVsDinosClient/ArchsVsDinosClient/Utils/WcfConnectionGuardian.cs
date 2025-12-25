@@ -56,7 +56,6 @@ namespace ArchsVsDinosClient.Utils
             }
         }
 
-        // ⭐ VERSIÓN ORIGINAL: Traga excepciones y retorna defaultValue (para fire-and-forget)
         public async Task<T> ExecuteAsync<T>(Func<Task<T>> operation, T defaultValue = default(T), string operationName = "Operación")
         {
             operationInProgress = true;
@@ -80,7 +79,6 @@ namespace ArchsVsDinosClient.Utils
             }
         }
 
-        // ⭐ NUEVA VERSIÓN: Relanza excepciones para que el caller las maneje
         public async Task<T> ExecuteWithThrowAsync<T>(Func<Task<T>> operation, string operationName = "Operación")
         {
             operationInProgress = true;
@@ -132,43 +130,43 @@ namespace ArchsVsDinosClient.Utils
             };
         }
 
-        private void HandleException(Exception ex, string operationName)
+        private void HandleException(Exception ex, string operationName, bool suppressErrors = false)
         {
             switch (ex)
             {
                 case ObjectDisposedException ode:
                     logger.LogError($"[{operationName}] Cliente desechado: {ode.ObjectName}", ode);
-                    HandleWcfError("Conexión perdida", "No hay conexión con el servidor", ode, operationName);
+                    HandleWcfError("Conexión perdida", "No hay conexión con el servidor", ode, operationName, suppressErrors);
                     break;
 
                 case EndpointNotFoundException enfe:
                     logger.LogError($"[{operationName}] Servidor no encontrado: {enfe.Message}", enfe);
-                    HandleWcfError("Conexión perdida", "No se pudo conectar al servidor. Verifique que esté en ejecución", enfe, operationName);
+                    HandleWcfError("Conexión perdida", "No se pudo conectar al servidor. Verifique que esté en ejecución", enfe, operationName, suppressErrors);
                     break;
 
                 case FaultException fe:
                     logger.LogError($"[{operationName}] Error del servicio: {fe.Message}", fe);
-                    HandleWcfError("Error de servicio", fe.Message, fe, operationName);
+                    HandleWcfError("Error de servicio", fe.Message, fe, operationName, suppressErrors);
                     break;
 
                 case CommunicationException ce:
                     logger.LogError($"[{operationName}] Error de comunicación: {ce.Message}", ce);
-                    HandleWcfError("Conexión perdida", $"La operación '{operationName}' falló", ce, operationName);
+                    HandleWcfError("Conexión perdida", $"La operación '{operationName}' falló", ce, operationName, suppressErrors);
                     break;
 
                 case TimeoutException te:
                     logger.LogError($"[{operationName}] Tiempo de espera agotado", te);
-                    HandleWcfError("Timeout", $"Tiempo de espera agotado para '{operationName}'", te, operationName);
+                    HandleWcfError("Timeout", $"Tiempo de espera agotado para '{operationName}'", te, operationName, suppressErrors);
                     break;
 
                 default:
                     logger.LogError($"[{operationName}] Error inesperado ({ex.GetType().Name}): {ex.Message}", ex);
-                    HandleWcfError("Error inesperado", ex.Message, ex, operationName);
+                    HandleWcfError("Error inesperado", ex.Message, ex, operationName, suppressErrors);
                     break;
             }
         }
 
-        private void HandleWcfError(string title, string message, Exception ex, string operationName)
+        private void HandleWcfError(string title, string message, Exception ex, string operationName, bool suppressErrors = false)
         {
             UpdateServerState(false);
 
@@ -180,6 +178,17 @@ namespace ArchsVsDinosClient.Utils
                 logMessage += $" | Inner: {ex.InnerException.Message}";
 
             logger.LogError(logMessage, ex);
+
+            if (!suppressErrors && !errorAlreadyReported)
+            {
+                errorAlreadyReported = true;
+                logger.LogDebug($"🔶 [GUARDIAN] Disparando onError para '{operationName}'");
+                onError?.Invoke(title, message);
+            }
+            else if (suppressErrors)
+            {
+                logger.LogDebug($"🔷 [GUARDIAN] Error suprimido en '{operationName}' - no se notifica al usuario");
+            }
         }
 
         private void UpdateServerState(bool isAvailable)
@@ -203,6 +212,60 @@ namespace ArchsVsDinosClient.Utils
             errorAlreadyReported = false;
             operationInProgress = false;
         }
+
+        public async Task<bool> ExecuteAsync(
+            Func<Task> operation,
+            string operationName,
+            bool suppressErrors)
+        {
+            operationInProgress = true;
+
+            try
+            {
+                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
+                await operation();
+                UpdateServerState(true);
+                errorAlreadyReported = false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex, operationName, suppressErrors);
+                return false;
+            }
+            finally
+            {
+                operationInProgress = false;
+            }
+        }
+
+        public async Task<T> ExecuteAsync<T>(
+            Func<Task<T>> operation,
+            string operationName,
+            T defaultValue,
+            bool suppressErrors)
+        {
+            operationInProgress = true;
+
+            try
+            {
+                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
+                var result = await operation();
+                UpdateServerState(true);
+                errorAlreadyReported = false;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex, operationName, suppressErrors);
+                return defaultValue;
+            }
+            finally
+            {
+                operationInProgress = false;
+            }
+        }
+
     }
 
 }
