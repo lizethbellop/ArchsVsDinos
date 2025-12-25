@@ -83,6 +83,7 @@
     <Compile Include="FriendsTests\FriendRequestRejectTest.cs" />
     <Compile Include="FriendsTests\FriendRequestSendTest.cs" />
     <Compile Include="FriendsTests\FriendTest.cs" />
+    <Compile Include="Lobby\LobbyCreateLobbyTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileUpdateInstagramTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileChangePasswordTest.cs" />
     <Compile Include="ProfileManagementTests\ProfileManagementTestBase.cs" />
