@@ -2,6 +2,7 @@
 using ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Interfaces.Game;
+using ArchsVsDinosServer.Model;
 using Contracts.DTO;
 using Contracts.DTO.Result_Codes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,14 +16,14 @@ using System.Threading.Tasks;
 namespace UnitTest.Lobby
 {
     [TestClass]
-    public class LobbyCreateLobbyTest : BaseTestClass
+    public class LobbyCreateTest : BaseTestClass
     {
-        /*private Mock<LobbyCoreContext> mockCore;
+        private Mock<LobbySession> mockSession;
+        private Mock<LobbyValidationHelper> mockValidation;
+        private Mock<LobbyCodeGeneratorHelper> mockCodeGenerator;
         private Mock<IGameLogic> mockGameLogic;
         private Mock<IInvitationSendHelper> mockInvitationHelper;
-        private Mock<ILobbyValidation> mockValidation;
-        private Mock<ICodeGenerator> mockCodeGenerator;
-        private Mock<ILobbySession> mockSession;
+        private LobbyCoreContext coreContext;
         private LobbyLogic lobbyLogic;
 
         [TestInitialize]
@@ -30,19 +31,20 @@ namespace UnitTest.Lobby
         {
             BaseSetup();
 
-            mockValidation = new Mock<ILobbyValidation>();
-            mockCodeGenerator = new Mock<ICodeGenerator>();
-            mockSession = new Mock<ISessionManager>();
+            mockSession = new Mock<LobbySession>(mockLoggerHelper.Object);
+            mockValidation = new Mock<LobbyValidationHelper>(mockLoggerHelper.Object);
+            mockCodeGenerator = new Mock<LobbyCodeGeneratorHelper>();
             mockGameLogic = new Mock<IGameLogic>();
             mockInvitationHelper = new Mock<IInvitationSendHelper>();
 
-            mockCore = new Mock<LobbyCoreContext>();
-            mockCore.Setup(c => c.Validation).Returns(mockValidation.Object);
-            mockCore.Setup(c => c.CodeGenerator).Returns(mockCodeGenerator.Object);
-            mockCore.Setup(c => c.Session).Returns(mockSession.Object);
+            coreContext = new LobbyCoreContext(
+                mockSession.Object,
+                mockValidation.Object,
+                mockCodeGenerator.Object
+            );
 
             lobbyLogic = new LobbyLogic(
-                mockCore.Object,
+                coreContext,
                 mockLoggerHelper.Object,
                 mockGameLogic.Object,
                 mockInvitationHelper.Object
@@ -50,18 +52,23 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionExitosa()
+        public async Task TestLobbyCreateSuccess()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockCodeGenerator
-                .Setup(c => c.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
-                .Returns("ABC123");
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
+                .Returns("ABC12");
+
+            mockSession
+                .Setup(x => x.LobbyExists(It.IsAny<string>()))
+                .Returns(false);
 
             var result = await lobbyLogic.CreateLobby(settings);
 
@@ -69,37 +76,39 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionRetornaCodigoCorrecto()
+        public async Task TestLobbyCreateReturnsLobbyCode()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockCodeGenerator
-                .Setup(c => c.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
-                .Returns("XYZ999");
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
+                .Returns("XYZ99");
 
             var result = await lobbyLogic.CreateLobby(settings);
 
-            Assert.AreEqual("XYZ999", result.LobbyCode);
+            Assert.AreEqual("XYZ99", result.LobbyCode);
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionRetornaCodigoExito()
+        public async Task TestLobbyCreateReturnsSuccessCode()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockCodeGenerator
-                .Setup(c => c.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
-                .Returns("ABC123");
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
+                .Returns("CODE1");
 
             var result = await lobbyLogic.CreateLobby(settings);
 
@@ -107,7 +116,7 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConSettingsNulos()
+        public async Task TestLobbyCreateWithNullSettings()
         {
             var result = await lobbyLogic.CreateLobby(null);
 
@@ -115,7 +124,7 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConSettingsNulosRetornaCodigoParametrosInvalidos()
+        public async Task TestLobbyCreateWithNullSettingsReturnsInvalidParametersCode()
         {
             var result = await lobbyLogic.CreateLobby(null);
 
@@ -123,55 +132,61 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionLlamaValidacion()
+        public async Task TestLobbyCreateCallsValidation()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockCodeGenerator
-                .Setup(c => c.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
-                .Returns("ABC123");
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
+                .Returns("TEST1");
 
             await lobbyLogic.CreateLobby(settings);
 
-            mockValidation.Verify(v => v.ValidateCreateLobby(settings), Times.Once);
+            mockValidation.Verify(x => x.ValidateCreateLobby(settings), Times.Once);
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionGuardaEnSesion()
+        public async Task TestLobbyCreateCallsSessionCreate()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockCodeGenerator
-                .Setup(c => c.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
-                .Returns("ABC123");
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
+                .Returns("TEST2");
 
             await lobbyLogic.CreateLobby(settings);
 
-            mockSession.Verify(s => s.CreateLobby("ABC123", It.IsAny<ActiveLobbyData>()), Times.Once);
+            mockSession.Verify(x => x.CreateLobby(
+                "TEST2",
+                It.IsAny<ActiveLobbyData>()),
+                Times.Once);
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConErrorGeneracionCodigo()
+        public async Task TestLobbyCreateHandlesInvalidOperationException()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockCodeGenerator
-                .Setup(c => c.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
                 .Throws<InvalidOperationException>();
 
             var result = await lobbyLogic.CreateLobby(settings);
@@ -180,17 +195,18 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConErrorGeneracionCodigoRetornaServidorOcupado()
+        public async Task TestLobbyCreateHandlesInvalidOperationExceptionReturnsServerBusy()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockCodeGenerator
-                .Setup(c => c.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
                 .Throws<InvalidOperationException>();
 
             var result = await lobbyLogic.CreateLobby(settings);
@@ -199,17 +215,18 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConValidacionInvalida()
+        public async Task TestLobbyCreateHandlesArgumentException()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockValidation
-                .Setup(v => v.ValidateCreateLobby(It.IsAny<MatchSettings>()))
+                .Setup(x => x.ValidateCreateLobby(It.IsAny<MatchSettings>()))
                 .Throws<ArgumentException>();
 
             var result = await lobbyLogic.CreateLobby(settings);
@@ -218,17 +235,18 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConValidacionInvalidaRetornaSettingsInvalidos()
+        public async Task TestLobbyCreateHandlesArgumentExceptionReturnsInvalidSettings()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
             mockValidation
-                .Setup(v => v.ValidateCreateLobby(It.IsAny<MatchSettings>()))
+                .Setup(x => x.ValidateCreateLobby(It.IsAny<MatchSettings>()))
                 .Throws<ArgumentException>();
 
             var result = await lobbyLogic.CreateLobby(settings);
@@ -237,17 +255,18 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConTimeout()
+        public async Task TestLobbyCreateHandlesTimeoutException()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
-            mockValidation
-                .Setup(v => v.ValidateCreateLobby(It.IsAny<MatchSettings>()))
+            mockCodeGenerator
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
                 .Throws<TimeoutException>();
 
             var result = await lobbyLogic.CreateLobby(settings);
@@ -256,22 +275,23 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public async Task TestLobbyCreacionConTimeoutRetornaCodigoTimeout()
+        public async Task TestLobbyCreateHandlesTimeoutExceptionReturnsTimeout()
         {
             var settings = new MatchSettings
             {
                 HostUserId = 1,
-                HostUsername = "user1",
-                HostNickname = "Player1"
+                HostUsername = "testuser",
+                HostNickname = "TestPlayer",
+                MaxPlayers = 4
             };
 
-            mockValidation
-                .Setup(v => v.ValidateCreateLobby(It.IsAny<MatchSettings>()))
+            mockCodeGenerator
+                .Setup(x => x.GenerateLobbyCode(It.IsAny<Func<string, bool>>()))
                 .Throws<TimeoutException>();
 
             var result = await lobbyLogic.CreateLobby(settings);
 
             Assert.AreEqual(MatchCreationResultCode.MatchCreation_Timeout, result.ResultCode);
-        }*/
+        }
     }
 }
