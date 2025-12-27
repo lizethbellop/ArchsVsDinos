@@ -30,6 +30,10 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         private int currentPoints;
         private bool isGameStartedReceived;
 
+        private Visibility waterArmyVisibility = Visibility.Visible;
+        private Visibility sandArmyVisibility = Visibility.Visible;
+        private Visibility windArmyVisibility = Visibility.Visible;
+
         public event PropertyChangedEventHandler PropertyChanged;
         public event Action<string> TurnChangedForUI;
 
@@ -73,6 +77,24 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 isMyTurn = value;
                 OnPropertyChanged(nameof(IsMyTurn));
             }
+        }
+
+        public Visibility WaterArmyVisibility
+        {
+            get => waterArmyVisibility;
+            set { waterArmyVisibility = value; OnPropertyChanged(nameof(WaterArmyVisibility)); }
+        }
+
+        public Visibility SandArmyVisibility
+        {
+            get => sandArmyVisibility;
+            set { sandArmyVisibility = value; OnPropertyChanged(nameof(SandArmyVisibility)); }
+        }
+
+        public Visibility WindArmyVisibility
+        {
+            get => windArmyVisibility;
+            set { windArmyVisibility = value; OnPropertyChanged(nameof(WindArmyVisibility)); }
         }
 
         public GameViewModel(IGameServiceClient gameServiceClient, string matchCode, string username, List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
@@ -167,7 +189,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             try
             {
                 int userId = DetermineMyUserId();
-                await gameServiceClient.DrawCardAsync(matchCode, userId, pileIndex);
+                await gameServiceClient.DrawCardAsync(matchCode, userId);
                 return null;
             }
             catch (Exception ex)
@@ -226,7 +248,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 BoardManager.UpdatePlayerHand(data.PlayersHands.ToList(), myUserId);
                 BoardManager.UpdateInitialBoard(data.InitialBoard);
 
-                RemainingCardsInDeck = data.DrawPile1Count + data.DrawPile2Count + data.DrawPile3Count;
+                RemainingCardsInDeck = data.DrawDeckCount;
                 IsMyTurn = data.FirstPlayerUserId == myUserId;
 
                 TimerManager.StartTimer(TimeSpan.FromMinutes(20));
@@ -289,22 +311,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             }
             return "Desconocido";
         }
-
-        /*
-        private int DetermineMyUserId()
-        {
-            var player = allPlayers?.FirstOrDefault(x => x.Username == currentUsername);
-            if (player != null)
-            {
-                return player.IdPlayer;
-            }
-
-            if (!string.IsNullOrEmpty(currentUsername))
-            {
-                return currentUsername.GetHashCode();
-            }
-            return 0;
-        }*/
 
         private int DetermineMyUserId()
         {

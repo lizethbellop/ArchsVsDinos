@@ -62,6 +62,4 @@ namespace ArchsVsDinosServer.Utils
                 InvitationSender
             );
     }
-
-
 }

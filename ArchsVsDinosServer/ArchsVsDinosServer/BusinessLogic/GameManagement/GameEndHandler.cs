@@ -26,7 +26,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            if (AreAllDrawPilesEmpty(session))
+            if (IsDrawDeckEmpty(session))
             {
                 return true;
             }
@@ -51,7 +51,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 GameEnded = true
             };
 
-            if (AreAllDrawPilesEmpty(session))
+            if (IsDrawDeckEmpty(session))
             {
                 result.Reason = "cards_depleted";
             }
@@ -74,16 +74,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             return result;
         }
 
-        private bool AreAllDrawPilesEmpty(GameSession session)
+        private bool IsDrawDeckEmpty(GameSession session)
         {
-            foreach (var pile in session.DrawPiles)
-            {
-                if (pile.Count > 0)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return session.DrawDeck.Count == 0;
         }
 
         private bool HasTimeExpired(GameSession session)

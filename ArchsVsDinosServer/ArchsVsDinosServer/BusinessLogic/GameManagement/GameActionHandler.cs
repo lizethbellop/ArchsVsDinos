@@ -25,7 +25,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             if (!session.ConsumeMoves(1)) return null;
 
-            var card = ProcessDrawnCard(session, player, pileIndex);
+            var card = ProcessDrawnCard(session, player);
 
             if (card == null)
             {
@@ -98,14 +98,14 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             session.AddToDiscard(cardToDiscard.IdCard);
 
-            var newCard = ProcessDrawnCard(session, player, pileIndex);
+            var newCard = ProcessDrawnCard(session, player);
 
             return newCard;
         }
 
-        private CardInGame ProcessDrawnCard(GameSession session, PlayerSession player, int pileIndex)
+        private CardInGame ProcessDrawnCard(GameSession session, PlayerSession player)
         {
-            var drawnCardIds = session.DrawFromPile(pileIndex, 1);
+            var drawnCardIds = session.DrawCards(1);
             if (drawnCardIds == null || drawnCardIds.Count == 0)
             {
                 return null;

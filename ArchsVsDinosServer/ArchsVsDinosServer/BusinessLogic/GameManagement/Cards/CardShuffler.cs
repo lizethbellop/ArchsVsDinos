@@ -9,7 +9,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
 {
     public static class CardShuffler
     {
-
         public static List<int> ShuffleCards(List<int> cardIds)
         {
             if (cardIds == null || cardIds.Count == 0)

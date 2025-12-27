@@ -354,11 +354,11 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="13*"/>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1.5*"/>
                     </Grid.RowDefinitions>
 
                     <!-- Chat -->
-                    <Grid Grid.Row="0" Background="White" Opacity="0.7">
+                    <Grid Grid.Row="0" Background="White" Opacity="0.8">
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*"/>
@@ -406,23 +406,13 @@
                             </Grid.RowDefinitions>
 
                             <!-- Mensajes del chat -->
-                            <ScrollViewer Grid.Row="0" 
-                          x:Name="ChatScrollViewer"
-                          VerticalScrollBarVisibility="Auto"
-                          Padding="10"
-                          Background="Transparent">
+                            <ScrollViewer Grid.Row="0" x:Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto"
+                                  Padding="10" Background="Transparent">
                                 <ItemsControl ItemsSource="{Binding Messages}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Background="#33000000"
-                                                CornerRadius="5"
-                                                Padding="8,5"
-                                                Margin="0,2">
-                                                <TextBlock Text="{Binding}" 
-                                               TextWrapping="Wrap"
-                                               Foreground="Black"
-                                               FontSize="13"
-                                               FontFamily="Trebuchet MS"/>
+                                            <Border Background="#33000000" CornerRadius="5" Padding="8,5" Margin="0,2">
+                                                <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="Black" FontSize="13" FontFamily="Trebuchet MS"/>
                                             </Border>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -430,17 +420,10 @@
                             </ScrollViewer>
 
                             <!-- Usuarios online -->
-                            <Border Grid.Row="1" 
-                                Background="#22000000"
-                                Padding="8,5"
-                                Margin="10,0">
+                            <Border Grid.Row="1" Background="#22000000" Padding="8,5" Margin="10,0">
                                 <StackPanel>
-                                    <TextBlock Text="Online:" 
-                                       FontWeight="SemiBold" 
-                                       FontSize="11" 
-                                       Foreground="#FF333333"
-                                       FontFamily="Trebuchet MS"
-                                       Margin="0,0,0,3"/>
+                                    <TextBlock Text="Online:" FontWeight="SemiBold" FontSize="11" Foreground="#FF333333"
+                                       FontFamily="Trebuchet MS" Margin="0,0,0,3"/>
                                     <ItemsControl ItemsSource="{Binding OnlineUsers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -449,15 +432,9 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Background="#FFB4B7FF"
-                                                    CornerRadius="8"
-                                                    Padding="6,2"
-                                                    Margin="0,0,4,4">
-                                                    <TextBlock Text="{Binding}" 
-                                                       Foreground="White"
-                                                       FontSize="10"
-                                                       FontWeight="SemiBold"
-                                                       FontFamily="Trebuchet MS"/>
+                                                <Border Background="#FFB200FF" CornerRadius="8" Padding="6,2" Margin="0,0,4,4">
+                                                    <TextBlock Text="{Binding}" Foreground="Black" FontSize="10"
+                                                       FontWeight="SemiBold" FontFamily="Trebuchet MS"/>
                                                 </Border>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -469,19 +446,20 @@
                     </Grid>
 
                     <!-- Write message zone -->
-                    <Grid Grid.Row="1" Background="#FFB4B7FF" Opacity="0.7">
-                        <TextBox Text="{Binding MessageInput, UpdateSourceTrigger=PropertyChanged}"
-                                 IsEnabled="{Binding IsConnected}"
-                                 TextWrapping="NoWrap" 
-                                 FontFamily="Trebuchet MS" 
-                                 Background="#FFB4B7FF"  
-                                 Margin="10,0,10,0" 
-                                 VerticalAlignment="Center"  
-                                 FontSize="18">
-                            <TextBox.InputBindings>
-                                <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
-                            </TextBox.InputBindings>
-                        </TextBox>
+                    <Grid Grid.Row="1" Background="#FFD9F7FF" Opacity="0.8">
+                        <TextBox x:Name="TxtB_Message" Text="{Binding MessageInput, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsConnected}" TextWrapping="Wrap" FontFamily="Trebuchet MS" 
+                                Background="#FFD9F7FF" Margin="10,0,10,0" VerticalAlignment="Center" FontSize="13" MaxLength="100" Padding="0,0,40,0">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding SendMessageCommand}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                                Margin="0,0,15,5" IsHitTestVisible="False">
+                            <TextBlock Text="{Binding Text.Length, ElementName=TxtB_Message}" FontSize="10" 
+                                   Foreground="#FF0024AF" FontFamily="Trebuchet MS"/>
+                            <TextBlock Text="/100" FontSize="10"  Foreground="#FF282828" FontFamily="Trebuchet MS"/>
+                        </StackPanel>
                     </Grid>
                 </Grid>
             </Grid>

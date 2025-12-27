@@ -10,7 +10,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         Task ConnectToGameAsync(string matchCode, int userId);
         Task InitializeGameAsync(string matchCode);
         Task StartGameAsync(string matchCode);
-        Task DrawCardAsync(string matchCode, int userId, int drawPileNumber);
+        Task DrawCardAsync(string matchCode, int userId);
         Task PlayDinoHeadAsync(string matchCode, int userId, int cardId);
         Task AttachBodyPartAsync(string matchCode, int userId, AttachBodyPartDTO attachmentData);
         Task SwapCardWithPlayerAsync(string matchCode, int initiatorUserId, ExchangeCardDTO request);

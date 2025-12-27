@@ -30,13 +30,7 @@ namespace Contracts.DTO.Game_DTO
         public CentralBoardDTO InitialBoard { get; set; }
 
         [DataMember]
-        public int DrawPile1Count { get; set; }
-
-        [DataMember]
-        public int DrawPile2Count { get; set; }
-
-        [DataMember]
-        public int DrawPile3Count { get; set; }
+        public int DrawDeckCount { get; set; }
         
         [DataMember]
         public DateTime StartTime { get; set; }

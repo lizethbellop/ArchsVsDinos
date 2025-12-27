@@ -17,7 +17,7 @@ namespace ArchsVsDinosServer.Interfaces.Game
     {
         Task<bool> InitializeMatch(string matchCode, List<GamePlayerInitDTO> players);
 
-        CardInGame DrawCard(string matchCode, int userId, int pileIndex);
+        CardInGame DrawCard(string matchCode, int userId);
 
         bool ExchangeCard(string matchCode, int userId, ExchangeCardDTO data);
         DinoInstance PlayDinoHead(string matchCode, int userId, int cardId); 

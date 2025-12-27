@@ -10,8 +10,8 @@ namespace Contracts.DTO.Game_DTO.Enums
     {
         None,
         Water, 
-        Land,
-        Air    
+        Sand,
+        Wind    
     }
 
     public enum DinoPartType

@@ -73,9 +73,9 @@ namespace ArchsVsDinosClient.Services
             await Task.CompletedTask;
         }
 
-        public async Task DrawCardAsync(string matchCode, int userId, int drawPileNumber)
+        public async Task DrawCardAsync(string matchCode, int userId)
         {
-            await ExecuteAsync(() => client.DrawCard(matchCode, userId, drawPileNumber));
+            await ExecuteAsync(() => client.DrawCard(matchCode, userId));
         }
 
         public async Task PlayDinoHeadAsync(string matchCode, int userId, int cardId)

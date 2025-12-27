@@ -1,5 +1,6 @@
 ﻿using ArchsVsDinosClient.GameService;
 using System;
+using System.ServiceModel;
 
 namespace ArchsVsDinosClient.Services
 {

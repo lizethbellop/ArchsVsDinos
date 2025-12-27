@@ -42,9 +42,7 @@
   <xs:element name="PlayerInGameDTO" nillable="true" type="tns:PlayerInGameDTO" />
   <xs:complexType name="GameStartedDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" name="DrawPile1Count" type="xs:int" />
-      <xs:element minOccurs="0" name="DrawPile2Count" type="xs:int" />
-      <xs:element minOccurs="0" name="DrawPile3Count" type="xs:int" />
+      <xs:element minOccurs="0" name="DrawDeckCount" type="xs:int" />
       <xs:element minOccurs="0" name="FirstPlayerUserId" type="xs:int" />
       <xs:element minOccurs="0" name="FirstPlayerUsername" nillable="true" type="xs:string" />
       <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" minOccurs="0" name="InitialBoard" nillable="true" type="q1:CentralBoardDTO" />

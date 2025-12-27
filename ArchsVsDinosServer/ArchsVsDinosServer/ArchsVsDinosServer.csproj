@@ -149,7 +149,6 @@
     <Compile Include="BusinessLogic\GameManagement\BattleResolver.cs" />
     <Compile Include="BusinessLogic\GameManagement\BattleResult.cs" />
     <Compile Include="BusinessLogic\GameManagement\Board\CentralBoard.cs" />
-    <Compile Include="BusinessLogic\GameManagement\Cards\CardConverter.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\CardDefinition.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\CardInGame.cs" />
     <Compile Include="BusinessLogic\GameManagement\Cards\CardShuffler.cs" />
@@ -341,8 +340,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BusinessLogic\DTO\" />
-    <Folder Include="Models\Response\" />
-    <Folder Include="Utils\Lobby\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj">

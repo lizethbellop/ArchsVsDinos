@@ -35,7 +35,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
                 var allCardIds = CardDefinitions.GetAllCardIds();
                 var shuffledDeck = CardShuffler.ShuffleCards(allCardIds);
-                var remainingDeck = DealInitialHands(session, shuffledDeck); // Usa la versión corregida
+                var remainingDeck = DealInitialHands(session, shuffledDeck); 
 
                 CreateSingleDrawPile(session, remainingDeck);
 
@@ -55,9 +55,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         private void CreateSingleDrawPile(GameSession session, List<int> remainingCards)
         {
-            var drawPile = new List<int>(remainingCards);
-            var drawPiles = new List<List<int>> { drawPile };
-            session.SetDrawPiles(drawPiles);
+            session.SetDrawDeck(remainingCards);
         }
 
         private List<int> DealInitialHands(GameSession session, List<int> deck)
@@ -86,7 +84,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             return deckQueue.ToList();
         }
-
 
         private void PlaceArchOnBoard(CentralBoard board, CardInGame archCard)
         {

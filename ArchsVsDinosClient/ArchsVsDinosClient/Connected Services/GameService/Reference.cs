@@ -162,10 +162,10 @@ namespace ArchsVsDinosClient.GameService {
         Water = 1,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Land = 2,
+        Sand = 2,
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
-        Air = 3,
+        Wind = 3,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -316,13 +316,7 @@ namespace ArchsVsDinosClient.GameService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int DrawPile1CountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int DrawPile2CountField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int DrawPile3CountField;
+        private int DrawDeckCountField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int FirstPlayerUserIdField;
@@ -356,40 +350,14 @@ namespace ArchsVsDinosClient.GameService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int DrawPile1Count {
+        public int DrawDeckCount {
             get {
-                return this.DrawPile1CountField;
+                return this.DrawDeckCountField;
             }
             set {
-                if ((this.DrawPile1CountField.Equals(value) != true)) {
-                    this.DrawPile1CountField = value;
-                    this.RaisePropertyChanged("DrawPile1Count");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int DrawPile2Count {
-            get {
-                return this.DrawPile2CountField;
-            }
-            set {
-                if ((this.DrawPile2CountField.Equals(value) != true)) {
-                    this.DrawPile2CountField = value;
-                    this.RaisePropertyChanged("DrawPile2Count");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int DrawPile3Count {
-            get {
-                return this.DrawPile3CountField;
-            }
-            set {
-                if ((this.DrawPile3CountField.Equals(value) != true)) {
-                    this.DrawPile3CountField = value;
-                    this.RaisePropertyChanged("DrawPile3Count");
+                if ((this.DrawDeckCountField.Equals(value) != true)) {
+                    this.DrawDeckCountField = value;
+                    this.RaisePropertyChanged("DrawDeckCount");
                 }
             }
         }
@@ -2170,10 +2138,10 @@ namespace ArchsVsDinosClient.GameService {
         System.Threading.Tasks.Task LeaveGameAsync(string matchCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/DrawCard", ReplyAction="http://tempuri.org/IGameManager/DrawCardResponse")]
-        void DrawCard(string matchCode, int userId, int drawPileNumber);
+        void DrawCard(string matchCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/DrawCard", ReplyAction="http://tempuri.org/IGameManager/DrawCardResponse")]
-        System.Threading.Tasks.Task DrawCardAsync(string matchCode, int userId, int drawPileNumber);
+        System.Threading.Tasks.Task DrawCardAsync(string matchCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/PlayDinoHead", ReplyAction="http://tempuri.org/IGameManager/PlayDinoHeadResponse")]
         void PlayDinoHead(string matchCode, int userId, int cardId);
@@ -2290,12 +2258,12 @@ namespace ArchsVsDinosClient.GameService {
             return base.Channel.LeaveGameAsync(matchCode, userId);
         }
         
-        public void DrawCard(string matchCode, int userId, int drawPileNumber) {
-            base.Channel.DrawCard(matchCode, userId, drawPileNumber);
+        public void DrawCard(string matchCode, int userId) {
+            base.Channel.DrawCard(matchCode, userId);
         }
         
-        public System.Threading.Tasks.Task DrawCardAsync(string matchCode, int userId, int drawPileNumber) {
-            return base.Channel.DrawCardAsync(matchCode, userId, drawPileNumber);
+        public System.Threading.Tasks.Task DrawCardAsync(string matchCode, int userId) {
+            return base.Channel.DrawCardAsync(matchCode, userId);
         }
         
         public void PlayDinoHead(string matchCode, int userId, int cardId) {

@@ -19,7 +19,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         private readonly ILoggerHelper loggerHelper;
 
         private readonly List<PlayerSession> players = new List<PlayerSession>();
-        private readonly List<List<int>> drawPiles = new List<List<int>>();
+        private readonly List<int> drawDeck = new List<int>();
         private readonly List<int> discardPile = new List<int>();
 
         public string MatchCode { get; private set; }
@@ -35,7 +35,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public CentralBoard CentralBoard { get; private set; }
 
         public IReadOnlyList<PlayerSession> Players => players.AsReadOnly();
-        public IReadOnlyList<List<int>> DrawPiles => drawPiles.AsReadOnly();
+        public IReadOnlyList<int> DrawDeck => drawDeck.AsReadOnly();
         public IReadOnlyList<int> DiscardPile => discardPile.AsReadOnly();
 
         public GameSession(string matchCode, CentralBoard board, ILoggerHelper logger)
@@ -78,32 +78,30 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             }
         }
 
-        public void SetDrawPiles(List<List<int>> piles)
+        public void SetDrawDeck(List<int> deck)
         {
             lock (SyncRoot)
             {
-                drawPiles.Clear();
-                if (piles != null)
+                drawDeck.Clear();
+                if (deck != null)
                 {
-                    foreach (var pile in piles)
-                    {
-                        drawPiles.Add(new List<int>(pile));
-                    }
+                    drawDeck.AddRange(deck);
                 }
             }
         }
 
-        public List<int> DrawFromPile(int pileIndex, int count)
+        public List<int> DrawCards(int count)
         {
             lock (SyncRoot)
             {
-                if (pileIndex < 0 || pileIndex >= drawPiles.Count || count <= 0) return new List<int>();
+                if (count <= 0 || drawDeck.Count == 0)
+                {
+                    return new List<int>();
+                }
 
-                var pile = drawPiles[pileIndex];
-                var availableCount = pile.Count < count ? pile.Count : count;
-                var startIndex = pile.Count - availableCount;
-                var drawn = pile.Skip(startIndex).Take(availableCount).ToList();
-                pile.RemoveRange(startIndex, drawn.Count);
+                var availableCount = drawDeck.Count < count ? drawDeck.Count : count;
+                var drawn = drawDeck.Take(availableCount).ToList();
+                drawDeck.RemoveRange(0, drawn.Count);
 
                 return drawn;
             }
@@ -125,22 +123,13 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             }
         }
 
-        public int GetDrawPileCount(int pileIndex)
-        {
-            lock (SyncRoot)
-            {
-                if (pileIndex >= 0 && pileIndex < drawPiles.Count) return drawPiles[pileIndex].Count;
-                return 0;
-            }
-        }
-
         public bool RemovePlayer(string nickname)
         {
             lock (SyncRoot)
             {
                 try
                 {
-                    var player = players.FirstOrDefault(p => p.Nickname == nickname);
+                    var player = players.FirstOrDefault(playerSelected => playerSelected.Nickname == nickname);
                     if (player != null)
                     {
                         bool removed = players.Remove(player);
@@ -171,7 +160,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             {
                 try
                 {
-                    var player = players.FirstOrDefault(p => p.UserId == userId);
+                    var player = players.FirstOrDefault(playerSelected => playerSelected.UserId == userId);
                     if (player != null)
                     {
                         bool removed = players.Remove(player);

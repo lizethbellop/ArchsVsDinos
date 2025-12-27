@@ -22,7 +22,7 @@ namespace Contracts
         void LeaveGame(string matchCode, int userId);
 
         [OperationContract]
-        void DrawCard(string matchCode, int userId, int drawPileNumber);
+        void DrawCard(string matchCode, int userId);
 
         [OperationContract]
         void PlayDinoHead(string matchCode, int userId, int cardId);

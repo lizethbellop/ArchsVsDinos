@@ -34,7 +34,6 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="userId" type="xs:int" />
-        <xs:element minOccurs="0" name="drawPileNumber" type="xs:int" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

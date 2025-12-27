@@ -4,8 +4,8 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="None" />
       <xs:enumeration value="Water" />
-      <xs:enumeration value="Land" />
-      <xs:enumeration value="Air" />
+      <xs:enumeration value="Sand" />
+      <xs:enumeration value="Wind" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="ArmyType" nillable="true" type="tns:ArmyType" />

@@ -4,10 +4,20 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="HostNickname" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="HostUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="HostUsername" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="MaxPlayers" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="MatchSettings" nillable="true" type="tns:MatchSettings" />
+  <xs:complexType name="JoinLobbyRequest">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LobbyCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Nickname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
+      <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="JoinLobbyRequest" nillable="true" type="tns:JoinLobbyRequest" />
   <xs:complexType name="ArrayOfLobbyPlayerDTO">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="unbounded" name="LobbyPlayerDTO" nillable="true" type="tns:LobbyPlayerDTO" />
@@ -24,4 +34,12 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="LobbyPlayerDTO" nillable="true" type="tns:LobbyPlayerDTO" />
+  <xs:complexType name="LobbyInvitationDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="LobbyCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SenderNickname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SentAt" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LobbyInvitationDTO" nillable="true" type="tns:LobbyInvitationDTO" />
 </xs:schema>

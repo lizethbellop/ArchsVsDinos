@@ -64,22 +64,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             return session.Players.FirstOrDefault(player => player.UserId == userId);
         }
-
-        public bool IsPlayerInSession(string matchCode, int userId)
-        {
-            return GetPlayer(matchCode, userId) != null;
-        }
-
-        public List<GameSession> GetAllActiveSessions()
-        {
-            return new List<GameSession>(activeSessions.Values);
-        }
-
-        public int GetActiveSessionCount()
-        {
-            return activeSessions.Count;
-        }
-
         
     }
 }

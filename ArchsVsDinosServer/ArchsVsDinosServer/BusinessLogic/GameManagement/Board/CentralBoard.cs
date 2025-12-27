@@ -10,15 +10,15 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Board
     {
         private readonly object syncRoot = new object();
 
-        private readonly List<int> landArmy = new List<int>();
+        private readonly List<int> sandArmy = new List<int>();
         private readonly List<int> waterArmy = new List<int>();
-        private readonly List<int> airArmy = new List<int>();
+        private readonly List<int> windArmy = new List<int>();
 
         private CardInGame supremeBossCard;
 
-        public IReadOnlyList<int> LandArmy => landArmy.AsReadOnly();
+        public IReadOnlyList<int> SandArmy => sandArmy.AsReadOnly();
         public IReadOnlyList<int> WaterArmy => waterArmy.AsReadOnly();
-        public IReadOnlyList<int> AirArmy => airArmy.AsReadOnly();
+        public IReadOnlyList<int> WindArmy => windArmy.AsReadOnly();
         public CardInGame SupremeBossCard => supremeBossCard;
 
         public List<int> GetArmyByType(ArmyType type)
@@ -27,12 +27,12 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Board
             {
                 switch (type)
                 {
-                    case ArmyType.Land:
-                        return landArmy;
+                    case ArmyType.Sand:
+                        return sandArmy;
                     case ArmyType.Water:
                         return waterArmy;
-                    case ArmyType.Air:
-                        return airArmy;
+                    case ArmyType.Wind:
+                        return windArmy;
                     default:
                         return null;
                 }

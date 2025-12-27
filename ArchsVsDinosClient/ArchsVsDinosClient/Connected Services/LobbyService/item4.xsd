@@ -20,16 +20,14 @@
   <xs:element name="JoinLobby">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
-        <xs:element minOccurs="0" name="userId" type="xs:int" />
-        <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="request" nillable="true" type="q3:JoinLobbyRequest" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="JoinLobbyResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="JoinLobbyResult" nillable="true" type="q3:MatchJoinResponse" />
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" minOccurs="0" name="JoinLobbyResult" nillable="true" type="q4:MatchJoinResponse" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -38,7 +36,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="sender" nillable="true" type="xs:string" />
-        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="guests" nillable="true" type="q4:ArrayOfstring" />
+        <xs:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="guests" nillable="true" type="q5:ArrayOfstring" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -116,6 +114,22 @@
       <xs:sequence />
     </xs:complexType>
   </xs:element>
+  <xs:element name="SendLobbyInviteToFriend">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="lobbyCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="senderNickname" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="targetUsername" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SendLobbyInviteToFriendResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="SendLobbyInviteToFriendResult" type="xs:boolean" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="PlayerJoinedLobby">
     <xs:complexType>
       <xs:sequence>
@@ -133,7 +147,7 @@
   <xs:element name="UpdateListOfPlayers">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="players" nillable="true" type="q5:ArrayOfLobbyPlayerDTO" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="players" nillable="true" type="q6:ArrayOfLobbyPlayerDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -155,6 +169,13 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="nickname" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="reason" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LobbyInvitationReceived">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Contracts.DTO" minOccurs="0" name="invitation" nillable="true" type="q7:LobbyInvitationDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
