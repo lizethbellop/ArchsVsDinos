@@ -907,7 +907,7 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Lobby invitation.
+        ///   Busca una cadena traducida similar a Invitacion de lobby.
         /// </summary>
         public static string Lobby_InvitationReceivedTitle {
             get {
@@ -1281,6 +1281,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_AlreadyUsedRolls {
             get {
                 return ResourceManager.GetString("Match_AlreadyUsedRolls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Arqueólogo arrastrado. Ejército:.
+        /// </summary>
+        public static string Match_ArchAddedMessage {
+            get {
+                return ResourceManager.GetString("Match_ArchAddedMessage", resourceCulture);
             }
         }
         

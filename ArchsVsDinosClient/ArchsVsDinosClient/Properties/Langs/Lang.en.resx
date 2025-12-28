@@ -886,4 +886,7 @@
   <data name="Lobby_InvitationReceivedTitle" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="Match_ArchAddedMessage" xml:space="preserve">
+    <value>Arch dragged. Army:</value>
+  </data>
 </root>

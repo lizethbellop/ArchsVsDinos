@@ -883,6 +883,9 @@
     <value>te ha invitado a unirte a su lobby. ¿Deseas aceptar la invitación?</value>
   </data>
   <data name="Lobby_InvitationReceivedTitle" xml:space="preserve">
-    <value>Lobby invitation</value>
+    <value>Invitacion de lobby</value>
+  </data>
+  <data name="Match_ArchAddedMessage" xml:space="preserve">
+    <value>Arqueólogo arrastrado. Ejército:</value>
   </data>
 </root>

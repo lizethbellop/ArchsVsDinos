@@ -78,7 +78,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 try
                 {
-                    //await chatViewModel.ConnectAsync(currentUsername).ConfigureAwait(true);
                     await chatViewModel.ConnectAsync(currentUsername, context: 0, matchCode: gameMatchCode);
                 }
                 catch
@@ -91,6 +90,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 gameViewModel.BoardManager.PlayerHand.CollectionChanged += PlayerHandCollectionChanged;
                 gameViewModel.TurnChangedForUI += UpdateTurnGlow;
+                gameViewModel.ArchCardPlaced += ShowArchPlacedAnimation;
                 MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
 
                 await gameViewModel.ConnectToGameAsync();
@@ -410,10 +410,35 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                System.Diagnostics.Debug.WriteLine($"[UI] ========== PlayerHand Collection Changed ==========");
+                System.Diagnostics.Debug.WriteLine($"[UI] Action: {e.Action}");
+
+                if (e.NewItems != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[UI] New items count: {e.NewItems.Count}");
+                    foreach (Card card in e.NewItems)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[UI] - Added card: {card.IdCard} ({card.Category})");
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[UI] Total cards in PlayerHand: {gameViewModel.BoardManager.PlayerHand.Count}");
+
+                UpdatePlayerHandVisual();
+                CheckDrawButtonState();
+
+                System.Diagnostics.Debug.WriteLine($"[UI] ================================================");
+            });
+        }
+
+        /*private void PlayerHandCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
                 UpdatePlayerHandVisual();
                 CheckDrawButtonState();
             });
-        }
+        }*/
 
         private void OnCardDragLeave(object sender, DragEventArgs e)
         {
@@ -560,7 +585,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 Opacity = 1
             };
         }
-
+        /*
         public void UpdatePlayerHandVisual()
         {
             double canvasWidth = MyDeckCanvas.ActualWidth > 0 ? MyDeckCanvas.ActualWidth : 800;
@@ -590,6 +615,117 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 Panel.SetZIndex(cardControl, i);
                 MyDeckCanvas.Children.Add(cardControl);
             }
+        }*/
+
+        public void UpdatePlayerHandVisual()
+        {
+            if (MyDeckCanvas == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[UI] ❌ MyDeckCanvas is NULL!");
+                return;
+            }
+
+            double canvasWidth = MyDeckCanvas.ActualWidth > 0 ? MyDeckCanvas.ActualWidth : 800;
+            System.Diagnostics.Debug.WriteLine($"[UI] Canvas width: {canvasWidth}");
+
+            MyDeckCanvas.Children.Clear();
+            System.Diagnostics.Debug.WriteLine($"[UI] Cleared canvas. Rebuilding with {gameViewModel.BoardManager.PlayerHand.Count} cards");
+
+            var cards = gameViewModel.BoardManager.PlayerHand.ToList();
+            if (cards.Count == 0)
+            {
+                System.Diagnostics.Debug.WriteLine("[UI] No cards to display");
+                return;
+            }
+
+            double cardWidth = 80;
+            double overlap = 50;
+            double totalWidth = (cards.Count - 1) * overlap + cardWidth;
+            double startX = (canvasWidth - totalWidth) / 2;
+
+            if (startX < 10)
+            {
+                startX = 10;
+            }
+
+            for (int i = 0; i < cards.Count; i++)
+            {
+                var cardControl = new DeckCardSelection { Card = cards[i] };
+                double leftPosition = startX + (i * overlap);
+                cardControl.SetInitialPosition(leftPosition, -70);
+                Panel.SetZIndex(cardControl, i);
+                MyDeckCanvas.Children.Add(cardControl);
+
+                System.Diagnostics.Debug.WriteLine($"[UI] Added card {cards[i].IdCard} at position {i}, left={leftPosition}");
+            }
+
+            System.Diagnostics.Debug.WriteLine($"[UI] Total controls in canvas: {MyDeckCanvas.Children.Count}");
+        }
+
+        private void ShowArchPlacedAnimation(string armyName, int cardId)
+        {
+            var notification = new Border
+            {
+                Background = new SolidColorBrush(Color.FromArgb(200, 75, 0, 130)),
+                BorderBrush = new SolidColorBrush(Colors.Gold),
+                BorderThickness = new Thickness(3),
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(20),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, 100, 0, 0),
+                Effect = new DropShadowEffect
+                {
+                    Color = Colors.Gold,
+                    ShadowDepth = 0,
+                    BlurRadius = 30,
+                    Opacity = 1
+                }
+            };
+
+            var text = new TextBlock
+            {
+                Text = $"{Lang.Match_ArchAddedMessage} {armyName}",
+                FontSize = 24,
+                FontWeight = FontWeights.Bold,
+                Foreground = new SolidColorBrush(Colors.Gold),
+                TextAlignment = TextAlignment.Center
+            };
+
+            notification.Child = text;
+
+            var mainGrid = this.Content as Grid;
+            if (mainGrid != null)
+            {
+                mainGrid.Children.Add(notification);
+                Panel.SetZIndex(notification, 1000);
+
+                var fadeIn = new DoubleAnimation
+                {
+                    From = 0,
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(0.5)
+                };
+
+                notification.BeginAnimation(OpacityProperty, fadeIn);
+
+                var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+                timer.Tick += (s, args) =>
+                {
+                    timer.Stop();
+
+                    var fadeOut = new DoubleAnimation
+                    {
+                        From = 1,
+                        To = 0,
+                        Duration = TimeSpan.FromSeconds(0.5)
+                    };
+
+                    fadeOut.Completed += (ss, ee) => mainGrid.Children.Remove(notification);
+                    notification.BeginAnimation(OpacityProperty, fadeOut);
+                };
+                timer.Start();
+            }
         }
 
         private void Click_BtnSeeDeckP1(object sender, RoutedEventArgs e)
@@ -612,6 +748,10 @@ namespace ArchsVsDinosClient.Views.MatchViews
             ShowDeckWindow();
         }
 
+        private async void Click_BtnEndTurn(object sender, RoutedEventArgs e)
+        {
+            await gameViewModel.EndTurnManuallyAsync();
+        }
         private void ShowDeckWindow()
         {
             SoundButton.PlayMovingRockSound();

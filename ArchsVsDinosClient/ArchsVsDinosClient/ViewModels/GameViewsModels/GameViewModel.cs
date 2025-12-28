@@ -37,6 +37,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event Action<string> TurnChangedForUI;
+        public event Action<string, int> ArchCardPlaced;
 
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
 
@@ -131,6 +132,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.GameStarted += OnGameStarted;
             gameServiceClient.TurnChanged += OnTurnChanged;
             gameServiceClient.CardDrawn += OnCardDrawn;
+            gameServiceClient.ArchAdded += OnArchAdded;
             gameServiceClient.ServiceError += OnServiceError;
         }
 
@@ -174,6 +176,12 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 ActionManager.RegisterSuccessfulMove(card, cellId);
                 BoardManager.PlayerHand.Remove(card);
                 RemainingMoves--;
+
+                if (RemainingMoves <= 0)
+                {
+                    EndTurnAutomatically();
+                }
+
                 return null;
             }
             catch (Exception ex)
@@ -200,6 +208,26 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 return ex.Message;
             }
         }
+
+        public async Task EndTurnManuallyAsync()
+        {
+            if (!IsMyTurn)
+            {
+                MessageBox.Show(Lang.Match_NotYourTurn);
+                return;
+            }
+
+            try
+            {
+                int userId = DetermineMyUserId();
+                await gameServiceClient.EndTurnAsync(matchCode, userId);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al terminar turno: {ex.Message}");
+            }
+        }
+
         private void OnCardDrawn(CardDrawnDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -224,9 +252,52 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     if (IsMyTurn)
                     {
                         RemainingMoves--;
+                        if (RemainingMoves <= 0)
+                        {
+                            EndTurnAutomatically();
+                        }
                     }
                 }
             });
+        }
+
+        private void OnArchAdded(ArchAddedToBoardDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var archCard = CardRepositoryModel.GetById(data.ArchCard.IdCard);
+
+                if (archCard == null) return;
+
+                switch (data.ArchCard.Element)
+                {
+                    case GameService.ArmyType.Sand:
+                        BoardManager.SandArmy.Add(archCard);
+                        ArchCardPlaced?.Invoke("Sand", archCard.IdCard);
+                        break;
+                    case GameService.ArmyType.Water:
+                        BoardManager.WaterArmy.Add(archCard);
+                        ArchCardPlaced?.Invoke("Water", archCard.IdCard);
+                        break;
+                    case GameService.ArmyType.Wind:
+                        BoardManager.WindArmy.Add(archCard);
+                        ArchCardPlaced?.Invoke("Wind", archCard.IdCard);
+                        break;
+                }
+            });
+        }
+
+        private async void EndTurnAutomatically()
+        {
+            try
+            {
+                int userId = DetermineMyUserId();
+                await gameServiceClient.EndTurnAsync(matchCode, userId);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error auto-ending turn: {ex.Message}");
+            }
         }
 
         private void OnGameInitialized(GameInitializedDTO data)
@@ -264,6 +335,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 else
                 {
                     RemainingMoves = 0;
+                    string namePlayer = GetUsernameById(data.FirstPlayerUserId);
+                    MessageBox.Show($"{Lang.Match_InfoBegin2}{namePlayer}");
                 }
             });
         }
@@ -286,6 +359,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 if (IsMyTurn)
                 {
                     RemainingMoves = 3;
+                    MessageBox.Show(Lang.Match_YourTurn);
                 }
                 else
                 {
@@ -356,6 +430,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.GameStarted -= OnGameStarted;
                 gameServiceClient.TurnChanged -= OnTurnChanged;
                 gameServiceClient.CardDrawn -= OnCardDrawn;
+                gameServiceClient.ArchAdded -= OnArchAdded;
                 gameServiceClient.ServiceError -= OnServiceError;
             }
         }
