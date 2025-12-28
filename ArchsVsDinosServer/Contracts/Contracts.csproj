@@ -47,7 +47,6 @@
     <Compile Include="DTO\ChatContext.cs" />
     <Compile Include="DTO\ConfigurationDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchAddedToBoardDTO.cs" />
-    <Compile Include="DTO\Game DTO\ArchArmyDTO.cs" />
     <Compile Include="DTO\Game DTO\ArchArmyProvokedDTO.cs" />
     <Compile Include="DTO\Game DTO\AttachBodyPartDTO.cs" />
     <Compile Include="DTO\Game DTO\BattleResultDTO.cs" />
@@ -55,8 +54,6 @@
     <Compile Include="DTO\Game DTO\CardDrawnDTO.cs" />
     <Compile Include="DTO\Game DTO\CardDTO.cs" />
     <Compile Include="DTO\Game DTO\CardExchangedDTO.cs" />
-    <Compile Include="DTO\Game DTO\DinoBattleDTO.cs" />
-    <Compile Include="DTO\Game DTO\DinoDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoPlayedDTO.cs" />
     <Compile Include="DTO\Game DTO\Enums\GameEnumeration.cs" />
     <Compile Include="DTO\Game DTO\ExchangeCardDTO.cs" />
@@ -67,8 +64,6 @@
     <Compile Include="DTO\Game DTO\PlayerInGameDTO.cs" />
     <Compile Include="DTO\Game DTO\PlayerScoreDTO.cs" />
     <Compile Include="DTO\Game DTO\State\CentralBoardDTO.cs" />
-    <Compile Include="DTO\Game DTO\State\GameStateDTO.cs" />
-    <Compile Include="DTO\Game DTO\State\PlayerGameStateDTO.cs" />
     <Compile Include="DTO\Game DTO\Swap\CardSwappedDTO.cs" />
     <Compile Include="DTO\Game DTO\Swap\SwapCardDTO.cs" />
     <Compile Include="DTO\Game DTO\TurnedChangedDTO.cs" />

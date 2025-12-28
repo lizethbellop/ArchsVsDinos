@@ -3,6 +3,7 @@ using ArchsVsDinosClient.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 
 namespace ArchsVsDinosClient.ViewModels.GameViewsModels
@@ -29,11 +30,25 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             if (myHand != null && myHand.Cards != null)
             {
                 PlayerHand.Clear();
+
+                System.Diagnostics.Debug.WriteLine($"[HAND] Received {myHand.Cards.Length} cards for user {myUserId}");
+
                 foreach (var cardDTO in myHand.Cards)
                 {
                     var cardModel = CardRepositoryModel.GetById(cardDTO.IdCard);
-                    if (cardModel != null) PlayerHand.Add(cardModel);
+
+                    if (cardModel != null)
+                    {
+                        PlayerHand.Add(cardModel);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[HAND] ❌ Card {cardDTO.IdCard} NOT FOUND - Repository has {CardRepositoryModel.Cards.Count} cards");
+                        var exists = CardRepositoryModel.Cards.Any(c => c.IdCard == cardDTO.IdCard);
+                    }
                 }
+
+                System.Diagnostics.Debug.WriteLine($"[HAND] Total added to PlayerHand: {PlayerHand.Count}");
             }
         }
 

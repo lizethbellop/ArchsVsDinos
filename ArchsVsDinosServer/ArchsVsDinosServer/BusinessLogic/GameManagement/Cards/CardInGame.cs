@@ -42,17 +42,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Cards
 
         private static ArmyType ParseElement(string element)
         {
-            string normalized = element;
-
-            switch (element)
-            {
-                case "Sand": normalized = "Land"; break;
-                case "Water": normalized = "Water"; break;
-                case "Wind": normalized = "Air"; break;
-            }
 
             ArmyType result;
-            if (Enum.TryParse(normalized, true, out result))
+            if (Enum.TryParse(element, true, out result))
             {
                 return result;
             }

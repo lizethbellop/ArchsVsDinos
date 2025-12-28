@@ -138,5 +138,6 @@ namespace ArchsVsDinosClient.Models
 
         public static Card GetById(int id)
             => Cards.FirstOrDefault(card => card.IdCard == id);
+
     }
 }

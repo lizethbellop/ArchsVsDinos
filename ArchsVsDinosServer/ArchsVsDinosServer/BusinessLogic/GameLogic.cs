@@ -86,6 +86,10 @@ namespace ArchsVsDinosServer.BusinessLogic
         public CardInGame DrawCard(string matchCode, int userId)
         {
             var gameSession = GetActiveSession(matchCode);
+
+            if (gameSession.CurrentTurn != userId)
+                throw new InvalidOperationException("It is not the player's turn.");
+
             var playerSession = GetPlayer(gameSession, userId);
 
             lock (gameSession.SyncRoot)
@@ -99,7 +103,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                     throw new InvalidOperationException("The Draw Deck is empty.");
 
                 var drawnCard = CardInGame.FromDefinition(drawnCardIds[0]);
-                if (drawnCard == null) throw new InvalidOperationException("Invalid card drawn.");
+
+                if (drawnCard == null)
+                    throw new InvalidOperationException($"Invalid card drawn: ID {drawnCardIds[0]}");
 
                 if (drawnCard.IsArch())
                 {
@@ -212,6 +218,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return Task.FromResult(false);
 
             StartFirstTurn(gameSession);
+            gameSession.MarkAsStarted();
 
             loggerHelper.LogInfo($"InitializeMatch: Match {matchCode} initialized successfully.");
 
@@ -460,12 +467,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             var player = session.Players.FirstOrDefault(p => p.UserId == userId);
             if (player == null)
                 throw new InvalidOperationException($"Player {userId} not found in session {session.MatchCode}.");
-
-            if (session.CurrentTurn != userId)
-                throw new InvalidOperationException("It is not the player's turn.");
-
-            if (!session.ConsumeMoves(1))
-                throw new InvalidOperationException("No moves remaining.");
 
             return player;
         }

@@ -1,11 +1,12 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
+using Contracts.DTO.Game_DTO.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
-using Contracts.DTO.Game_DTO.Enums;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 {
@@ -34,7 +35,23 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 }
 
                 var allCardIds = CardDefinitions.GetAllCardIds();
+                Console.WriteLine($"[SETUP] Total cards from definitions: {allCardIds.Count}");
                 var shuffledDeck = CardShuffler.ShuffleCards(allCardIds);
+                Console.WriteLine($"[SETUP] Shuffled deck size: {shuffledDeck.Count}");
+
+                var duplicates = shuffledDeck.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+                if (duplicates.Any())
+                {
+                    Console.WriteLine($"[ERROR] Duplicate card IDs found: {string.Join(", ", duplicates)}");
+                }
+
+                // Verificar IDs inválidos
+                var invalidIds = shuffledDeck.Where(id => id < 1 || id > 96).ToList();
+                if (invalidIds.Any())
+                {
+                    Console.WriteLine($"[ERROR] Invalid card IDs found: {string.Join(", ", invalidIds)}");
+                }
+
                 var remainingDeck = DealInitialHands(session, shuffledDeck); 
 
                 CreateSingleDrawPile(session, remainingDeck);
@@ -64,6 +81,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             foreach (var player in session.Players)
             {
+                int archCount = 0;
+                int cardCount = 0;
+
                 while (player.Hand.Count < InitialHandSize && deckQueue.Count > 0)
                 {
                     int cardId = deckQueue.Dequeue();
@@ -74,12 +94,15 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                     if (card.IsArch())
                     {
                         PlaceArchOnBoard(session.CentralBoard, card);
+                        archCount++;
                     }
                     else
                     {
                         player.AddCard(card);
+                        cardCount++;
                     }
                 }
+                Console.WriteLine($"[SETUP] Player {player.UserId} - Hand: {player.Hand.Count}, Archs: {archCount}, Total: {cardCount + archCount}");
             }
 
             return deckQueue.ToList();

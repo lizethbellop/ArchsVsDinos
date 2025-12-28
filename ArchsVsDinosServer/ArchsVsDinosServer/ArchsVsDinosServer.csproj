@@ -338,9 +338,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="BusinessLogic\DTO\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj">
       <Project>{1f499930-12a6-4c79-9820-5cc501643d2d}</Project>
