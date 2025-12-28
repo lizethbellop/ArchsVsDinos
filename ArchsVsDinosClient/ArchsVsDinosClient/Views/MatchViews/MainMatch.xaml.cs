@@ -34,7 +34,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
         private DispatcherTimer errorNotificationTimer;
         private CardCell lastHoveredCardCell;
 
-        public MainMatch(List<LobbyPlayerDTO> players, string myUsername, string gameMatchCode)
+        public MainMatch(List<LobbyPlayerDTO> players, string myUsername, string gameMatchCode, int myLobbyUserId)
         {
             InitializeComponent();
             this.currentUsername = myUsername;
@@ -54,7 +54,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             try
             {
                 var gameService = new GameServiceClient();
-                gameViewModel = new GameViewModel(gameService, this.gameMatchCode, currentUsername, players);
+                gameViewModel = new GameViewModel(gameService, this.gameMatchCode, currentUsername, players, myLobbyUserId);
                 DataContext = gameViewModel;
             }
             catch (Exception)
@@ -78,7 +78,8 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 try
                 {
-                    await chatViewModel.ConnectAsync(currentUsername).ConfigureAwait(true);
+                    //await chatViewModel.ConnectAsync(currentUsername).ConfigureAwait(true);
+                    await chatViewModel.ConnectAsync(currentUsername, context: 0, matchCode: gameMatchCode);
                 }
                 catch
                 {
@@ -103,7 +104,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 {
                     await Task.Delay(1000);
 
-                    await chatViewModel.ConnectAsync(currentUsername).ConfigureAwait(true);
+                    await chatViewModel.ConnectAsync(currentUsername, context: 0, matchCode: gameMatchCode);
                 }
                 catch (Exception ex)
                 {
@@ -314,19 +315,53 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 targetBorder.Background = brush;
             }
         }
+        /*
+                private void InitializePlayersVisuals(List<LobbyPlayerDTO> players, string myUsername)
+                {
+                    var others = players.Where(player => player.Username != myUsername).ToList();
+
+                    if (others.Count > 0)
+                    {
+                        Lb_TopPlayerName.Content = others[0].Username;
+                    }
+
+                    if (others.Count > 1)
+                    {
+                        Lb_LeftPlayerName.Content = others[1].Username;
+                        Grid_LeftPlayer.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        Grid_LeftPlayer.Visibility = Visibility.Collapsed;
+                    }
+
+                    if (others.Count > 2)
+                    {
+                        Lb_RightPlayerName.Content = others[2].Username;
+                        Grid_RightPlayer.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        Grid_RightPlayer.Visibility = Visibility.Collapsed;
+                    }
+                }*/
 
         private void InitializePlayersVisuals(List<LobbyPlayerDTO> players, string myUsername)
         {
-            var others = players.Where(player => player.Username != myUsername).ToList();
+            string myNickname = UserSession.Instance.GetNickname();
+            var others = players.Where(player =>
+                player.Username != myUsername &&
+                player.Nickname != myNickname
+            ).ToList();
 
             if (others.Count > 0)
             {
-                Lb_TopPlayerName.Content = others[0].Username;
+                Lb_TopPlayerName.Content = others[0].Nickname ?? others[0].Username;
             }
 
             if (others.Count > 1)
             {
-                Lb_LeftPlayerName.Content = others[1].Username;
+                Lb_LeftPlayerName.Content = others[1].Nickname ?? others[1].Username;
                 Grid_LeftPlayer.Visibility = Visibility.Visible;
             }
             else
@@ -336,7 +371,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             if (others.Count > 2)
             {
-                Lb_RightPlayerName.Content = others[2].Username;
+                Lb_RightPlayerName.Content = others[2].Nickname ?? others[2].Username;
                 Grid_RightPlayer.Visibility = Visibility.Visible;
             }
             else

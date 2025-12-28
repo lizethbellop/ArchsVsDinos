@@ -65,11 +65,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     }
                 }
             };
-
-
-
         }
-
 
         private void OnNavigateToLobbyAsGuest(string lobbyCode)
         {
@@ -151,8 +147,9 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     string matchCode = viewModel.MatchCode;
                     string myUsername = UserSession.Instance.CurrentUser.Username;
                     List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players = viewModel.GetCurrentPlayers();
+                    int myLobbyUserId = viewModel.GetMyLobbyUserId();
 
-                    MainMatch gameWindow = new MainMatch(players, myUsername, matchCode);
+                    MainMatch gameWindow = new MainMatch(players, myUsername, matchCode, myLobbyUserId);
                     gameWindow.Show();
                     this.Close();
                 }

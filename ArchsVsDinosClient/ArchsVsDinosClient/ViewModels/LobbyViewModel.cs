@@ -211,7 +211,7 @@ namespace ArchsVsDinosClient.ViewModels
             var userAccount = new ArchsVsDinosClient.DTO.UserAccountDTO
             {
                 Nickname = UserSession.Instance.CurrentUser.Nickname,
-                IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
+                IdPlayer = UserSession.Instance.CurrentUser.IdUser
             };
 
             try
@@ -258,9 +258,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         public void SendFriendRequest(string targetUsername)
         {
-            MessageBox.Show($"Intentando enviar a: '{targetUsername}'");
-            if (string.IsNullOrEmpty(targetUsername)) return;
-
             string myUsername = UserSession.Instance.CurrentUser.Username;
             if (myUsername == targetUsername) return;
 
@@ -398,6 +395,7 @@ namespace ArchsVsDinosClient.ViewModels
             currentSlot.CanKick = this.isHost && !isMe;
             currentSlot.IsGuest = player.IdPlayer <= 0;
             currentSlot.LocalUserIsGuest = UserSession.Instance.GetPlayerId() <= 0;
+            currentSlot.IdPlayer = player.IdPlayer;
         }
 
         public void StartTheGame(string matchCode, string username)
@@ -451,6 +449,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+                Debug.WriteLine("[LOBBY VM] Game starting - navigating to game");
                 NavigateToGame?.Invoke();
             });
         }
@@ -467,7 +466,7 @@ namespace ArchsVsDinosClient.ViewModels
                     {
                         Nickname = slot.Nickname,
                         Username = slot.Username,
-                        IdPlayer = slot.IsGuest ? -1 : 0,
+                        IdPlayer = slot.IdPlayer,
                         IsHost = slot.IsLocalPlayer && this.isHost,
                         IsReady = slot.IsReady
                     });
@@ -480,6 +479,11 @@ namespace ArchsVsDinosClient.ViewModels
         public bool CurrentClientIsHost() => isHost;
 
         public int GetPlayersCount() => Slots.Count(s => !string.IsNullOrEmpty(s.Username));
+
+        public int GetMyLobbyUserId()
+        {
+            return this.MyActualPlayerId;
+        }
 
         public void SetWaitingForGuestCallback(bool waiting) { }
 
@@ -525,14 +529,12 @@ namespace ArchsVsDinosClient.ViewModels
 
             try
             {
-                // Detener reconexión automática si está activa
                 if (isAttemptingReconnection)
                 {
                     Debug.WriteLine("[LOBBY VM] Deteniendo intentos de reconexión...");
                     StopReconnectionAttempts(success: false);
                 }
 
-                // Intentar desconectar del lobby
                 string myUsername = UserSession.Instance.CurrentUser?.Username;
                 if (!string.IsNullOrEmpty(myUsername))
                 {
@@ -560,7 +562,6 @@ namespace ArchsVsDinosClient.ViewModels
                     Debug.WriteLine("[LOBBY VM] ✅ Eventos de lobby desuscritos");
                 }
 
-                // Limpiar chat
                 if (Chat != null)
                 {
                     try
@@ -569,7 +570,6 @@ namespace ArchsVsDinosClient.ViewModels
                         Chat.ChatDegraded -= OnChatDegraded;
                         Chat.RequestWindowClose -= OnChatRequestWindowClose;
 
-                        // Fire-and-forget
                         var disconnectTask = Chat.DisconnectAsync();
                         Debug.WriteLine("[LOBBY VM] ✅ Chat desconectado");
                     }
@@ -579,7 +579,6 @@ namespace ArchsVsDinosClient.ViewModels
                     }
                 }
 
-                // Limpiar amigos
                 if (Friends != null)
                 {
                     try
@@ -630,7 +629,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Debug.WriteLine($"[LOBBY VM] Jugador salió: {playerDto.Nickname}");
+                Debug.WriteLine($"[LOBBY VM] Player leave: {playerDto.Nickname}");
 
                 var slotToRemove = Slots.FirstOrDefault(s =>
                     string.Equals(s.Nickname?.Trim(), playerDto.Nickname?.Trim(), StringComparison.CurrentCultureIgnoreCase));
@@ -656,7 +655,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Debug.WriteLine($"[LOBBY VM] Invitación recibida de {invitation.SenderNickname} para lobby {invitation.LobbyCode}");
+                Debug.WriteLine($"[LOBBY VM] Lobby invitation received from {invitation.SenderNickname} for lobby {invitation.LobbyCode}");
                 ShowInvitationDialog(invitation);
             });
         }
@@ -664,8 +663,7 @@ namespace ArchsVsDinosClient.ViewModels
         private async void ShowInvitationDialog(LobbyInvitationDTO invitation)
         {
             var result = MessageBox.Show(
-                $"{invitation.SenderNickname} te ha invitado a unirte a su lobby.\n\n¿Deseas aceptar la invitación?",
-                "Invitación de lobby",
+                $"{invitation.SenderNickname}" + Lang.Lobby_InvitationReceived, Lang.Lobby_InvitationReceivedTitle,
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question
             );
@@ -723,7 +721,7 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 Nickname = UserSession.Instance.CurrentUser.Nickname,
                 Username = UserSession.Instance.CurrentUser.Username,
-                IdPlayer = UserSession.Instance.CurrentPlayer?.IdPlayer ?? 0
+                IdPlayer = UserSession.Instance.CurrentUser.IdUser
             };
         }
 
@@ -972,5 +970,6 @@ namespace ArchsVsDinosClient.ViewModels
 
             Debug.WriteLine($"[LOBBY VM] Intentos de reconexión detenidos. Éxito: {success}");
         }
+
     }
 }

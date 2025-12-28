@@ -898,6 +898,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a te ha invitado a unirte a su lobby. ¿Deseas aceptar la invitación?.
+        /// </summary>
+        public static string Lobby_InvitationReceived {
+            get {
+                return ResourceManager.GetString("Lobby_InvitationReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Lobby invitation.
+        /// </summary>
+        public static string Lobby_InvitationReceivedTitle {
+            get {
+                return ResourceManager.GetString("Lobby_InvitationReceivedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Invitar.
         /// </summary>
         public static string Lobby_Invite {

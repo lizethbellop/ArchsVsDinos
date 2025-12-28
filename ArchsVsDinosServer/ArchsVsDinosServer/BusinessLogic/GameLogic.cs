@@ -215,7 +215,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             loggerHelper.LogInfo($"InitializeMatch: Match {matchCode} initialized successfully.");
 
-            //NotifyGameStarted(gameSession);
+            NotifyGameStarted(gameSession);
 
             var initDto = new GameInitializedDTO
             {
@@ -233,8 +233,10 @@ namespace ArchsVsDinosServer.BusinessLogic
             return Task.FromResult(true);
         }
 
-        /*private void NotifyGameStarted(GameSession session)
+        private void NotifyGameStarted(GameSession session)
         {
+            var failedPlayers = new List<int>();
+
             foreach (var player in session.Players)
             {
                 var playerHandDto = new PlayerHandDTO
@@ -250,7 +252,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     MatchId = session.MatchCode.GetHashCode(),
                     FirstPlayerUserId = session.CurrentTurn,
-                    FirstPlayerUsername = session.Players.FirstOrDefault(p => p.UserId == session.CurrentTurn)?.Nickname ?? string.Empty,
+                    FirstPlayerUsername = session.Players.FirstOrDefault(playerSelected => playerSelected.UserId == session.CurrentTurn)?.Nickname ?? string.Empty,
                     MyUserId = player.UserId,
                     StartTime = session.StartTime ?? DateTime.UtcNow,
                     PlayersHands = new List<PlayerHandDTO> { playerHandDto },
@@ -258,10 +260,35 @@ namespace ArchsVsDinosServer.BusinessLogic
                     DrawDeckCount = session.DrawDeck.Count
                 };
 
-                gameNotifier.NotifyGameStarted(player.UserId, gameStartedDto);
+                try
+                {
+                    gameNotifier.NotifyGameStarted(gameStartedDto);
+                }
+                catch (Exception ex)
+                {
+                    loggerHelper.LogError($"Failed to notify game start to player {player.UserId} ({player.Nickname})", ex);
+                    failedPlayers.Add(player.UserId);
+                }
             }
 
-            loggerHelper.LogInfo($"Game started notifications sent to all {session.Players.Count} players in {session.MatchCode}");
+            if (failedPlayers.Count > 0)
+            {
+                loggerHelper.LogWarning($"Game start notification failed for {failedPlayers.Count} players in {session.MatchCode}. Aborting game.");
+
+                foreach (var userId in failedPlayers)
+                {
+                    session.RemovePlayer(userId);
+                }
+
+                if (session.Players.Count < 2)
+                {
+                    EndGame(session.MatchCode, GameEndType.Aborted, "Insufficient players after failed connections");
+                }
+            }
+            else
+            {
+                loggerHelper.LogInfo($"Game started successfully for all {session.Players.Count} players in {session.MatchCode}");
+            }
         }
 
         private CentralBoardDTO MapBoardToDTO(CentralBoard board)
@@ -290,7 +317,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                     .Select(c => CreateCardDTO(c))
                     .ToList()
             };
-        }*/
+        }
 
         public DinoInstance PlayDinoHead(string matchCode, int userId, int headCardId)
         {

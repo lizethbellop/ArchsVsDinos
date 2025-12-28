@@ -6,6 +6,7 @@ using ArchsVsDinosClient.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -97,7 +98,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             set { windArmyVisibility = value; OnPropertyChanged(nameof(WindArmyVisibility)); }
         }
 
-        public GameViewModel(IGameServiceClient gameServiceClient, string matchCode, string username, List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
+        public GameViewModel(IGameServiceClient gameServiceClient, string matchCode, string username, List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players, int myLobbyUserId = 0)
         {
             if (gameServiceClient == null)
             {
@@ -107,6 +108,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             this.matchCode = matchCode;
             this.currentUsername = username;
             this.allPlayers = players ?? new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
+            this.forcedUserId = myLobbyUserId;
 
             TimerManager = new GameTimerManager();
             BoardManager = new GameBoardManager();
@@ -135,6 +137,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public async Task ConnectToGameAsync()
         {
             int userId = DetermineMyUserId();
+            Debug.WriteLine($"[GAME VM] Connecting to game with matchCode: {matchCode}, userId: {userId}");
             await gameServiceClient.ConnectToGameAsync(matchCode, userId);
         }
 
@@ -317,6 +320,15 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             if (this.forcedUserId != 0)
             {
                 return this.forcedUserId;
+            }
+
+            var myPlayer = allPlayers.FirstOrDefault(p =>
+                p.Username == currentUsername ||
+                p.Nickname == currentUsername);
+
+            if (myPlayer != null && myPlayer.IdPlayer != 0)
+            {
+                return myPlayer.IdPlayer; 
             }
 
             int playerId = UserSession.Instance.GetPlayerId();

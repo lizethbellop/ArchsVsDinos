@@ -395,6 +395,10 @@ namespace ArchsVsDinosServer.BusinessLogic
                     .ToList();
             }
 
+            core.Session.Broadcast(lobbyCode, callback => callback.GameStarting());
+            logger.LogInfo($"Game starting notification sent for lobby {lobbyCode}.");
+            await Task.Delay(3000);
+
             bool created = await gameLogic.InitializeMatch(lobbyCode, playersToStart);
 
             if (!created)
@@ -497,32 +501,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 logger.LogError("Unexpected error sending invitations.", ex);
                 return false;
-            }
-        }
-
-        private void SendInitialState(ILobbyManagerCallback callback, ActiveLobbyData activeLobbyData, string nickname)
-        {
-            if(callback == null || activeLobbyData == null || string.IsNullOrWhiteSpace(nickname))
-            {
-                return;
-            }
-
-            try
-            {
-                var players = activeLobbyData.Players;
-                callback.UpdateListOfPlayers(MapPlayersToDTOs(activeLobbyData));
-            }
-            catch (CommunicationException ex)
-            {
-                logger.LogWarning($"Communication error sending initial state to {nickname}: {ex.Message}");
-            }
-            catch (TimeoutException ex)
-            {
-                logger.LogWarning($"Timeout sending initial state to {nickname}: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Critical error sending initial state to {nickname}.", ex);
             }
         }
 

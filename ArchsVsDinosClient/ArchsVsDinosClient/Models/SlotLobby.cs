@@ -19,6 +19,7 @@ namespace ArchsVsDinosClient.Models
         private bool isReady;
         private bool isGuest;
         private bool localUserIsGuest;
+        private int idPlayer;
 
         public string Username
         {
@@ -105,6 +106,16 @@ namespace ArchsVsDinosClient.Models
         {
             get => localUserIsGuest;
             set { localUserIsGuest = value; OnPropertyChanged(nameof(LocalUserIsGuest)); }
+        }
+
+        public int IdPlayer
+        {
+            get => idPlayer;
+            set
+            {
+                idPlayer = value;
+                OnPropertyChanged(nameof(IdPlayer));
+            }
         }
 
         public bool IsOccupied => !string.IsNullOrWhiteSpace(Username);

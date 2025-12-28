@@ -42,12 +42,61 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public void NotifyGameInitialized(GameInitializedDTO data) => NotifyAll(cb => cb.OnGameInitialized(data));
 
-        public void NotifyGameStarted(GameStartedDTO data) => NotifyAll(cb => cb.OnGameStarted(data));
-
         public void NotifyPlayerExpelled(PlayerExpelledDTO data) => NotifyAll(cb => cb.OnPlayerExpelled(data));
 
         public void NotifyTurnChanged(TurnChangedDTO data) => NotifyAll(cb => cb.OnTurnChanged(data));
 
+        public void NotifyGameStarted(GameStartedDTO data)
+        {
+            if (data == null)
+            {
+                logger.LogWarning("NotifyGameStarted called with null data");
+                throw new ArgumentNullException(nameof(data));
+            }
+
+            var callback = GameCallbackRegistry.Instance.GetCallback(data.MyUserId);
+
+            if (callback == null)
+            {
+                logger.LogWarning($"No callback found for user {data.MyUserId} in NotifyGameStarted");
+                throw new InvalidOperationException($"No callback registered for user {data.MyUserId}");
+            }
+
+            try
+            {
+                callback.OnGameStarted(data);
+                logger.LogInfo($"Game started notification sent to user {data.MyUserId}");
+            }
+            catch (CommunicationException ex)
+            {
+                logger.LogWarning($"Callback communication error for user {data.MyUserId}. Removing callback. - {ex.Message}");
+                GameCallbackRegistry.Instance.UnregisterCallback(data.MyUserId);
+                throw;
+            }
+            catch (ObjectDisposedException ex)
+            {
+                logger.LogWarning($"Callback disposed for user {data.MyUserId}. Removing callback. - {ex.Message}");
+                GameCallbackRegistry.Instance.UnregisterCallback(data.MyUserId);
+                throw;
+            }
+            catch (TimeoutException ex)
+            {
+                logger.LogWarning($"Callback timeout for user {data.MyUserId}. Removing callback. - {ex.Message}");
+                GameCallbackRegistry.Instance.UnregisterCallback(data.MyUserId);
+                throw;
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogError($"Invalid operation in callback for user {data.MyUserId}.", ex);
+                GameCallbackRegistry.Instance.UnregisterCallback(data.MyUserId);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Unexpected error while notifying user {data.MyUserId}.", ex);
+                throw;
+            }
+        }
 
         private void NotifyAll(Action<IGameManagerCallback> action)
         {

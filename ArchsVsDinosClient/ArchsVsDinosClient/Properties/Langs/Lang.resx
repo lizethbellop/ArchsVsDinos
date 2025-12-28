@@ -879,4 +879,10 @@
   <data name="Login_UnexpectedError" xml:space="preserve">
     <value>Error ineperado con el sistema, agradecemos tu paciencia</value>
   </data>
+  <data name="Lobby_InvitationReceived" xml:space="preserve">
+    <value>te ha invitado a unirte a su lobby. ¿Deseas aceptar la invitación?</value>
+  </data>
+  <data name="Lobby_InvitationReceivedTitle" xml:space="preserve">
+    <value>Lobby invitation</value>
+  </data>
 </root>
