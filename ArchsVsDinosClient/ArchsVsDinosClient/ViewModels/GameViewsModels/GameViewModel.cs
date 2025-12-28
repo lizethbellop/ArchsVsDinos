@@ -261,7 +261,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             });
         }
 
-        private void OnArchAdded(ArchAddedToBoardDTO data)
+        /*private void OnArchAdded(ArchAddedToBoardDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -284,6 +284,38 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         ArchCardPlaced?.Invoke("Wind", archCard.IdCard);
                         break;
                 }
+
+                ArchCardPlaced?.Invoke(armyName, archCard.IdCard);
+            });
+        }*/
+
+        private void OnArchAdded(ArchAddedToBoardDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var archCard = CardRepositoryModel.GetById(data.ArchCard.IdCard);
+
+                if (archCard == null) return;
+
+                string armyName = "";
+
+                switch (data.ArchCard.Element)
+                {
+                    case GameService.ArmyType.Sand:
+                        BoardManager.SandArmy.Add(archCard);
+                        armyName = "Arena";
+                        break;
+                    case GameService.ArmyType.Water:
+                        BoardManager.WaterArmy.Add(archCard);
+                        armyName = "Agua";
+                        break;
+                    case GameService.ArmyType.Wind:
+                        BoardManager.WindArmy.Add(archCard);
+                        armyName = "Viento";
+                        break;
+                }
+
+                ArchCardPlaced?.Invoke(armyName, archCard.IdCard);
             });
         }
 
@@ -327,6 +359,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                 TimerManager.StartTimer(TimeSpan.FromMinutes(20));
 
+                ShowInitialArchsSummary(data.InitialBoard);
+
                 if (IsMyTurn)
                 {
                     RemainingMoves = 3;
@@ -339,6 +373,26 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     MessageBox.Show($"{Lang.Match_InfoBegin2}{namePlayer}");
                 }
             });
+        }
+
+        private void ShowInitialArchsSummary(GameService.CentralBoardDTO board)
+        {
+            int sandCount = board.SandArmyCount;
+            int waterCount = board.WaterArmyCount;
+            int windCount = board.WindArmyCount;
+            int totalArchs = sandCount + waterCount + windCount;
+
+            if (totalArchs > 0)
+            {
+                string message = $"{Lang.Match_InitialDistribution1} \n\n" +
+                                $"{Lang.Match_InitialDistribution2}:\n" +
+                                $"🏜️ {Lang.Match_InitialDistribution3} {sandCount}\n" +
+                                $"🌊 {Lang.Match_InitialDistribution4} {waterCount}\n" +
+                                $"💨 {Lang.Match_InitialDistribution5} {windCount}\n\n" +
+                                $"Total: {totalArchs} Archs";
+
+                MessageBox.Show(message);
+            }
         }
 
         private void OnTurnChanged(TurnChangedDTO data)

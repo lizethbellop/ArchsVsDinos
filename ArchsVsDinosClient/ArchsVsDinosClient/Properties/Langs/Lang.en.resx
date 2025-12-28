@@ -889,4 +889,19 @@
   <data name="Match_ArchAddedMessage" xml:space="preserve">
     <value>Arch dragged. Army:</value>
   </data>
+  <data name="Match_InitialDistribution1" xml:space="preserve">
+    <value>Cards dealt!</value>
+  </data>
+  <data name="Match_InitialDistribution2" xml:space="preserve">
+    <value>Archs placed during distribution:</value>
+  </data>
+  <data name="Match_InitialDistribution3" xml:space="preserve">
+    <value>Sand:</value>
+  </data>
+  <data name="Match_InitialDistribution4" xml:space="preserve">
+    <value>Water:</value>
+  </data>
+  <data name="Match_InitialDistribution5" xml:space="preserve">
+    <value>Wind:</value>
+  </data>
 </root>

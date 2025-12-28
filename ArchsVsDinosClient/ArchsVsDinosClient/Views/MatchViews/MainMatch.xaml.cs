@@ -664,6 +664,8 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void ShowArchPlacedAnimation(string armyName, int cardId)
         {
+            HighlightArmyDeck(armyName);
+
             var notification = new Border
             {
                 Background = new SolidColorBrush(Color.FromArgb(200, 75, 0, 130)),
@@ -726,6 +728,60 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 };
                 timer.Start();
             }
+        }
+
+        private void HighlightArmyDeck(string armyName)
+        {
+            Grid targetGrid = null;
+
+            switch (armyName)
+            {
+                case "Sand":
+                    targetGrid = Gr_SandArchs;
+                    break;
+                case "Water":
+                    targetGrid = Gr_SeaArchs;
+                    break;
+                case "Wind":
+                    targetGrid = Gr_WindArchs;
+                    break;
+            }
+
+            if (targetGrid == null) return;
+
+            var glowEffect = new DropShadowEffect
+            {
+                Color = Colors.Gold,
+                ShadowDepth = 0,
+                BlurRadius = 40,
+                Opacity = 1
+            };
+
+            targetGrid.Effect = glowEffect;
+
+            var pulseAnimation = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 1.15,
+                Duration = TimeSpan.FromSeconds(0.3),
+                AutoReverse = true,
+                RepeatBehavior = new RepeatBehavior(3)
+            };
+
+            var scaleTransform = new ScaleTransform(1, 1, targetGrid.ActualWidth / 2, targetGrid.ActualHeight / 2);
+            targetGrid.RenderTransform = scaleTransform;
+
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, pulseAnimation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, pulseAnimation);
+
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+            timer.Tick += (s, args) =>
+            {
+                timer.Stop();
+                targetGrid.Effect = null;
+                targetGrid.RenderTransform = null;
+            };
+            timer.Start();
         }
 
         private void Click_BtnSeeDeckP1(object sender, RoutedEventArgs e)

@@ -1411,6 +1411,51 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡Cartas repartidas!.
+        /// </summary>
+        public static string Match_InitialDistribution1 {
+            get {
+                return ResourceManager.GetString("Match_InitialDistribution1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Arqueólogos colocados durante repartición:.
+        /// </summary>
+        public static string Match_InitialDistribution2 {
+            get {
+                return ResourceManager.GetString("Match_InitialDistribution2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tierra:.
+        /// </summary>
+        public static string Match_InitialDistribution3 {
+            get {
+                return ResourceManager.GetString("Match_InitialDistribution3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Agua:.
+        /// </summary>
+        public static string Match_InitialDistribution4 {
+            get {
+                return ResourceManager.GetString("Match_InitialDistribution4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Aire:.
+        /// </summary>
+        public static string Match_InitialDistribution5 {
+            get {
+                return ResourceManager.GetString("Match_InitialDistribution5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No puedes poner tu carta aquí.
         /// </summary>
         public static string Match_InvalidCell {

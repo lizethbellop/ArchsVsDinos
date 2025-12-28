@@ -110,6 +110,16 @@ namespace ArchsVsDinosServer.BusinessLogic
                 if (drawnCard.IsArch())
                 {
                     gameSession.CentralBoard.AddArchCardToArmy(drawnCard);
+                    var archAddedDto = new ArchAddedToBoardDTO
+                    {
+                        MatchId = matchCode.GetHashCode(),
+                        PlayerUserId = userId,
+                        PlayerUsername = playerSession.Nickname,
+                        ArchCard = CreateCardDTO(drawnCard),
+                        ArmyType = drawnCard.Element.ToString(),
+                        NewArchCount = gameSession.CentralBoard.GetArmyByType(drawnCard.Element).Count
+                    };
+                    gameNotifier.NotifyArchAddedToBoard(archAddedDto);
                 }
                 else
                 {
@@ -296,6 +306,8 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 loggerHelper.LogInfo($"Game started successfully for all {session.Players.Count} players in {session.MatchCode}");
             }
+
+            NotifyInitialArchsOnBoard(session);
         }
 
         private CentralBoardDTO MapBoardToDTO(CentralBoard board)
@@ -773,6 +785,68 @@ namespace ArchsVsDinosServer.BusinessLogic
                 HasLeftJoint = card.HasLeftJoint,
                 HasRightJoint = card.HasRightJoint
             };
+        }
+
+        private void NotifyInitialArchsOnBoard(GameSession session)
+        {
+            var board = session.CentralBoard;
+
+            foreach (var archId in board.SandArmy)
+            {
+                var archCard = CardInGame.FromDefinition(archId);
+                if (archCard != null)
+                {
+                    var dto = new ArchAddedToBoardDTO
+                    {
+                        MatchId = session.MatchCode.GetHashCode(),
+                        PlayerUserId = 0,
+                        PlayerUsername = "System",
+                        ArchCard = CreateCardDTO(archCard),
+                        ArmyType = ArmyType.Sand.ToString(),
+                        NewArchCount = board.SandArmy.Count
+                    };
+                    gameNotifier.NotifyArchAddedToBoard(dto);
+                }
+            }
+
+            foreach (var archId in board.WaterArmy)
+            {
+                var archCard = CardInGame.FromDefinition(archId);
+                if (archCard != null)
+                {
+                    var dto = new ArchAddedToBoardDTO
+                    {
+                        MatchId = session.MatchCode.GetHashCode(),
+                        PlayerUserId = 0,
+                        PlayerUsername = "System",
+                        ArchCard = CreateCardDTO(archCard),
+                        ArmyType = ArmyType.Water.ToString(),
+                        NewArchCount = board.WaterArmy.Count
+                    };
+                    gameNotifier.NotifyArchAddedToBoard(dto);
+                }
+            }
+
+            foreach (var archId in board.WindArmy)
+            {
+                var archCard = CardInGame.FromDefinition(archId);
+                if (archCard != null)
+                {
+                    var dto = new ArchAddedToBoardDTO
+                    {
+                        MatchId = session.MatchCode.GetHashCode(),
+                        PlayerUserId = 0,
+                        PlayerUsername = "System",
+                        ArchCard = CreateCardDTO(archCard),
+                        ArmyType = ArmyType.Wind.ToString(),
+                        NewArchCount = board.WindArmy.Count
+                    };
+                    gameNotifier.NotifyArchAddedToBoard(dto);
+                }
+            }
+
+            int totalArchs = board.SandArmy.Count + board.WaterArmy.Count + board.WindArmy.Count;
+            loggerHelper.LogInfo($"Notified {totalArchs} initial Archs in match {session.MatchCode}");
         }
     }
 }

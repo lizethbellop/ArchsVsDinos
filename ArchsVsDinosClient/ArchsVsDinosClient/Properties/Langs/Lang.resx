@@ -888,4 +888,19 @@
   <data name="Match_ArchAddedMessage" xml:space="preserve">
     <value>Arqueólogo arrastrado. Ejército:</value>
   </data>
+  <data name="Match_InitialDistribution1" xml:space="preserve">
+    <value>¡Cartas repartidas!</value>
+  </data>
+  <data name="Match_InitialDistribution2" xml:space="preserve">
+    <value>Arqueólogos colocados durante repartición:</value>
+  </data>
+  <data name="Match_InitialDistribution3" xml:space="preserve">
+    <value>Tierra:</value>
+  </data>
+  <data name="Match_InitialDistribution4" xml:space="preserve">
+    <value>Agua:</value>
+  </data>
+  <data name="Match_InitialDistribution5" xml:space="preserve">
+    <value>Aire:</value>
+  </data>
 </root>

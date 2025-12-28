@@ -35,9 +35,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 }
 
                 var allCardIds = CardDefinitions.GetAllCardIds();
-                Console.WriteLine($"[SETUP] Total cards from definitions: {allCardIds.Count}");
                 var shuffledDeck = CardShuffler.ShuffleCards(allCardIds);
-                Console.WriteLine($"[SETUP] Shuffled deck size: {shuffledDeck.Count}");
 
                 var duplicates = shuffledDeck.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
                 if (duplicates.Any())
@@ -45,7 +43,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                     Console.WriteLine($"[ERROR] Duplicate card IDs found: {string.Join(", ", duplicates)}");
                 }
 
-                // Verificar IDs inválidos
                 var invalidIds = shuffledDeck.Where(id => id < 1 || id > 96).ToList();
                 if (invalidIds.Any())
                 {
