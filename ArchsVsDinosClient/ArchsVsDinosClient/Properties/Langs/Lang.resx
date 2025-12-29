@@ -906,4 +906,7 @@
   <data name="Match_EndTurnError" xml:space="preserve">
     <value>Error terminando turno, intenta de nuevo</value>
   </data>
+  <data name="Match_PlayerNotFoundDeck" xml:space="preserve">
+    <value>Mazo de player no encontrado</value>
+  </data>
 </root>

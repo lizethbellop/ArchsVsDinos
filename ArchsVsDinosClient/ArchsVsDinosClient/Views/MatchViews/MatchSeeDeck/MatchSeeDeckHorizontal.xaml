@@ -3,56 +3,100 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews.MatchSeeDeck" xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
+        xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews.MatchSeeDeck"
+        xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
+        xmlns:utils="clr-namespace:ArchsVsDinosClient.Utils"
+        xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
         mc:Ignorable="d"
-        Title="WatchDeckHorizontal" Height="540" Width="1320" ResizeMode="CanResize"
+        Height="500" Width="1520" ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen" WindowStyle="None">
+
+    <Window.Resources>
+        <utils:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <utils:CardToBackgroundConverter x:Key="CardToBackgroundConverter"/>
+    </Window.Resources>
 
     <Window.Background>
         <ImageBrush ImageSource="/Resources/Images/seeDeckHorizontalBackground.png"/>
     </Window.Background>
 
-    <Grid Margin="10,10,10,45">
-
+    <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="5*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="16*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="1">
-                <Button Click="Click_BtnClose">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Resources/Images/close.png"/>
-                    </Button.Background>
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border" Background="{TemplateBinding Background}" 
-                                CornerRadius="5" BorderThickness="0">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
+            <TextBlock Grid.Column="0" Text="{Binding PlayerName}" FontSize="28" FontWeight="Bold" Foreground="White"
+                       VerticalAlignment="Center" Margin="10,0,0,0"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
+                <TextBlock Text="{x:Static language:Lang.Match_Points}" FontSize="20" Foreground="White" Margin="0,0,8,0"/>
+                <TextBlock Text="{Binding PlayerPoints}" FontSize="20" FontWeight="Bold" Foreground="#FFD700"/>
+            </StackPanel>
+
+            <Button Grid.Column="2" Click="Click_BtnClose" Width="50" Height="50">
+                <Button.Background>
+                    <ImageBrush ImageSource="/Resources/Images/close.png"/>
+                </Button.Background>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}"  CornerRadius="5" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </Grid>
 
-        <Grid Grid.Row="1">
-            <Grid>
-                <controls:PlayerCellHorizontal x:Name="TopPlayerCards"/>
-            </Grid>
-        </Grid>
-        
+        <!-- Dinos slots -->
+        <ItemsControl Grid.Row="1" 
+                      ItemsSource="{Binding DinoSlots}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" Columns="6"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="#666" BorderThickness="2" CornerRadius="6" Margin="3" Background="#30000000">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Number slot and power -->
+                            <Border Grid.Row="0" 
+                                    Background="#50000000" 
+                                    Padding="5"
+                                    CornerRadius="6,6,0,0">
+                                <Grid>
+                                    <TextBlock Text="{Binding SlotNumber, StringFormat='Slot {0}'}" FontSize="12" 
+                                               Foreground="#AAA"  HorizontalAlignment="Left"/>
+                                    <TextBlock Text="{Binding TotalPower, StringFormat='⚡ {0}'}" FontSize="16" 
+                                               FontWeight="Bold" Foreground="#FFD700" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Dino -->
+                            <controls:DinoSlotControl Grid.Row="1"  DataContext="{Binding}" Margin="3"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
-    
 </Window>

@@ -162,6 +162,7 @@
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\ProfileServiceClient.cs" />
     <Compile Include="Services\StatisticsServiceClient.cs" />
+    <Compile Include="Utils\ConverterCard.cs" />
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
     <Compile Include="Utils\ImageCompressor.cs" />
     <Compile Include="Utils\LoadingDisplayHelper.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="ViewModels\GameStatisticsViewModel.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameActionManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameBoardManager.cs" />
+    <Compile Include="ViewModels\GameViewsModels\GameSeeDeckViewModel.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameTimerManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameViewModel.cs" />
     <Compile Include="ViewModels\LobbyViewModel.cs" />
@@ -256,6 +258,9 @@
     </Compile>
     <Compile Include="Views\MatchViews\DeckCardSelection.xaml.cs">
       <DependentUpon>DeckCardSelection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MatchViews\DinoSlotControl.xaml.cs">
+      <DependentUpon>DinoSlotControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MatchViews\MainMatch.xaml.cs">
       <DependentUpon>MainMatch.xaml</DependentUpon>
@@ -369,6 +374,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MatchViews\DeckCardSelection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\DinoSlotControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

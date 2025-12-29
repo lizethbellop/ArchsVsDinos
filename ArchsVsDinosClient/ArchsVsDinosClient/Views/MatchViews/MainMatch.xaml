@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Match" Height="780" Width="1420" ResizeMode="CanResize"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs" xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Window.Background>
         <ImageBrush ImageSource="/Resources/Images/matchBackground.png"/>

@@ -11,17 +11,19 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ArchsVsDinosClient.ViewModels.GameViewsModels;
 
 namespace ArchsVsDinosClient.Views.MatchViews.MatchSeeDeck
 {
-    /// <summary>
-    /// Lógica de interacción para MatchSeeDeckHorizontal.xaml
-    /// </summary>
     public partial class MatchSeeDeckHorizontal : Window
     {
-        public MatchSeeDeckHorizontal()
+        public GameSeeDeckViewModel ViewModel { get; }
+
+        public MatchSeeDeckHorizontal(GameSeeDeckViewModel viewModel)
         {
             InitializeComponent();
+            ViewModel = viewModel;
+            DataContext = ViewModel;
         }
 
         private void Click_BtnClose(object sender, RoutedEventArgs e)

@@ -38,6 +38,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public event PropertyChangedEventHandler PropertyChanged;
         public event Action<string> TurnChangedForUI;
         public event Action<string, int> ArchCardPlaced;
+        public event Action<int, int, Card> OpponentDinoHeadPlayed;
+        public event Action<int, int, Card> OpponentBodyPartAttached;
 
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
 
@@ -133,6 +135,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.TurnChanged += OnTurnChanged;
             gameServiceClient.CardDrawn += OnCardDrawn;
             gameServiceClient.ArchAdded += OnArchAdded;
+            gameServiceClient.DinoHeadPlayed += OnDinoHeadPlayed;
+            gameServiceClient.BodyPartAttached += OnBodyPartAttached;
             gameServiceClient.ServiceError += OnServiceError;
         }
 
@@ -447,6 +451,58 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        private void OnDinoHeadPlayed(DinoPlayedDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var headCard = CardRepositoryModel.GetById(data.HeadCard.IdCard);
+
+                if (headCard == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[DINO HEAD] ⚠️ Card {data.HeadCard.IdCard} not found in repository");
+                    return;
+                }
+
+                BoardManager.RegisterDinoHeadPlayed(data.PlayerUserId, data.DinoInstanceId, headCard);
+
+                int myUserId = DetermineMyUserId();
+
+                if (data.PlayerUserId != myUserId)
+                {
+                    string playerName = GetUsernameById(data.PlayerUserId);
+                    System.Diagnostics.Debug.WriteLine($"[DINO HEAD] {playerName} played head card {headCard.IdCard}");
+
+                    OpponentDinoHeadPlayed?.Invoke(data.PlayerUserId, data.DinoInstanceId, headCard);
+                }
+            });
+        }
+
+        private void OnBodyPartAttached(BodyPartAttachedDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var bodyCard = CardRepositoryModel.GetById(data.BodyCard.IdCard);
+
+                if (bodyCard == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[BODY PART] ⚠️ Card {data.BodyCard.IdCard} not found in repository");
+                    return;
+                }
+
+                BoardManager.RegisterBodyPartAttached(data.PlayerUserId, data.DinoInstanceId, bodyCard);
+
+                int myUserId = DetermineMyUserId();
+
+                if (data.PlayerUserId != myUserId)
+                {
+                    string playerName = GetUsernameById(data.PlayerUserId);
+                    System.Diagnostics.Debug.WriteLine($"[BODY PART] {playerName} attached {bodyCard.BodyPartType} to dino {data.DinoInstanceId}");
+
+                    OpponentBodyPartAttached?.Invoke(data.PlayerUserId, data.DinoInstanceId, bodyCard);
+                }
+            });
+        }
+
         public async void InitializeAndStartGameAsync()
         {
             await Task.CompletedTask;
@@ -462,8 +518,34 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.TurnChanged -= OnTurnChanged;
                 gameServiceClient.CardDrawn -= OnCardDrawn;
                 gameServiceClient.ArchAdded -= OnArchAdded;
+                gameServiceClient.DinoHeadPlayed -= OnDinoHeadPlayed;
+                gameServiceClient.BodyPartAttached -= OnBodyPartAttached;
                 gameServiceClient.ServiceError -= OnServiceError;
             }
+        }
+
+        public void ShowPlayerDeck(int userId)
+        {
+            var playerInfo = allPlayers.FirstOrDefault(p => p.IdPlayer == userId);
+            if (playerInfo == null)
+            {
+                MessageBox.Show(Lang.Match_PlayerNotFoundDeck);
+                return;
+            }
+
+            var playerDeck = BoardManager.GetPlayerDeck(userId);
+
+            int playerPoints = 0;
+            if (userId == DetermineMyUserId())
+            {
+                playerPoints = CurrentPoints;
+            }
+
+            var viewModel = new GameSeeDeckViewModel();
+            viewModel.LoadPlayerDeck(playerInfo.Nickname, playerPoints, playerDeck);
+
+            var window = new Views.MatchViews.MatchSeeDeck.MatchSeeDeckHorizontal(viewModel);
+            window.ShowDialog();
         }
     }
 }

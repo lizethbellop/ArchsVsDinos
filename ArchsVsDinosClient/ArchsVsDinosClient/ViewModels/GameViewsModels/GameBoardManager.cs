@@ -15,11 +15,80 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public ObservableCollection<Card> WaterArmy { get; } = new ObservableCollection<Card>();
         public ObservableCollection<Card> WindArmy { get; } = new ObservableCollection<Card>();
 
+        public Dictionary<int, Dictionary<int, DinoBuilder>> PlayerDecks { get; } = new Dictionary<int, Dictionary<int, DinoBuilder>>();
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Visibility SandArmyVisibility => SandArmy.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         public Visibility WaterArmyVisibility => WaterArmy.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
         public Visibility WindArmyVisibility => WindArmy.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        public void InitializePlayerDecks(List<int> playerUserIds)
+        {
+            foreach (var userId in playerUserIds)
+            {
+                if (!PlayerDecks.ContainsKey(userId))
+                {
+                    PlayerDecks[userId] = new Dictionary<int, DinoBuilder>();
+                }
+            }
+        }
+
+        public void RegisterDinoHeadPlayed(int userId, int dinoInstanceId, Card headCard)
+        {
+            if (!PlayerDecks.ContainsKey(userId))
+            {
+                PlayerDecks[userId] = new Dictionary<int, DinoBuilder>();
+            }
+
+            if (!PlayerDecks[userId].ContainsKey(dinoInstanceId))
+            {
+                PlayerDecks[userId][dinoInstanceId] = new DinoBuilder();
+            }
+
+            PlayerDecks[userId][dinoInstanceId].Head = headCard;
+            System.Diagnostics.Debug.WriteLine($"[BOARD] Player {userId} - Dino {dinoInstanceId} - Head registered: {headCard.IdCard}");
+        }
+
+        public void RegisterBodyPartAttached(int userId, int dinoInstanceId, Card bodyCard)
+        {
+            if (!PlayerDecks.ContainsKey(userId))
+            {
+                return;
+            }
+
+            if (!PlayerDecks[userId].ContainsKey(dinoInstanceId))
+            {
+                return;
+            }
+
+            var dino = PlayerDecks[userId][dinoInstanceId];
+
+            switch (bodyCard.BodyPartType)
+            {
+                case BodyPartType.Chest:
+                    dino.Chest = bodyCard;
+                    break;
+                case BodyPartType.LeftArm:
+                    dino.LeftArm = bodyCard;
+                    break;
+                case BodyPartType.RightArm:
+                    dino.RightArm = bodyCard;
+                    break;
+                case BodyPartType.Legs:
+                    dino.Legs = bodyCard;
+                    break;
+            }
+        }
+
+        public Dictionary<int, DinoBuilder> GetPlayerDeck(int userId)
+        {
+            if (PlayerDecks.ContainsKey(userId))
+            {
+                return PlayerDecks[userId];
+            }
+            return new Dictionary<int, DinoBuilder>();
+        }
 
         public void UpdatePlayerHand(List<ArchsVsDinosClient.GameService.PlayerHandDTO> playersHands, int myUserId)
         {
@@ -31,8 +100,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             {
                 PlayerHand.Clear();
 
-                System.Diagnostics.Debug.WriteLine($"[HAND] Received {myHand.Cards.Length} cards for user {myUserId}");
-
                 foreach (var cardDTO in myHand.Cards)
                 {
                     var cardModel = CardRepositoryModel.GetById(cardDTO.IdCard);
@@ -43,12 +110,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine($"[HAND] ❌ Card {cardDTO.IdCard} NOT FOUND - Repository has {CardRepositoryModel.Cards.Count} cards");
                         var exists = CardRepositoryModel.Cards.Any(c => c.IdCard == cardDTO.IdCard);
                     }
                 }
-
-                System.Diagnostics.Debug.WriteLine($"[HAND] Total added to PlayerHand: {PlayerHand.Count}");
             }
         }
 

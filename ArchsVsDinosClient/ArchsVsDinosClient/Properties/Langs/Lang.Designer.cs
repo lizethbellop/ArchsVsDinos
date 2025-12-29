@@ -1501,6 +1501,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Mazo de player no encontrado.
+        /// </summary>
+        public static string Match_PlayerNotFoundDeck {
+            get {
+                return ResourceManager.GetString("Match_PlayerNotFoundDeck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Tiradas restantes.
         /// </summary>
         public static string Match_PlaysRemaining {
