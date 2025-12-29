@@ -904,4 +904,7 @@
   <data name="Match_InitialDistribution5" xml:space="preserve">
     <value>Wind:</value>
   </data>
+  <data name="Match_EndTurnError" xml:space="preserve">
+    <value>Errror ending turn, try again</value>
+  </data>
 </root>

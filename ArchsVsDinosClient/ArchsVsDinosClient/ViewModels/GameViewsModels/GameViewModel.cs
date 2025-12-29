@@ -224,12 +224,15 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al terminar turno: {ex.Message}");
+                MessageBox.Show($"{Lang.Match_EndTurnError}: {ex.Message}");
             }
         }
 
         private void OnCardDrawn(CardDrawnDTO data)
         {
+            System.Diagnostics.Debug.WriteLine($"[CARD DRAWN] Card ID: {data.Card.IdCard}");
+            System.Diagnostics.Debug.WriteLine($"[CARD DRAWN] Player who drew: {data.PlayerUserId}");
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 if (RemainingCardsInDeck > 0)
@@ -242,6 +245,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                 if (userIdWhoDrew == myUserId)
                 {
+
                     var newCard = CardRepositoryModel.GetById(data.Card.IdCard);
 
                     if (newCard != null && newCard.Category != ArchsVsDinosClient.Models.CardCategory.Arch)
@@ -258,36 +262,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         }
                     }
                 }
+
             });
         }
-
-        /*private void OnArchAdded(ArchAddedToBoardDTO data)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                var archCard = CardRepositoryModel.GetById(data.ArchCard.IdCard);
-
-                if (archCard == null) return;
-
-                switch (data.ArchCard.Element)
-                {
-                    case GameService.ArmyType.Sand:
-                        BoardManager.SandArmy.Add(archCard);
-                        ArchCardPlaced?.Invoke("Sand", archCard.IdCard);
-                        break;
-                    case GameService.ArmyType.Water:
-                        BoardManager.WaterArmy.Add(archCard);
-                        ArchCardPlaced?.Invoke("Water", archCard.IdCard);
-                        break;
-                    case GameService.ArmyType.Wind:
-                        BoardManager.WindArmy.Add(archCard);
-                        ArchCardPlaced?.Invoke("Wind", archCard.IdCard);
-                        break;
-                }
-
-                ArchCardPlaced?.Invoke(armyName, archCard.IdCard);
-            });
-        }*/
 
         private void OnArchAdded(ArchAddedToBoardDTO data)
         {
@@ -303,15 +280,15 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     case GameService.ArmyType.Sand:
                         BoardManager.SandArmy.Add(archCard);
-                        armyName = "Arena";
+                        armyName = "Sand";
                         break;
                     case GameService.ArmyType.Water:
                         BoardManager.WaterArmy.Add(archCard);
-                        armyName = "Agua";
+                        armyName = "Water";
                         break;
                     case GameService.ArmyType.Wind:
                         BoardManager.WindArmy.Add(archCard);
-                        armyName = "Viento";
+                        armyName = "Wind";
                         break;
                 }
 
@@ -370,7 +347,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     RemainingMoves = 0;
                     string namePlayer = GetUsernameById(data.FirstPlayerUserId);
-                    MessageBox.Show($"{Lang.Match_InfoBegin2}{namePlayer}");
+                    MessageBox.Show($"{namePlayer } {Lang.Match_InfoBegin2}");
                 }
             });
         }

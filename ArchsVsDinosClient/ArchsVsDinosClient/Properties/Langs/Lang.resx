@@ -903,4 +903,7 @@
   <data name="Match_InitialDistribution5" xml:space="preserve">
     <value>Aire:</value>
   </data>
+  <data name="Match_EndTurnError" xml:space="preserve">
+    <value>Error terminando turno, intenta de nuevo</value>
+  </data>
 </root>

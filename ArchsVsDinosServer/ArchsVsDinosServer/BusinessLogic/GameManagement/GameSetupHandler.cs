@@ -79,9 +79,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             foreach (var player in session.Players)
             {
                 int archCount = 0;
-                int cardCount = 0;
+                int handCardCount = 0; 
 
-                while (player.Hand.Count < InitialHandSize && deckQueue.Count > 0)
+                while (handCardCount < InitialHandSize && deckQueue.Count > 0)
                 {
                     int cardId = deckQueue.Dequeue();
                     var card = CardInGame.FromDefinition(cardId);
@@ -96,10 +96,10 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                     else
                     {
                         player.AddCard(card);
-                        cardCount++;
+                        handCardCount++;  
                     }
                 }
-                Console.WriteLine($"[SETUP] Player {player.UserId} - Hand: {player.Hand.Count}, Archs: {archCount}, Total: {cardCount + archCount}");
+                Console.WriteLine($"[SETUP] Player {player.UserId} - Hand: {handCardCount}, Archs: {archCount}, Total: {handCardCount + archCount}");
             }
 
             return deckQueue.ToList();

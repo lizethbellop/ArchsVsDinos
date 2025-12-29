@@ -91,15 +91,19 @@ namespace ArchsVsDinosClient.Models
             Element = ElementType.None;
         }
 
+
         private void DeduceCategoryFromRoute(string route)
         {
-            if (route.Contains("Archs"))
+            int cardsIndex = route.IndexOf("Images/Cards/");
+            string cardPath = cardsIndex >= 0 ? route.Substring(cardsIndex) : route;
+
+            if (cardPath.Contains("/Archs/"))
             {
                 Category = CardCategory.Arch;
                 return;
             }
 
-            if (route.Contains("Dinos"))
+            if (cardPath.Contains("/Dinos/"))
             {
                 Category = CardCategory.DinoHead;
                 return;

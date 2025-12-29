@@ -1393,6 +1393,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error terminando turno, intenta de nuevo.
+        /// </summary>
+        public static string Match_EndTurnError {
+            get {
+                return ResourceManager.GetString("Match_EndTurnError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¡El juego ha comenzado!.
         /// </summary>
         public static string Match_InfoBegin1 {

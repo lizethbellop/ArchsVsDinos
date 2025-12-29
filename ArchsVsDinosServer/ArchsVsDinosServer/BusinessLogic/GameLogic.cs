@@ -260,6 +260,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     UserId = player.UserId,
                     Cards = player.Hand
+                        .Where(card => !card.IsArch()) 
                         .Select(card => CreateCardDTO(card))
                         .Where(dto => dto != null)
                         .ToList()

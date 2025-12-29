@@ -68,7 +68,7 @@ namespace ArchsVsDinosClient.Models
             new Card(43, BasePath + "Images/Cards/Dinos/Sea/Power3/D_Sea3_2.png", 3),
             
             // -- Wind Dino Cards
-            new Card(44, BasePath + "Images/Cards/Dinos/Wind/Power0/D_Wind0_1.png", 0), 
+            new Card(44, BasePath + "Images/Cards/Dinos/Wind/Power0/D_Wind0_1.png", 0),
             new Card(45, BasePath + "Images/Cards/Dinos/Wind/Power1/D_Wind1_1.png", 1),
             new Card(46, BasePath + "Images/Cards/Dinos/Wind/Power1/D_Wind1_2.png", 1),
             new Card(47, BasePath + "Images/Cards/Dinos/Wind/Power1/D_Wind1_3.png", 1),
@@ -136,8 +136,24 @@ namespace ArchsVsDinosClient.Models
             new Card(96, BasePath + "Images/Cards/RightArm/Power3/Right_Power3_1.png", 3),
         };
 
+        /*public static Card GetById(int id)
+            => Cards.FirstOrDefault(card => card.IdCard == id);*/
+
         public static Card GetById(int id)
-            => Cards.FirstOrDefault(card => card.IdCard == id);
+        {
+            var card = Cards.FirstOrDefault(c => c.IdCard == id);
+
+            if (card != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"[REPO] Card {id}: Route={card.CardRoute}, Category={card.Category}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[REPO] Card {id}: NOT FOUND");
+            }
+
+            return card;
+        }
 
     }
 }
