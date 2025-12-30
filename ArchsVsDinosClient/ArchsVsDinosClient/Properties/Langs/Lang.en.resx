@@ -910,4 +910,64 @@
   <data name="Match_PlayerNotFoundDeck" xml:space="preserve">
     <value>Player deck not found</value>
   </data>
+  <data name="Match_ErrorProvokingArchs" xml:space="preserve">
+    <value>Error provoking archs, try again</value>
+  </data>
+  <data name="Match_ProvokeBattleResultTitle" xml:space="preserve">
+    <value>Battle Result</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage" xml:space="preserve">
+    <value>✨ ¡VICTORY! ✨</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage" xml:space="preserve">
+    <value>💀 DEFEAT 💀</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage2" xml:space="preserve">
+    <value>wins with</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage3" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage4" xml:space="preserve">
+    <value>againts</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage5" xml:space="preserve">
+    <value>pts from the army</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage2" xml:space="preserve">
+    <value>The army wins with</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage3" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage4" xml:space="preserve">
+    <value>againts</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage5" xml:space="preserve">
+    <value>pts from</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage6" xml:space="preserve">
+    <value>Everyone loses their dinos from</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessagePlayer" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="Match_ProvokeVictoryMessagePlayer2" xml:space="preserve">
+    <value>wins</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessagePlayer3" xml:space="preserve">
+    <value>points!</value>
+  </data>
+  <data name="Match_ProvokeVictoryTitle" xml:space="preserve">
+    <value>The archs were defeated</value>
+  </data>
+  <data name="Match_ProvokeTotalDefeatMessage1" xml:space="preserve">
+    <value>The army of archs defeated all the dinos</value>
+  </data>
+  <data name="Match_ProvokeTotalDefeatTitle" xml:space="preserve">
+    <value>DEFEAT</value>
+  </data>
+  <data name="Match_ErrorChatNotAvailable" xml:space="preserve">
+    <value>Chat not available</value>
+  </data>
 </root>

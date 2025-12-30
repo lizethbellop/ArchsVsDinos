@@ -199,6 +199,7 @@
     <Compile Include="ViewModels\GameViewsModels\GameSeeDeckViewModel.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameTimerManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameViewModel.cs" />
+    <Compile Include="ViewModels\GameViewsModels\MatchProvokeViewModel.cs" />
     <Compile Include="ViewModels\LobbyViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -759,8 +760,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_1.xcf" />
-    <None Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_2.xcf" />
     <Resource Include="Resources\Fonts\Volcanic Dungeon.ttf" />
     <Resource Include="Resources\Fonts\Ouroboros.ttf" />
   </ItemGroup>
@@ -1022,6 +1021,8 @@
     <Content Include="Resources\Images\Avatars\default_avatar_05.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_2.png" />
     <Content Include="Resources\Music\MusicAttack.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

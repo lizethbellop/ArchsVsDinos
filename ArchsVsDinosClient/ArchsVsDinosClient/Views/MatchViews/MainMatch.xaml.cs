@@ -1,7 +1,9 @@
 ﻿using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.GameService;
 using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
+using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.ViewModels.GameViewsModels;
@@ -33,6 +35,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
         private Dictionary<string, int> playerPositionToUserId = new Dictionary<string, int>();
         private DispatcherTimer errorNotificationTimer;
         private CardCell lastHoveredCardCell;
+        private bool isProvokeModeActive = false;
+
+        private int player2UserId = 0;
+        private int player3UserId = 0;
+        private int player4UserId = 0;
 
         public MainMatch(List<LobbyPlayerDTO> players, string myUsername, string gameMatchCode, int myLobbyUserId)
         {
@@ -48,7 +55,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
             catch (Exception)
             {
-                MessageBox.Show("Chat no disponible.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.Match_ErrorChatNotAvailable);
             }
 
             try
@@ -93,6 +100,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 gameViewModel.ArchCardPlaced += ShowArchPlacedAnimation;
                 gameViewModel.OpponentDinoHeadPlayed += OnOpponentDinoHeadPlayed;
                 gameViewModel.OpponentBodyPartAttached += OnOpponentBodyPartAttached;
+                gameViewModel.PlayerDinosClearedByElement += OnPlayerDinosClearedByElement;
+                gameViewModel.DiscardPileUpdated += OnDiscardPileUpdated;
+                gameViewModel.ArchArmyCleared += OnArchArmyCleared;
                 MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
 
                 await gameViewModel.ConnectToGameAsync();
@@ -336,6 +346,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 Lb_TopPlayerName.Content = others[0].Nickname ?? others[0].Username;
                 playerPositionToUserId["P2"] = others[0].IdPlayer;
+                player2UserId = others[0].IdPlayer;
             }
 
             if (others.Count > 1)
@@ -343,6 +354,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 Lb_LeftPlayerName.Content = others[1].Nickname ?? others[1].Username;
                 Grid_LeftPlayer.Visibility = Visibility.Visible;
                 playerPositionToUserId["P3"] = others[1].IdPlayer;
+                player3UserId = others[1].IdPlayer;
             }
             else
             {
@@ -354,6 +366,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 Lb_RightPlayerName.Content = others[2].Nickname ?? others[2].Username;
                 Grid_RightPlayer.Visibility = Visibility.Visible;
                 playerPositionToUserId["P4"] = others[2].IdPlayer;
+                player4UserId = others[2].IdPlayer;
             }
             else
             {
@@ -803,6 +816,315 @@ namespace ArchsVsDinosClient.Views.MatchViews
             Btn_Chat.Visibility = Visibility.Visible;
         }
 
+        private void Click_BtnProvokeNow(object sender, RoutedEventArgs e)
+        {
+            if (!gameViewModel.IsMyTurn)
+            {
+                MessageBox.Show(Lang.Match_NotYourTurn);
+                return;
+            }
+
+            ActivateProvokeMode();
+        }
+
+        private void ActivateProvokeMode()
+        {
+            isProvokeModeActive = true;
+
+            if (gameViewModel.BoardManager.SandArmy.Count > 0)
+            {
+                AddGlowToArmy(Gr_SandArchs);
+                Gr_SandArchs.Cursor = Cursors.Hand;
+                Gr_SandArchs.MouseLeftButtonDown += OnArmyClick;
+            }
+
+            if (gameViewModel.BoardManager.WaterArmy.Count > 0)
+            {
+                AddGlowToArmy(Gr_SeaArchs);
+                Gr_SeaArchs.Cursor = Cursors.Hand;
+                Gr_SeaArchs.MouseLeftButtonDown += OnArmyClick;
+            }
+
+            if (gameViewModel.BoardManager.WindArmy.Count > 0)
+            {
+                AddGlowToArmy(Gr_WindArchs);
+                Gr_WindArchs.Cursor = Cursors.Hand;
+                Gr_WindArchs.MouseLeftButtonDown += OnArmyClick;
+            }
+
+            System.Diagnostics.Debug.WriteLine("[PROVOKE] Attack mode activated - Click on an army");
+        }
+
+        private void DesactivateAttackMode()
+        {
+            isProvokeModeActive = false;
+
+            RemoveGlowFromArmy(Gr_SandArchs);
+            RemoveGlowFromArmy(Gr_SeaArchs);
+            RemoveGlowFromArmy(Gr_WindArchs);
+
+            Gr_SandArchs.Cursor = Cursors.Arrow;
+            Gr_SeaArchs.Cursor = Cursors.Arrow;
+            Gr_WindArchs.Cursor = Cursors.Arrow;
+
+            Gr_SandArchs.MouseLeftButtonDown -= OnArmyClick;
+            Gr_SeaArchs.MouseLeftButtonDown -= OnArmyClick;
+            Gr_WindArchs.MouseLeftButtonDown -= OnArmyClick;
+        }
+
+        private void OnArmyClick(object sender, MouseButtonEventArgs e)
+        {
+            if (!isProvokeModeActive) return;
+
+            ArmyType selectedArmy = ArmyType.Sand;
+
+            if (sender == Gr_SandArchs)
+                selectedArmy = ArmyType.Sand;
+            else if (sender == Gr_SeaArchs)
+                selectedArmy = ArmyType.Water;
+            else if (sender == Gr_WindArchs)
+                selectedArmy = ArmyType.Wind;
+
+            System.Diagnostics.Debug.WriteLine($"[PROVOKE] Army selected: {selectedArmy}");
+
+            DesactivateAttackMode();
+            OpenProvokeWindow(selectedArmy);
+        }
+
+        private void AddGlowToArmy(Grid armyGrid)
+        {
+            armyGrid.Effect = new DropShadowEffect
+            {
+                Color = Colors.OrangeRed,
+                ShadowDepth = 0,
+                BlurRadius = 40,
+                Opacity = 1
+            };
+
+            var pulseAnimation = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 1.1,
+                Duration = TimeSpan.FromSeconds(0.5),
+                AutoReverse = true,
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+
+            var scaleTransform = new ScaleTransform(1, 1, armyGrid.ActualWidth / 2, armyGrid.ActualHeight / 2);
+            armyGrid.RenderTransform = scaleTransform;
+
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, pulseAnimation);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, pulseAnimation);
+        }
+
+        private void RemoveGlowFromArmy(Grid armyGrid)
+        {
+            armyGrid.Effect = null;
+            armyGrid.RenderTransform = null;
+            armyGrid.BeginAnimation(Grid.OpacityProperty, null);
+        }
+
+        private void OpenProvokeWindow(ArmyType selectedArmy)
+        {
+            var playerNames = new Dictionary<int, string>();
+            foreach (var player in playersInMatch)
+            {
+                playerNames[player.IdPlayer] = player.Nickname ?? player.Username;
+            }
+
+            var viewModel = new MatchProvokeViewModel(
+                gameViewModel.BoardManager,
+                playerNames,
+                gameViewModel.DetermineMyUserId(),
+                selectedArmy
+            );
+
+            var provokeWindow = new MatchProvoke.MatchProvoke(viewModel);
+            bool? result = provokeWindow.ShowDialog();
+
+            if (result == true)
+            {
+                ExecuteProvoke(selectedArmy);
+            }
+        }
+
+        private async void ExecuteProvoke(ArmyType armyType)
+        {
+            try
+            {
+                int userId = gameViewModel.DetermineMyUserId();
+                await gameViewModel.gameServiceClient.ProvokeArchArmyAsync(gameMatchCode, userId, armyType);
+
+                System.Diagnostics.Debug.WriteLine($"[PROVOKE] Successfully provoked {armyType}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{Lang.Match_ErrorProvokingArchs} {ex.Message}");
+            }
+        }
+
+        private void OnPlayerDinosClearedByElement(int userId, ArmyType element)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                int myUserId = gameViewModel.DetermineMyUserId();
+
+                if (userId == myUserId)
+                {
+                    ClearMyDinosByElement(element);
+                }
+                else
+                {
+                    ClearOpponentDinosByElement(userId, element);
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Cleared {element} dinos for player {userId}");
+            });
+        }
+
+        private void ClearMyDinosByElement(ArmyType element)
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                var cell = BottomPlayerCards.GetCombinationCell(i);
+                if (cell != null && cell is CardCell cardCell)
+                {
+                    if (GetCellElement(cardCell) == element)
+                    {
+                        ClearCardCell(cardCell);
+                        string cellId = $"IdCombinationCell_{i}";
+                        gameViewModel.ActionManager.ClearSlot(cellId);
+                    }
+                }
+            }
+        }
+
+        private void ClearOpponentDinosByElement(int userId, ArmyType element)
+        {
+            if (player2UserId == userId)
+            {
+                for (int i = 1; i <= 6; i++)
+                {
+                    var cell = TopPlayerCards.GetCombinationCell(i);
+                    if (cell != null && cell is CardCell cardCell)
+                    {
+                        if (GetCellElement(cardCell) == element)
+                        {
+                            ClearCardCell(cardCell);
+                        }
+                    }
+                }
+            }
+            else if (player3UserId == userId)
+            {
+                for (int i = 1; i <= 6; i++)
+                {
+                    var cell = LeftPlayerCell.GetCombinationCell(i);
+                    if (cell != null && cell is CardCell cardCell)
+                    {
+                        if (GetCellElement(cardCell) == element)
+                        {
+                            ClearCardCell(cardCell);
+                        }
+                    }
+                }
+            }
+            else if (player4UserId == userId)
+            {
+                for (int i = 1; i <= 6; i++)
+                {
+                    var cell = RightPlayerCards.GetCombinationCell(i);
+                    if (cell != null && cell is CardCell cardCell)
+                    {
+                        if (GetCellElement(cardCell) == element)
+                        {
+                            ClearCardCell(cardCell);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ClearCardCell(CardCell cell)
+        {
+            var grayBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#222"));
+
+            if (cell.Part_Head != null)
+                cell.Part_Head.Background = grayBrush;
+
+            if (cell.Part_Chest != null)
+                cell.Part_Chest.Background = grayBrush;
+
+            if (cell.Part_LeftArm != null)
+                cell.Part_LeftArm.Background = grayBrush;
+
+            if (cell.Part_RightArm != null)
+                cell.Part_RightArm.Background = grayBrush;
+
+            if (cell.Part_Legs != null)
+                cell.Part_Legs.Background = grayBrush;
+        }
+
+        private ArmyType GetCellElement(CardCell cell)
+        {
+            if (cell.Part_Head?.Background is ImageBrush headBrush)
+            {
+                string imagePath = headBrush.ImageSource?.ToString();
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    var headCard = CardRepositoryModel.Cards.FirstOrDefault(c => c.CardRoute == imagePath);
+                    if (headCard != null)
+                    {
+                        switch (headCard.Element)
+                        {
+                            case ElementType.Sand:
+                                return ArmyType.Sand;
+                            case ElementType.Water:
+                                return ArmyType.Water;
+                            case ElementType.Wind:
+                                return ArmyType.Wind;
+                        }
+                    }
+                }
+            }
+
+            return ArmyType.None;
+        }
+
+        private void OnDiscardPileUpdated()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Gr_DiscardedCards.Visibility = Visibility.Visible;
+            });
+        }
+
+        private void OnArchArmyCleared(ArmyType armyType)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Grid targetGrid = null;
+
+                switch (armyType)
+                {
+                    case ArmyType.Sand:
+                        targetGrid = Gr_SandArchs;
+                        break;
+                    case ArmyType.Water:
+                        targetGrid = Gr_SeaArchs;
+                        break;
+                    case ArmyType.Wind:
+                        targetGrid = Gr_WindArchs;
+                        break;
+                }
+
+                if (targetGrid != null)
+                {
+                    targetGrid.Visibility = Visibility.Collapsed;
+                }
+            });
+        }
+
         protected override async void OnClosing(CancelEventArgs e)
         {
             if (chatViewModel != null)
@@ -827,6 +1149,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     gameViewModel.ArchCardPlaced -= ShowArchPlacedAnimation;
                     gameViewModel.OpponentDinoHeadPlayed -= OnOpponentDinoHeadPlayed;
                     gameViewModel.OpponentBodyPartAttached -= OnOpponentBodyPartAttached;
+                    gameViewModel.PlayerDinosClearedByElement -= OnPlayerDinosClearedByElement;
+                    gameViewModel.DiscardPileUpdated -= OnDiscardPileUpdated;
+                    gameViewModel.ArchArmyCleared -= OnArchArmyCleared;
                     gameViewModel.Dispose();
                 }
                 catch

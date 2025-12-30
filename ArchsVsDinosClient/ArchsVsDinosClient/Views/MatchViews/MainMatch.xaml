@@ -751,7 +751,7 @@
 
                 <!-- Provoke now -->
                 <Grid Grid.Row="1" Margin="20,0,20,0">
-                    <Button Grid.Column="0" 
+                    <Button Grid.Column="0" Click="Click_BtnProvokeNow"
                         Foreground="#FFFFF900" FontWeight="Bold"
                         BorderBrush="Transparent" 
                         FontFamily="{StaticResource Volcanic Dungeon}">

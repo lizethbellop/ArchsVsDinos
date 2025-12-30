@@ -18,7 +18,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            return session.RemainingMoves >= CostProvoke;
+            return true;
         }
 
         public bool IsValidDinoHead(CardInGame card)

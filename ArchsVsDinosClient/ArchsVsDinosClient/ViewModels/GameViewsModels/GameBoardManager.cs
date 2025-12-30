@@ -1,4 +1,4 @@
-﻿ // Para CentralBoardDTO
+﻿using ArchsVsDinosClient.GameService;
 using ArchsVsDinosClient.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -146,6 +146,47 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SandArmyVisibility)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WaterArmyVisibility)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WindArmyVisibility)));
+        }
+
+        public void ClearPlayerDinosByElement(int userId, ArmyType element)
+        {
+            if (!PlayerDecks.ContainsKey(userId))
+                return;
+
+            var playerDinos = PlayerDecks[userId];
+            var dinosToRemove = new List<int>();
+
+            foreach (var dinoPair in playerDinos)
+            {
+                var dino = dinoPair.Value;
+
+                if (dino.Head != null && GetElementFromCard(dino.Head) == element)
+                {
+                    dinosToRemove.Add(dinoPair.Key);
+                }
+            }
+
+            foreach (var dinoId in dinosToRemove)
+            {
+                playerDinos.Remove(dinoId);
+            }
+
+            System.Diagnostics.Debug.WriteLine($"[BOARD MANAGER] Cleared {dinosToRemove.Count} {element} dinos for player {userId}");
+        }
+
+        private ArmyType GetElementFromCard(Card card)
+        {
+            switch (card.Element)
+            {
+                case ElementType.Sand:
+                    return ArmyType.Sand;
+                case ElementType.Water:
+                    return ArmyType.Water;
+                case ElementType.Wind:
+                    return ArmyType.Wind;
+                default:
+                    return ArmyType.None;
+            }
         }
     }
 }

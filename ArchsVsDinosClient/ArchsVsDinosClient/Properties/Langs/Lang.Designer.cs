@@ -1402,6 +1402,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Chat no disponible.
+        /// </summary>
+        public static string Match_ErrorChatNotAvailable {
+            get {
+                return ResourceManager.GetString("Match_ErrorChatNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error provocando arqueólgos, intenta de nuevo.
+        /// </summary>
+        public static string Match_ErrorProvokingArchs {
+            get {
+                return ResourceManager.GetString("Match_ErrorProvokingArchs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¡El juego ha comenzado!.
         /// </summary>
         public static string Match_InfoBegin1 {
@@ -1524,6 +1542,168 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_Points {
             get {
                 return ResourceManager.GetString("Match_Points", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Resultado de Batalla.
+        /// </summary>
+        public static string Match_ProvokeBattleResultTitle {
+            get {
+                return ResourceManager.GetString("Match_ProvokeBattleResultTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a 💀 DERROTA 💀.
+        /// </summary>
+        public static string Match_ProvokeDefeatMessage {
+            get {
+                return ResourceManager.GetString("Match_ProvokeDefeatMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El ejército gana con .
+        /// </summary>
+        public static string Match_ProvokeDefeatMessage2 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeDefeatMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a pts.
+        /// </summary>
+        public static string Match_ProvokeDefeatMessage3 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeDefeatMessage3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a contra.
+        /// </summary>
+        public static string Match_ProvokeDefeatMessage4 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeDefeatMessage4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a pts.
+        /// </summary>
+        public static string Match_ProvokeDefeatMessage5 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeDefeatMessage5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Todos pierden sus dinos.
+        /// </summary>
+        public static string Match_ProvokeDefeatMessage6 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeDefeatMessage6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El ejército de arqueólogos derrotó a todos los dinos.
+        /// </summary>
+        public static string Match_ProvokeTotalDefeatMessage1 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeTotalDefeatMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a DERROTA.
+        /// </summary>
+        public static string Match_ProvokeTotalDefeatTitle {
+            get {
+                return ResourceManager.GetString("Match_ProvokeTotalDefeatTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ✨ ¡VICTORIA! ✨.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessage {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a gana con.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessage2 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessage2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a pts.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessage3 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessage3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a contra.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessage4 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessage4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a pts del ejército.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessage5 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessage5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessagePlayer {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessagePlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ganó.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessagePlayer2 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessagePlayer2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a puntos!.
+        /// </summary>
+        public static string Match_ProvokeVictoryMessagePlayer3 {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryMessagePlayer3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Los arqueólogos fueron derrotados.
+        /// </summary>
+        public static string Match_ProvokeVictoryTitle {
+            get {
+                return ResourceManager.GetString("Match_ProvokeVictoryTitle", resourceCulture);
             }
         }
         

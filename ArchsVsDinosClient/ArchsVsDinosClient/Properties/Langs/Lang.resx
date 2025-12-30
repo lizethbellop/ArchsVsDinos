@@ -909,4 +909,64 @@
   <data name="Match_PlayerNotFoundDeck" xml:space="preserve">
     <value>Mazo de player no encontrado</value>
   </data>
+  <data name="Match_ErrorProvokingArchs" xml:space="preserve">
+    <value>Error provocando arqueólgos, intenta de nuevo</value>
+  </data>
+  <data name="Match_ProvokeBattleResultTitle" xml:space="preserve">
+    <value>Resultado de Batalla</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage" xml:space="preserve">
+    <value>✨ ¡VICTORIA! ✨</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage" xml:space="preserve">
+    <value>💀 DERROTA 💀</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage2" xml:space="preserve">
+    <value>gana con</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage3" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage4" xml:space="preserve">
+    <value>contra</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessage5" xml:space="preserve">
+    <value>pts del ejército</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage2" xml:space="preserve">
+    <value>El ejército gana con </value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage3" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage4" xml:space="preserve">
+    <value>contra</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage5" xml:space="preserve">
+    <value>pts</value>
+  </data>
+  <data name="Match_ProvokeDefeatMessage6" xml:space="preserve">
+    <value>Todos pierden sus dinos</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessagePlayer" xml:space="preserve">
+    <value>¡</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessagePlayer2" xml:space="preserve">
+    <value>ganó</value>
+  </data>
+  <data name="Match_ProvokeVictoryMessagePlayer3" xml:space="preserve">
+    <value>puntos!</value>
+  </data>
+  <data name="Match_ProvokeVictoryTitle" xml:space="preserve">
+    <value>Los arqueólogos fueron derrotados</value>
+  </data>
+  <data name="Match_ProvokeTotalDefeatMessage1" xml:space="preserve">
+    <value>El ejército de arqueólogos derrotó a todos los dinos</value>
+  </data>
+  <data name="Match_ProvokeTotalDefeatTitle" xml:space="preserve">
+    <value>DERROTA</value>
+  </data>
+  <data name="Match_ErrorChatNotAvailable" xml:space="preserve">
+    <value>Chat no disponible</value>
+  </data>
 </root>

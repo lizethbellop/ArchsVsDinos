@@ -1,4 +1,5 @@
-﻿using ArchsVsDinosClient.Models;
+﻿using ArchsVsDinosClient.GameService;
+using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using System.Collections.Generic;
 
@@ -149,6 +150,43 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         }
                         break;
                 }
+            }
+        }
+
+        public void ClearSlot(string cellId)
+        {
+            if (dinoSlots.ContainsKey(cellId))
+            {
+                dinoSlots[cellId] = new DinoBuilder();
+                System.Diagnostics.Debug.WriteLine($"[ACTION MANAGER] Cleared slot {cellId}");
+            }
+        }
+
+        public void ClearSlotsByElement(ArmyType element)
+        {
+            foreach (var slot in dinoSlots)
+            {
+                var dino = slot.Value;
+                if (dino.HasHead && GetElementFromCard(dino.Head) == element)
+                {
+                    dinoSlots[slot.Key] = new DinoBuilder();
+                    System.Diagnostics.Debug.WriteLine($"[ACTION MANAGER] Cleared {slot.Key} (element: {element})");
+                }
+            }
+        }
+
+        private ArmyType GetElementFromCard(Card card)
+        {
+            switch (card.Element)
+            {
+                case ElementType.Sand:
+                    return ArmyType.Sand;
+                case ElementType.Water:
+                    return ArmyType.Water;
+                case ElementType.Wind:
+                    return ArmyType.Wind;
+                default:
+                    return ArmyType.None;
             }
         }
     }

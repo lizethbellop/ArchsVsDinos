@@ -393,6 +393,24 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 loggerHelper.LogInfo($"Player {userId} provoked {targetArmy} in {matchCode}. DinosWon: {battleResult?.DinosWon}, Winner: {battleResult?.Winner?.Nickname ?? "Nobody"}");
 
+                var nextPlayer = gameSession.Players.OrderBy(player => player.TurnOrder)
+                                                    .SkipWhile(player => player.UserId != userId)
+                                                    .Skip(1)
+                                                    .DefaultIfEmpty(gameSession.Players.OrderBy(player => player.TurnOrder).First())
+                                                    .First();
+
+                gameSession.EndTurn(nextPlayer.UserId);
+                loggerHelper.LogInfo($"[PROVOKE] Turn auto-ended. Next player: {nextPlayer.UserId}");
+
+                gameNotifier.NotifyTurnChanged(new TurnChangedDTO
+                {
+                    MatchCode = matchCode,
+                    CurrentPlayerUserId = nextPlayer.UserId,
+                    TurnNumber = gameSession.TurnNumber,
+                    RemainingTime = TimeSpan.Zero,
+                    PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points)
+                });
+
                 return Task.FromResult(true);
             }
         }

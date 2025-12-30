@@ -1,6 +1,6 @@
 ﻿using ArchsVsDinosClient.DTO;
-using ArchsVsDinosClient.GameService; // DTOs de transporte (CardDrawnDTO, etc.)
-using ArchsVsDinosClient.Models;      // Tus Modelos Locales (Card, CardCategory)
+using ArchsVsDinosClient.GameService; 
+using ArchsVsDinosClient.Models;     
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services.Interfaces;
 using System;
@@ -15,7 +15,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 {
     public class GameViewModel : INotifyPropertyChanged, IDisposable
     {
-        private readonly IGameServiceClient gameServiceClient;
+        public readonly IGameServiceClient gameServiceClient;
         private readonly string matchCode;
         private readonly string currentUsername;
         private readonly List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> allPlayers;
@@ -31,15 +31,18 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         private int currentPoints;
         private bool isGameStartedReceived;
 
-        private Visibility waterArmyVisibility = Visibility.Visible;
-        private Visibility sandArmyVisibility = Visibility.Visible;
-        private Visibility windArmyVisibility = Visibility.Visible;
+        private Visibility waterArmyVisibility = Visibility.Collapsed;
+        private Visibility sandArmyVisibility = Visibility.Collapsed;
+        private Visibility windArmyVisibility = Visibility.Collapsed;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public event Action<string> TurnChangedForUI;
         public event Action<string, int> ArchCardPlaced;
         public event Action<int, int, Card> OpponentDinoHeadPlayed;
         public event Action<int, int, Card> OpponentBodyPartAttached;
+        public event Action<int, ArmyType> PlayerDinosClearedByElement;
+        public event Action DiscardPileUpdated;
+        public event Action<ArmyType> ArchArmyCleared;
 
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
 
@@ -137,6 +140,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.ArchAdded += OnArchAdded;
             gameServiceClient.DinoHeadPlayed += OnDinoHeadPlayed;
             gameServiceClient.BodyPartAttached += OnBodyPartAttached;
+            gameServiceClient.ServiceError += OnServiceError;
+            gameServiceClient.ArchProvoked += OnArchProvoked;  
             gameServiceClient.ServiceError += OnServiceError;
         }
 
@@ -270,7 +275,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             });
         }
 
-        private void OnArchAdded(ArchAddedToBoardDTO data)
+        /*private void OnArchAdded(ArchAddedToBoardDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -284,14 +289,97 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     case GameService.ArmyType.Sand:
                         BoardManager.SandArmy.Add(archCard);
+                        SandArmyVisibility = Visibility.Visible;
                         armyName = "Sand";
                         break;
                     case GameService.ArmyType.Water:
                         BoardManager.WaterArmy.Add(archCard);
+                        WaterArmyVisibility = Visibility.Visible;
                         armyName = "Water";
                         break;
                     case GameService.ArmyType.Wind:
                         BoardManager.WindArmy.Add(archCard);
+                        WindArmyVisibility = Visibility.Visible;
+                        armyName = "Wind";
+                        break;
+                }
+
+                ArchCardPlaced?.Invoke(armyName, archCard.IdCard);
+            });
+        }*/
+
+        private void OnArchAdded(ArchAddedToBoardDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var archCard = CardRepositoryModel.GetById(data.ArchCard.IdCard);
+
+                if (archCard == null) return;
+
+                string armyName = "";
+
+                switch (data.ArchCard.Element)
+                {
+                    case GameService.ArmyType.Sand:
+                        // ✅ PREVENIR DUPLICADOS
+                        if (!BoardManager.SandArmy.Any(c => c.IdCard == archCard.IdCard))
+                        {
+                            BoardManager.SandArmy.Add(archCard);
+                            SandArmyVisibility = Visibility.Visible;
+                            System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] Sand Arch {archCard.IdCard} added. Total: {BoardManager.SandArmy.Count}");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] ⚠️ Sand Arch {archCard.IdCard} already exists, skipping");
+                        }
+
+                        if (BoardManager.SandArmy.Count > 0)
+                        {
+                            SandArmyVisibility = Visibility.Visible;
+                        }
+
+                        armyName = "Sand";
+                        break;
+
+                    case GameService.ArmyType.Water:
+                        // ✅ PREVENIR DUPLICADOS
+                        if (!BoardManager.WaterArmy.Any(c => c.IdCard == archCard.IdCard))
+                        {
+                            BoardManager.WaterArmy.Add(archCard);
+                            WaterArmyVisibility = Visibility.Visible;
+                            System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] Water Arch {archCard.IdCard} added. Total: {BoardManager.WaterArmy.Count}");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] ⚠️ Water Arch {archCard.IdCard} already exists, skipping");
+                        }
+
+                        if (BoardManager.WaterArmy.Count > 0)
+                        {
+                            WaterArmyVisibility = Visibility.Visible;
+                        }
+
+                        armyName = "Water";
+                        break;
+
+                    case GameService.ArmyType.Wind:
+                        // ✅ PREVENIR DUPLICADOS
+                        if (!BoardManager.WindArmy.Any(c => c.IdCard == archCard.IdCard))
+                        {
+                            BoardManager.WindArmy.Add(archCard);
+                            WindArmyVisibility = Visibility.Visible;
+                            System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] Wind Arch {archCard.IdCard} added. Total: {BoardManager.WindArmy.Count}");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] ⚠️ Wind Arch {archCard.IdCard} already exists, skipping");
+                        }
+
+                        if (BoardManager.WindArmy.Count > 0)
+                        {
+                            WindArmyVisibility = Visibility.Visible;
+                        }
+
                         armyName = "Wind";
                         break;
                 }
@@ -334,6 +422,24 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 int myUserId = DetermineMyUserId();
                 BoardManager.UpdatePlayerHand(data.PlayersHands.ToList(), myUserId);
                 BoardManager.UpdateInitialBoard(data.InitialBoard);
+
+                if (BoardManager.SandArmy.Count > 0)
+                {
+                    SandArmyVisibility = Visibility.Visible;
+                    System.Diagnostics.Debug.WriteLine($"[GAME STARTED] Sand army visible ({BoardManager.SandArmy.Count} cards)");
+                }
+
+                if (BoardManager.WaterArmy.Count > 0)
+                {
+                    WaterArmyVisibility = Visibility.Visible;
+                    System.Diagnostics.Debug.WriteLine($"[GAME STARTED] Water army visible ({BoardManager.WaterArmy.Count} cards)");
+                }
+
+                if (BoardManager.WindArmy.Count > 0)
+                {
+                    WindArmyVisibility = Visibility.Visible;
+                    System.Diagnostics.Debug.WriteLine($"[GAME STARTED] Wind army visible ({BoardManager.WindArmy.Count} cards)");
+                }
 
                 RemainingCardsInDeck = data.DrawDeckCount;
                 IsMyTurn = data.FirstPlayerUserId == myUserId;
@@ -424,7 +530,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             return "Desconocido";
         }
 
-        private int DetermineMyUserId()
+        public int DetermineMyUserId()
         {
             if (this.forcedUserId != 0)
             {
@@ -503,6 +609,78 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             });
         }
 
+        private void OnArchProvoked(ArchArmyProvokedDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[ARCH PROVOKED] Army: {data.ArmyType}, Winner: {data.BattleResult?.WinnerUsername ?? "None"}");
+
+                ActionManager.ClearSlotsByElement(data.ArmyType);
+
+                int myUserId = DetermineMyUserId();
+
+                if (data.ProvokerUserId == myUserId)
+                {
+                    RemainingMoves = 0;
+                    System.Diagnostics.Debug.WriteLine("[PROVOKE] All my moves consumed locally");
+                }
+
+                if (data.BattleResult != null &&
+                    data.BattleResult.DinosWon &&
+                    data.BattleResult.WinnerUserId.HasValue &&
+                    data.BattleResult.WinnerUserId.Value == myUserId)
+                {
+                    CurrentPoints += data.BattleResult.PointsAwarded;
+                }
+
+                switch (data.ArmyType)
+                {
+                    case ArmyType.Sand:
+                        BoardManager.SandArmy.Clear();
+                        SandArmyVisibility = Visibility.Collapsed;
+                        break;
+                    case ArmyType.Water:
+                        BoardManager.WaterArmy.Clear();
+                        WaterArmyVisibility = Visibility.Collapsed;
+                        break;
+                    case ArmyType.Wind:
+                        BoardManager.WindArmy.Clear();
+                        WindArmyVisibility = Visibility.Collapsed;
+                        break;
+                }
+
+                ArchArmyCleared?.Invoke(data.ArmyType);
+
+                if (data.BattleResult?.PlayerPowers != null)
+                {
+                    foreach (var playerPower in data.BattleResult.PlayerPowers)
+                    {
+                        int userId = playerPower.Key;
+                        BoardManager.ClearPlayerDinosByElement(userId, data.ArmyType);
+                        PlayerDinosClearedByElement?.Invoke(userId, data.ArmyType);
+                    }
+                }
+
+                string resultMessage;
+                string resultTitle;
+
+                if (data.BattleResult.DinosWon)
+                {
+                    resultMessage = $"{Lang.Match_ProvokeVictoryMessagePlayer}{data.BattleResult.WinnerUsername} {Lang.Match_ProvokeVictoryMessagePlayer2} {data.BattleResult.PointsAwarded} {Lang.Match_ProvokeVictoryMessagePlayer3}";
+                    resultTitle = Lang.Match_ProvokeVictoryTitle;
+                }
+                else
+                {
+                    resultMessage = $"{Lang.Match_ProvokeTotalDefeatMessage1}";
+                    resultTitle = Lang.Match_ProvokeTotalDefeatTitle;
+                }
+
+                MessageBox.Show(resultMessage, resultTitle);
+
+                DiscardPileUpdated?.Invoke();
+            });
+        }
+
         public async void InitializeAndStartGameAsync()
         {
             await Task.CompletedTask;
@@ -520,6 +698,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.ArchAdded -= OnArchAdded;
                 gameServiceClient.DinoHeadPlayed -= OnDinoHeadPlayed;
                 gameServiceClient.BodyPartAttached -= OnBodyPartAttached;
+                gameServiceClient.ArchProvoked -= OnArchProvoked;
                 gameServiceClient.ServiceError -= OnServiceError;
             }
         }

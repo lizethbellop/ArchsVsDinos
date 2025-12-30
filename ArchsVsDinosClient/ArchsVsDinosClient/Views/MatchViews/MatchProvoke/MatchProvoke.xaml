@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MatchProvoke" Height="780" Width="1420" ResizeMode="CanResize"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs" xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
-        WindowStartupLocation="CenterScreen" WindowStyle="None">
+        WindowStartupLocation="CenterScreen" WindowStyle="None" WindowState="Maximized">
 
     <Window.Background>
         <ImageBrush ImageSource="/Resources/Images/provokeBackground.png"/>
@@ -64,58 +64,57 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0">
+                <Grid Grid.Row="0" x:Name="Gr_Player1Info">
                     <Grid.Background>
                         <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
                     </Grid.Background>
                     <StackPanel HorizontalAlignment="Center">
-                        <Label Content="Hola" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
-                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                        <Label x:Name="Lb_Player1Name" Content="Player 1" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label x:Name="Lb_Player1Power" Content="0" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" x:Name="Gr_Player2Info">
                     <Grid.Background>
                         <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
                     </Grid.Background>
                     <StackPanel HorizontalAlignment="Center">
-                        <Label Content="Hola" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
-                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                        <Label x:Name="Lb_Player2Name" Content="Player 2" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label x:Name="Lb_Player2Power" Content="0" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="2" x:Name="Gr_Player3Info">
                     <Grid.Background>
                         <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
                     </Grid.Background>
                     <StackPanel HorizontalAlignment="Center">
-                        <Label Content="Hola" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
-                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                        <Label x:Name="Lb_Player3Name" Content="Player 3" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label x:Name="Lb_Player3Power" Content="0" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="3">
+                <Grid Grid.Row="3" x:Name="Gr_Player4Info">
                     <Grid.Background>
                         <ImageBrush ImageSource="/Resources/Images/bondDinoUser.png"/>
                     </Grid.Background>
                     <StackPanel HorizontalAlignment="Center">
-                        <Label Content="xXProGamerXx" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
-                        <Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
+                        <Label x:Name="Lb_Player4Name" Content="Player 4" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="27" FontWeight="Bold" Foreground="#FF9B5400"/>
+                        <Label x:Name="Lb_Player4Power" Content="0" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="18" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="4">
+                <Grid Grid.Row="4" x:Name="Gr_ArmyInfo">
                     <StackPanel>
                         <Label Content="P. Archs" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center">
                             <Label.Effect>
-                            <DropShadowEffect Color="#FFBA7BFF"
+                                <DropShadowEffect Color="#FFBA7BFF"
                                       BlurRadius="20"
                                       ShadowDepth="0"
                                       Opacity="1"/>
-                            </Label.Effect> 
+                            </Label.Effect>
                         </Label>
-                        <!--<Label Content="24" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="25" FontWeight="Bold" Foreground="#FFEDFF31" HorizontalAlignment="Center"/>-->
-                        <Label Content="25" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center">
+                        <Label x:Name="Lb_ArmyPowerTotal" Content="0" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center">
                             <Label.Effect>
                                 <DropShadowEffect Color="Red"
                                   BlurRadius="20"
@@ -131,7 +130,7 @@
         </Grid>
 
         <!-- ARCHS CARDS -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="0,20,0,20">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
