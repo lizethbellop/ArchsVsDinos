@@ -34,5 +34,10 @@ namespace Contracts.DTO.Game_DTO
         
         [DataMember]
         public DateTime StartTime { get; set; }
+        [DataMember]
+        public DateTime MatchEndTime { get; set; }
+
+        [DataMember]
+        public DateTime TurnEndTime { get; set; }
     }
 }

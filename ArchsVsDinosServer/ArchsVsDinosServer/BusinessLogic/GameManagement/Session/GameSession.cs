@@ -8,6 +8,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
 {
@@ -21,6 +22,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         private readonly List<PlayerSession> players = new List<PlayerSession>();
         private readonly List<int> drawDeck = new List<int>();
         private readonly List<int> discardPile = new List<int>();
+        private readonly Timer turnTimer;
+        public event Action<string, int> TurnTimeExpired;
 
         public string MatchCode { get; private set; }
         public int CurrentTurn { get; private set; }
@@ -29,7 +32,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public bool IsFinished { get; private set; }
         public DateTime? StartTime { get; private set; }
         public GameEndType? EndType { get; private set; }
-
+        public DateTime MatchEndTime { get; private set; }
+        public DateTime TurnEndTime { get; private set; }
 
         public int RemainingMoves { get; private set; }
         public CentralBoard CentralBoard { get; private set; }
@@ -37,6 +41,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         public IReadOnlyList<PlayerSession> Players => players.AsReadOnly();
         public IReadOnlyList<int> DrawDeck => drawDeck.AsReadOnly();
         public IReadOnlyList<int> DiscardPile => discardPile.AsReadOnly();
+
+        private const int MatchDurationMinutes = 20;
+        private const int TurnDurationSeconds = 30;
 
         public GameSession(string matchCode, CentralBoard board, ILoggerHelper logger)
         {
@@ -49,6 +56,14 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             IsStarted = false;
             IsFinished = false;
             RemainingMoves = MaxMoves;
+            turnTimer = new Timer(TurnDurationSeconds * 1000);
+            turnTimer.AutoReset = false; 
+            turnTimer.Elapsed += OnTurnTimerElapsed;
+        }
+
+        private void OnTurnTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            TurnTimeExpired?.Invoke(MatchCode, CurrentTurn);
         }
 
         public void MarkAsStarted()
@@ -57,7 +72,16 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             {
                 IsStarted = true;
                 StartTime = DateTime.UtcNow;
+                MatchEndTime = StartTime.Value.AddMinutes(MatchDurationMinutes);
+                ResetTurnTimer();
             }
+        }
+
+        public void ResetTurnTimer()
+        {
+            TurnEndTime = DateTime.UtcNow.AddSeconds(TurnDurationSeconds);
+            turnTimer.Stop();
+            turnTimer.Start();
         }
 
         public void MarkAsFinished(GameEndType endType)
@@ -66,6 +90,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             {
                 IsFinished = true;
                 EndType = endType;
+                turnTimer.Stop();
             }
         }
 

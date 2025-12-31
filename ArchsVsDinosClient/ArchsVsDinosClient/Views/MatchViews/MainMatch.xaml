@@ -147,7 +147,26 @@
                             </LinearGradientBrush>
                         </StackPanel.Background>
                         <Label Content="{x:Static language:Lang.Match_PlaysRemaining}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" Foreground="#FFFFFDFD" Background="#FF513800" HorizontalAlignment="Stretch"/>
-                        <Label Content="{Binding RemainingMoves}" Name="Lb_PlaysRemaining" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="30" Foreground="#FF472100" FontWeight="Bold"/>
+                        <Label Content="{Binding RemainingMoves}" Name="Lb_PlaysRemaining" FontFamily="Trebuchet MS" HorizontalAlignment="Center" FontSize="25" Foreground="#FF472100" FontWeight="Bold"/>
+
+                        <Border Background="#44000000" CornerRadius="8" Margin="10,0,10,0" Padding="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                                <TextBlock Text="⏱" FontSize="10" Foreground="White" VerticalAlignment="Center" Margin="0,0,5,0">
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+
+                                <TextBlock Text="{Binding TurnTimeDisplay, FallbackValue='60'}" Foreground="{Binding TurnTimeColor, FallbackValue=White}" 
+                                    FontFamily="Trebuchet MS" FontSize="13" FontWeight="Bold" VerticalAlignment="Center">
+                                    <TextBlock.Effect>
+                                        <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1" Opacity="0.5"/>
+                                    </TextBlock.Effect>
+                                </TextBlock>
+
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
                 </Grid>
 

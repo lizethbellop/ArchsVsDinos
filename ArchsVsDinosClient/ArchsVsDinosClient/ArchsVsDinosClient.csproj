@@ -120,11 +120,9 @@
     <Compile Include="Converters\PositionToHeightConverter.cs" />
     <Compile Include="Converters\PositionToStatsBorderThicknessConverter.cs" />
     <Compile Include="DTO\Configuration.cs" />
-    <Compile Include="DTO\GameSession.cs" />
     <Compile Include="DTO\MatchSettings.cs" />
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\LobbyPlayerDTO.cs" />
-    <Compile Include="DTO\PlayerInGame.cs" />
     <Compile Include="DTO\Response\LoginResponse.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />

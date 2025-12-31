@@ -328,6 +328,9 @@ namespace ArchsVsDinosClient.GameService {
         private ArchsVsDinosClient.GameService.CentralBoardDTO InitialBoardField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime MatchEndTimeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int MatchIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -338,6 +341,9 @@ namespace ArchsVsDinosClient.GameService {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.DateTime StartTimeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime TurnEndTimeField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -402,6 +408,19 @@ namespace ArchsVsDinosClient.GameService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime MatchEndTime {
+            get {
+                return this.MatchEndTimeField;
+            }
+            set {
+                if ((this.MatchEndTimeField.Equals(value) != true)) {
+                    this.MatchEndTimeField = value;
+                    this.RaisePropertyChanged("MatchEndTime");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public int MatchId {
             get {
                 return this.MatchIdField;
@@ -449,6 +468,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((this.StartTimeField.Equals(value) != true)) {
                     this.StartTimeField = value;
                     this.RaisePropertyChanged("StartTime");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime TurnEndTime {
+            get {
+                return this.TurnEndTimeField;
+            }
+            set {
+                if ((this.TurnEndTimeField.Equals(value) != true)) {
+                    this.TurnEndTimeField = value;
+                    this.RaisePropertyChanged("TurnEndTime");
                 }
             }
         }
@@ -896,6 +928,9 @@ namespace ArchsVsDinosClient.GameService {
         private System.TimeSpan RemainingTimeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private System.DateTime TurnEndTimeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int TurnNumberField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
@@ -956,6 +991,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((this.RemainingTimeField.Equals(value) != true)) {
                     this.RemainingTimeField = value;
                     this.RaisePropertyChanged("RemainingTime");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public System.DateTime TurnEndTime {
+            get {
+                return this.TurnEndTimeField;
+            }
+            set {
+                if ((this.TurnEndTimeField.Equals(value) != true)) {
+                    this.TurnEndTimeField = value;
+                    this.RaisePropertyChanged("TurnEndTime");
                 }
             }
         }
