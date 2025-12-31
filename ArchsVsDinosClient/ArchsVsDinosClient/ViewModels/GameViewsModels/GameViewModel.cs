@@ -754,7 +754,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                System.Diagnostics.Debug.WriteLine($"[CARD TAKEN FROM DISCARD] Player {data.PlayerUserId} took card {data.CardId}");
+                System.Diagnostics.Debug.WriteLine($"[CARD TAKEN] Player {data.PlayerUserId} took card {data.CardId}");
 
                 int myUserId = DetermineMyUserId();
 
@@ -762,55 +762,58 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 if (cardToRemove != null)
                 {
                     BoardManager.DiscardPile.Remove(cardToRemove);
-                    System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Card {data.CardId} removed from visual pile. Remaining: {data.RemainingCardsInDiscard}");
+                }
+
+                var card = CardRepositoryModel.GetById(data.CardId);
+                if (card == null) return;
+
+                if (card.Category == ArchsVsDinosClient.Models.CardCategory.Arch)
+                {
+                    switch (card.Element)
+                    {
+                        case ElementType.Sand:
+                            if (!BoardManager.SandArmy.Any(c => c.IdCard == card.IdCard))
+                            {
+                                BoardManager.SandArmy.Add(card);
+                            }
+                            SandArmyVisibility = Visibility.Visible;
+                            break;
+                        case ElementType.Water:
+                            if (!BoardManager.WaterArmy.Any(c => c.IdCard == card.IdCard))
+                            {
+                                BoardManager.WaterArmy.Add(card);
+                            }
+                            WaterArmyVisibility = Visibility.Visible;
+                            break;
+                        case ElementType.Wind:
+                            if (!BoardManager.WindArmy.Any(c => c.IdCard == card.IdCard))
+                            {
+                                BoardManager.WindArmy.Add(card);
+                            }
+                            WindArmyVisibility = Visibility.Visible;
+                            break;
+                    }
+                    System.Diagnostics.Debug.WriteLine($"[VISUAL UPDATE] Arch {card.IdCard} added to board for everyone.");
                 }
 
                 if (data.PlayerUserId == myUserId)
                 {
-                    var card = CardRepositoryModel.GetById(data.CardId);
-                    if (card != null)
+                    if (card.Category != ArchsVsDinosClient.Models.CardCategory.Arch)
                     {
-                        if (card.Category == ArchsVsDinosClient.Models.CardCategory.Arch)
+                        BoardManager.PlayerHand.Add(card);
+                        System.Diagnostics.Debug.WriteLine($"[MY HAND] Card {card.IdCard} added to my hand");
+                    }
+
+                    if (IsMyTurn)
+                    {
+                        RemainingMoves--;
+                        if (RemainingMoves <= 0)
                         {
-                            switch (card.Element)
-                            {
-                                case ElementType.Sand:
-                                    if (!BoardManager.SandArmy.Any(c => c.IdCard == card.IdCard))
-                                    {
-                                        BoardManager.SandArmy.Add(card);
-                                        SandArmyVisibility = Visibility.Visible;
-                                    }
-                                    break;
-                                case ElementType.Water:
-                                    if (!BoardManager.WaterArmy.Any(c => c.IdCard == card.IdCard))
-                                    {
-                                        BoardManager.WaterArmy.Add(card);
-                                        WaterArmyVisibility = Visibility.Visible;
-                                    }
-                                    break;
-                                case ElementType.Wind:
-                                    if (!BoardManager.WindArmy.Any(c => c.IdCard == card.IdCard))
-                                    {
-                                        BoardManager.WindArmy.Add(card);
-                                        WindArmyVisibility = Visibility.Visible;
-                                    }
-                                    break;
-                            }
-                            System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Arch card {card.IdCard} added to {card.Element} army");
-                        }
-                        else
-                        {
-                            BoardManager.PlayerHand.Add(card);
-                            System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Card {card.IdCard} added to my hand");
+                            EndTurnAutomatically(); 
                         }
                     }
                 }
             });
-        }
-
-        public async void InitializeAndStartGameAsync()
-        {
-            await Task.CompletedTask;
         }
 
         public void Dispose()

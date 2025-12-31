@@ -450,12 +450,30 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void GameViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(GameViewModel.RemainingMoves) ||
-              e.PropertyName == nameof(GameViewModel.IsMyTurn) ||
-              e.PropertyName == nameof(GameViewModel.RemainingCardsInDeck))
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Application.Current.Dispatcher.Invoke(() => CheckDrawButtonState());
-            }
+                if (e.PropertyName == nameof(GameViewModel.RemainingMoves) ||
+                    e.PropertyName == nameof(GameViewModel.IsMyTurn) ||
+                    e.PropertyName == nameof(GameViewModel.RemainingCardsInDeck))
+                {
+                    CheckDrawButtonState();
+                }
+                else if (e.PropertyName == nameof(GameViewModel.SandArmyVisibility))
+                {
+                    if (Gr_SandArchs != null)
+                        Gr_SandArchs.Visibility = gameViewModel.SandArmyVisibility;
+                }
+                else if (e.PropertyName == nameof(GameViewModel.WaterArmyVisibility))
+                {
+                    if (Gr_SeaArchs != null)
+                        Gr_SeaArchs.Visibility = gameViewModel.WaterArmyVisibility;
+                }
+                else if (e.PropertyName == nameof(GameViewModel.WindArmyVisibility))
+                {
+                    if (Gr_WindArchs != null)
+                        Gr_WindArchs.Visibility = gameViewModel.WindArmyVisibility;
+                }
+            });
         }
 
         private void CheckDrawButtonState()
@@ -863,6 +881,12 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     UpdateArmyVisibility();
                 }
             }
+        }
+
+        private void Click_BtnOptions(object sender, RoutedEventArgs e)
+        {
+            var settings = new SettingsInMatch();
+            settings.Show();
         }
 
         private void UpdateArmyVisibility()
