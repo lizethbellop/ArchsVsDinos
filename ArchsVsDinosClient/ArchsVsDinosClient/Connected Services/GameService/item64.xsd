@@ -46,10 +46,12 @@
       <xs:element minOccurs="0" name="FirstPlayerUserId" type="xs:int" />
       <xs:element minOccurs="0" name="FirstPlayerUsername" nillable="true" type="xs:string" />
       <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" minOccurs="0" name="InitialBoard" nillable="true" type="q1:CentralBoardDTO" />
+      <xs:element minOccurs="0" name="MatchEndTime" type="xs:dateTime" />
       <xs:element minOccurs="0" name="MatchId" type="xs:int" />
       <xs:element minOccurs="0" name="MyUserId" type="xs:int" />
       <xs:element minOccurs="0" name="PlayersHands" nillable="true" type="tns:ArrayOfPlayerHandDTO" />
       <xs:element minOccurs="0" name="StartTime" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="TurnEndTime" type="xs:dateTime" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="GameStartedDTO" nillable="true" type="tns:GameStartedDTO" />
@@ -91,6 +93,7 @@
       <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
       <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerScores" nillable="true" type="q4:ArrayOfKeyValueOfintint" />
       <xs:element minOccurs="0" name="RemainingTime" type="ser:duration" />
+      <xs:element minOccurs="0" name="TurnEndTime" type="xs:dateTime" />
       <xs:element minOccurs="0" name="TurnNumber" type="xs:int" />
     </xs:sequence>
   </xs:complexType>

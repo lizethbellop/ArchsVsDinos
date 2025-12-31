@@ -24,5 +24,8 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public Dictionary<int, int> PlayerScores { get; set; }
+        
+        [DataMember]
+        public DateTime TurnEndTime { get; set; }
     }
 }

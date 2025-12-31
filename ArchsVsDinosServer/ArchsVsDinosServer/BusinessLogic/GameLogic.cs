@@ -158,6 +158,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                                                     .First();
 
                 gameSession.EndTurn(nextPlayer.UserId);
+                gameSession.ResetTurnTimer();
                 loggerHelper.LogInfo($"Turn ended for {userId}. Next: {nextPlayer.UserId} in {matchCode}");
 
                 gameNotifier.NotifyTurnChanged(new TurnChangedDTO
@@ -166,6 +167,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                     CurrentPlayerUserId = nextPlayer.UserId,
                     TurnNumber = gameSession.TurnNumber,
                     RemainingTime = TimeSpan.Zero,
+                    TurnEndTime = gameSession.TurnEndTime,
                     PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points)
                 });
 
@@ -283,7 +285,9 @@ namespace ArchsVsDinosServer.BusinessLogic
                     StartTime = session.StartTime ?? DateTime.UtcNow,
                     PlayersHands = new List<PlayerHandDTO> { playerHandDto },
                     InitialBoard = MapBoardToDTO(session.CentralBoard),
-                    DrawDeckCount = session.DrawDeck.Count
+                    DrawDeckCount = session.DrawDeck.Count,
+                    MatchEndTime = session.MatchEndTime,
+                    TurnEndTime = session.TurnEndTime
                 };
 
                 try
@@ -408,6 +412,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                                                     .First();
 
                 gameSession.EndTurn(nextPlayer.UserId);
+                gameSession.ResetTurnTimer();
                 loggerHelper.LogInfo($"[PROVOKE] Turn auto-ended. Next player: {nextPlayer.UserId}");
 
                 gameNotifier.NotifyTurnChanged(new TurnChangedDTO
@@ -416,7 +421,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                     CurrentPlayerUserId = nextPlayer.UserId,
                     TurnNumber = gameSession.TurnNumber,
                     RemainingTime = TimeSpan.Zero,
-                    PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points)
+                    PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points),
+                    TurnEndTime = gameSession.TurnEndTime
                 });
 
                 return Task.FromResult(true);
@@ -491,6 +497,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                                                         .First();
 
                     gameSession.EndTurn(nextPlayer.UserId);
+                    gameSession.ResetTurnTimer();
                     loggerHelper.LogInfo($"[DISCARD PILE] Turn auto-ended. Next player: {nextPlayer.UserId}");
 
                     gameNotifier.NotifyTurnChanged(new TurnChangedDTO
@@ -499,7 +506,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                         CurrentPlayerUserId = nextPlayer.UserId,
                         TurnNumber = gameSession.TurnNumber,
                         RemainingTime = TimeSpan.Zero,
-                        PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points)
+                        PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points),
+                        TurnEndTime = gameSession.TurnEndTime
                     });
                 }
             }
@@ -537,7 +545,52 @@ namespace ArchsVsDinosServer.BusinessLogic
                 gameCoreContext.Sessions.RemoveSession(matchCode);
             }
 
+            session.TurnTimeExpired += HandleTurnTimeExpired;
             return session;
+        }
+
+        private void HandleTurnTimeExpired(string matchCode, int expiredUserId)
+        {
+            loggerHelper.LogInfo($"[TIMER] Time expired (30s) for user {expiredUserId} in match {matchCode}. Forcing turn change.");
+
+            try
+            {
+                var gameSession = GetActiveSession(matchCode);
+
+                lock (gameSession.SyncRoot)
+                {
+                    if (gameSession.CurrentTurn != expiredUserId)
+                    {
+                        loggerHelper.LogInfo($"[TIMER] Race condition detected: User {expiredUserId} is no longer active. Ignoring.");
+                        return;
+                    }
+
+                    var nextPlayer = gameSession.Players.OrderBy(player => player.TurnOrder)
+                                                        .SkipWhile(player => player.UserId != expiredUserId)
+                                                        .Skip(1)
+                                                        .DefaultIfEmpty(gameSession.Players.OrderBy(player => player.TurnOrder).First())
+                                                        .First();
+
+                    gameSession.EndTurn(nextPlayer.UserId);
+                    gameSession.ResetTurnTimer(); 
+
+                    loggerHelper.LogInfo($"[TIMER] Turn passed automatically to Player {nextPlayer.UserId} ({nextPlayer.Nickname}).");
+
+                    gameNotifier.NotifyTurnChanged(new TurnChangedDTO
+                    {
+                        MatchCode = matchCode,
+                        CurrentPlayerUserId = nextPlayer.UserId,
+                        TurnNumber = gameSession.TurnNumber,
+                        RemainingTime = TimeSpan.Zero,
+                        TurnEndTime = gameSession.TurnEndTime, 
+                        PlayerScores = gameSession.Players.ToDictionary(p => p.UserId, p => p.Points)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Error in HandleTurnTimeExpired for {matchCode}", ex);
+            }
         }
 
         private List<PlayerSession> CreatePlayerSessions(List<GamePlayerInitDTO> initialPlayers)
