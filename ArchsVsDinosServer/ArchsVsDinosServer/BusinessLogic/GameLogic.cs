@@ -32,16 +32,24 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly IGameNotifier gameNotifier;
         private readonly IStatisticsManager statisticsManager;
 
-        public GameLogic(GameCoreContext coreContext, ILoggerHelper logger, IGameNotifier notifier, IStatisticsManager statsManager)
+        public GameLogic(GameLogicDependencies dependencies)
         {
-            this.gameCoreContext = coreContext ?? throw new ArgumentNullException(nameof(coreContext));
-            this.loggerHelper = logger ?? throw new ArgumentNullException(nameof(logger));
+            if (dependencies == null)
+                throw new ArgumentNullException(nameof(dependencies));
+
+            this.gameCoreContext = dependencies.CoreContext ??
+                throw new ArgumentNullException(nameof(dependencies.CoreContext));
+            this.loggerHelper = dependencies.Logger ??
+                throw new ArgumentNullException(nameof(dependencies.Logger));
+            this.gameNotifier = dependencies.Notifier ??
+                throw new ArgumentNullException(nameof(dependencies.Notifier));
+            this.statisticsManager = dependencies.StatisticsManager ??
+                throw new ArgumentNullException(nameof(dependencies.StatisticsManager));
+
             this.rulesValidator = new GameRulesValidator();
             this.gameEndHandler = new GameEndHandler();
-            this.gameNotifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
-            this.statisticsManager = statsManager ?? throw new ArgumentNullException(nameof(statsManager));
         }
-        
+
         public bool AttachBodyPart(string matchCode, int userId, AttachBodyPartDTO attachmentData)
         {
             if (attachmentData == null) throw new ArgumentNullException(nameof(attachmentData));
