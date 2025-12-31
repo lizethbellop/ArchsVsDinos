@@ -84,6 +84,8 @@
     <Compile Include="FriendsTests\FriendRequestRejectTest.cs" />
     <Compile Include="FriendsTests\FriendRequestSendTest.cs" />
     <Compile Include="FriendsTests\FriendTest.cs" />
+    <Compile Include="Game\GameDrawCardTest.cs" />
+    <Compile Include="Game\GameLogicAttachBodyPartTest.cs" />
     <Compile Include="Lobby\LobbyCreateTest.cs" />
     <Compile Include="Lobby\LobbyFriendInviteTest.cs" />
     <Compile Include="Lobby\LobbyGameStartTest.cs" />
@@ -120,7 +122,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Game\" />
     <Folder Include="Util\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
