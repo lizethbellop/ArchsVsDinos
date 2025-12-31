@@ -20,7 +20,9 @@ namespace ArchsVsDinosServer.Interfaces.Game
         CardInGame DrawCard(string matchCode, int userId);
 
         bool ExchangeCard(string matchCode, int userId, ExchangeCardDTO data);
-        DinoInstance PlayDinoHead(string matchCode, int userId, int cardId); 
+        DinoInstance PlayDinoHead(string matchCode, int userId, int cardId);
+
+        void TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
 
         bool AttachBodyPart(string matchCode, int userId, AttachBodyPartDTO data);
 

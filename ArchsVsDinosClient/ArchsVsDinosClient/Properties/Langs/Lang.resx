@@ -969,4 +969,19 @@
   <data name="Match_ErrorChatNotAvailable" xml:space="preserve">
     <value>Chat no disponible</value>
   </data>
+  <data name="Match_NoArmiesToProvoke" xml:space="preserve">
+    <value>No hay ningún ejército que provocar</value>
+  </data>
+  <data name="SettingsIG_LeaveTheGame" xml:space="preserve">
+    <value>Abandonar partida</value>
+  </data>
+  <data name="MatchDiscard_DiscardPile" xml:space="preserve">
+    <value>Pila de descarte</value>
+  </data>
+  <data name="Match_DiscardPileEmpty" xml:space="preserve">
+    <value>No hay cartas en la pila de descarte</value>
+  </data>
+  <data name="MatchDiscard_TakeACardWarning" xml:space="preserve">
+    <value>Tomar una carta gasta todas tus tiradas</value>
+  </data>
 </root>

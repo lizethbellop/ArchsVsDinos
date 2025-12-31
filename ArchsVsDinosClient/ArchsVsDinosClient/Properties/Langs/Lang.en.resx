@@ -814,7 +814,7 @@
     <value>The deck of cards is empty!</value>
   </data>
   <data name="Match_AlreadyUsedRolls" xml:space="preserve">
-    <value>You have already used up your rolls</value>
+    <value>You have already used up your plays</value>
   </data>
   <data name="Login_IForgotMyPassword" xml:space="preserve">
     <value>I forgot my password</value>
@@ -969,5 +969,20 @@
   </data>
   <data name="Match_ErrorChatNotAvailable" xml:space="preserve">
     <value>Chat not available</value>
+  </data>
+  <data name="Match_NoArmiesToProvoke" xml:space="preserve">
+    <value>There aren't armies to provoke</value>
+  </data>
+  <data name="SettingsIG_LeaveTheGame" xml:space="preserve">
+    <value>Leave the game</value>
+  </data>
+  <data name="MatchDiscard_DiscardPile" xml:space="preserve">
+    <value>Discard pile</value>
+  </data>
+  <data name="Match_DiscardPileEmpty" xml:space="preserve">
+    <value>The discard pile is empty</value>
+  </data>
+  <data name="MatchDiscard_TakeACardWarning" xml:space="preserve">
+    <value>Taking a card uses up all your moves</value>
   </data>
 </root>

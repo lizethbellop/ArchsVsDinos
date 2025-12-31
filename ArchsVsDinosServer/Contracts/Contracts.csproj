@@ -54,6 +54,7 @@
     <Compile Include="DTO\Game DTO\CardDrawnDTO.cs" />
     <Compile Include="DTO\Game DTO\CardDTO.cs" />
     <Compile Include="DTO\Game DTO\CardExchangedDTO.cs" />
+    <Compile Include="DTO\Game DTO\CardTakenFromDiscardDTO.cs" />
     <Compile Include="DTO\Game DTO\DinoPlayedDTO.cs" />
     <Compile Include="DTO\Game DTO\Enums\GameEnumeration.cs" />
     <Compile Include="DTO\Game DTO\ExchangeCardDTO.cs" />

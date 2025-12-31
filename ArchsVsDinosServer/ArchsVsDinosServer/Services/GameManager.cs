@@ -145,6 +145,15 @@ namespace ArchsVsDinosServer.Services
                 gameLogic.Provoke(matchCode, userId, armyType);
             });
         }
+
+        public void TakeCardFromDiscardPile(string matchCode, int userId, int cardId)
+        {
+            ExecuteSafe(() =>
+            {
+                gameLogic.TakeCardFromDiscardPile(matchCode, userId, cardId);
+            });
+        }
+
         public void SwapCardWithPlayer(string matchCode, int initiatorUserId, ExchangeCardDTO request)
         {
             ExecuteSafe(() =>

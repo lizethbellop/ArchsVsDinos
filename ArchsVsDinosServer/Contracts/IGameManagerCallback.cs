@@ -46,6 +46,9 @@ namespace Contracts
         void OnPlayerExpelled(PlayerExpelledDTO dto);
 
         [OperationContract(IsOneWay = true)]
+        void OnCardTakenFromDiscard(CardTakenFromDiscardDTO data);
+
+        [OperationContract(IsOneWay = true)]
         void OnCardExchanged(CardExchangedDTO dto);
     }
 }

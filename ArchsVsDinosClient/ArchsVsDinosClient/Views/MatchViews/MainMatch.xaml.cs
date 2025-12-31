@@ -827,9 +827,103 @@ namespace ArchsVsDinosClient.Views.MatchViews
             ActivateProvokeMode();
         }
 
+        private async void Click_BtnOpenDiscardPile(object sender, RoutedEventArgs e)
+        {
+            if (!gameViewModel.IsMyTurn)
+            {
+                MessageBox.Show(Lang.Match_NotYourTurn);
+                return;
+            }
+
+            if (gameViewModel.RemainingMoves <= 0)
+            {
+                MessageBox.Show(Lang.Match_AlreadyUsedRolls);
+                return;
+            }
+
+            var discardedCards = gameViewModel.BoardManager.DiscardPile.ToList();
+
+            if (discardedCards.Count == 0)
+            {
+                MessageBox.Show(Lang.Match_DiscardPileEmpty);
+                return;
+            }
+
+            var discardWindow = new MatchDiscardPile(discardedCards);
+            bool? result = discardWindow.ShowDialog();
+
+            if (result == true && discardWindow.SelectedCardId.HasValue)
+            {
+                int selectedCardId = discardWindow.SelectedCardId.Value;
+                bool success = await gameViewModel.TakeCardFromDiscardPileAsync(selectedCardId);
+
+                if (success)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Successfully took card {selectedCardId} from discard pile");
+                    UpdateArmyVisibility();
+                }
+            }
+        }
+
+        private void UpdateArmyVisibility()
+        {
+            if (gameViewModel.BoardManager.SandArmy.Count > 0)
+            {
+                Gr_SandArchs.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Gr_SandArchs.Visibility = Visibility.Collapsed;
+            }
+
+            if (gameViewModel.BoardManager.WaterArmy.Count > 0)
+            {
+                Gr_SeaArchs.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Gr_SeaArchs.Visibility = Visibility.Collapsed;
+            }
+
+            if (gameViewModel.BoardManager.WindArmy.Count > 0)
+            {
+                Gr_WindArchs.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Gr_WindArchs.Visibility = Visibility.Collapsed;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Army visibility updated - Sand: {Gr_SandArchs.Visibility}, Water: {Gr_SeaArchs.Visibility}, Wind: {Gr_WindArchs.Visibility}");
+        }
+
         private void ActivateProvokeMode()
         {
+
+            if (gameViewModel.BoardManager.SandArmy.Count == 0 &&
+                gameViewModel.BoardManager.WaterArmy.Count == 0 &&
+                gameViewModel.BoardManager.WindArmy.Count == 0)
+            {
+                MessageBox.Show(Lang.Match_NoArmiesToProvoke); 
+                return;
+            }
+
             isProvokeModeActive = true;
+
+            Btn_TakeACard.IsEnabled = false;
+            Btn_EndTurn.IsEnabled = false;
+            Btn_ProvokeNow.IsEnabled = false;
+
+            for (int i = 1; i <= 6; i++)
+            {
+                var cell = BottomPlayerCards.GetCombinationCell(i);
+                if (cell != null)
+                {
+                    cell.AllowDrop = false;
+                }
+            }
+
+            DisablePlayerHandDragging();
 
             if (gameViewModel.BoardManager.SandArmy.Count > 0)
             {
@@ -870,6 +964,22 @@ namespace ArchsVsDinosClient.Views.MatchViews
             Gr_SandArchs.MouseLeftButtonDown -= OnArmyClick;
             Gr_SeaArchs.MouseLeftButtonDown -= OnArmyClick;
             Gr_WindArchs.MouseLeftButtonDown -= OnArmyClick;
+
+            CheckDrawButtonState(); 
+            Btn_EndTurn.IsEnabled = gameViewModel.IsMyTurn;
+            Btn_ProvokeNow.IsEnabled = gameViewModel.IsMyTurn;
+
+            for (int i = 1; i <= 6; i++)
+            {
+                var cell = BottomPlayerCards.GetCombinationCell(i);
+                if (cell != null)
+                {
+                    cell.AllowDrop = true;
+                }
+            }
+
+            EnablePlayerHandDragging();
+
         }
 
         private void OnArmyClick(object sender, MouseButtonEventArgs e)
@@ -1125,6 +1235,29 @@ namespace ArchsVsDinosClient.Views.MatchViews
             });
         }
 
+        private void DisablePlayerHandDragging()
+        {
+            foreach (UIElement child in MyDeckCanvas.Children)
+            {
+                if (child is DeckCardSelection cardControl)
+                {
+                    cardControl.IsEnabled = false;
+                    cardControl.Opacity = 0.5; 
+                }
+            }
+        }
+
+        private void EnablePlayerHandDragging()
+        {
+            foreach (UIElement child in MyDeckCanvas.Children)
+            {
+                if (child is DeckCardSelection cardControl)
+                {
+                    cardControl.IsEnabled = true;
+                    cardControl.Opacity = 1.0;
+                }
+            }
+        }
         protected override async void OnClosing(CancelEventArgs e)
         {
             if (chatViewModel != null)

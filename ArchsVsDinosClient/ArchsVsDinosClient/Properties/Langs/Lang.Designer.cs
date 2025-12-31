@@ -1393,6 +1393,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No hay cartas en la pila de descarte.
+        /// </summary>
+        public static string Match_DiscardPileEmpty {
+            get {
+                return ResourceManager.GetString("Match_DiscardPileEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Error terminando turno, intenta de nuevo.
         /// </summary>
         public static string Match_EndTurnError {
@@ -1488,6 +1497,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_InvalidCell {
             get {
                 return ResourceManager.GetString("Match_InvalidCell", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No hay ningún ejército que provocar.
+        /// </summary>
+        public static string Match_NoArmiesToProvoke {
+            get {
+                return ResourceManager.GetString("Match_NoArmiesToProvoke", resourceCulture);
             }
         }
         
@@ -1722,6 +1740,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_YourTurn {
             get {
                 return ResourceManager.GetString("Match_YourTurn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Pila de descarte.
+        /// </summary>
+        public static string MatchDiscard_DiscardPile {
+            get {
+                return ResourceManager.GetString("MatchDiscard_DiscardPile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tomar una carta gasta todas tus tiradas.
+        /// </summary>
+        public static string MatchDiscard_TakeACardWarning {
+            get {
+                return ResourceManager.GetString("MatchDiscard_TakeACardWarning", resourceCulture);
             }
         }
         
@@ -2208,6 +2244,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Settings_SoundTitle {
             get {
                 return ResourceManager.GetString("Settings_SoundTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Abandonar partida.
+        /// </summary>
+        public static string SettingsIG_LeaveTheGame {
+            get {
+                return ResourceManager.GetString("SettingsIG_LeaveTheGame", resourceCulture);
             }
         }
         

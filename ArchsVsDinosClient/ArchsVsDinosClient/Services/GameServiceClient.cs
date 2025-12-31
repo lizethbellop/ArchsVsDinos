@@ -27,6 +27,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<GameEndedDTO> GameEnded;
         public event Action<PlayerExpelledDTO> PlayerExpelled;
         public event Action<CardExchangedDTO> CardExchanged;
+        public event Action<CardTakenFromDiscardDTO> CardTakenFromDiscard;
         public event Action<string, string> ServiceError;
 
         public GameServiceClient()
@@ -46,6 +47,7 @@ namespace ArchsVsDinosClient.Services
             callback.OnGameEndedEvent += (d) => GameEnded?.Invoke(d);
             callback.OnPlayerExpelledEvent += (d) => PlayerExpelled?.Invoke(d);
             callback.OnCardExchangedEvent += (d) => CardExchanged?.Invoke(d);
+            callback.OnCardTakenFromDiscardEvent += (d) => CardTakenFromDiscard?.Invoke(d);
 
             var context = new InstanceContext(callback);
 
@@ -106,6 +108,11 @@ namespace ArchsVsDinosClient.Services
         public async Task ConnectToGameAsync(string matchCode, int userId)
         {
             await ExecuteAsync(() => client.ConnectToGame(matchCode, userId));
+        }
+
+        public async Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId)
+        {
+            await ExecuteAsync(() => client.TakeCardFromDiscardPile(matchCode, userId, cardId));
         }
 
         private async Task ExecuteAsync(Action action)

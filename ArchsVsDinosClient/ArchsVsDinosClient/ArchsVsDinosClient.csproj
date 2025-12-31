@@ -266,6 +266,9 @@
     <Compile Include="Views\MatchViews\MainMatch.xaml.cs">
       <DependentUpon>MainMatch.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\MatchViews\MatchDiscardPile.xaml.cs">
+      <DependentUpon>MatchDiscardPile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MatchViews\MatchProvoke\MatchProvoke.xaml.cs">
       <DependentUpon>MatchProvoke.xaml</DependentUpon>
     </Compile>
@@ -277,6 +280,9 @@
     </Compile>
     <Compile Include="Views\MatchViews\PlayerCellHorizontal.xaml.cs">
       <DependentUpon>PlayerCellHorizontal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MatchViews\SettingsInMatch.xaml.cs">
+      <DependentUpon>SettingsInMatch.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PersonalStatistics.xaml.cs">
       <DependentUpon>PersonalStatistics.xaml</DependentUpon>
@@ -386,6 +392,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MatchViews\MatchDiscardPile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MatchViews\MatchProvoke\MatchProvoke.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -399,6 +409,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MatchViews\PlayerCellHorizontal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MatchViews\SettingsInMatch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1023,6 +1037,7 @@
     </Content>
     <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_1.png" />
     <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_2.png" />
+    <Resource Include="Resources\Images\trashBack.png" />
     <Content Include="Resources\Music\MusicAttack.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

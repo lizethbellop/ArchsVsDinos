@@ -46,6 +46,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public void NotifyTurnChanged(TurnChangedDTO data) => NotifyAll(cb => cb.OnTurnChanged(data));
 
+        public void NotifyCardTakenFromDiscard(CardTakenFromDiscardDTO data) => NotifyAll(cb => cb.OnCardTakenFromDiscard(data));
+
         public void NotifyGameStarted(GameStartedDTO data)
         {
             if (data == null)
@@ -139,7 +141,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 RemoveCallback(cb);
             }
         }
-
 
         private void RemoveCallback(IGameManagerCallback callback)
         {

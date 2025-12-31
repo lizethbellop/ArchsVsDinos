@@ -185,6 +185,15 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="PlayerScoreDTO" nillable="true" type="tns:PlayerScoreDTO" />
+  <xs:complexType name="CardTakenFromDiscardDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CardId" type="xs:int" />
+      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PlayerUserId" type="xs:int" />
+      <xs:element minOccurs="0" name="RemainingCardsInDiscard" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CardTakenFromDiscardDTO" nillable="true" type="tns:CardTakenFromDiscardDTO" />
   <xs:complexType name="CardExchangedDTO">
     <xs:sequence>
       <xs:element minOccurs="0" name="CardFromPlayerA" nillable="true" type="tns:CardDTO" />

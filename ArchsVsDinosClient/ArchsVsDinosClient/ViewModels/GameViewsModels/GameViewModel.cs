@@ -143,6 +143,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.ServiceError += OnServiceError;
             gameServiceClient.ArchProvoked += OnArchProvoked;  
             gameServiceClient.ServiceError += OnServiceError;
+            gameServiceClient.CardTakenFromDiscard += OnCardTakenFromDiscard;
         }
 
         public async Task ConnectToGameAsync()
@@ -215,6 +216,28 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             catch (Exception ex)
             {
                 return ex.Message;
+            }
+        }
+
+        public async Task<bool> TakeCardFromDiscardPileAsync(int cardId)
+        {
+            if (!IsMyTurn || RemainingMoves <= 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                int userId = DetermineMyUserId();
+                await gameServiceClient.TakeCardFromDiscardPileAsync(matchCode, userId, cardId);
+                System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Successfully requested card {cardId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Error: {ex.Message}");
+                MessageBox.Show($"Error al tomar carta: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
 
@@ -325,7 +348,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         if (!BoardManager.SandArmy.Any(c => c.IdCard == archCard.IdCard))
                         {
                             BoardManager.SandArmy.Add(archCard);
-                            SandArmyVisibility = Visibility.Visible;
+                            //SandArmyVisibility = Visibility.Visible;
                             System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] Sand Arch {archCard.IdCard} added. Total: {BoardManager.SandArmy.Count}");
                         }
                         else
@@ -346,7 +369,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         if (!BoardManager.WaterArmy.Any(c => c.IdCard == archCard.IdCard))
                         {
                             BoardManager.WaterArmy.Add(archCard);
-                            WaterArmyVisibility = Visibility.Visible;
+                            //WaterArmyVisibility = Visibility.Visible;
                             System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] Water Arch {archCard.IdCard} added. Total: {BoardManager.WaterArmy.Count}");
                         }
                         else
@@ -367,7 +390,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         if (!BoardManager.WindArmy.Any(c => c.IdCard == archCard.IdCard))
                         {
                             BoardManager.WindArmy.Add(archCard);
-                            WindArmyVisibility = Visibility.Visible;
+                            //WindArmyVisibility = Visibility.Visible;
                             System.Diagnostics.Debug.WriteLine($"[ARCH ADDED] Wind Arch {archCard.IdCard} added. Total: {BoardManager.WindArmy.Count}");
                         }
                         else
@@ -633,6 +656,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     CurrentPoints += data.BattleResult.PointsAwarded;
                 }
 
+                PopulateDiscardPileFromProvoke(data);
+
                 switch (data.ArmyType)
                 {
                     case ArmyType.Sand:
@@ -681,6 +706,141 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             });
         }
 
+        private void PopulateDiscardPileFromProvoke(ArchArmyProvokedDTO data)
+        {
+            if (data.BattleResult?.ArchCards != null)
+            {
+                foreach (var archCardDTO in data.BattleResult.ArchCards)
+                {
+                    var card = CardRepositoryModel.GetById(archCardDTO.IdCard);
+                    if (card != null && !BoardManager.DiscardPile.Any(c => c.IdCard == card.IdCard))
+                    {
+                        BoardManager.DiscardPile.Add(card);
+                        System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Added Arch {card.IdCard} to discard pile");
+                    }
+                }
+            }
+
+            if (data.BattleResult?.PlayerPowers != null)
+            {
+                int myUserId = DetermineMyUserId();
+
+                foreach (var playerPower in data.BattleResult.PlayerPowers)
+                {
+                    int userId = playerPower.Key;
+
+                    if (BoardManager.PlayerDecks.ContainsKey(userId))
+                    {
+                        var playerDinos = BoardManager.PlayerDecks[userId].Values.ToList();
+
+                        foreach (var dino in playerDinos)
+                        {
+                            if (dino.Head != null && GetElementFromCard(dino.Head) == data.ArmyType)
+                            {
+                                if (dino.Head != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.Head.IdCard))
+                                {
+                                    BoardManager.DiscardPile.Add(dino.Head);
+                                }
+                                if (dino.Chest != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.Chest.IdCard))
+                                {
+                                    BoardManager.DiscardPile.Add(dino.Chest);
+                                }
+                                if (dino.LeftArm != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.LeftArm.IdCard))
+                                {
+                                    BoardManager.DiscardPile.Add(dino.LeftArm);
+                                }
+                                if (dino.RightArm != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.RightArm.IdCard))
+                                {
+                                    BoardManager.DiscardPile.Add(dino.RightArm);
+                                }
+                                if (dino.Legs != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.Legs.IdCard))
+                                {
+                                    BoardManager.DiscardPile.Add(dino.Legs);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private ArmyType GetElementFromCard(Card card)
+        {
+            switch (card.Element)
+            {
+                case ElementType.Sand:
+                    return ArmyType.Sand;
+                case ElementType.Water:
+                    return ArmyType.Water;
+                case ElementType.Wind:
+                    return ArmyType.Wind;
+                default:
+                    return ArmyType.None;
+            }
+        }
+
+        private void OnCardTakenFromDiscard(CardTakenFromDiscardDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[CARD TAKEN FROM DISCARD] Player {data.PlayerUserId} took card {data.CardId}");
+
+                int myUserId = DetermineMyUserId();
+
+                // ✅ Remover carta de la pila de descarte visual
+                var cardToRemove = BoardManager.DiscardPile.FirstOrDefault(c => c.IdCard == data.CardId);
+                if (cardToRemove != null)
+                {
+                    BoardManager.DiscardPile.Remove(cardToRemove);
+                    System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Card {data.CardId} removed from visual pile. Remaining: {data.RemainingCardsInDiscard}");
+                }
+
+                // ✅ Si fui yo quien tomó la carta
+                if (data.PlayerUserId == myUserId)
+                {
+                    var card = CardRepositoryModel.GetById(data.CardId);
+                    if (card != null)
+                    {
+                        // ✅ Si es Arch, agregarlo al ejército correspondiente
+                        if (card.Category == ArchsVsDinosClient.Models.CardCategory.Arch)
+                        {
+                            switch (card.Element)
+                            {
+                                case ElementType.Sand:
+                                    if (!BoardManager.SandArmy.Any(c => c.IdCard == card.IdCard))
+                                    {
+                                        BoardManager.SandArmy.Add(card);
+                                        SandArmyVisibility = Visibility.Visible;
+                                    }
+                                    break;
+                                case ElementType.Water:
+                                    if (!BoardManager.WaterArmy.Any(c => c.IdCard == card.IdCard))
+                                    {
+                                        BoardManager.WaterArmy.Add(card);
+                                        WaterArmyVisibility = Visibility.Visible;
+                                    }
+                                    break;
+                                case ElementType.Wind:
+                                    if (!BoardManager.WindArmy.Any(c => c.IdCard == card.IdCard))
+                                    {
+                                        BoardManager.WindArmy.Add(card);
+                                        WindArmyVisibility = Visibility.Visible;
+                                    }
+                                    break;
+                            }
+                            System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Arch card {card.IdCard} added to {card.Element} army");
+                        }
+                        else
+                        {
+                            // ✅ Si es parte de dino, agregarlo a la mano
+                            BoardManager.PlayerHand.Add(card);
+                            System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Card {card.IdCard} added to my hand");
+                        }
+                    }
+                }
+            });
+        }
+
         public async void InitializeAndStartGameAsync()
         {
             await Task.CompletedTask;
@@ -699,6 +859,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.DinoHeadPlayed -= OnDinoHeadPlayed;
                 gameServiceClient.BodyPartAttached -= OnBodyPartAttached;
                 gameServiceClient.ArchProvoked -= OnArchProvoked;
+                gameServiceClient.CardTakenFromDiscard -= OnCardTakenFromDiscard;
                 gameServiceClient.ServiceError -= OnServiceError;
             }
         }

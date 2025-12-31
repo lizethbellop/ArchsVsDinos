@@ -123,6 +123,20 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             }
         }
 
+        public bool RemoveFromDiscard(int cardId)
+        {
+            lock (SyncRoot)
+            {
+                if (discardPile.Contains(cardId))
+                {
+                    discardPile.Remove(cardId);
+                    loggerHelper.LogInfo($"Card {cardId} removed from discard pile in match {MatchCode}");
+                    return true;
+                }
+                return false;
+            }
+        }
+
         public bool RemovePlayer(string nickname)
         {
             lock (SyncRoot)

@@ -14,6 +14,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public ObservableCollection<Card> SandArmy { get; } = new ObservableCollection<Card>();
         public ObservableCollection<Card> WaterArmy { get; } = new ObservableCollection<Card>();
         public ObservableCollection<Card> WindArmy { get; } = new ObservableCollection<Card>();
+        public ObservableCollection<Card> DiscardPile { get; } = new ObservableCollection<Card>();
 
         public Dictionary<int, Dictionary<int, DinoBuilder>> PlayerDecks { get; } = new Dictionary<int, Dictionary<int, DinoBuilder>>();
 

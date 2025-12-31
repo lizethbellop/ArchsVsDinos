@@ -1,0 +1,135 @@
+﻿<Window x:Class="ArchsVsDinosClient.Views.MatchViews.SettingsInMatch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
+        mc:Ignorable="d"
+        xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
+        Title="Settings" Height="450" Width="600"
+        WindowStartupLocation="CenterScreen" WindowStyle="None">
+
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FF82C4FF" Offset="0"/>
+            <GradientStop Color="#FFE8F4FA" Offset="0.5"/>
+            <GradientStop Color="#FFC4DBF0" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Background>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#B0FFFFFF" BorderBrush="#FF196572" BorderThickness="0,0,2,0" Margin="10,10,0,10">
+            <StackPanel Margin="0,10,0,0">
+                <Label Content="{x:Static language:Lang.Settings_SettingsTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="22" FontWeight="Bold" Foreground="#FF196572" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+                <Button x:Name="BtnVolume" Height="50" BorderBrush="Transparent" HorizontalContentAlignment="Left" Padding="15,0">
+                    <Button.Background>
+                        <SolidColorBrush Color="#D0FFFFFF"/>
+                    </Button.Background>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="🔊" FontSize="20" Padding="0" Margin="0,0,10,0"/>
+                        <Label Content="{x:Static language:Lang.Setting_VolumeTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16" Foreground="Black" Padding="0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button VerticalAlignment="Bottom" Content="{x:Static language:Lang.SettingsIG_LeaveTheGame}"  Margin="5" Height="55" Width="150" Foreground="White" FontWeight="Bold" 
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                    CornerRadius="5" BorderThickness="0">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Column="1" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="{x:Static language:Lang.Setting_VolumeTitle}" FontFamily="{StaticResource Volcanic Dungeon}" FontSize="20" FontWeight="Bold" Foreground="#FF0A5F47" Margin="0,10,0,20"/>
+
+            <StackPanel Grid.Row="1" VerticalAlignment="Top">
+                <Label Content="{x:Static language:Lang.Settings_MusicTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="Black" Margin="0,10,0,5"/>
+                <Slider x:Name="Sl_VolumeMusic" Minimum="0" Maximum="100" Value="50" TickFrequency="10" IsSnapToTickEnabled="True"
+                        Height="30" Margin="0,0,50,0" Foreground="#FF6ABA2A"/>
+
+                <Label Content="{x:Static language:Lang.Settings_SoundTitle}" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="18" Foreground="Black" Margin="0,20,0,5"/>
+                <Slider x:Name="Sl_VolumeSound" Minimum="0" Maximum="100" Value="50" TickFrequency="10" IsSnapToTickEnabled="True" 
+                        Height="30" Margin="0,0,50,0" Foreground="#FF6ABA2A"/>
+            </StackPanel>
+
+            <UniformGrid Grid.Row="2" Columns="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,50,10">
+                <Button Content="{x:Static language:Lang.GlobalSaveText}" Margin="5" Height="55" Width="130" Foreground="White" FontWeight="Bold" 
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                    CornerRadius="5" BorderThickness="0">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="55" Width="130" Foreground="White" FontWeight="Bold" 
+                        BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
+                    </Button.Background>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" 
+                                    CornerRadius="5" BorderThickness="0">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+            </UniformGrid>
+
+        </Grid>
+
+    </Grid>
+</Window>

@@ -55,6 +55,12 @@
   <wsdl:message name="IGameManager_SwapCardWithPlayer_OutputMessage">
     <wsdl:part name="parameters" element="tns:SwapCardWithPlayerResponse" />
   </wsdl:message>
+  <wsdl:message name="IGameManager_TakeCardFromDiscardPile_InputMessage">
+    <wsdl:part name="parameters" element="tns:TakeCardFromDiscardPile" />
+  </wsdl:message>
+  <wsdl:message name="IGameManager_TakeCardFromDiscardPile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:TakeCardFromDiscardPileResponse" />
+  </wsdl:message>
   <wsdl:message name="IGameManager_ProvokeArchArmy_InputMessage">
     <wsdl:part name="parameters" element="tns:ProvokeArchArmy" />
   </wsdl:message>
@@ -100,6 +106,9 @@
   <wsdl:message name="IGameManager_OnPlayerExpelled_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:OnPlayerExpelled" />
   </wsdl:message>
+  <wsdl:message name="IGameManager_OnCardTakenFromDiscard_OutputCallbackMessage">
+    <wsdl:part name="parameters" element="tns:OnCardTakenFromDiscard" />
+  </wsdl:message>
   <wsdl:message name="IGameManager_OnCardExchanged_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:OnCardExchanged" />
   </wsdl:message>
@@ -127,6 +136,10 @@
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="SwapCardWithPlayer">
       <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/SwapCardWithPlayer" message="tns:IGameManager_SwapCardWithPlayer_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/SwapCardWithPlayerResponse" message="tns:IGameManager_SwapCardWithPlayer_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="TakeCardFromDiscardPile">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/TakeCardFromDiscardPile" message="tns:IGameManager_TakeCardFromDiscardPile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/TakeCardFromDiscardPileResponse" message="tns:IGameManager_TakeCardFromDiscardPile_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="ProvokeArchArmy">
       <wsdl:input wsaw:Action="http://tempuri.org/IGameManager/ProvokeArchArmy" message="tns:IGameManager_ProvokeArchArmy_InputMessage" />
@@ -168,6 +181,9 @@
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="OnPlayerExpelled">
       <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnPlayerExpelled" message="tns:IGameManager_OnPlayerExpelled_OutputCallbackMessage" />
+    </wsdl:operation>
+    <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="OnCardTakenFromDiscard">
+      <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnCardTakenFromDiscard" message="tns:IGameManager_OnCardTakenFromDiscard_OutputCallbackMessage" />
     </wsdl:operation>
     <wsdl:operation msc:isInitiating="true" msc:isTerminating="false" name="OnCardExchanged">
       <wsdl:output wsaw:Action="http://tempuri.org/IGameManager/OnCardExchanged" message="tns:IGameManager_OnCardExchanged_OutputCallbackMessage" />
@@ -223,6 +239,15 @@
     </wsdl:operation>
     <wsdl:operation name="SwapCardWithPlayer">
       <soap12:operation soapAction="http://tempuri.org/IGameManager/SwapCardWithPlayer" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TakeCardFromDiscardPile">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/TakeCardFromDiscardPile" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -310,6 +335,12 @@
     </wsdl:operation>
     <wsdl:operation name="OnPlayerExpelled">
       <soap12:operation soapAction="http://tempuri.org/IGameManager/OnPlayerExpelled" style="document" />
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OnCardTakenFromDiscard">
+      <soap12:operation soapAction="http://tempuri.org/IGameManager/OnCardTakenFromDiscard" style="document" />
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>

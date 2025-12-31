@@ -34,6 +34,9 @@ namespace Contracts
         void SwapCardWithPlayer(string matchCode, int initiatorUserId, ExchangeCardDTO request);
 
         [OperationContract]
+        void TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
+
+        [OperationContract]
         void ProvokeArchArmy(string matchCode, int userId, ArmyType armyType);
 
         [OperationContract]

@@ -16,6 +16,8 @@ namespace ArchsVsDinosClient.Services.Interfaces
         Task SwapCardWithPlayerAsync(string matchCode, int initiatorUserId, ExchangeCardDTO request);
         Task ProvokeArchArmyAsync(string matchCode, int userId, ArmyType armyType);
         Task EndTurnAsync(string matchCode, int userId);
+        Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
+
 
         event Action<GameInitializedDTO> GameInitialized;
         event Action<GameStartedDTO> GameStarted;
@@ -29,6 +31,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<GameEndedDTO> GameEnded;
         event Action<PlayerExpelledDTO> PlayerExpelled;
         event Action<CardExchangedDTO> CardExchanged;
+        event Action<CardTakenFromDiscardDTO> CardTakenFromDiscard;
 
         event Action<string, string> ServiceError;
     }

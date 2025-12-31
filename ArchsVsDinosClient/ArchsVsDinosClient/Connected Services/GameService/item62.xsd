@@ -84,6 +84,20 @@
       <xs:sequence />
     </xs:complexType>
   </xs:element>
+  <xs:element name="TakeCardFromDiscardPile">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="userId" type="xs:int" />
+        <xs:element minOccurs="0" name="cardId" type="xs:int" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TakeCardFromDiscardPileResponse">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
   <xs:element name="ProvokeArchArmy">
     <xs:complexType>
       <xs:sequence>
@@ -188,10 +202,17 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="OnCardTakenFromDiscard">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="data" nillable="true" type="q15:CardTakenFromDiscardDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="OnCardExchanged">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="dto" nillable="true" type="q15:CardExchangedDTO" />
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="dto" nillable="true" type="q16:CardExchangedDTO" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

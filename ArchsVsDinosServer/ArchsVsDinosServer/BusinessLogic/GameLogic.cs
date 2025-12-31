@@ -41,7 +41,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             this.gameNotifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
             this.statisticsManager = statsManager ?? throw new ArgumentNullException(nameof(statsManager));
         }
-
+        
         public bool AttachBodyPart(string matchCode, int userId, AttachBodyPartDTO attachmentData)
         {
             if (attachmentData == null) throw new ArgumentNullException(nameof(attachmentData));
@@ -412,6 +412,88 @@ namespace ArchsVsDinosServer.BusinessLogic
                 });
 
                 return Task.FromResult(true);
+            }
+        }
+
+        public void TakeCardFromDiscardPile(string matchCode, int userId, int cardId)
+        {
+            var gameSession = GetActiveSession(matchCode);
+            var playerSession = GetPlayer(gameSession, userId);
+
+            lock (gameSession.SyncRoot)
+            {
+                if (gameSession.CurrentTurn != userId)
+                    throw new InvalidOperationException("It's not your turn");
+
+                if (gameSession.RemainingMoves <= 0)
+                    throw new InvalidOperationException("No moves remaining");
+
+                if (!gameSession.DiscardPile.Contains(cardId))
+                    throw new InvalidOperationException($"Card {cardId} not found in discard pile");
+
+                if (!gameSession.RemoveFromDiscard(cardId))
+                    throw new InvalidOperationException($"Could not remove card {cardId} from discard pile");
+
+                var card = CardInGame.FromDefinition(cardId);
+                if (card == null)
+                    throw new InvalidOperationException($"Invalid card: {cardId}");
+
+                if (card.IsArch())
+                {
+                    gameSession.CentralBoard.AddArchCardToArmy(card);
+
+                    var archAddedDto = new ArchAddedToBoardDTO
+                    {
+                        MatchId = matchCode.GetHashCode(),
+                        PlayerUserId = userId,
+                        PlayerUsername = playerSession.Nickname,
+                        ArchCard = CreateCardDTO(card),
+                        ArmyType = card.Element.ToString(),
+                        NewArchCount = gameSession.CentralBoard.GetArmyByType(card.Element).Count
+                    };
+
+                    gameNotifier.NotifyArchAddedToBoard(archAddedDto);
+                }
+                else
+                {
+                    playerSession.AddCard(card);
+                }
+
+                int movesConsumed = gameSession.RemainingMoves;
+                gameSession.ConsumeMoves(movesConsumed);
+
+                loggerHelper.LogInfo($"Player {userId} took card {cardId} from discard pile in {matchCode}. Moves consumed: {movesConsumed}");
+
+                var notification = new CardTakenFromDiscardDTO
+                {
+                    MatchCode = matchCode,
+                    PlayerUserId = userId,
+                    CardId = cardId,
+                    RemainingCardsInDiscard = gameSession.DiscardPile.Count
+                };
+
+                gameNotifier.NotifyCardTakenFromDiscard(notification);
+
+                if (gameSession.RemainingMoves <= 0)
+                {
+                    var nextPlayer = gameSession.Players.OrderBy(player => player.TurnOrder)
+                                                        .SkipWhile(player => player.UserId != userId)
+                                                        .Skip(1)
+                                                        .DefaultIfEmpty(gameSession.Players.OrderBy(player => player.TurnOrder).First())
+                                                        .First();
+
+                    gameSession.EndTurn(nextPlayer.UserId);
+                    loggerHelper.LogInfo($"[DISCARD PILE] Turn auto-ended. Next player: {nextPlayer.UserId}");
+
+                    gameNotifier.NotifyTurnChanged(new TurnChangedDTO
+                    {
+                        MatchCode = matchCode,
+                        CurrentPlayerUserId = nextPlayer.UserId,
+                        TurnNumber = gameSession.TurnNumber,
+                        RemainingTime = TimeSpan.Zero,
+                        PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points)
+                    });
+                }
             }
         }
 

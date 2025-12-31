@@ -106,14 +106,14 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="1">
-                            <Button Click="Click_BtnSeeDeckP2">
+                            <Button Click="Click_BtnSeeDeckP2" Cursor="Hand">
                                 <Button.Background>
                                     <ImageBrush ImageSource="/Resources/Images/eye.png"/>
                                 </Button.Background>
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="border" Background="{TemplateBinding Background}" 
-                CornerRadius="5" BorderThickness="0">
+                                            CornerRadius="5" BorderThickness="0">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -198,7 +198,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0">
-                            <Button Click="Click_BtnSeeDeckP3">
+                            <Button Click="Click_BtnSeeDeckP3" Cursor="Hand">
                                 <Button.Background>
                                     <ImageBrush ImageSource="/Resources/Images/eye.png"/>
                                 </Button.Background>
@@ -250,7 +250,7 @@
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="1">
-                            <Button Click="Click_BtnChat" Name="Btn_Chat" Visibility="Visible" Grid.Column="0">
+                            <Button Click="Click_BtnChat" Name="Btn_Chat" Visibility="Visible" Grid.Column="0" Cursor="Hand">
                                 <Button.Background>
                                     <ImageBrush ImageSource="/Resources/Images/chatLogo.png"/>
                                 </Button.Background>
@@ -289,7 +289,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="1">
-                                <Button Click="Click_BtnSeeDeckP1">
+                                <Button Click="Click_BtnSeeDeckP1" Cursor="Hand">
                                     <Button.Background>
                                         <ImageBrush ImageSource="/Resources/Images/eye.png"/>
                                     </Button.Background>
@@ -320,9 +320,9 @@
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="1" Margin="0,10,0,0">
-                                <Button Click="Click_BtnEndTurn" Grid.Column="0" Content="{x:Static language:Lang.Match_PassTurn}"
+                                <Button Name="Btn_EndTurn" Click="Click_BtnEndTurn" Grid.Column="0" Content="{x:Static language:Lang.Match_PassTurn}"
                                     Foreground="White" FontWeight="Bold"
-                                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
+                                    BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20" Cursor="Hand">
                                     <Button.Background>
                                         <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
                                     </Button.Background>
@@ -521,10 +521,32 @@
                                         </Grid>
                                     </Grid>
                                     <!-- Card -->
-                                    <Grid Name="Gr_DiscardedCards" Grid.RowSpan="2" Visibility="Collapsed" Margin="15,15,15,15">
-                                        <Grid.Background>
-                                            <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png"/>
-                                        </Grid.Background>
+                                    <Grid x:Name="Gr_DiscardedCards" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Button Width="100"  Height="165" Click="Click_BtnOpenDiscardPile" Cursor="Hand">
+                                            <Button.Background>
+                                                <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png" Stretch="UniformToFill"/>
+                                            </Button.Background>
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="#555" BorderThickness="1">
+                                                        <Border.Effect>
+                                                            <DropShadowEffect Color="Black" BlurRadius="10" ShadowDepth="3"/>
+                                                        </Border.Effect>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="border" Property="BorderBrush" Value="#FFD700"/>
+                                                            <Setter TargetName="border" Property="BorderThickness" Value="4"/>
+                                                            <Setter TargetName="border" Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect Color="#FFD700" BlurRadius="20" ShadowDepth="0"/>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -638,8 +660,8 @@
                                     </Grid>
 
                                     <!-- Card -->
-                                    <Grid Name="Gr_AllCards" Margin="30,30,30,30">
-                                        <Button Name="Btn_TakeACard" Click="Click_BtnTakeACard" Visibility="Visible">
+                                    <Grid Name="Gr_AllCards" Margin="30,35,30,35">
+                                        <Button Name="Btn_TakeACard" Click="Click_BtnTakeACard" Visibility="Visible" Cursor="Hand">
                                             <Button.Background>
                                                 <ImageBrush ImageSource="/Resources/Images/Cards/Reverse/reverse.png"/>
                                             </Button.Background>
@@ -719,7 +741,7 @@
                             </Viewbox>
                         </Grid>
                         <Grid Grid.Column="1">
-                            <Button Click="Click_BtnSeeDeckP4">
+                            <Button Click="Click_BtnSeeDeckP4" Cursor="Hand">
                                 <Button.Background>
                                     <ImageBrush ImageSource="/Resources/Images/eye.png"/>
                                 </Button.Background>
@@ -751,10 +773,10 @@
 
                 <!-- Provoke now -->
                 <Grid Grid.Row="1" Margin="20,0,20,0">
-                    <Button Grid.Column="0" Click="Click_BtnProvokeNow"
+                    <Button Name="Btn_ProvokeNow" Grid.Column="0" Click="Click_BtnProvokeNow"
                         Foreground="#FFFFF900" FontWeight="Bold"
                         BorderBrush="Transparent" 
-                        FontFamily="{StaticResource Volcanic Dungeon}">
+                        FontFamily="{StaticResource Volcanic Dungeon}" Cursor="Hand">
 
                         <Button.Background>
                             <ImageBrush ImageSource="/Resources/Images/attackNow.png"/>

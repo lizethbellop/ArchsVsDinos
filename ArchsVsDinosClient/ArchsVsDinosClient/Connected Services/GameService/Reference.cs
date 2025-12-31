@@ -2014,6 +2014,99 @@ namespace ArchsVsDinosClient.GameService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CardTakenFromDiscardDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
+    [System.SerializableAttribute()]
+    public partial class CardTakenFromDiscardDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int CardIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string MatchCodeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int PlayerUserIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int RemainingCardsInDiscardField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int CardId {
+            get {
+                return this.CardIdField;
+            }
+            set {
+                if ((this.CardIdField.Equals(value) != true)) {
+                    this.CardIdField = value;
+                    this.RaisePropertyChanged("CardId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string MatchCode {
+            get {
+                return this.MatchCodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MatchCodeField, value) != true)) {
+                    this.MatchCodeField = value;
+                    this.RaisePropertyChanged("MatchCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int PlayerUserId {
+            get {
+                return this.PlayerUserIdField;
+            }
+            set {
+                if ((this.PlayerUserIdField.Equals(value) != true)) {
+                    this.PlayerUserIdField = value;
+                    this.RaisePropertyChanged("PlayerUserId");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int RemainingCardsInDiscard {
+            get {
+                return this.RemainingCardsInDiscardField;
+            }
+            set {
+                if ((this.RemainingCardsInDiscardField.Equals(value) != true)) {
+                    this.RemainingCardsInDiscardField = value;
+                    this.RaisePropertyChanged("RemainingCardsInDiscard");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CardExchangedDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
     [System.SerializableAttribute()]
     public partial class CardExchangedDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
@@ -2161,6 +2254,12 @@ namespace ArchsVsDinosClient.GameService {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/SwapCardWithPlayer", ReplyAction="http://tempuri.org/IGameManager/SwapCardWithPlayerResponse")]
         System.Threading.Tasks.Task SwapCardWithPlayerAsync(string matchCode, int initiatorUserId, ArchsVsDinosClient.GameService.ExchangeCardDTO request);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/TakeCardFromDiscardPile", ReplyAction="http://tempuri.org/IGameManager/TakeCardFromDiscardPileResponse")]
+        void TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/TakeCardFromDiscardPile", ReplyAction="http://tempuri.org/IGameManager/TakeCardFromDiscardPileResponse")]
+        System.Threading.Tasks.Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/ProvokeArchArmy", ReplyAction="http://tempuri.org/IGameManager/ProvokeArchArmyResponse")]
         void ProvokeArchArmy(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType);
         
@@ -2209,6 +2308,9 @@ namespace ArchsVsDinosClient.GameService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnPlayerExpelled")]
         void OnPlayerExpelled(ArchsVsDinosClient.GameService.PlayerExpelledDTO dto);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnCardTakenFromDiscard")]
+        void OnCardTakenFromDiscard(ArchsVsDinosClient.GameService.CardTakenFromDiscardDTO data);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnCardExchanged")]
         void OnCardExchanged(ArchsVsDinosClient.GameService.CardExchangedDTO dto);
@@ -2288,6 +2390,14 @@ namespace ArchsVsDinosClient.GameService {
         
         public System.Threading.Tasks.Task SwapCardWithPlayerAsync(string matchCode, int initiatorUserId, ArchsVsDinosClient.GameService.ExchangeCardDTO request) {
             return base.Channel.SwapCardWithPlayerAsync(matchCode, initiatorUserId, request);
+        }
+        
+        public void TakeCardFromDiscardPile(string matchCode, int userId, int cardId) {
+            base.Channel.TakeCardFromDiscardPile(matchCode, userId, cardId);
+        }
+        
+        public System.Threading.Tasks.Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId) {
+            return base.Channel.TakeCardFromDiscardPileAsync(matchCode, userId, cardId);
         }
         
         public void ProvokeArchArmy(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType) {
