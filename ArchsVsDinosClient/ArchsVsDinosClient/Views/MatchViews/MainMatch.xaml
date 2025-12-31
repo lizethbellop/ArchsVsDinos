@@ -33,7 +33,7 @@
                     <ColumnDefinition Width="1.5*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="{x:Static language:Lang.Match_Options}" Height="60" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"
+                <Button Click="Click_BtnOptions" Grid.Column="0" Content="{x:Static language:Lang.Match_Options}" Height="60" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Foreground="#FF5F0000" FontWeight="Bold"
                      BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="20">
                     <Button.Background>

@@ -13,7 +13,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
     {
         public BattleResolver(ServiceDependencies dependencies)
         {
-            // dependencies.CardHelper ya no es necesario, pero mantenemos la inyección si la usas en otro lugar
         }
 
         public BattleResult ResolveBattle(GameSession session, ArmyType armyType)
@@ -33,8 +32,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             int archPower = CalculateArchPower(session.CentralBoard, archArmyCardIds, armyType);
 
             var playerDinos = GetAllPlayerDinosOfType(session, armyType);
-
             var playerPowers = new Dictionary<int, int>();
+
             foreach (var playerDinosPair in playerDinos)
             {
                 var playerId = playerDinosPair.Key;
@@ -43,24 +42,38 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 playerPowers[playerId] = totalPower;
             }
 
-            var maxPower = playerPowers.Any() ? playerPowers.Values.Max() : 0;
+            var maxPlayerPower = playerPowers.Any() ? playerPowers.Values.Max() : 0;
 
-            var dinosWin = maxPower >= archPower;
+            bool dinosWin = maxPlayerPower > 0 && maxPlayerPower >= archPower;
 
             PlayerSession winner = null;
-            if (dinosWin && maxPower > 0)
+
+            if (dinosWin)
             {
-                var winnerUserId = playerPowers.First(powerPair => powerPair.Value == maxPower).Key;
-                winner = session.Players.FirstOrDefault(player => player.UserId == winnerUserId);
+                var tiedWinners = playerPowers.Where(p => p.Value == maxPlayerPower)
+                                              .Select(p => p.Key)
+                                              .ToList();
+
+                if (tiedWinners.Count > 0)
+                {
+                    if (tiedWinners.Contains(session.CurrentTurn))
+                    {
+                        winner = session.Players.FirstOrDefault(p => p.UserId == session.CurrentTurn);
+                    }
+                    else
+                    {
+                        winner = session.Players.FirstOrDefault(p => p.UserId == tiedWinners.First());
+                    }
+                }
             }
 
             var battleResult = new BattleResult
             {
-                ArmyType = armyType, 
+                ArmyType = armyType,
                 ArchPower = archPower,
                 DinosWon = dinosWin,
                 Winner = winner,
-                WinnerPower = maxPower,
+                WinnerPower = maxPlayerPower,
                 ArchCardIds = new List<int>(archArmyCardIds),
                 PlayerDinos = playerDinos
             };
