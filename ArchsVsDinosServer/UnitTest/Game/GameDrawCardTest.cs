@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace UnitTest.Game
 {
     [TestClass]
-    public class GameLogicDrawCardTest : BaseTestClass
+    public class GameDrawCardTest : BaseTestClass
     {
         private Mock<GameSessionManager> mockSessionManager;
         private Mock<GameSetupHandler> mockSetupHandler;
