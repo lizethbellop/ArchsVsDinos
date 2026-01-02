@@ -35,7 +35,6 @@ namespace ArchsVsDinosServer.Utils
         }
     }
 
-    // 2. Modifica el constructor de GameLogic
     public static class ServiceContext
     {
         public static readonly ILoggerHelper Logger =
