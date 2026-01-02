@@ -15,6 +15,7 @@ namespace Contracts.DTO.Result_Codes
         [EnumMember] Authentication_InvalidCredentials,
         [EnumMember] Authentication_DatabaseError,
         [EnumMember] Authentication_UnexpectedError,
-        [EnumMember] Authentication_UserBanned
+        [EnumMember] Authentication_UserBanned,
+        [EnumMember] Authentication_UserAlreadyLoggedIn
     }
 }

@@ -115,6 +115,11 @@ namespace ArchsVsDinosClient.Services
             await ExecuteAsync(() => client.TakeCardFromDiscardPile(matchCode, userId, cardId));
         }
 
+        public async Task LeaveGameAsync(string matchCode, int userId)
+        {
+            await ExecuteAsync(() => client.LeaveGame(matchCode, userId));
+        }
+
         private async Task ExecuteAsync(Action action)
         {
             try

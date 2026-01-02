@@ -409,7 +409,7 @@ namespace ArchsVsDinosClient.Services
         {
             try
             {
-                Debug.WriteLine($"[LOBBY CLIENT] 🔄 Intentando reconectar al lobby {matchCode}...");
+                Debug.WriteLine($"[LOBBY CLIENT] Trying to reconnect to the lobby {matchCode}...");
 
                 EnsureClientIsUsable();
 
@@ -423,18 +423,18 @@ namespace ArchsVsDinosClient.Services
 
                 if (connected)
                 {
-                    Debug.WriteLine($"[LOBBY CLIENT] ✅ Reconexión exitosa al lobby {matchCode}");
+                    Debug.WriteLine($"[LOBBY CLIENT] Reconnection to the lobby successfully {matchCode}");
                     return true;
                 }
                 else
                 {
-                    Debug.WriteLine($"[LOBBY CLIENT] ❌ Fallo al reconectar al lobby");
+                    Debug.WriteLine($"[LOBBY CLIENT] Failing connecting to the lobby");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[LOBBY CLIENT] ❌ Error en reconexión: {ex.Message}");
+                Debug.WriteLine($"[LOBBY CLIENT] Error in connection {ex.Message}");
                 return false;
             }
         }

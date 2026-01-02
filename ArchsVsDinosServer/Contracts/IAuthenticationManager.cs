@@ -12,6 +12,9 @@ namespace Contracts
     {
         [OperationContract]
         LoginResponse Login(string username, string password);
+
+        [OperationContract]
+        void Logout(string username);
     }
 
 }

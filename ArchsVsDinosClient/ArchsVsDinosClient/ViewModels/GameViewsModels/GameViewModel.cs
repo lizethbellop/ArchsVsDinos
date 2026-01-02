@@ -43,6 +43,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public event Action<int, ArmyType> PlayerDinosClearedByElement;
         public event Action DiscardPileUpdated;
         public event Action<ArmyType> ArchArmyCleared;
+        public event Action<string, string> GameEnded;
+        public event Action<int> PlayerLeftMatch;
 
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
         public string TurnTimeDisplay => TimerManager.TurnTimeDisplay;
@@ -154,6 +156,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.ArchProvoked += OnArchProvoked;  
             gameServiceClient.ServiceError += OnServiceError;
             gameServiceClient.CardTakenFromDiscard += OnCardTakenFromDiscard;
+            gameServiceClient.PlayerExpelled += OnPlayerExpelled;
+            gameServiceClient.GameEnded += OnGameEnded;
         }
 
         public async Task ConnectToGameAsync()
@@ -268,6 +272,68 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             {
                 MessageBox.Show($"{Lang.Match_EndTurnError}: {ex.Message}");
             }
+        }
+
+        public async Task LeaveGameAsync()
+        {
+            try
+            {
+                int userId = DetermineMyUserId();
+                await gameServiceClient.LeaveGameAsync(matchCode, userId);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error leaving game: {ex.Message}");
+            }
+        }
+
+        private void OnPlayerExpelled(PlayerExpelledDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[PLAYER LEFT] User {data.ExpelledUsername} left.");
+
+                if (data.RecycledCardIds != null && data.RecycledCardIds.Length > 0)
+                {
+                    foreach (var cardId in data.RecycledCardIds)
+                    {
+                        if (!BoardManager.DiscardPile.Any(c => c.IdCard == cardId))
+                        {
+                            var card = CardRepositoryModel.GetById(cardId);
+                            if (card != null)
+                            {
+                                BoardManager.DiscardPile.Add(card);
+                            }
+                        }
+                    }
+
+                    DiscardPileUpdated?.Invoke();
+                    System.Diagnostics.Debug.WriteLine($"[CLIENT] Added {data.RecycledCardIds.Length} recycled cards to discard pile.");
+                }
+
+                PlayerLeftMatch?.Invoke(data.ExpelledUserId);
+            });
+        }
+
+        private void OnGameEnded(GameEndedDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                string message = "";
+                string title = Lang.Match_GameOverTitle; 
+
+                if (data.Reason.Contains("Insufficient players") || data.Reason.Contains("Someone left"))
+                {
+                    message = Lang.Match_GameAbortedMessage; 
+                }
+                else
+                {
+                    string winnerName = GetUsernameById(data.WinnerUserId);
+                    message = $"El ganador es {winnerName}";
+                }
+
+                GameEnded?.Invoke(title, message);
+            });
         }
 
         private void OnCardDrawn(CardDrawnDTO data)
@@ -831,6 +897,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.ArchProvoked -= OnArchProvoked;
                 gameServiceClient.CardTakenFromDiscard -= OnCardTakenFromDiscard;
                 gameServiceClient.ServiceError -= OnServiceError;
+                gameServiceClient.PlayerExpelled -= OnPlayerExpelled;
+                gameServiceClient.GameEnded -= OnGameEnded;
             }
         }
 

@@ -104,6 +104,8 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 gameViewModel.DiscardPileUpdated += OnDiscardPileUpdated;
                 gameViewModel.ArchArmyCleared += OnArchArmyCleared;
                 MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
+                gameViewModel.GameEnded += OnGameEndedReceived;
+                gameViewModel.PlayerLeftMatch += OnPlayerLeftMatchReceived;
 
                 await gameViewModel.ConnectToGameAsync();
 
@@ -883,10 +885,43 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
-        private void Click_BtnOptions(object sender, RoutedEventArgs e)
+        private async void Click_BtnOptions(object sender, RoutedEventArgs e)
         {
             var settings = new SettingsInMatch();
-            settings.Show();
+            settings.Owner = this;
+            settings.ShowDialog();
+
+            if (settings.RequestLeaveGame)
+            {
+                if (chatViewModel != null)
+                {
+                    try 
+                    {
+                        await chatViewModel.DisconnectAsync();
+                    } 
+                    catch { }
+                }
+
+                await gameViewModel.LeaveGameAsync();
+                NavigateToMainWindow();
+            }
+        }
+
+        private void OnPlayerLeftMatchReceived(int userId)
+        {
+            if (player2UserId == userId)
+            {
+                TopPlayerCards.Visibility = Visibility.Hidden;
+                Lb_TopPlayerName.Content = "";
+            }
+            else if (player3UserId == userId)
+            {
+                Grid_LeftPlayer.Visibility = Visibility.Hidden;
+            }
+            else if (player4UserId == userId)
+            {
+                Grid_RightPlayer.Visibility = Visibility.Hidden;
+            }
         }
 
         private void UpdateArmyVisibility()
@@ -1271,6 +1306,16 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
+        private void OnGameEndedReceived(string title, string message)
+        {
+            if (errorNotificationTimer != null)
+            {
+                errorNotificationTimer.Stop();
+            }
+            MessageBox.Show(message, title);
+            NavigateToMainWindow();
+        }
+
         private void EnablePlayerHandDragging()
         {
             foreach (UIElement child in MyDeckCanvas.Children)
@@ -1282,6 +1327,16 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 }
             }
         }
+
+        private void NavigateToMainWindow()
+        {
+            if (gameViewModel != null) gameViewModel.Dispose();
+
+            var mainWindow = new MainWindow(); 
+            mainWindow.Show();
+            this.Close();
+        }
+
         protected override async void OnClosing(CancelEventArgs e)
         {
             if (chatViewModel != null)

@@ -46,6 +46,13 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 LoginResponse response = new LoginResponse();
 
+                if (SessionManager.Instance.IsUserOnline(username))
+                {
+                    response.Success = false;
+                    response.ResultCode = LoginResultCode.Authentication_UserAlreadyLoggedIn;
+                    return response;
+                }
+
                 if (IsEmpty(username, password))
                 {
                     response.Success = false;
@@ -78,6 +85,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                         loggerHelper.LogInfo($"Banned user {username} attempted to login");
                         return response;
                     }
+
+                    SessionManager.Instance.RegisterUser(username);
 
                     response.Success = true;
                     response.ResultCode = LoginResultCode.Authentication_Success;
@@ -127,6 +136,12 @@ namespace ArchsVsDinosServer.BusinessLogic
                     ResultCode = LoginResultCode.Authentication_UnexpectedError
                 };
             }
+        }
+
+        public void Logout(string username)
+        {
+            SessionManager.Instance.RemoveUser(username);
+            loggerHelper.LogInfo($"User logged out successfully: {username}");
         }
 
         private bool IsEmpty(string username, string password)

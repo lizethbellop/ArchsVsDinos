@@ -291,6 +291,7 @@
     <Compile Include="Utils\ServiceContext.cs" />
     <Compile Include="Utils\ServiceDependencies.cs" />
     <Compile Include="Utils\ServiceLocator.cs" />
+    <Compile Include="Utils\SessionManager.cs" />
     <Compile Include="Utils\StrikeServiceDependencies.cs" />
     <Compile Include="Utils\UnregisteredPlayerGenerator.cs" />
     <Compile Include="Utils\ValidationCodeManager.cs" />

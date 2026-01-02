@@ -50,6 +50,17 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
+        public async Task LogoutAsync(string username)
+        {
+            await guardian.ExecuteWithThrowAsync<bool>(
+                () =>
+                {
+                    client.Logout(username);
+                    return Task.FromResult(true);
+                },
+                operationName: "Logout"
+            );
+        }
 
         public void Dispose()
         {

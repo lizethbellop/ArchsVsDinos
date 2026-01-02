@@ -409,6 +409,9 @@ namespace ArchsVsDinosClient.AuthenticationService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Authentication_UserBanned = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Authentication_UserAlreadyLoggedIn = 6,
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -420,6 +423,12 @@ namespace ArchsVsDinosClient.AuthenticationService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/Login", ReplyAction="http://tempuri.org/IAuthenticationManager/LoginResponse")]
         System.Threading.Tasks.Task<ArchsVsDinosClient.AuthenticationService.LoginResponse> LoginAsync(string username, string password);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/Logout", ReplyAction="http://tempuri.org/IAuthenticationManager/LogoutResponse")]
+        void Logout(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/Logout", ReplyAction="http://tempuri.org/IAuthenticationManager/LogoutResponse")]
+        System.Threading.Tasks.Task LogoutAsync(string username);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -455,6 +464,14 @@ namespace ArchsVsDinosClient.AuthenticationService {
         
         public System.Threading.Tasks.Task<ArchsVsDinosClient.AuthenticationService.LoginResponse> LoginAsync(string username, string password) {
             return base.Channel.LoginAsync(username, password);
+        }
+        
+        public void Logout(string username) {
+            base.Channel.Logout(username);
+        }
+        
+        public System.Threading.Tasks.Task LogoutAsync(string username) {
+            return base.Channel.LogoutAsync(username);
         }
     }
 }

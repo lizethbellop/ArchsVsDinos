@@ -206,7 +206,7 @@
                     BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16"
                     Margin="0,0,10,0">
                 <Button.Background>
-                    <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>
+                    <ImageBrush ImageSource="/Resources/Images/rockConfirm.png"/>
                 </Button.Background>
                 <Button.Template>
                     <ControlTemplate TargetType="Button">

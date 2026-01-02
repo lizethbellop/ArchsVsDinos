@@ -196,6 +196,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El usuario ya ha iniciado sesión.
+        /// </summary>
+        public static string Authentication_UserAlreadyLoggedIn {
+            get {
+                return ResourceManager.GetString("Authentication_UserAlreadyLoggedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Tu cuenta ha sido suspendida temporalmente por lenguaje inapropiado en el chat. La suspensión se levanta automáticamente cuando expiren tus infracciones (30 días).
         /// </summary>
         public static string Authentication_UserBanned {
@@ -691,6 +700,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El servidor no ha sido encontrado, intente en otro momento.
+        /// </summary>
+        public static string GlobalServerNotFound {
+            get {
+                return ResourceManager.GetString("GlobalServerNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ha pasado un tiempo y no se obtiene respuesta del servidor.
         /// </summary>
         public static string GlobalServerTimeout {
@@ -723,6 +741,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string GlobalSystemError {
             get {
                 return ResourceManager.GetString("GlobalSystemError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Ocurrió un error innesperado!.
+        /// </summary>
+        public static string GlobalUnexpectedError {
+            get {
+                return ResourceManager.GetString("GlobalUnexpectedError", resourceCulture);
             }
         }
         
@@ -1348,6 +1375,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¿Estás seguro que quieres salir de la partida?.
+        /// </summary>
+        public static string Match_ConfirmLeaveMessage {
+            get {
+                return ResourceManager.GetString("Match_ConfirmLeaveMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Confirmación de abandono de partida.
+        /// </summary>
+        public static string Match_ConfirmLeaveTitle {
+            get {
+                return ResourceManager.GetString("Match_ConfirmLeaveTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¡El mazo de cartas está vacío!.
         /// </summary>
         public static string Match_DeckCardsEmpty {
@@ -1425,6 +1470,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_ErrorProvokingArchs {
             get {
                 return ResourceManager.GetString("Match_ErrorProvokingArchs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Partida terminada por falta de jugadores.
+        /// </summary>
+        public static string Match_GameAbortedMessage {
+            get {
+                return ResourceManager.GetString("Match_GameAbortedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Fin de partida.
+        /// </summary>
+        public static string Match_GameOverTitle {
+            get {
+                return ResourceManager.GetString("Match_GameOverTitle", resourceCulture);
             }
         }
         

@@ -17,6 +17,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         Task ProvokeArchArmyAsync(string matchCode, int userId, ArmyType armyType);
         Task EndTurnAsync(string matchCode, int userId);
         Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
+        Task LeaveGameAsync(string matchCode, int userId);
 
 
         event Action<GameInitializedDTO> GameInitialized;

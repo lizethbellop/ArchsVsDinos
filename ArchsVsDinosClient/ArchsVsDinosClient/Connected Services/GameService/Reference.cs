@@ -1988,6 +1988,9 @@ namespace ArchsVsDinosClient.GameService {
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string ReasonField;
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int[] RecycledCardIdsField;
+        
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
             get {
@@ -2046,6 +2049,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((object.ReferenceEquals(this.ReasonField, value) != true)) {
                     this.ReasonField = value;
                     this.RaisePropertyChanged("Reason");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int[] RecycledCardIds {
+            get {
+                return this.RecycledCardIdsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.RecycledCardIdsField, value) != true)) {
+                    this.RecycledCardIdsField = value;
+                    this.RaisePropertyChanged("RecycledCardIds");
                 }
             }
         }

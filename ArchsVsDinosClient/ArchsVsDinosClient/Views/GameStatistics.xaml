@@ -26,7 +26,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- TÍTULO -->
         <Label Grid.Row="0" 
                Content="{x:Static language:Lang.Statistics_Title}" 
                FontFamily="{StaticResource Ouroboros}" 
@@ -34,14 +33,14 @@
                Foreground="#FF671414" 
                Margin="0,10,0,15"/>
 
-        <!-- FECHA -->
+        <!-- Date -->
         <Label Grid.Row="1" 
                Content="{Binding MatchDateText}" 
                FontFamily="Tw Cen MT Condensed Extra Bold" 
                FontSize="18" HorizontalAlignment="Center"
                Margin="0,0,0,20"/>
 
-        <!-- LOADING -->
+        <!-- Loading -->
         <Grid Grid.Row="2"
               Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Label Content="Cargando estadísticas..." 
@@ -60,7 +59,6 @@
             </StackPanel>
         </Grid>
 
-        <!-- LISTA DINÁMICA DE JUGADORES -->
         <ItemsControl Grid.Row="2" 
                       ItemsSource="{Binding PlayerStats}"
                       Visibility="{Binding IsLoading, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
@@ -75,7 +73,6 @@
                 <DataTemplate>
                     <StackPanel Margin="10">
 
-                        <!-- POSICIÓN -->
                         <Label Content="{Binding Position, StringFormat='{}{0}°'}"
                                FontFamily="Tw Cen MT Condensed Extra Bold"
                                FontSize="{Binding Position, Converter={StaticResource PositionToFontSizeConverter}}"
@@ -83,14 +80,14 @@
                                FontWeight="Bold"
                                Foreground="{Binding Position, Converter={StaticResource PositionToColorConverter}}"/>
 
-                        <!-- NOMBRE DEL JUGADOR -->
+                        <!-- Player name -->
                         <Label Content="{Binding Username}" 
                                FontFamily="Tw Cen MT Condensed Extra Bold" 
                                FontSize="16" 
                                HorizontalAlignment="Center" 
                                Margin="0,5,0,10"/>
 
-                        <!-- ÍCONO DEL JUGADOR (NO IMAGEN) -->
+                        <!-- Photo profile -->
                         <Border Width="140"
                                 Height="{Binding Position, Converter={StaticResource PositionToHeightConverter}}"
                                 Background="White"
@@ -105,7 +102,7 @@
                                    VerticalAlignment="Center"/>
                         </Border>
 
-                        <!-- ESTADÍSTICAS -->
+                        <!-- Stadistics -->
                         <Border Background="White"
                                 BorderBrush="{Binding Position, Converter={StaticResource PositionToBorderConverter}}"
                                 BorderThickness="{Binding Position, Converter={StaticResource PositionToStatsBorderThicknessConverter}}"
@@ -144,7 +141,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <!-- BOTÓN SALIR -->
+        <!-- Exit -->
         <Button Grid.Row="3" 
                 Content="{x:Static language:Lang.GlobalExitText}"
                 Command="{Binding ExitCommand}"

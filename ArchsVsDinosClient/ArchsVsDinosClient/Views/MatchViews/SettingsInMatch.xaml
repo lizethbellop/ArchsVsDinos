@@ -36,7 +36,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button VerticalAlignment="Bottom" Content="{x:Static language:Lang.SettingsIG_LeaveTheGame}"  Margin="5" Height="55" Width="150" Foreground="White" FontWeight="Bold" 
+                <Button Click="Click_BtnLeaveTheGame" VerticalAlignment="Bottom" Content="{x:Static language:Lang.SettingsIG_LeaveTheGame}"  Margin="5" Height="55" Width="150" Foreground="White" FontWeight="Bold" 
                         BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
@@ -104,7 +104,7 @@
                     </Button.Template>
                 </Button>
 
-                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Btn_Cancel" Margin="5" Height="55" Width="130" Foreground="White" FontWeight="Bold" 
+                <Button Content="{x:Static language:Lang.GlobalCancelText}" Click="Click_BtnCancel" Margin="5" Height="55" Width="130" Foreground="White" FontWeight="Bold" 
                         BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="16">
                     <Button.Background>
                         <ImageBrush ImageSource="/Resources/Images/rockCancel.png"/>

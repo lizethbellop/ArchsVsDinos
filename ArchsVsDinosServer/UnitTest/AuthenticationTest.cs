@@ -33,6 +33,8 @@ namespace UnitTest
             mockValidationHelper = new Mock<IValidationHelper>();
             mockStrikeManager = new Mock<IStrikeManager>();
 
+            SessionManager.Instance.ClearAllUsers();
+
             CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
                 mockValidationHelper.Object,
@@ -47,6 +49,32 @@ namespace UnitTest
             authentication = new Authentication(dependencies, mockStrikeManager.Object);
         }
 
+        [TestCleanup]
+        public void Cleanup()
+        {
+            SessionManager.Instance.ClearAllUsers();
+        }
+
+        [TestMethod]
+        public void TestLoginUserAlreadyLoggedIn()
+        {
+            string username = "activeUser";
+            string password = "password123";
+
+            SessionManager.Instance.RegisterUser(username);
+
+            LoginResponse result = authentication.Login(username, password);
+
+            LoginResponse expectedResult = new LoginResponse
+            {
+                Success = false,
+                UserSession = null,
+                AssociatedPlayer = null,
+                ResultCode = LoginResultCode.Authentication_UserAlreadyLoggedIn
+            };
+
+            Assert.AreEqual(expectedResult, result);
+        }
 
         [TestMethod]
         public void TestLoginEmptyFields()
@@ -435,7 +463,7 @@ namespace UnitTest
 
             authentication.Login(username, password);
 
-            mockValidationHelper.Verify(v => v.IsEmpty(username), Times.AtLeastOnce);  // UN SOLO VERIFY
+            mockValidationHelper.Verify(v => v.IsEmpty(username), Times.AtLeastOnce);  
         }
 
         [TestMethod]
@@ -450,7 +478,7 @@ namespace UnitTest
 
             authentication.Login(username, password);
 
-            mockValidationHelper.Verify(v => v.IsEmpty(password), Times.AtLeastOnce);  // UN SOLO VERIFY
+            mockValidationHelper.Verify(v => v.IsEmpty(password), Times.AtLeastOnce);  
         }
 
         [TestMethod]
@@ -508,7 +536,7 @@ namespace UnitTest
 
             authentication.Login(username, password);
 
-            mockSecurityHelper.Verify(s => s.VerifyPassword(It.IsAny<string>(), It.IsAny<string>()), Times.Never);  // UN SOLO VERIFY
+            mockSecurityHelper.Verify(s => s.VerifyPassword(It.IsAny<string>(), It.IsAny<string>()), Times.Never);  
         }
 
         [TestMethod]
@@ -532,7 +560,7 @@ namespace UnitTest
 
             authentication.Login(username, password);
 
-            mockStrikeManager.Verify(s => s.IsUserBanned(It.IsAny<int>()), Times.Never);  // UN SOLO VERIFY
+            mockStrikeManager.Verify(s => s.IsUserBanned(It.IsAny<int>()), Times.Never);  
         }
 
         [TestMethod]
@@ -545,7 +573,68 @@ namespace UnitTest
 
             authentication.Login(username, password);
 
-            mockStrikeManager.Verify(s => s.IsUserBanned(It.IsAny<int>()), Times.Never);  // UN SOLO VERIFY
+            mockStrikeManager.Verify(s => s.IsUserBanned(It.IsAny<int>()), Times.Never);  
+        }
+
+        [TestMethod]
+        public void TestLogoutSuccessful()
+        {
+            string username = "playerToLogout";
+            SessionManager.Instance.RegisterUser(username);
+
+            Assert.IsTrue(SessionManager.Instance.IsUserOnline(username), "El usuario debería estar marcado como online antes del logout.");
+
+            authentication.Logout(username);
+
+            bool isUserStillOnline = SessionManager.Instance.IsUserOnline(username);
+            Assert.IsFalse(isUserStillOnline, "El usuario debió ser eliminado de la memoria del servidor.");
+        }
+
+        [TestMethod]
+        public void TestLogoutUserNotLoggedIn()
+        {
+            string username = "ghostUser";
+
+            authentication.Logout(username);
+
+            bool isUserOnline = SessionManager.Instance.IsUserOnline(username);
+            Assert.IsFalse(isUserOnline);
+        }
+
+        [TestMethod]
+        public void TestLoginThenLogoutCycle()
+        {
+            string username = "userCycle";
+            string password = "password123";
+            string passwordHash = "hashedPassword123";
+
+            UserAccount validUser = new UserAccount
+            {
+                idUser = 99,
+                username = username,
+                password = passwordHash,
+                email = "cycle@test.com",
+                nickname = "cyclist",
+                Player = new Player { idPlayer = 99 } 
+            };
+
+            mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
+            mockSecurityHelper.Setup(s => s.VerifyPassword(password, passwordHash)).Returns(true);
+            mockStrikeManager.Setup(s => s.IsUserBanned(99)).Returns(false);
+
+            SetupMockUserSet(new List<UserAccount> { validUser });
+
+            LoginResponse login1 = authentication.Login(username, password);
+            Assert.IsTrue(login1.Success, "El primer login debería ser exitoso");
+            Assert.IsTrue(SessionManager.Instance.IsUserOnline(username), "El usuario debe quedar registrado en memoria tras el login");
+
+            authentication.Logout(username);
+            Assert.IsFalse(SessionManager.Instance.IsUserOnline(username), "El usuario debe ser removido de memoria tras el logout");
+
+            LoginResponse login2 = authentication.Login(username, password);
+
+            Assert.IsTrue(login2.Success, "El usuario debería poder volver a entrar después de hacer logout");
+            Assert.AreEqual(LoginResultCode.Authentication_Success, login2.ResultCode);
         }
 
     }

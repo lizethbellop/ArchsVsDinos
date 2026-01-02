@@ -8,6 +8,7 @@
       <xs:enumeration value="Authentication_DatabaseError" />
       <xs:enumeration value="Authentication_UnexpectedError" />
       <xs:enumeration value="Authentication_UserBanned" />
+      <xs:enumeration value="Authentication_UserAlreadyLoggedIn" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="LoginResultCode" nillable="true" type="tns:LoginResultCode" />

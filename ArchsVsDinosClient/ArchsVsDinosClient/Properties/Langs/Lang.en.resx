@@ -985,4 +985,25 @@
   <data name="MatchDiscard_TakeACardWarning" xml:space="preserve">
     <value>Taking a card uses up all your moves</value>
   </data>
+  <data name="Match_ConfirmLeaveMessage" xml:space="preserve">
+    <value>Are you sure that you want to leave the match?</value>
+  </data>
+  <data name="Match_ConfirmLeaveTitle" xml:space="preserve">
+    <value>Leave the match confirmation</value>
+  </data>
+  <data name="Match_GameOverTitle" xml:space="preserve">
+    <value>End match</value>
+  </data>
+  <data name="Match_GameAbortedMessage" xml:space="preserve">
+    <value>Match ended due insufficient players</value>
+  </data>
+  <data name="GlobalServerNotFound" xml:space="preserve">
+    <value>El servidor no ha sido encontrado, intente en otro momento</value>
+  </data>
+  <data name="GlobalUnexpectedError" xml:space="preserve">
+    <value>An unexpected error ocurred!</value>
+  </data>
+  <data name="Authentication_UserAlreadyLoggedIn" xml:space="preserve">
+    <value>The user already logged in</value>
+  </data>
 </root>

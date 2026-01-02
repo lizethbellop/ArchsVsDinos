@@ -83,6 +83,5 @@ namespace ArchsVsDinosClient.Models
         public bool HasPlayer() => CurrentPlayer != null;
         public int GetPlayerId() => CurrentPlayer?.IdPlayer ?? 0;
 
-
     }
 }

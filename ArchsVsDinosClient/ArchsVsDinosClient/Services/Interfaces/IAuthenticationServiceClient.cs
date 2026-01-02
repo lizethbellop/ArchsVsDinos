@@ -10,7 +10,9 @@ namespace ArchsVsDinosClient.Services.Interfaces
     public interface IAuthenticationServiceClient : IDisposable
     {
         event Action<string, string> ConnectionError;
+        
         Task<LoginResponse> LoginAsync(string username, string password);
+        Task LogoutAsync(string username);
 
         bool IsServerAvailable { get; }
         string LastErrorTitle { get; }

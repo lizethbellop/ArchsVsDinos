@@ -984,4 +984,25 @@
   <data name="MatchDiscard_TakeACardWarning" xml:space="preserve">
     <value>Tomar una carta gasta todas tus tiradas</value>
   </data>
+  <data name="Match_ConfirmLeaveMessage" xml:space="preserve">
+    <value>¿Estás seguro que quieres salir de la partida?</value>
+  </data>
+  <data name="Match_ConfirmLeaveTitle" xml:space="preserve">
+    <value>Confirmación de abandono de partida</value>
+  </data>
+  <data name="Match_GameOverTitle" xml:space="preserve">
+    <value>Fin de partida</value>
+  </data>
+  <data name="Match_GameAbortedMessage" xml:space="preserve">
+    <value>Partida terminada por falta de jugadores</value>
+  </data>
+  <data name="GlobalServerNotFound" xml:space="preserve">
+    <value>El servidor no ha sido encontrado, intente en otro momento</value>
+  </data>
+  <data name="GlobalUnexpectedError" xml:space="preserve">
+    <value>¡Ocurrió un error innesperado!</value>
+  </data>
+  <data name="Authentication_UserAlreadyLoggedIn" xml:space="preserve">
+    <value>El usuario ya ha iniciado sesión</value>
+  </data>
 </root>

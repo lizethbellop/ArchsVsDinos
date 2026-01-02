@@ -21,5 +21,8 @@ namespace Contracts.DTO
 
         [DataMember]
         public string Reason { get; set; }
+
+        [DataMember]
+        public List<int> RecycledCardIds { get; set; }
     }
 }

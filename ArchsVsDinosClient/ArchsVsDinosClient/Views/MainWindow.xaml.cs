@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views;
@@ -24,9 +25,15 @@ namespace ArchsVsDinosClient
 {
     public partial class MainWindow : Window
     {
+
+        private readonly MainWindowViewModel viewModel;
+        private bool isNavigating = false;
+
         public MainWindow()
         {
             InitializeComponent();
+            viewModel = new MainWindowViewModel();
+            this.DataContext = viewModel;
             ConfigureForTypeSession();
             //MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Main);
         }
@@ -41,9 +48,12 @@ namespace ArchsVsDinosClient
             }
         }
 
-        private void Click_BtnLogOut(object sender, RoutedEventArgs e)
+        private async void Click_BtnLogOut(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
+
+            await viewModel.LogoutAsync();
+
             var login = new Login();
             login.Show();
             this.Close();
@@ -56,7 +66,6 @@ namespace ArchsVsDinosClient
             lobby.Show();
             this.Hide();
         }
-
 
         private void Click_BtnJoinToMatch(object sender, RoutedEventArgs e)
         {
@@ -87,8 +96,6 @@ namespace ArchsVsDinosClient
             SoundButton.PlayMovingRockSound();
             new Settings().ShowDialog();
         }
-
-
 
     }
 }

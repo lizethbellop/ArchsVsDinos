@@ -20,5 +20,11 @@ namespace ArchsVsDinosServer.Services
             LoginResponse response = autentication.Login(username, password);
             return response;
         }
+
+        public void Logout(string username)
+        {
+            Authentication authenticationLogic = new Authentication();
+            authenticationLogic.Logout(username);
+        }
     }
 }

@@ -15,21 +15,40 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.MatchViews
 {
-    /// <summary>
-    /// Lógica de interacción para SettingsInMatch.xaml
-    /// </summary>
     public partial class SettingsInMatch : Window
     {
+
+        public bool RequestLeaveGame { get; private set; } = false;
+
         public SettingsInMatch()
         {
             InitializeComponent();
         }
 
-        private void Btn_Cancel(object sender, RoutedEventArgs e)
+        private void Click_BtnCancel(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
+            RequestLeaveGame = false;
             this.Close();
         }
+
+        private void Click_BtnLeaveTheGame(object sender, RoutedEventArgs e)
+        {
+            SoundButton.PlayDestroyingRockSound();
+
+            var result = MessageBox.Show(
+                Properties.Langs.Lang.Match_ConfirmLeaveMessage,
+                Properties.Langs.Lang.Match_ConfirmLeaveTitle,
+                MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                RequestLeaveGame = true;
+                this.DialogResult = true;
+                this.Close();
+            }
+        }
+
     }
 
 }

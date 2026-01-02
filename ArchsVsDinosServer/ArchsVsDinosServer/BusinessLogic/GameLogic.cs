@@ -789,22 +789,88 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public void LeaveGame(string matchCode, int userId)
         {
-            if (string.IsNullOrWhiteSpace(matchCode)) return;
+            if (string.IsNullOrWhiteSpace(matchCode))
+            {
+                return;
+            }
 
             var session = gameCoreContext.Sessions.GetSession(matchCode);
-            if (session == null) return;
+
+            if (session == null) 
+            { 
+                return; 
+            }
 
             lock (session.SyncRoot)
             {
-                var playerLeaving = RemovePlayerFromSession(session, userId);
-                if (playerLeaving == null) return;
+                var playerLeaving = session.Players.FirstOrDefault(p => p.UserId == userId);
 
-                NotifyPlayersPlayerLeft(session, playerLeaving);
-
-                if (session.Players.Count < 2 && !session.IsFinished)
+                if (playerLeaving == null)
                 {
-                    EndGameDueToInsufficientPlayers(session);
+                    return;
                 }
+
+                var cardsToRecycle = new List<int>();
+
+                if (playerLeaving.Hand != null && playerLeaving.Hand.Count > 0)
+                {
+                    cardsToRecycle.AddRange(playerLeaving.Hand.Select(c => c.IdCard));
+                }
+
+                if (playerLeaving.Dinos != null && playerLeaving.Dinos.Count > 0)
+                {
+                    foreach (var dino in playerLeaving.Dinos)
+                    {
+                        cardsToRecycle.AddRange(dino.GetAllCards().Select(c => c.IdCard));
+                    }
+                }
+
+                if (cardsToRecycle.Count > 0)
+                {
+                    session.AddToDiscard(cardsToRecycle);
+                    loggerHelper.LogInfo($"[LEAVE] Recycled {cardsToRecycle.Count} cards from player {userId} to discard pile.");
+                }
+
+                bool wasHisTurn = session.CurrentTurn == userId;
+
+                if (session.RemovePlayer(userId))
+                {
+                    loggerHelper.LogInfo($"Player {playerLeaving.Nickname} ({userId}) left the match {session.MatchCode}");
+
+                    NotifyPlayersPlayerLeft(session, playerLeaving, cardsToRecycle);
+
+                    if (session.Players.Count < 2 && !session.IsFinished)
+                    {
+                        EndGameDueToInsufficientPlayers(session);
+                    }
+                    else if (wasHisTurn)
+                    {
+                        PassTurnToNextActivePlayer(session);
+                    }
+                }
+            }
+        }
+
+        private void PassTurnToNextActivePlayer(GameSession session)
+        {
+            var nextPlayer = session.Players.OrderBy(p => p.TurnOrder).FirstOrDefault();
+
+            if (nextPlayer != null)
+            {
+                loggerHelper.LogInfo($"[LEAVE] Passing turn to {nextPlayer.UserId} because current player left.");
+
+                session.EndTurn(nextPlayer.UserId);
+                session.ResetTurnTimer();
+
+                gameNotifier.NotifyTurnChanged(new TurnChangedDTO
+                {
+                    MatchCode = session.MatchCode,
+                    CurrentPlayerUserId = nextPlayer.UserId,
+                    TurnNumber = session.TurnNumber,
+                    RemainingTime = TimeSpan.Zero,
+                    TurnEndTime = session.TurnEndTime,
+                    PlayerScores = session.Players.ToDictionary(p => p.UserId, p => p.Points)
+                });
             }
         }
 
@@ -819,14 +885,15 @@ namespace ArchsVsDinosServer.BusinessLogic
             return null;
         }
 
-        private void NotifyPlayersPlayerLeft(GameSession session, PlayerSession playerLeaving)
+        private void NotifyPlayersPlayerLeft(GameSession session, PlayerSession playerLeaving, List<int> recycledCards)
         {
             var dto = new PlayerExpelledDTO
             {
                 MatchId = session.MatchCode.GetHashCode(),
                 ExpelledUserId = playerLeaving.UserId,
                 ExpelledUsername = playerLeaving.Nickname,
-                Reason = "PlayerLeft"
+                Reason = "PlayerLeft",
+                RecycledCardIds = recycledCards ?? new List<int>()
             };
 
             gameNotifier.NotifyPlayerExpelled(dto);
