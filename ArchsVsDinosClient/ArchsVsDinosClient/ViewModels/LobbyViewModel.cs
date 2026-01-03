@@ -100,12 +100,12 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 string myUsername = UserSession.Instance.CurrentUser.Username;
                 var friendClient = new FriendServiceClient();
-
                 var response = await friendClient.GetFriendsAsync(myUsername);
 
                 if (response != null && response.Success && response.Friends != null)
                 {
                     currentFriendsList = response.Friends.ToList();
+                    RefreshFriendStatusInSlots();
                     return currentFriendsList;
                 }
 
@@ -128,33 +128,19 @@ namespace ArchsVsDinosClient.ViewModels
             }
         }
 
-        /*
-        private void OnPlayerKicked(string nickname, string reason)
+        private void RefreshFriendStatusInSlots()
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                string myNickname = UserSession.Instance.GetNickname();
-
-                if (nickname == "SYSTEM" || nickname == myNickname)
+                foreach (var slot in Slots)
                 {
-                    if (LobbyConnectionLost != null)
+                    if (!string.IsNullOrEmpty(slot.Username) && !slot.IsLocalPlayer)
                     {
-                        LobbyConnectionLost(
-                            "Expulsado del lobby",
-                            reason
-                        );
+                        slot.IsFriend = currentFriendsList != null && currentFriendsList.Contains(slot.Username);
                     }
                 }
-                else
-                {
-                    MessageBox.Show(
-                        $"{nickname} fue expulsado del lobby.",
-                        "Jugador expulsado",
-                        MessageBoxButton.OK
-                    );
-                }
             });
-        }*/
+        }
 
         private void OnPlayerKicked(string nickname, string reason)
         {
@@ -162,35 +148,23 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 string myNickname = UserSession.Instance.GetNickname();
 
-                // 1. Verificamos si la orden es para cerrarlo todo (SYSTEM) o si me echaron a mí
                 if (nickname == "SYSTEM" || nickname == myNickname)
                 {
-                    // Mostramos el motivo (ej: "La sala se cerró por falta de anfitriones")
-                    MessageBox.Show(reason, "Aviso de la Sala", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    // 2. EJECUTAR LIMPIEZA (Detiene chat, amigos y cierra el proxy WCF)
+                    MessageBox.Show(reason, "Aviso de la Sala", MessageBoxButton.OK);
                     Cleanup();
 
-                    // 3. PREPARAR EL REGRESO AL MENÚ
                     MainWindow mainMenu = new MainWindow();
 
-                    // Buscamos la ventana del Lobby actual ANTES de cambiar la principal
                     var lobbyWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is Lobby);
 
-                    // 4. CAMBIAR VENTANA PRINCIPAL Y MOSTRAR
                     Application.Current.MainWindow = mainMenu;
                     mainMenu.Show();
 
-                    // 5. CERRAR EL LOBBY (Ahora es seguro porque ya abrimos la otra)
                     lobbyWindow?.Close();
-
-                    Debug.WriteLine("[LOBBY VM] Navegación al menú principal completada.");
                 }
                 else
                 {
-                    // Caso en el que expulsaron a OTRO jugador (solo informamos en consola o chat)
-                    // No usamos MessageBox aquí para no interrumpir el juego de los demás
-                    Debug.WriteLine($"[LOBBY] El jugador {nickname} ha sido retirado de la sala.");
+                    Debug.WriteLine($"[LOBBY] The player {nickname} has been kicked from the lobby.");
                 }
             });
         }
@@ -232,7 +206,7 @@ namespace ArchsVsDinosClient.ViewModels
                 else if (LobbyConnectionLost != null && !isAttemptingReconnection)
                 {
                     LobbyConnectionLost(
-                        "Conexión perdida",
+                        "Connection lost",
                         "Se perdió la conexión con el servidor. Serás redirigido al menú principal."
                     );
                 }
@@ -337,7 +311,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void OnPlayerListUpdated(List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players)
         {
-            Debug.WriteLine($"[LOBBY] OnPlayerListUpdated called with {players.Count} players");
             foreach (var p in players)
             {
                 Debug.WriteLine($"[LOBBY]   - {p.Nickname} (IsHost: {p.IsHost}, IsReady: {p.IsReady})");
@@ -351,7 +324,6 @@ namespace ArchsVsDinosClient.ViewModels
                 if (string.IsNullOrEmpty(myNickname) && players.Count > 0)
                 {
                     myNickname = players.First().Nickname;
-                    Debug.WriteLine($"[LOBBY] Using first player nickname: {myNickname}");
                 }
 
                 var meInList = players.FirstOrDefault(p => p.Nickname == myNickname);
@@ -368,8 +340,6 @@ namespace ArchsVsDinosClient.ViewModels
 
                         if (UserSession.Instance.CurrentPlayer != null)
                             UserSession.Instance.CurrentPlayer.IdPlayer = meInList.IdPlayer;
-
-                        Debug.WriteLine($"[LOBBY] ID Local Actualizado: {meInList.IdPlayer}");
                     }
                 }
 
@@ -418,23 +388,30 @@ namespace ArchsVsDinosClient.ViewModels
             string currentNickname = UserSession.Instance.GetNickname();
             bool isMe = player.Nickname == currentNickname;
 
-            string finalUsername = player.Username;
+            string officialUsername = player.Username;
 
             if (isMe)
             {
-                finalUsername = UserSession.Instance.CurrentUser.Username;
+                officialUsername = UserSession.Instance.CurrentUser.Username;
             }
-            else if (string.IsNullOrEmpty(finalUsername))
+            else if (string.IsNullOrEmpty(officialUsername))
             {
-                finalUsername = player.Nickname;
+                officialUsername = player.Nickname;
             }
 
-            currentSlot.Username = finalUsername;
-            currentSlot.Nickname = player.Nickname;
+            bool isFriend = false;
+            if (!isMe && currentFriendsList != null && !string.IsNullOrEmpty(officialUsername))
+            {
+                isFriend = currentFriendsList.Contains(officialUsername);
+            }
+
+            currentSlot.Username = officialUsername; 
+            currentSlot.Nickname = player.Nickname; 
             currentSlot.IsReady = player.IsReady;
             currentSlot.IsLocalPlayer = isMe;
             currentSlot.CanKick = this.isHost && !isMe;
             currentSlot.IsGuest = player.IdPlayer <= 0;
+            currentSlot.IsFriend = isFriend; 
             currentSlot.ProfilePicture = player.ProfilePicture;
             currentSlot.LocalUserIsGuest = UserSession.Instance.GetPlayerId() <= 0;
             currentSlot.IdPlayer = player.IdPlayer;
@@ -454,7 +431,7 @@ namespace ArchsVsDinosClient.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[LOBBY VM] ⚠️ Error al salir del lobby (ignorado): {ex.Message}");
+                Debug.WriteLine($"[LOBBY VM] Error while exiting from lobby: {ex.Message}");
             }
             finally
             {
@@ -472,7 +449,6 @@ namespace ArchsVsDinosClient.ViewModels
                     }
                 });
 
-                Debug.WriteLine($"[LOBBY VM] Estado local limpiado");
             }
         }
 
@@ -943,7 +919,7 @@ namespace ArchsVsDinosClient.ViewModels
         {
             reconnectionAttempts++;
 
-            Debug.WriteLine($"[LOBBY VM] 🔄 Intento de reconexión #{reconnectionAttempts}/{MAX_RECONNECTION_ATTEMPTS}");
+            Debug.WriteLine($"[LOBBY VM] Intento de reconexión #{reconnectionAttempts}/{MAX_RECONNECTION_ATTEMPTS}");
 
             if (reconnectionAttempts > MAX_RECONNECTION_ATTEMPTS)
             {

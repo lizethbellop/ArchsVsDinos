@@ -47,11 +47,10 @@ namespace ArchsVsDinosServer.Services
         {
             logger.LogWarning($"Lobby {lobbyCode} closed. Reason: {reason}");
 
-            // Avisamos a los que queden (invitados) antes de borrar
             core.Session.Broadcast(lobbyCode, cb =>
                 cb.PlayerKicked("SYSTEM", reason));
 
-            System.Threading.Thread.Sleep(200); // Dar tiempo al mensaje
+            System.Threading.Thread.Sleep(200); 
             core.Session.RemoveLobby(lobbyCode);
         }
     }

@@ -96,43 +96,12 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        /*
-        private UserAccountDTO BuildUserAccount()
-        {
-            var user = UserSession.Instance.CurrentUser;
-            var player = UserSession.Instance.CurrentPlayer;
-
-            if (user == null)
-            {
-                string guestNickname = "Guest_" + new Random().Next(1000, 9999);
-
-                UserSession.Instance.SetGuestSession(guestNickname, guestNickname);
-
-                Debug.WriteLine($"[JOINCODE] Guest session created: {guestNickname}");
-
-                return new UserAccountDTO
-                {
-                    Nickname = guestNickname,
-                    IdPlayer = 0
-                };
-            }
-
-            return new UserAccountDTO
-            {
-                Nickname = user.Nickname,
-                Username = user.Username,
-                IdPlayer = user.IdUser
-            };
-        }*/
-
         private UserAccountDTO BuildUserAccount()
         {
             var user = UserSession.Instance.CurrentUser;
 
-            // CASO 1: Es un invitado (no inició sesión)
             if (user == null)
             {
-                // Solo generamos un nombre nuevo si no tiene uno ya (para no cambiarle el nombre si reintenta)
                 string guestNickname = UserSession.Instance.GetNickname();
                 if (string.IsNullOrEmpty(guestNickname))
                 {
@@ -140,24 +109,23 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     UserSession.Instance.SetGuestSession(guestNickname, guestNickname);
                 }
 
-                Debug.WriteLine($"[JOINCODE] Uniéndose como invitado: {guestNickname}");
+                Debug.WriteLine($"[JOINCODE] Joining as guest: {guestNickname}");
 
                 return new UserAccountDTO
                 {
                     Nickname = guestNickname,
-                    Username = guestNickname, // El username es el mismo nickname en invitados
-                    IdPlayer = 0 // El servidor le asignará el ID negativo
+                    Username = guestNickname, 
+                    IdPlayer = 0 
                 };
             }
 
-            // CASO 2: Es un usuario registrado (Abraham o Abi)
-            Debug.WriteLine($"[JOINCODE] Uniéndose registrado: {user.Nickname} | UserID: {user.IdUser}");
+            Debug.WriteLine($"[JOINCODE] Joining as registered user: {user.Nickname} | UserID: {user.IdUser}");
 
             return new UserAccountDTO
             {
                 Nickname = user.Nickname,
-                Username = user.Username, // ¡IMPORTANTE! Se necesita para el JOIN de las fotos
-                IdPlayer = user.IdUser    // MANDAMOS EL ID DE LA CUENTA (IdUser)
+                Username = user.Username,
+                IdPlayer = user.IdUser    
             };
         }
 

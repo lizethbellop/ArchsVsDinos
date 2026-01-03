@@ -233,6 +233,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 CheckMinimumPlayersInGame(matchCode);
         }
 
+        /*
         private void CheckMinimumPlayersInLobby(string lobbyCode)
         {
             int lobbyPlayers = ConnectedUsers.Count(u =>
@@ -247,6 +248,24 @@ namespace ArchsVsDinosServer.BusinessLogic
                 lobbyNotifier?.NotifyLobbyClosure(lobbyCode, "Insufficient players");
                 DisconnectLobbyUsers(lobbyCode);
             }
+        }*/
+
+        private void CheckMinimumPlayersInLobby(string lobbyCode)
+        {
+            int lobbyPlayers = ConnectedUsers.Count(u =>
+                u.Value.Context == ContextLobby &&
+                u.Value.MatchCode == lobbyCode);
+
+            if (lobbyPlayers < MinimumPlayersRequired)
+            {
+                // Solo dejamos el log para saber qué pasa
+                loggerHelper.LogWarning($"[CHAT MONITOR] Low players in lobby {lobbyCode}: {lobbyPlayers}. Waiting for LobbyLogic decision.");
+
+                // COMENTA ESTAS LÍNEAS:
+                // NotifyLobbyClosing(lobbyCode, "... ");
+                // lobbyNotifier?.NotifyLobbyClosure(lobbyCode, "Insufficient players"); 
+                // DisconnectLobbyUsers(lobbyCode);
+            }
         }
 
         private void CheckMinimumPlayersInGame(string matchCode)
@@ -257,11 +276,7 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             if (gamePlayers < MinimumPlayersRequired)
             {
-                loggerHelper.LogWarning($"Insufficient players in game {matchCode}. Current: {gamePlayers}");
-
-                NotifyGameClosing(matchCode, "Insufficient players to continue");
-                gameNotifier?.NotifyGameClosure(matchCode, GameEndType.Aborted, "Insufficient players");
-                DisconnectGameUsers(matchCode);
+                loggerHelper.LogWarning($"[CHAT MONITOR] Low players in game {matchCode}: {gamePlayers}.");
             }
         }
 
@@ -346,8 +361,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        // ========== MÉTODOS DE BROADCAST ESPECÍFICOS ==========
-
         private void BroadcastSystemNotificationGlobal(ChatResultCode code, string message)
         {
             foreach (var user in ConnectedUsers.ToArray())
@@ -395,17 +408,14 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         private void UpdateUserList()
         {
-            // Agrupar usuarios por MatchCode
             var groupedUsers = ConnectedUsers
                 .GroupBy(u => u.Value.MatchCode)
                 .ToList();
 
             foreach (var group in groupedUsers)
             {
-                // Obtener solo los usuarios de ESTE grupo específico
                 var usersInThisGroup = group.Select(u => u.Key).ToList();
 
-                // Notificar solo a los usuarios de este grupo
                 foreach (var user in group)
                 {
                     SafeCallbackInvoke(user.Key, () =>

@@ -53,6 +53,11 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             viewModel.NavigateToGame += OnNavigateToGame;
             viewModel.NavigateToLobbyAsGuest += OnNavigateToLobbyAsGuest;
 
+            this.Loaded += async (s, e) =>
+            {
+                await viewModel.LoadFriendsAsync();
+            };
+
             Loaded += async (_, __) =>
             {
                 if (isHost)

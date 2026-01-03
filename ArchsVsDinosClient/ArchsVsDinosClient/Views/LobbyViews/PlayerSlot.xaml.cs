@@ -103,30 +103,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        /*
-        private void LoadPlayerAvatar(SlotLobby slotData, System.Windows.Media.ImageBrush imageBrush)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(slotData.ProfilePicture))
-                {
-                    imageBrush.ImageSource = new BitmapImage(new Uri($"pack://application:,,,/{slotData.ProfilePicture}", UriKind.Absolute));
-                }
-                else
-                {
-                    imageBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/Avatars/default_avatar_00.png"));
-                }
-            }
-            catch (Exception ex)
-            {
-                imageBrush.ImageSource = null;
-            }
-        }*/
-
-
-        // Propiedad para evitar recargas innecesarias
-        private string CurrentLoadedPath { get; set; } = string.Empty;
-
         private void LoadPlayerAvatar(SlotLobby slotData, System.Windows.Media.ImageBrush imageBrush)
         {
             if (slotData == null || imageBrush == null) return;
@@ -134,24 +110,18 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             this.Dispatcher.Invoke(() => {
                 try
                 {
-                    // --- EL CAMBIO CLAVE ---
-                    // Si el slotData NO trae foto (está vacío), pero el círculo YA TIENE una imagen puesta...
-                    // ¡NO HACEMOS NADA! No vamos a dejar que la 00 borre a la 05.
                     if (string.IsNullOrEmpty(slotData.ProfilePicture) && imageBrush.ImageSource != null)
                     {
                         return;
                     }
 
-                    // Decidir ruta
                     string selectedPath = string.IsNullOrEmpty(slotData.ProfilePicture)
                         ? "/Resources/Images/Avatars/default_avatar_00.png"
                         : slotData.ProfilePicture;
 
-                    // Limpieza y URI
                     string cleanPath = selectedPath.TrimStart('/', '\\');
                     string packUri = $"pack://application:,,,/ArchsVsDinosClient;component/{cleanPath}";
 
-                    // Solo logueamos si es la 05 para ver si sobrevive
                     if (cleanPath.Contains("_05"))
                     {
                         Debug.WriteLine($"[AVATAR RESISTENTE] Dibujando la 05: {packUri}");
@@ -170,15 +140,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     Debug.WriteLine($"[AVATAR ERROR]: {ex.Message}");
                 }
             });
-        }
-
-        private void SetDefaultImage(System.Windows.Media.ImageBrush imageBrush)
-        {
-            try
-            {
-                imageBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/ArchsVsDinosClient;component/Resources/Images/Avatars/default_avatar_00.png"));
-            }
-            catch { }
         }
 
         private void Click_BtnAddFriend(object sender, RoutedEventArgs e)
