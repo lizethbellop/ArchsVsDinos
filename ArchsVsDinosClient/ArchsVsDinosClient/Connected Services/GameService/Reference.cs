@@ -178,6 +178,12 @@ namespace ArchsVsDinosClient.GameService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string NicknameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ProfilePictureField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int TurnOrderField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -190,6 +196,32 @@ namespace ArchsVsDinosClient.GameService {
             }
             set {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Nickname {
+            get {
+                return this.NicknameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.NicknameField, value) != true)) {
+                    this.NicknameField = value;
+                    this.RaisePropertyChanged("Nickname");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ProfilePicture {
+            get {
+                return this.ProfilePictureField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ProfilePictureField, value) != true)) {
+                    this.ProfilePictureField = value;
+                    this.RaisePropertyChanged("ProfilePicture");
+                }
             }
         }
         

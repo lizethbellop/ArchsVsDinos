@@ -36,19 +36,26 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                             date = matchResult.MatchDate,
                             gameTime = DateTime.Now.TimeOfDay
                         };
-
                         context.GeneralMatch.Add(newMatch);
-
-                        context.SaveChanges();
+                        context.SaveChanges(); 
 
                         foreach (var playerResult in matchResult.PlayerResults)
                         {
                             if (playerResult.UserId <= 0) continue;
 
+                            var userAccount = context.UserAccount.FirstOrDefault(u => u.idUser == playerResult.UserId);
+
+                            if (userAccount == null)
+                            {
+                                continue;
+                            }
+
+                            int actualPlayerId = userAccount.idPlayer;
+
                             var participant = new MatchParticipants
                             {
                                 idGeneralMatch = newMatch.idGeneralMatch,
-                                idPlayer = playerResult.UserId,
+                                idPlayer = actualPlayerId, 
                                 points = playerResult.Points,
                                 isWinner = playerResult.IsWinner,
                                 isDefeated = !playerResult.IsWinner,
@@ -57,59 +64,29 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                             };
                             context.MatchParticipants.Add(participant);
 
-                            var dbPlayer = context.Player.FirstOrDefault(p => p.idPlayer == playerResult.UserId);
-
+                            var dbPlayer = context.Player.FirstOrDefault(player => player.idPlayer == actualPlayerId);
                             if (dbPlayer != null)
                             {
                                 dbPlayer.totalMatches++;
                                 dbPlayer.totalPoints += playerResult.Points;
-
-                                if (playerResult.IsWinner)
-                                {
-                                    dbPlayer.totalWins++;
-                                }
-                                else
-                                {
-                                    dbPlayer.totalLosses++;
-                                }
+                                if (playerResult.IsWinner) dbPlayer.totalWins++;
+                                else dbPlayer.totalLosses++;
                             }
                         }
-
                         context.SaveChanges();
                         transaction.Commit();
-
-                        logger.LogInfo($"ProcessMatchResults: Successfully saved match {matchResult.MatchId}");
                         return true;
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: Invalid operation - {ex.Message}", ex);
-                        return false;
-                    }
-                    catch (EntityException ex)
-                    {
-                        transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: Entity Framework error - {ex.Message}", ex);
-                        return false;
-                    }
-                    catch (SqlException ex)
-                    {
-                        transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: SQL error - {ex.Message}", ex);
-                        return false;
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: Unexpected error - {ex.Message}", ex);
+                        logger.LogError($"[STATS] Error saving results: {ex.Message}", ex);
                         return false;
                     }
                 }
             }
         }
 
-        
         private void UpdatePlayerStatistics(IDbContext context, MatchResultDTO matchResult)
         {
             foreach (var playerResult in matchResult.PlayerResults)
@@ -144,7 +121,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
             {
                 try
                 {
-                    var match = context.GeneralMatch.FirstOrDefault(m => m.matchCode == matchCode);
+                    var match = context.GeneralMatch.FirstOrDefault(matchSelected => matchSelected.matchCode == matchCode);
 
                     if (match == null)
                     {
@@ -153,9 +130,9 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                     }
 
                     var participants = context.MatchParticipants
-                        .Where(mp => mp.idGeneralMatch == match.idGeneralMatch && !mp.isDefeated)
-                        .OrderByDescending(mp => mp.points)
-                        .ThenByDescending(mp => mp.isWinner)
+                        .Where(matchParticipant => matchParticipant.idGeneralMatch == match.idGeneralMatch && !matchParticipant.isDefeated)
+                        .OrderByDescending(matchParticipant => matchParticipant.points)
+                        .ThenByDescending(matchParticipant => matchParticipant.isWinner)
                         .ToList();
 
                     if (!participants.Any())
@@ -186,7 +163,8 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                             Points = participant.points,
                             IsWinner = participant.isWinner,
                             ArchaeologistsEliminated = participant.archaeologistsEliminated,
-                            SupremeBossesEliminated = participant.supremeBossesEliminated
+                            SupremeBossesEliminated = participant.supremeBossesEliminated,
+                            ProfilePicture = context.Player.FirstOrDefault(player => player.idPlayer == participant.idPlayer)?.profilePicture?? "/Resources/Images/Avatars/default_avatar_00.png"
                         });
                     }
 
@@ -219,7 +197,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
         {
             try
             {
-                var player = context.Player.FirstOrDefault(p => p.idPlayer == playerId);
+                var player = context.Player.FirstOrDefault(playerSelected => playerSelected.idPlayer == playerId);
                 if (player == null)
                 {
                     return "Unknown";

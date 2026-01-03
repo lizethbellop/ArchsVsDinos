@@ -15,5 +15,9 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public int TurnOrder { get; set; }
+        [DataMember] 
+        public string Nickname { get; set; }       
+        [DataMember] 
+        public string ProfilePicture { get; set; }
     }
 }

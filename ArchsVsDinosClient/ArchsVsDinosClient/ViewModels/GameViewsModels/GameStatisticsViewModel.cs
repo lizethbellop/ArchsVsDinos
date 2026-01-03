@@ -122,7 +122,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                     if (playersInfo != null)
                     {
-                        var playerInfo = playersInfo.FirstOrDefault(p => p.IdPlayer == score.UserId);
+                        var playerInfo = playersInfo.FirstOrDefault(p => p.IdPlayer == score.UserId || p.Nickname == score.Username);
                         if (playerInfo != null && !string.IsNullOrEmpty(playerInfo.ProfilePicture))
                         {
                             playerImage = LoadImageFromPath(playerInfo.ProfilePicture);
@@ -152,12 +152,35 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             try
             {
-                var uri = new Uri(path, UriKind.RelativeOrAbsolute);
-                var image = new BitmapImage(uri);
-                image.Freeze(); 
-                return image;
+                if (string.IsNullOrEmpty(path)) return null;
+
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string cleanPath = path;
+
+                if (path.Contains(";component/"))
+                {
+                    cleanPath = path.Split(new[] { ";component/" }, StringSplitOptions.None)[1];
+                }
+                else if (path.StartsWith("pack://"))
+                {
+                    cleanPath = path.Replace("pack://application:,,,", "").TrimStart('/');
+                }
+
+                string fullPath = Path.Combine(baseDir, cleanPath.TrimStart('/', '\\'));
+
+                if (File.Exists(fullPath))
+                {
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.UriSource = new Uri(fullPath, UriKind.Absolute);
+                    image.CacheOption = BitmapCacheOption.OnLoad; 
+                    image.EndInit();
+                    image.Freeze(); 
+                    return image;
+                }
+                return null;
             }
-            catch (Exception)
+            catch
             {
                 return null;
             }
@@ -167,7 +190,20 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             try
             {
-                return new BitmapImage(new Uri("pack://application:,,,/Resources/Images/default_avatar_00.png"));
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string fullPath = Path.Combine(baseDir, "Resources", "Images", "Avatars", "default_avatar_00.png");
+
+                if (File.Exists(fullPath))
+                {
+                    var image = new BitmapImage();
+                    image.BeginInit();
+                    image.UriSource = new Uri(fullPath, UriKind.Absolute);
+                    image.CacheOption = BitmapCacheOption.OnLoad;
+                    image.EndInit();
+                    image.Freeze();
+                    return image;
+                }
+                return null;
             }
             catch
             {

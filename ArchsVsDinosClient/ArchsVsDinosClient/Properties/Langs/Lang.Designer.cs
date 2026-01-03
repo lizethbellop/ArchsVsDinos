@@ -1339,6 +1339,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudieron guardar las estadísticas.
+        /// </summary>
+        public static string Match_Can_tSaveStatistics {
+            get {
+                return ResourceManager.GetString("Match_Can\'tSaveStatistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Esta carta no se puede colocar aquí.
         /// </summary>
         public static string Match_CardCannotPlacedHere {

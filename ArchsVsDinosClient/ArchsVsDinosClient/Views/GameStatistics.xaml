@@ -39,22 +39,8 @@
                FontSize="18" HorizontalAlignment="Center"
                Margin="0,0,0,20"/>
 
-        <Grid Grid.Row="2"
-              Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
-        </Grid>
-
-        <Grid Grid.Row="2"
-              Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Label Content="{Binding ErrorMessage}" 
-                       FontSize="16" Foreground="Red"
-                       HorizontalAlignment="Center"/>
-            </StackPanel>
-        </Grid>
-
         <ItemsControl Grid.Row="2" 
-                      ItemsSource="{Binding PlayerStats}"
-                      Visibility="{Binding IsLoading, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                      ItemsSource="{Binding PlayerStats}">
 
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>

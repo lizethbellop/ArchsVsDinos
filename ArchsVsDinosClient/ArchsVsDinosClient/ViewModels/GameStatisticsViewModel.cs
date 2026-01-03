@@ -1,6 +1,9 @@
-﻿using ArchsVsDinosClient.Services;
+﻿using ArchsVsDinosClient.DTO;
+using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.StatisticsService;
+using ArchsVsDinosClient.ViewModels.GameViewsModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,14 +12,17 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace ArchsVsDinosClient.ViewModels
 {
     public class GameStatisticsViewModel : INotifyPropertyChanged, IDisposable
     {
         private readonly int matchId;
-        private ObservableCollection<PlayerMatchStatsDTO> playerStats;
+        private readonly List<LobbyPlayerDTO> playersInfo; 
+        private ObservableCollection<PlayerStatItem> playerStats; 
         private bool isLoading;
         private string errorMessage;
         private bool hasError;
@@ -25,17 +31,18 @@ namespace ArchsVsDinosClient.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public GameStatisticsViewModel(int matchId)
+        public GameStatisticsViewModel(int matchId, List<LobbyPlayerDTO> playersInfo)
         {
             this.matchId = matchId;
-            PlayerStats = new ObservableCollection<PlayerMatchStatsDTO>();
+            this.playersInfo = playersInfo;
+            PlayerStats = new ObservableCollection<PlayerStatItem>();
 
             ExitCommand = new DelegateCommand(ExecuteExit);
 
             LoadMatchStatisticsAsync();
         }
 
-        public ObservableCollection<PlayerMatchStatsDTO> PlayerStats
+        public ObservableCollection<PlayerStatItem> PlayerStats
         {
             get => playerStats;
             set
@@ -94,10 +101,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         private async Task LoadStatisticsAsync()
         {
-            IsLoading = true;
-            HasError = false;
-            ErrorMessage = string.Empty;
-
             IStatisticsServiceClient statisticsClient = null;
 
             try
@@ -113,21 +116,50 @@ namespace ArchsVsDinosClient.ViewModels
 
                     foreach (var stat in stats.PlayerStats)
                     {
-                        PlayerStats.Add(stat);
+                        var infoDelLobby = playersInfo?.FirstOrDefault(player =>
+                            player.IdPlayer == stat.UserId ||
+                            (player.Username != null && player.Username.Equals(stat.Username, StringComparison.OrdinalIgnoreCase)));
+
+                        BitmapImage playerImage = null;
+                        if (infoDelLobby != null && !string.IsNullOrEmpty(infoDelLobby.ProfilePicture))
+                        {
+                            playerImage = LoadImageFromPath(infoDelLobby.ProfilePicture);
+                        }
+                        if (playerImage == null) playerImage = LoadDefaultImage();
+
+                        double heightValue = 200;
+                        string colorHex = "#A0A0A0";
+                        string iconSymbol = "";
+
+                        switch (stat.Position)
+                        {
+                            case 1: heightValue = 320; colorHex = "#FFD700"; iconSymbol = "👑"; break;
+                            case 2: heightValue = 280; colorHex = "#C0C0C0"; iconSymbol = "🥈"; break;
+                            case 3: heightValue = 240; colorHex = "#CD7F32"; iconSymbol = "🥉"; break;
+                        }
+
+                        PlayerStats.Add(new PlayerStatItem
+                        {
+                            Username = stat.Username,
+                            Points = stat.Points,
+                            Position = stat.Position,
+                            Height = heightValue,
+                            BorderColor = colorHex,
+                            Icon = iconSymbol,
+                            ProfileImage = playerImage
+                        });
                     }
 
                     MatchDateText = $"Fecha: {stats.MatchDate:dd/MM/yyyy HH:mm}";
                 }
                 else
                 {
-                    HasError = true;
-                    ErrorMessage = "No se pudieron cargar las estadísticas de la partida";
+                    MessageBox.Show(Lang.Match_Can_tSaveStatistics);
                 }
             }
             catch (Exception ex)
             {
-                HasError = true;
-                ErrorMessage = $"Error al cargar las estadísticas: {ex.Message}";
+                MessageBox.Show($"{Lang.GlobalUnexpectedError} {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -136,8 +168,28 @@ namespace ArchsVsDinosClient.ViewModels
                     statisticsClient.ConnectionError -= OnConnectionError;
                     statisticsClient.Dispose();
                 }
-                IsLoading = false;
             }
+        }
+
+        private BitmapImage LoadImageFromPath(string path)
+        {
+            try
+            {
+                var uri = new Uri(path, UriKind.RelativeOrAbsolute);
+                var image = new BitmapImage(uri);
+                image.Freeze(); 
+                return image;
+            }
+            catch { return null; }
+        }
+
+        private BitmapImage LoadDefaultImage()
+        {
+            try
+            {
+                return new BitmapImage(new Uri("pack://application:,,,/ArchsVsDinosClient;component/Resources/Images/Avatars/default_avatar_00.png"));
+            }
+            catch { return null; }
         }
 
         private void OnConnectionError(string title, string message)
@@ -148,7 +200,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void ExecuteExit()
         {
-            // Cerrar la ventana y volver al menú principal
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -165,16 +216,25 @@ namespace ArchsVsDinosClient.ViewModels
         protected virtual void Dispose(bool disposing)
         {
             if (isDisposed) return;
-
             if (disposing)
             {
                 PlayerStats?.Clear();
             }
-
             isDisposed = true;
         }
 
-       private class DelegateCommand : ICommand
+        public class PlayerStatItem
+        {
+            public string Username { get; set; }
+            public int Points { get; set; }
+            public int Position { get; set; }
+            public double Height { get; set; }
+            public string BorderColor { get; set; }
+            public string Icon { get; set; }
+            public BitmapImage ProfileImage { get; set; }
+        }
+
+        private class DelegateCommand : ICommand
         {
             private readonly Action execute;
             private readonly Func<bool> canExecute;
@@ -191,16 +251,8 @@ namespace ArchsVsDinosClient.ViewModels
                 this.canExecute = canExecute;
             }
 
-            public bool CanExecute(object parameter)
-            {
-                return canExecute == null || canExecute();
-            }
-
-            public void Execute(object parameter)
-            {
-                execute();
-            }
+            public bool CanExecute(object parameter) => canExecute == null || canExecute();
+            public void Execute(object parameter) => execute();
         }
-
     }
 }

@@ -24,6 +24,8 @@ namespace Contracts.DTO.Statistics
         public int ArchaeologistsEliminated { get; set; }
         [DataMember]
         public int SupremeBossesEliminated { get; set; }
+        [DataMember] 
+        public string ProfilePicture { get; set; }
 
         public override bool Equals(object obj)
         {

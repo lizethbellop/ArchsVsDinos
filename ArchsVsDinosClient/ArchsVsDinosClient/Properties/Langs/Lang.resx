@@ -1026,4 +1026,7 @@
   <data name="Match_ErrorLeavingGame" xml:space="preserve">
     <value>Error saliendo del juego</value>
   </data>
+  <data name="Match_Can'tSaveStatistics" xml:space="preserve">
+    <value>No se pudieron guardar las estadísticas</value>
+  </data>
 </root>

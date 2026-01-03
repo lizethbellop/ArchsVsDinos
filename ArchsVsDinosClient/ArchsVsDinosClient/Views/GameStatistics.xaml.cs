@@ -25,6 +25,8 @@ namespace ArchsVsDinosClient.Views
 
         private void Click_BtnExit(object sender, RoutedEventArgs e)
         {
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
             this.Close();
         }
 
