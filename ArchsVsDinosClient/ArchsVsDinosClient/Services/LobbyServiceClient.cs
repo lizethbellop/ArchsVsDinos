@@ -438,7 +438,5 @@ namespace ArchsVsDinosClient.Services
                 return false;
             }
         }
-
-
     }
 }

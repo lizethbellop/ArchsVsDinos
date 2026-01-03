@@ -22,5 +22,8 @@ namespace Contracts.DTO
         [DataMember]
         public int HostUserId { get; set; }
 
+        [DataMember]
+        public string HostProfilePicture { get; set; }
+
     }
 }

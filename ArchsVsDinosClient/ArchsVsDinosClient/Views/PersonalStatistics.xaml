@@ -23,12 +23,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Título -->
+        <!-- Title -->
         <Label Grid.Row="0" Content="{x:Static language:Lang.PlayerStatistics_Title}" 
                FontFamily="{StaticResource Volcanic Dungeon}"
                FontSize="20" FontWeight="Bold" Foreground="Black" Margin="0,10,0,20"/>
 
-        <!-- Estadísticas Generales del Jugador -->
+        <!-- General statistic player -->
         <Border Grid.Row="1" Background="White" BorderBrush="Gray" BorderThickness="1" 
                 CornerRadius="5" Padding="15" Margin="0,0,0,10">
             <StackPanel>
@@ -43,11 +43,9 @@
             </StackPanel>
         </Border>
 
-        <!-- Contenido Principal -->
         <Border Grid.Row="2" Background="White" BorderBrush="Gray" BorderThickness="1" 
                 CornerRadius="5" Padding="10">
             <Grid>
-                <!-- Indicador de carga -->
                 <TextBlock Text="Cargando estadísticas..." 
                            FontFamily="Trebuchet MS" FontSize="18" 
                            Foreground="Gray" 
@@ -65,7 +63,6 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <!-- Mensaje de error -->
                 <TextBlock Text="{Binding ErrorMessage}" 
                            FontFamily="Trebuchet MS" FontSize="16" 
                            Foreground="Red" 
@@ -85,7 +82,6 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <!-- TabControl con Leaderboard e Historial -->
                 <TabControl SelectedIndex="{Binding SelectedTabIndex}">
                     <TabControl.Style>
                         <Style TargetType="TabControl">
@@ -98,7 +94,6 @@
                         </Style>
                     </TabControl.Style>
 
-                    <!-- Tab Leaderboard -->
                     <TabItem Header="{x:Static language:Lang.Statistics_Leaderboard}" FontFamily="Trebuchet MS" FontSize="14">
                         <ListBox ItemsSource="{Binding Leaderboard}" 
                                  BorderThickness="0" 
@@ -140,7 +135,6 @@
                         </ListBox>
                     </TabItem>
 
-                    <!-- Tab Historial -->
                     <TabItem Header="{x:Static language:Lang.Statistics_History}" FontFamily="Trebuchet MS" FontSize="14">
                         <ListBox ItemsSource="{Binding MatchHistory}" 
                                  BorderThickness="0" 
@@ -153,7 +147,6 @@
                                             <TextBlock Text="{Binding MatchDate, StringFormat='Fecha: {0:dd/MM/yyyy HH:mm}'}" 
                                                        FontWeight="Bold" FontSize="13"/>
 
-                                            <!-- Victoria (Verde) -->
                                             <TextBlock FontSize="12" Margin="0,3,0,0" Foreground="Green">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
@@ -169,7 +162,6 @@
                                                 <Run Text="Victoria" FontWeight="Bold"/>
                                             </TextBlock>
 
-                                            <!-- Derrota (Rojo) -->
                                             <TextBlock FontSize="12" Margin="0,3,0,0" Foreground="Red">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
@@ -199,7 +191,6 @@
             </Grid>
         </Border>
 
-        <!-- Botones -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
             <Button Content="Actualizar" Command="{Binding RefreshCommand}"
                     Height="50" Width="110" Foreground="White" FontWeight="Bold" 

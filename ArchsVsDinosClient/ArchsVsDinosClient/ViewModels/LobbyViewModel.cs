@@ -5,11 +5,13 @@ using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
+using ArchsVsDinosClient.Views.LobbyViews;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.ServiceModel;
@@ -126,13 +128,14 @@ namespace ArchsVsDinosClient.ViewModels
             }
         }
 
+        /*
         private void OnPlayerKicked(string nickname, string reason)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 string myNickname = UserSession.Instance.GetNickname();
 
-                if (nickname == myNickname)
+                if (nickname == "SYSTEM" || nickname == myNickname)
                 {
                     if (LobbyConnectionLost != null)
                     {
@@ -149,6 +152,45 @@ namespace ArchsVsDinosClient.ViewModels
                         "Jugador expulsado",
                         MessageBoxButton.OK
                     );
+                }
+            });
+        }*/
+
+        private void OnPlayerKicked(string nickname, string reason)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                string myNickname = UserSession.Instance.GetNickname();
+
+                // 1. Verificamos si la orden es para cerrarlo todo (SYSTEM) o si me echaron a mí
+                if (nickname == "SYSTEM" || nickname == myNickname)
+                {
+                    // Mostramos el motivo (ej: "La sala se cerró por falta de anfitriones")
+                    MessageBox.Show(reason, "Aviso de la Sala", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // 2. EJECUTAR LIMPIEZA (Detiene chat, amigos y cierra el proxy WCF)
+                    Cleanup();
+
+                    // 3. PREPARAR EL REGRESO AL MENÚ
+                    MainWindow mainMenu = new MainWindow();
+
+                    // Buscamos la ventana del Lobby actual ANTES de cambiar la principal
+                    var lobbyWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w is Lobby);
+
+                    // 4. CAMBIAR VENTANA PRINCIPAL Y MOSTRAR
+                    Application.Current.MainWindow = mainMenu;
+                    mainMenu.Show();
+
+                    // 5. CERRAR EL LOBBY (Ahora es seguro porque ya abrimos la otra)
+                    lobbyWindow?.Close();
+
+                    Debug.WriteLine("[LOBBY VM] Navegación al menú principal completada.");
+                }
+                else
+                {
+                    // Caso en el que expulsaron a OTRO jugador (solo informamos en consola o chat)
+                    // No usamos MessageBox aquí para no interrumpir el juego de los demás
+                    Debug.WriteLine($"[LOBBY] El jugador {nickname} ha sido retirado de la sala.");
                 }
             });
         }
@@ -179,13 +221,12 @@ namespace ArchsVsDinosClient.ViewModels
 
                 if (isInitializing)
                 {
-                    Debug.WriteLine($"[LOBBY VM] Error ignorado durante inicialización");
                     return;
                 }
 
                 if (!string.IsNullOrEmpty(MatchCode) && !isAttemptingReconnection)
                 {
-                    Debug.WriteLine($"[LOBBY VM] 🔄 Lobby activo detectado, iniciando reconexión automática...");
+                    Debug.WriteLine($"[LOBBY VM] Active lobby detected, trying automatic reconnection...");
                     StartReconnectionAttempts();
                 }
                 else if (LobbyConnectionLost != null && !isAttemptingReconnection)
@@ -369,7 +410,7 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        private void UpdateSlot(int index, ArchsVsDinosClient.DTO.LobbyPlayerDTO player)
+        private void UpdateSlot(int index, DTO.LobbyPlayerDTO player)
         {
             if (index < 0 || index >= Slots.Count) return;
 
@@ -394,6 +435,7 @@ namespace ArchsVsDinosClient.ViewModels
             currentSlot.IsLocalPlayer = isMe;
             currentSlot.CanKick = this.isHost && !isMe;
             currentSlot.IsGuest = player.IdPlayer <= 0;
+            currentSlot.ProfilePicture = player.ProfilePicture;
             currentSlot.LocalUserIsGuest = UserSession.Instance.GetPlayerId() <= 0;
             currentSlot.IdPlayer = player.IdPlayer;
         }
@@ -407,9 +449,8 @@ namespace ArchsVsDinosClient.ViewModels
         {
             try
             {
-                Debug.WriteLine($"[LOBBY VM] Intentando salir del lobby: {nickname}");
+                Debug.WriteLine($"[LOBBY VM] Trying to exit from the lobby: {nickname}");
                 lobbyServiceClient.LeaveLobby(nickname);
-                Debug.WriteLine($"[LOBBY VM] Comando de salida enviado");
             }
             catch (Exception ex)
             {
@@ -524,9 +565,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         public void Cleanup()
         {
-            Debug.WriteLine("[LOBBY VM] ═══════════════════════════════════════");
-            Debug.WriteLine("[LOBBY VM] Iniciando Cleanup...");
-
             try
             {
                 if (isAttemptingReconnection)
@@ -609,7 +647,6 @@ namespace ArchsVsDinosClient.ViewModels
             finally
             {
                 Debug.WriteLine("[LOBBY VM] Cleanup finalizado");
-                Debug.WriteLine("[LOBBY VM] ═══════════════════════════════════════");
             }
         }
 

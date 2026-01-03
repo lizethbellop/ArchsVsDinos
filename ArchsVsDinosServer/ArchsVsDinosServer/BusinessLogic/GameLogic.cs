@@ -632,6 +632,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             lock (session.SyncRoot)
             {
+
+                session.TurnTimeExpired -= HandleTurnTimeExpired;
+
                 GameEndResult result;
 
                 if (gameType == GameEndType.Finished)
@@ -705,6 +708,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return result;
             }
         }
+
         private void SaveMatchStatistics(GameSession session, GameEndResult result)
         {
             if (session == null)
@@ -715,10 +719,16 @@ namespace ArchsVsDinosServer.BusinessLogic
             if (statisticsManager == null)
                 throw new InvalidOperationException("StatisticsManager is not initialized.");
 
+            int safeWinnerId = (result.Winner != null && result.Winner.UserId > 0)
+                               ? result.Winner.UserId
+                               : 0;
+
             var matchResultDto = new MatchResultDTO
             {
                 MatchId = session.MatchCode,
                 MatchDate = session.StartTime ?? DateTime.UtcNow,
+
+                WinnerUserId = safeWinnerId,
 
                 PlayerResults = session.Players
                 .Where(player => player.UserId > 0)

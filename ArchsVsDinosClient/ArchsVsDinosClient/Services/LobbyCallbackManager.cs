@@ -54,7 +54,8 @@ namespace ArchsVsDinosClient.Services
                 Username = servicePlayer.Username,
                 Nickname = servicePlayer.Nickname,
                 IsReady = servicePlayer.IsReady,
-                IsHost = servicePlayer.IsHost
+                IsHost = servicePlayer.IsHost,
+            ProfilePicture = servicePlayer.ProfilePicture
             }).ToList();
 
             OnPlayerListUpdated?.Invoke(localPlayersList);

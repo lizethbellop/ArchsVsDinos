@@ -21,5 +21,6 @@ namespace Contracts.DTO
 
         [DataMember]
         public string Nickname { get; set; }
+
     }
 }

@@ -12,6 +12,7 @@ namespace ArchsVsDinosServer.Model
         public string Username { get; }
         public string Nickname { get; }
         public bool IsReady { get; set; }
+        public string ProfilePicture { get; set; }
 
         public LobbyPlayer(int userId, string username, string nickname)
         {

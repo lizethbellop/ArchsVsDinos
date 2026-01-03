@@ -16,7 +16,7 @@ namespace ArchsVsDinosServer.Model
 
         public readonly object LobbyLock = new object();
 
-        public int HostUserId { get; private set; }
+        public int HostUserId { get; set; }
 
         public ActiveLobbyData(string lobbyCode, MatchSettings settings)
         {
@@ -37,10 +37,26 @@ namespace ArchsVsDinosServer.Model
                 if (Players.Count >= Settings.MaxPlayers)
                     return false;
 
-                if (Players.Any(p =>
-                    p.UserId == userId ||
-                    p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase) ||
-                    (!string.IsNullOrEmpty(username) && p.Username.Equals(username, StringComparison.OrdinalIgnoreCase))))
+                bool alreadyInLobby = Players.Any(player =>
+                {
+                    if (player == null) return false;
+
+                    if (player.UserId == userId) return true;
+
+                    if (!string.IsNullOrEmpty(nickname) &&
+                        nickname.Equals(player.Nickname, StringComparison.OrdinalIgnoreCase))
+                        return true;
+
+                    if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(player.Username))
+                    {
+                        if (username.Equals(player.Username, StringComparison.OrdinalIgnoreCase))
+                            return true;
+                    }
+
+                    return false;
+                });
+
+                if (alreadyInLobby)
                     return false;
 
                 Players.Add(new LobbyPlayer(userId, username, nickname));
@@ -52,7 +68,7 @@ namespace ArchsVsDinosServer.Model
         {
             if (Players.Count > 0)
             {
-                var newHost = Players.FirstOrDefault(p => p.UserId != HostUserId)
+                var newHost = Players.FirstOrDefault(player => player.UserId != HostUserId)
                               ?? Players.First();
                 HostUserId = newHost.UserId;
             }
@@ -63,7 +79,7 @@ namespace ArchsVsDinosServer.Model
             lock (LobbyLock)
             {
                 var player = Players
-                    .FirstOrDefault(p => p.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(playerSelected => playerSelected.Nickname.Equals(nickname, StringComparison.OrdinalIgnoreCase));
 
                 if (player != null)
                     Players.Remove(player);

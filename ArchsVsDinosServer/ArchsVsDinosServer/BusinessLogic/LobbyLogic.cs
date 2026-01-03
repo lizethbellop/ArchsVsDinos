@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
@@ -94,6 +95,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
+ 
         public Task<MatchJoinResponse> JoinLobby(JoinLobbyRequest request)  
         {
             if (request == null ||
@@ -413,6 +415,8 @@ namespace ArchsVsDinosServer.BusinessLogic
         }
 
 
+
+        /*
         public void DisconnectPlayer(string lobbyCode, string playerNickname)
         {
             if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(playerNickname))
@@ -462,6 +466,76 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (Exception ex)
             {
                 logger.LogWarning($"Error disconnecting player: {ex.Message}");
+            }
+        }*/
+
+        public void DisconnectPlayer(string lobbyCode, string playerNickname)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || string.IsNullOrWhiteSpace(playerNickname)) return;
+
+            try
+            {
+                var lobby = core.Session.GetLobby(lobbyCode);
+                if (lobby == null) return;
+
+                lock (lobby.LobbyLock)
+                {
+                    var leavingPlayer = lobby.Players.FirstOrDefault(p =>
+                            p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
+
+                    if (leavingPlayer == null) return;
+
+                    bool wasHost = (lobby.HostUserId == leavingPlayer.UserId);
+
+                    // A. Avisamos que alguien se fue (solo el nombre)
+                    core.Session.Broadcast(lobbyCode, cb => cb.PlayerLeftLobby(playerNickname));
+
+                    // B. Lo quitamos de las listas INTERNAS (sin avisar la lista todavía)
+                    lobby.RemovePlayer(playerNickname);
+                    core.Session.DisconnectPlayerCallback(lobbyCode, playerNickname);
+
+                    // C. Evaluamos qué pasa con el liderazgo
+                    if (wasHost && lobby.Players.Count > 0)
+                    {
+                        var nextRegistered = lobby.Players.FirstOrDefault(p => p.UserId > 0);
+
+                        if (nextRegistered != null)
+                        {
+                            lobby.HostUserId = nextRegistered.UserId; // Asignamos nuevo líder
+                            logger.LogInfo($"Host transferido a: {nextRegistered.Nickname}");
+                        }
+                        else
+                        {
+                            logger.LogInfo($"[LOBBY] Desmantelando {lobbyCode}: No quedan registrados.");
+
+                            // 1. EL GRITO (Indispensable para el invitado)
+                            core.Session.Broadcast(lobbyCode, cb =>
+                                cb.PlayerKicked("SYSTEM", "The host left and there aren't registered players to be the host."));
+
+                            // 2. LA ESPERA (Para que el WCF no corte la conexión antes de enviar el grito)
+                            System.Threading.Thread.Sleep(300); // Sube a 300ms por seguridad
+
+                            // 3. EL BORRADO
+                            core.Session.RemoveLobby(lobbyCode);
+                            return;
+                        }
+                    }
+
+                    // D. Caso final: Si el lobby no se borró, mandamos la lista actualizada UNA SOLA VEZ
+                    if (lobby.Players.Count > 0)
+                    {
+                        var updatedList = MapPlayersToDTOs(lobby);
+                        core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(updatedList));
+                    }
+                    else
+                    {
+                        core.Session.RemoveLobby(lobbyCode);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning($"Error en DisconnectPlayer: {ex.Message}");
             }
         }
 
@@ -523,14 +597,75 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             if (lobby == null) return new LobbyPlayerDTO[0];
 
-            return lobby.Players.Select(p => new LobbyPlayerDTO
+            var dtoList = new List<LobbyPlayerDTO>();
+
+            var registeredUserIds = lobby.Players
+                                         .Where(player => player.UserId > 0)
+                                         .Select(player => player.UserId)
+                                         .Distinct()
+                                         .ToList();
+
+            var photosMap = new Dictionary<int, string>();
+
+            if (registeredUserIds.Count > 0)
             {
-                UserId = p.UserId,
-                Username = p.Username,
-                Nickname = p.Nickname,
-                IsReady = p.IsReady,
-                IsHost = (p.UserId == lobby.HostUserId)
-            }).ToArray();
+                try
+                {
+                    using (var db = new ArchsVsDinosConnection())
+                    {
+                        var query = from user in db.UserAccount
+                                    join player in db.Player on user.idPlayer equals player.idPlayer
+                                    where registeredUserIds.Contains(user.idUser) || registeredUserIds.Contains(user.idPlayer)
+                                    select new
+                                    {
+                                        UserId = user.idUser,
+                                        PlayerId = user.idPlayer,
+                                        PhotoPath = player.profilePicture
+                                    };
+
+                        var results = query.ToList();
+
+                        foreach (var item in results)
+                        {
+                            if (!photosMap.ContainsKey(item.UserId))
+                            {
+                                photosMap.Add(item.UserId, item.PhotoPath);
+                            }
+                            if (!photosMap.ContainsKey(item.PlayerId)) photosMap.Add(item.PlayerId, item.PhotoPath);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning($"[SERVER ERROR] Error obtaining images: {ex.Message}");
+                }
+            }
+
+            foreach (var player in lobby.Players)
+            {
+                string photoPath = "/Resources/Images/Avatars/default_avatar_00.png";
+
+                if (player.UserId > 0 && photosMap.ContainsKey(player.UserId))
+                {
+                    string dbPath = photosMap[player.UserId];
+                    if (!string.IsNullOrWhiteSpace(dbPath))
+                    {
+                        photoPath = dbPath;
+                    }
+                }
+
+                dtoList.Add(new LobbyPlayerDTO
+                {
+                    UserId = player.UserId,
+                    Username = player.Username,
+                    Nickname = player.Nickname,
+                    IsReady = player.IsReady,
+                    IsHost = (player.UserId == lobby.HostUserId),
+                    ProfilePicture = photoPath
+                });
+            }
+
+            return dtoList.ToArray();
         }
 
         public void KickPlayer(string lobbyCode, int hostUserId, string targetNickname)

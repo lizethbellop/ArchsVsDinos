@@ -3,6 +3,7 @@
   <xs:complexType name="MatchSettings">
     <xs:sequence>
       <xs:element minOccurs="0" name="HostNickname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="HostProfilePicture" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="HostUserId" type="xs:int" />
       <xs:element minOccurs="0" name="HostUsername" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="MaxPlayers" type="xs:int" />
@@ -29,6 +30,7 @@
       <xs:element minOccurs="0" name="IsHost" type="xs:boolean" />
       <xs:element minOccurs="0" name="IsReady" type="xs:boolean" />
       <xs:element minOccurs="0" name="Nickname" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProfilePicture" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="UserId" type="xs:int" />
       <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
     </xs:sequence>

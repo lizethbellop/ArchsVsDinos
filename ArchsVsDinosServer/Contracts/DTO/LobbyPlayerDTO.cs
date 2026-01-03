@@ -25,5 +25,7 @@ namespace Contracts.DTO
         [DataMember]
         public bool IsHost { get; set; }
 
+        [DataMember]
+        public string ProfilePicture { get; set; }
     }
 }

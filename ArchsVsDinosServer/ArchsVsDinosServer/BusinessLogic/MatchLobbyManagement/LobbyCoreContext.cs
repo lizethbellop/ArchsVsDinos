@@ -23,6 +23,4 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
             CodeGenerator = codeGenerator;
         }
     }
-
-
 }

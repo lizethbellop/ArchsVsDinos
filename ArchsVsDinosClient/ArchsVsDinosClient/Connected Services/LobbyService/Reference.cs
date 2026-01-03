@@ -26,6 +26,9 @@ namespace ArchsVsDinosClient.LobbyService {
         private string HostNicknameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string HostProfilePictureField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int HostUserIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -53,6 +56,19 @@ namespace ArchsVsDinosClient.LobbyService {
                 if ((object.ReferenceEquals(this.HostNicknameField, value) != true)) {
                     this.HostNicknameField = value;
                     this.RaisePropertyChanged("HostNickname");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string HostProfilePicture {
+            get {
+                return this.HostProfilePictureField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.HostProfilePictureField, value) != true)) {
+                    this.HostProfilePictureField = value;
+                    this.RaisePropertyChanged("HostProfilePicture");
                 }
             }
         }
@@ -424,6 +440,9 @@ namespace ArchsVsDinosClient.LobbyService {
         private string NicknameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ProfilePictureField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int UserIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -474,6 +493,19 @@ namespace ArchsVsDinosClient.LobbyService {
                 if ((object.ReferenceEquals(this.NicknameField, value) != true)) {
                     this.NicknameField = value;
                     this.RaisePropertyChanged("Nickname");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ProfilePicture {
+            get {
+                return this.ProfilePictureField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ProfilePictureField, value) != true)) {
+                    this.ProfilePictureField = value;
+                    this.RaisePropertyChanged("ProfilePicture");
                 }
             }
         }
