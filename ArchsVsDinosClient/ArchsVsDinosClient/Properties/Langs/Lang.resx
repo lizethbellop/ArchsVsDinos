@@ -1005,4 +1005,25 @@
   <data name="Authentication_UserAlreadyLoggedIn" xml:space="preserve">
     <value>El usuario ya ha iniciado sesión</value>
   </data>
+  <data name="Match_DefeatedByArchs" xml:space="preserve">
+    <value>¡Han sido derrotados por los arqueólogos!</value>
+  </data>
+  <data name="Match_WhoIsTheWinner" xml:space="preserve">
+    <value>Ek ganador es: </value>
+  </data>
+  <data name="Match_DinosVictoryTitle" xml:space="preserve">
+    <value>¡LOS DINOS HAN GANADO!</value>
+  </data>
+  <data name="Match_ExitingIn" xml:space="preserve">
+    <value>Saliendo en:</value>
+  </data>
+  <data name="Statistics_LoadingStatistics" xml:space="preserve">
+    <value>Cargando estadísticas</value>
+  </data>
+  <data name="Match_ErrorTakingACard" xml:space="preserve">
+    <value>Error tomando la carta</value>
+  </data>
+  <data name="Match_ErrorLeavingGame" xml:space="preserve">
+    <value>Error saliendo del juego</value>
+  </data>
 </root>

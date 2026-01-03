@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,7 +44,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public event Action<int, ArmyType> PlayerDinosClearedByElement;
         public event Action DiscardPileUpdated;
         public event Action<ArmyType> ArchArmyCleared;
-        public event Action<string, string> GameEnded;
+        public event Action<string, string, GameEndedDTO> GameEnded;
         public event Action<int> PlayerLeftMatch;
 
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
@@ -108,7 +109,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             set { windArmyVisibility = value; OnPropertyChanged(nameof(WindArmyVisibility)); }
         }
 
-        public GameViewModel(IGameServiceClient gameServiceClient, string matchCode, string username, List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players, int myLobbyUserId = 0)
+        public GameViewModel(IGameServiceClient gameServiceClient, string matchCode, string username, List<LobbyPlayerDTO> players, int myLobbyUserId = 0)
         {
             if (gameServiceClient == null)
             {
@@ -117,7 +118,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             this.gameServiceClient = gameServiceClient;
             this.matchCode = matchCode;
             this.currentUsername = username;
-            this.allPlayers = players ?? new List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>();
+            this.allPlayers = players ?? new List<LobbyPlayerDTO>();
             this.forcedUserId = myLobbyUserId;
 
             TimerManager = new GameTimerManager();
@@ -180,11 +181,11 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
             try
             {
-                if (card.Category == ArchsVsDinosClient.Models.CardCategory.DinoHead)
+                if (card.Category == CardCategory.DinoHead)
                 {
                     await gameServiceClient.PlayDinoHeadAsync(matchCode, userId, card.IdCard);
                 }
-                else if (card.Category == ArchsVsDinosClient.Models.CardCategory.BodyPart)
+                else if (card.Category == CardCategory.BodyPart)
                 {
                     int headId = ActionManager.GetHeadIdFromCell(cellId);
 
@@ -250,7 +251,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Error: {ex.Message}");
-                MessageBox.Show($"Error al tomar carta: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{Lang.Match_ErrorTakingACard} {ex.Message}");
                 return false;
             }
         }
@@ -270,6 +271,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[END TURN MANUAL] Error: {ex.Message}");
                 MessageBox.Show($"{Lang.Match_EndTurnError}: {ex.Message}");
             }
         }
@@ -284,6 +286,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error leaving game: {ex.Message}");
+                MessageBox.Show($"{Lang.Match_ErrorLeavingGame}: {ex.Message}");
             }
         }
 
@@ -297,7 +300,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     foreach (var cardId in data.RecycledCardIds)
                     {
-                        if (!BoardManager.DiscardPile.Any(c => c.IdCard == cardId))
+                        if (!BoardManager.DiscardPile.Any(card => card.IdCard == cardId))
                         {
                             var card = CardRepositoryModel.GetById(cardId);
                             if (card != null)
@@ -320,19 +323,23 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             Application.Current.Dispatcher.Invoke(() =>
             {
                 string message = "";
-                string title = Lang.Match_GameOverTitle; 
+                string title = Lang.Match_GameOverTitle;
 
-                if (data.Reason.Contains("Insufficient players") || data.Reason.Contains("Someone left"))
+                if (data.Reason == "Aborted")
                 {
-                    message = Lang.Match_GameAbortedMessage; 
+                    message = Lang.Match_GameAbortedMessage;
+                }
+                else if (data.Reason == "ArchsVictory")
+                {
+                    message = Lang.Match_DefeatedByArchs; 
                 }
                 else
                 {
                     string winnerName = GetUsernameById(data.WinnerUserId);
-                    message = $"El ganador es {winnerName}";
+                    message = $"{Lang.Match_WhoIsTheWinner} {winnerName}";
                 }
 
-                GameEnded?.Invoke(title, message);
+                GameEnded?.Invoke(title, message, data);
             });
         }
 
@@ -356,7 +363,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                     var newCard = CardRepositoryModel.GetById(data.Card.IdCard);
 
-                    if (newCard != null && newCard.Category != ArchsVsDinosClient.Models.CardCategory.Arch)
+                    if (newCard != null && newCard.Category != CardCategory.Arch)
                     {
                         BoardManager.PlayerHand.Add(newCard);
                     }
@@ -582,7 +589,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         private string GetUsernameById(int userId)
         {
-            var player = allPlayers.FirstOrDefault(p => p.IdPlayer == userId);
+            var player = allPlayers.FirstOrDefault(playerSelected => playerSelected.IdPlayer == userId);
             if (player != null)
             {
                 return player.Nickname;
@@ -597,9 +604,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 return this.forcedUserId;
             }
 
-            var myPlayer = allPlayers.FirstOrDefault(p =>
-                p.Username == currentUsername ||
-                p.Nickname == currentUsername);
+            var myPlayer = allPlayers.FirstOrDefault(player =>
+                player.Username == currentUsername ||
+                player.Nickname == currentUsername);
 
             if (myPlayer != null && myPlayer.IdPlayer != 0)
             {
@@ -774,23 +781,23 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         {
                             if (dino.Head != null && GetElementFromCard(dino.Head) == data.ArmyType)
                             {
-                                if (dino.Head != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.Head.IdCard))
+                                if (dino.Head != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.Head.IdCard))
                                 {
                                     BoardManager.DiscardPile.Add(dino.Head);
                                 }
-                                if (dino.Chest != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.Chest.IdCard))
+                                if (dino.Chest != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.Chest.IdCard))
                                 {
                                     BoardManager.DiscardPile.Add(dino.Chest);
                                 }
-                                if (dino.LeftArm != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.LeftArm.IdCard))
+                                if (dino.LeftArm != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.LeftArm.IdCard))
                                 {
                                     BoardManager.DiscardPile.Add(dino.LeftArm);
                                 }
-                                if (dino.RightArm != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.RightArm.IdCard))
+                                if (dino.RightArm != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.RightArm.IdCard))
                                 {
                                     BoardManager.DiscardPile.Add(dino.RightArm);
                                 }
-                                if (dino.Legs != null && !BoardManager.DiscardPile.Any(c => c.IdCard == dino.Legs.IdCard))
+                                if (dino.Legs != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.Legs.IdCard))
                                 {
                                     BoardManager.DiscardPile.Add(dino.Legs);
                                 }
@@ -824,7 +831,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                 int myUserId = DetermineMyUserId();
 
-                var cardToRemove = BoardManager.DiscardPile.FirstOrDefault(c => c.IdCard == data.CardId);
+                var cardToRemove = BoardManager.DiscardPile.FirstOrDefault(cardSelected => cardSelected.IdCard == data.CardId);
                 if (cardToRemove != null)
                 {
                     BoardManager.DiscardPile.Remove(cardToRemove);
@@ -833,26 +840,26 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 var card = CardRepositoryModel.GetById(data.CardId);
                 if (card == null) return;
 
-                if (card.Category == ArchsVsDinosClient.Models.CardCategory.Arch)
+                if (card.Category == CardCategory.Arch)
                 {
                     switch (card.Element)
                     {
                         case ElementType.Sand:
-                            if (!BoardManager.SandArmy.Any(c => c.IdCard == card.IdCard))
+                            if (!BoardManager.SandArmy.Any(cardSelected => cardSelected.IdCard == card.IdCard))
                             {
                                 BoardManager.SandArmy.Add(card);
                             }
                             SandArmyVisibility = Visibility.Visible;
                             break;
                         case ElementType.Water:
-                            if (!BoardManager.WaterArmy.Any(c => c.IdCard == card.IdCard))
+                            if (!BoardManager.WaterArmy.Any(cardSelected => cardSelected.IdCard == card.IdCard))
                             {
                                 BoardManager.WaterArmy.Add(card);
                             }
                             WaterArmyVisibility = Visibility.Visible;
                             break;
                         case ElementType.Wind:
-                            if (!BoardManager.WindArmy.Any(c => c.IdCard == card.IdCard))
+                            if (!BoardManager.WindArmy.Any(cardSelected => cardSelected.IdCard == card.IdCard))
                             {
                                 BoardManager.WindArmy.Add(card);
                             }
@@ -904,7 +911,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         public void ShowPlayerDeck(int userId)
         {
-            var playerInfo = allPlayers.FirstOrDefault(p => p.IdPlayer == userId);
+            var playerInfo = allPlayers.FirstOrDefault(player => player.IdPlayer == userId);
             if (playerInfo == null)
             {
                 MessageBox.Show(Lang.Match_PlayerNotFoundDeck);

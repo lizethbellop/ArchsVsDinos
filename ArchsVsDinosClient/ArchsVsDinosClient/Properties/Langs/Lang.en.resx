@@ -1006,4 +1006,25 @@
   <data name="Authentication_UserAlreadyLoggedIn" xml:space="preserve">
     <value>The user already logged in</value>
   </data>
+  <data name="Match_DefeatedByArchs" xml:space="preserve">
+    <value>You have been defeated by the archs!</value>
+  </data>
+  <data name="Match_WhoIsTheWinner" xml:space="preserve">
+    <value>The winner is:</value>
+  </data>
+  <data name="Match_DinosVictoryTitle" xml:space="preserve">
+    <value>¡DINO'S VICTORY!</value>
+  </data>
+  <data name="Match_ExitingIn" xml:space="preserve">
+    <value>Exiting in:</value>
+  </data>
+  <data name="Statistics_LoadingStatistics" xml:space="preserve">
+    <value>Loading statistics</value>
+  </data>
+  <data name="Match_ErrorTakingACard" xml:space="preserve">
+    <value>Error taking card</value>
+  </data>
+  <data name="Match_ErrorLeavingGame" xml:space="preserve">
+    <value>Error while leaving game</value>
+  </data>
 </root>

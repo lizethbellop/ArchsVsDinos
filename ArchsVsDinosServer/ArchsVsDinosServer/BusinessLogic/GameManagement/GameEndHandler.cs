@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
+using Contracts.DTO.Game_DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +14,18 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         public string Reason { get; set; }
         public PlayerSession Winner { get; set; }
         public int WinnerPoints { get; set; }
+        public List<PlayerScoreDTO> FinalScores { get; set; }
     }
 
     public class GameEndHandler
     {
+
         private const int GameDurationMinutes = 20;
 
         public bool ShouldGameEnd(GameSession session)
         {
-            if (session == null)
-            {
-                return false;
-            }
-
-            if (IsDrawDeckEmpty(session))
-            {
-                return true;
-            }
-
-            if (HasTimeExpired(session))
-            {
-                return true;
-            }
-
-            return false;
+            if (session == null) return false;
+            return session.DrawDeck.Count == 0 || HasTimeExpired(session);
         }
 
         public GameEndResult EndGame(GameSession session)
@@ -46,37 +35,50 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return null;
             }
 
-            var result = new GameEndResult
-            {
-                GameEnded = true
-            };
+            var result = new GameEndResult { GameEnded = true };
 
-            if (IsDrawDeckEmpty(session))
+            var orderedPlayers = session.Players
+                .OrderByDescending(player => player.Points)
+                .ToList();
+
+            if (orderedPlayers.Count == 0)
             {
-                result.Reason = "cards_depleted";
+                result.Reason = "Aborted";
+                result.FinalScores = new List<PlayerScoreDTO>();
+                return result;
             }
-            else if (HasTimeExpired(session))
+
+            bool allZero = orderedPlayers.All(player => player.Points == 0);
+
+            if (allZero)
             {
-                result.Reason = "time_expired";
+                result.Reason = "ArchsVictory";
+                result.Winner = null;
+                result.WinnerPoints = 0;
             }
             else
             {
-                result.Reason = "unknown";
-            }
-
-            var winner = session.Players.OrderByDescending(p => p.Points).FirstOrDefault();
-            if (winner != null)
-            {
+                var winner = orderedPlayers.First();
+                result.Reason = "DinosVictory";
                 result.Winner = winner;
                 result.WinnerPoints = winner.Points;
             }
 
-            return result;
-        }
+            result.FinalScores = new List<PlayerScoreDTO>();
+            int currentPosition = 1;
 
-        private bool IsDrawDeckEmpty(GameSession session)
-        {
-            return session.DrawDeck.Count == 0;
+            foreach (var player in orderedPlayers)
+            {
+                result.FinalScores.Add(new PlayerScoreDTO
+                {
+                    UserId = player.UserId,
+                    Username = player.Nickname,
+                    Points = player.Points,
+                    Position = currentPosition++ 
+                });
+            }
+
+            return result;
         }
 
         private bool HasTimeExpired(GameSession session)
@@ -86,21 +88,8 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
                 return false;
             }
 
-            var elapsed = DateTime.UtcNow - session.StartTime.Value;
-            return elapsed.TotalMinutes >= GameDurationMinutes;
+            return (DateTime.UtcNow - session.StartTime.Value).TotalMinutes >= GameDurationMinutes;
         }
 
-        public TimeSpan GetRemainingTime(GameSession session)
-        {
-            if (!session.StartTime.HasValue)
-            {
-                return TimeSpan.FromMinutes(GameDurationMinutes);
-            }
-
-            var elapsed = DateTime.UtcNow - session.StartTime.Value;
-            var remaining = TimeSpan.FromMinutes(GameDurationMinutes) - elapsed;
-
-            return remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
-        }
     }
 }

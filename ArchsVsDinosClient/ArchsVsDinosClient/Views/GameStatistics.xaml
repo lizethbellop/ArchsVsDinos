@@ -33,23 +33,16 @@
                Foreground="#FF671414" 
                Margin="0,10,0,15"/>
 
-        <!-- Date -->
         <Label Grid.Row="1" 
                Content="{Binding MatchDateText}" 
                FontFamily="Tw Cen MT Condensed Extra Bold" 
                FontSize="18" HorizontalAlignment="Center"
                Margin="0,0,0,20"/>
 
-        <!-- Loading -->
         <Grid Grid.Row="2"
               Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Label Content="Cargando estadísticas..." 
-                   FontSize="20" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"/>
         </Grid>
 
-        <!-- ERROR -->
         <Grid Grid.Row="2"
               Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -71,7 +64,7 @@
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="10">
+                    <StackPanel Margin="10" VerticalAlignment="Bottom">
 
                         <Label Content="{Binding Position, StringFormat='{}{0}°'}"
                                FontFamily="Tw Cen MT Condensed Extra Bold"
@@ -80,30 +73,32 @@
                                FontWeight="Bold"
                                Foreground="{Binding Position, Converter={StaticResource PositionToColorConverter}}"/>
 
-                        <!-- Player name -->
-                        <Label Content="{Binding Username}" 
-                               FontFamily="Tw Cen MT Condensed Extra Bold" 
-                               FontSize="16" 
-                               HorizontalAlignment="Center" 
-                               Margin="0,5,0,10"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,10">
+                            <Label Content="{Binding Username}" 
+                                   FontFamily="Tw Cen MT Condensed Extra Bold" 
+                                   FontSize="16" 
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
 
-                        <!-- Photo profile -->
-                        <Border Width="140"
+                            <TextBlock Text="{Binding Icon}" 
+                                       FontSize="20" 
+                                       Margin="5,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Border Width="120"
                                 Height="{Binding Position, Converter={StaticResource PositionToHeightConverter}}"
-                                Background="White"
                                 BorderBrush="{Binding Position, Converter={StaticResource PositionToBorderConverter}}"
                                 BorderThickness="{Binding Position, Converter={StaticResource PositionToBorderThicknessConverter}}"
                                 CornerRadius="5" 
                                 Margin="0,0,0,10">
 
-                            <Label Content="{Binding Icon}" 
-                                   FontSize="60"
-                                   HorizontalAlignment="Center" 
-                                   VerticalAlignment="Center"/>
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding ProfileImage}" Stretch="UniformToFill"/>
+                            </Border.Background>
                         </Border>
 
-                        <!-- Stadistics -->
-                        <Border Background="White"
+                        <Border
                                 BorderBrush="{Binding Position, Converter={StaticResource PositionToBorderConverter}}"
                                 BorderThickness="{Binding Position, Converter={StaticResource PositionToStatsBorderThicknessConverter}}"
                                 Padding="10" 
@@ -115,25 +110,13 @@
                                        FontSize="12" 
                                        HorizontalAlignment="Center"/>
 
-                                <Label Content="{Binding EnemiesEliminated}" 
+                                <Label Content="{Binding Points}" 
                                        FontFamily="Tw Cen MT Condensed Extra Bold" 
                                        FontSize="16" 
                                        HorizontalAlignment="Center" 
                                        FontWeight="Bold"/>
 
-                                <Label Content="{x:Static language:Lang.Statistics_SupremeBoss}"
-                                       FontFamily="Trebuchet MS" 
-                                       FontSize="12" 
-                                       HorizontalAlignment="Center"
-                                       Margin="0,5,0,0"/>
-
-                                <Label Content="{Binding BossesDefeated}" 
-                                       FontFamily="Tw Cen MT Condensed Extra Bold" 
-                                       FontSize="16" 
-                                       HorizontalAlignment="Center" 
-                                       FontWeight="Bold"/>
                             </StackPanel>
-
                         </Border>
 
                     </StackPanel>
@@ -141,44 +124,38 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <!-- Exit -->
-        <Button Grid.Row="3" 
-                Content="{x:Static language:Lang.GlobalExitText}"
-                Command="{Binding ExitCommand}"
-                Height="60" Width="200" 
-                Foreground="White" 
-                FontWeight="Bold"
-                FontFamily="Tw Cen MT Condensed Extra Bold" 
-                FontSize="20"
-                HorizontalAlignment="Right" 
-                Margin="0,5,0,0" 
-                BorderBrush="{x:Null}">
+        <Grid Grid.Row="3">
 
-            <Button.Background>
-                <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
-            </Button.Background>
+            <Label Content="{Binding TimerText}" FontSize="16" FontFamily="Trebuchet MS"
+               Foreground="#FF671414" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5,0,0" FontStyle="Italic"/>
 
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="border" 
-                            Background="{TemplateBinding Background}" 
-                            CornerRadius="5" BorderThickness="0">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
+            <Button Click="Click_BtnExit"  Content="{x:Static language:Lang.GlobalExitText}" Height="60" Width="200" 
+                    Foreground="White" FontWeight="Bold" FontFamily="Tw Cen MT Condensed Extra Bold" 
+                    FontSize="20" HorizontalAlignment="Right" Margin="0,5,0,0"  BorderBrush="{x:Null}">
 
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Opacity" Value="0.8"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="border" Property="Opacity" Value="0.6"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
+                <Button.Background>
+                    <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
+                </Button.Background>
 
-        </Button>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+        </Grid>
 
     </Grid>
 </Window>
-

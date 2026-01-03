@@ -893,6 +893,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             if (settings.RequestLeaveGame)
             {
+                if (gameViewModel != null)
+                {
+                    gameViewModel.GameEnded -= OnGameEndedReceived;
+                }
+
                 if (chatViewModel != null)
                 {
                     try 
@@ -1306,14 +1311,47 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
-        private void OnGameEndedReceived(string title, string message)
+        private void OnGameEndedReceived(string title, string message, GameEndedDTO gameData)
         {
             if (errorNotificationTimer != null)
             {
                 errorNotificationTimer.Stop();
             }
-            MessageBox.Show(message, title);
-            NavigateToMainWindow();
+            Gr_ErrorNotification.Visibility = Visibility.Collapsed;
+            Gr_GameEndedOverlay.Visibility = Visibility.Visible;
+
+            var endAnimationTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
+
+            endAnimationTimer.Tick += (sender, args) =>
+            {
+                endAnimationTimer.Stop(); 
+                ProcessPostGameNavigation(gameData);
+            };
+
+            endAnimationTimer.Start();
+        }
+
+        private void ProcessPostGameNavigation(GameEndedDTO gameData)
+        {
+            if (gameViewModel != null) gameViewModel.Dispose();
+            if (chatViewModel != null) try { chatViewModel.Dispose(); } catch { }
+
+            Gr_GameEndedOverlay.Visibility = Visibility.Collapsed;
+
+            if (gameData.Reason == "Aborted")
+            {
+                NavigateToMainWindow();
+                MessageBox.Show(Lang.Match_GameAbortedMessage, Lang.Match_GameOverTitle);
+            }
+            else
+            {
+                var statisticsWindow = new GameStatistics(gameData, this.playersInMatch);
+                statisticsWindow.Show();
+                this.Close();
+            }
         }
 
         private void EnablePlayerHandDragging()

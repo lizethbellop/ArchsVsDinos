@@ -87,7 +87,6 @@
     <Compile Include="Game\GameDrawCardTest.cs" />
     <Compile Include="Game\GameEndGameTest.cs" />
     <Compile Include="Game\GameEndTurnTest.cs" />
-    <Compile Include="Game\GameExchangeCardTest.cs" />
     <Compile Include="Game\GameInitializeMatchTest.cs" />
     <Compile Include="Game\GameLogicAttachBodyPartTest.cs" />
     <Compile Include="Game\GamePlayDinoHeadTest.cs" />

@@ -61,7 +61,7 @@
           <Property Name="idGeneralMatch" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="date" Type="datetime" Nullable="false" />
           <Property Name="gameTime" Type="time" Precision="7" Nullable="false" />
-          <Property Name="matchCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="matchCode" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="MatchParticipants">
           <Key>
@@ -75,9 +75,9 @@
           <Property Name="isDefeated" Type="bit" Nullable="false" />
           <Property Name="archaeologistsEliminated" Type="int" Nullable="false" />
           <Property Name="supremeBossesEliminated" Type="int" Nullable="false" />
-          <Property Name="wasExpelled" Type="bit" Nullable="false" />
           <Property Name="expulsionReason" Type="nvarchar" MaxLength="200" />
           <Property Name="expulsionDate" Type="datetime" />
+          <Property Name="wasExpelled" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Music">
           <Key>
@@ -100,7 +100,7 @@
           <Property Name="totalPoints" Type="int" Nullable="false" />
           <Property Name="tiktok" Type="varchar" MaxLength="150" />
           <Property Name="profilePicture" Type="varchar" MaxLength="255" />
-          <Property Name="totalMatches" Type="int" Nullable="false" />
+          <Property Name="totalMatches" Type="int" />
         </EntityType>
         <EntityType Name="Strike">
           <Key>
@@ -131,7 +131,7 @@
           <Property Name="nickname" Type="varchar" MaxLength="45" Nullable="false" />
           <Property Name="idConfiguration" Type="int" Nullable="false" />
           <Property Name="idPlayer" Type="int" Nullable="false" />
-          <Property Name="isBanned" Type="bit" Nullable="false" />
+          <Property Name="isBanned" Type="bit" />
         </EntityType>
         <EntityType Name="UserHasStrike">
           <Key>
@@ -345,7 +345,7 @@
 					<Property Name="name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
 					<Property Name="power" Type="Int32" />
 					<Property Name="imagePath" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="idCardGlobal" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="idCardGlobal" Type="String" Nullable="false" />
 				</EntityType>
 				<EntityType Name="CardCharacter">
 					<Key>
@@ -357,7 +357,7 @@
 					<Property Name="armyType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
 					<Property Name="power" Type="Int32" />
 					<Property Name="imagePath" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="idCardGlobal" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="idCardGlobal" Type="String" Nullable="false" />
 				</EntityType>
 				<EntityType Name="Configuration">
 					<Key>
@@ -399,7 +399,7 @@
 					<Property Name="date" Type="DateTime" Nullable="false" Precision="3" />
 					<Property Name="gameTime" Type="Time" Nullable="false" Precision="7" />
 					<NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idGen__59FA5E80" FromRole="GeneralMatch" ToRole="MatchParticipants" />
-          <Property Name="matchCode" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="matchCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
 				</EntityType>
 				<EntityType Name="MatchParticipants">
 					<Key>
@@ -415,9 +415,9 @@
 					<NavigationProperty Name="Player" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="MatchParticipants" ToRole="Player" />
           <Property Name="archaeologistsEliminated" Type="Int32" Nullable="false" />
           <Property Name="supremeBossesEliminated" Type="Int32" Nullable="false" />
-          <Property Name="wasExpelled" Type="Boolean" Nullable="false" />
-          <Property Name="expulsionReason" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="expulsionDate" Type="DateTime" Precision="3" />
+          <Property Name="wasExpelled" Type="Boolean" Nullable="false" DefaultValue="false" />
+          <Property Name="expulsionReason" Type="String" Nullable="true" MaxLength="200" Unicode="true" FixedLength="false" />
+          <Property Name="expulsionDate" Type="DateTime" Nullable="true" Precision="3" />
 				</EntityType>
 				<EntityType Name="Music">
 					<Key>
@@ -442,7 +442,7 @@
 					<Property Name="profilePicture" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
 					<NavigationProperty Name="MatchParticipants" Relationship="Self.FK__MatchPart__idPla__5AEE82B9" FromRole="Player" ToRole="MatchParticipants" />
 					<NavigationProperty Name="UserAccount" Relationship="Self.FK__UserAccou__idPla__44FF419A" FromRole="Player" ToRole="UserAccount" />
-          <Property Name="totalMatches" Type="Int32" Nullable="false" />
+          <Property Name="totalMatches" Type="Int32" />
 				</EntityType>
 				<EntityType Name="Strike">
 					<Key>
@@ -476,7 +476,7 @@
 					<Property Name="nickname" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
 					<Property Name="idConfiguration" Type="Int32" Nullable="false" />
 					<Property Name="idPlayer" Type="Int32" Nullable="false" />
-					<Property Name="isBanned" Type="Boolean" Nullable="false" />
+					<Property Name="isBanned" Type="Boolean" />
 					<NavigationProperty Name="Configuration" Relationship="Self.FK__UserAccou__idCon__440B1D61" FromRole="UserAccount" ToRole="Configuration" />
 					<NavigationProperty Name="FriendRequest" Relationship="Self.FK__FriendReq__idRec__4CA06362" FromRole="UserAccount" ToRole="FriendRequest" />
 					<NavigationProperty Name="FriendRequest1" Relationship="Self.FK__FriendReq__idUse__4BAC3F29" FromRole="UserAccount" ToRole="FriendRequest" />
@@ -696,7 +696,7 @@
 					<EntitySetMapping Name="CardBody">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.CardBody">
 							<MappingFragment StoreEntitySet="CardBody">
-								<ScalarProperty Name="idCardGlobal" ColumnName="idCardGlobal" />
+                <ScalarProperty Name="idCardGlobal" ColumnName="idCardGlobal" />
                 <ScalarProperty Name="idCardBody" ColumnName="idCardBody" />
 								<ScalarProperty Name="name" ColumnName="name" />
 								<ScalarProperty Name="power" ColumnName="power" />
@@ -707,7 +707,7 @@
 					<EntitySetMapping Name="CardCharacter">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.CardCharacter">
 							<MappingFragment StoreEntitySet="CardCharacter">
-								<ScalarProperty Name="idCardGlobal" ColumnName="idCardGlobal" />
+                <ScalarProperty Name="idCardGlobal" ColumnName="idCardGlobal" />
                 <ScalarProperty Name="idCardCharacter" ColumnName="idCardCharacter" />
 								<ScalarProperty Name="name" ColumnName="name" />
 								<ScalarProperty Name="type" ColumnName="type" />
@@ -760,8 +760,8 @@
 					<EntitySetMapping Name="MatchParticipants">
 						<EntityTypeMapping TypeName="ArchsVsDinosModel.MatchParticipants">
 							<MappingFragment StoreEntitySet="MatchParticipants">
-								<ScalarProperty Name="expulsionDate" ColumnName="expulsionDate" />
                 <ScalarProperty Name="expulsionReason" ColumnName="expulsionReason" />
+                <ScalarProperty Name="expulsionDate" ColumnName="expulsionDate" />
                 <ScalarProperty Name="wasExpelled" ColumnName="wasExpelled" />
                 <ScalarProperty Name="supremeBossesEliminated" ColumnName="supremeBossesEliminated" />
                 <ScalarProperty Name="archaeologistsEliminated" ColumnName="archaeologistsEliminated" />

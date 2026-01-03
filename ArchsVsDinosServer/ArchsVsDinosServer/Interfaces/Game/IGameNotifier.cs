@@ -23,7 +23,6 @@ namespace ArchsVsDinosServer.Interfaces.Game
         void NotifyGameEnded(GameEndedDTO data);
         void NotifyPlayerExpelled(PlayerExpelledDTO data);
         void NotifyCardTakenFromDiscard(CardTakenFromDiscardDTO data);
-        void NotifyCardExchanged(CardExchangedDTO data);
     }
 
 }

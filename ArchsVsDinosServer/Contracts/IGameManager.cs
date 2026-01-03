@@ -31,9 +31,6 @@ namespace Contracts
         void AttachBodyPartToDino(string matchCode, int userId, AttachBodyPartDTO attachmentData);
 
         [OperationContract]
-        void SwapCardWithPlayer(string matchCode, int initiatorUserId, ExchangeCardDTO request);
-
-        [OperationContract]
         void TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
 
         [OperationContract]

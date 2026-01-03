@@ -74,83 +74,6 @@ namespace ArchsVsDinosClient.GameService {
         }
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ExchangeCardDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
-    [System.SerializableAttribute()]
-    public partial class ExchangeCardDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int OfferedCardIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int RequestedCardIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int TargetUserIdField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int OfferedCardId {
-            get {
-                return this.OfferedCardIdField;
-            }
-            set {
-                if ((this.OfferedCardIdField.Equals(value) != true)) {
-                    this.OfferedCardIdField = value;
-                    this.RaisePropertyChanged("OfferedCardId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int RequestedCardId {
-            get {
-                return this.RequestedCardIdField;
-            }
-            set {
-                if ((this.RequestedCardIdField.Equals(value) != true)) {
-                    this.RequestedCardIdField = value;
-                    this.RaisePropertyChanged("RequestedCardId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int TargetUserId {
-            get {
-                return this.TargetUserIdField;
-            }
-            set {
-                if ((this.TargetUserIdField.Equals(value) != true)) {
-                    this.TargetUserIdField = value;
-                    this.RaisePropertyChanged("TargetUserId");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="ArmyType", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums")]
     public enum ArmyType : int {
@@ -2169,115 +2092,6 @@ namespace ArchsVsDinosClient.GameService {
         }
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CardExchangedDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
-    [System.SerializableAttribute()]
-    public partial class CardExchangedDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.GameService.CardDTO CardFromPlayerAField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.GameService.CardDTO CardFromPlayerBField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string MatchCodeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int PlayerAUserIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int PlayerBUserIdField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.GameService.CardDTO CardFromPlayerA {
-            get {
-                return this.CardFromPlayerAField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.CardFromPlayerAField, value) != true)) {
-                    this.CardFromPlayerAField = value;
-                    this.RaisePropertyChanged("CardFromPlayerA");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.GameService.CardDTO CardFromPlayerB {
-            get {
-                return this.CardFromPlayerBField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.CardFromPlayerBField, value) != true)) {
-                    this.CardFromPlayerBField = value;
-                    this.RaisePropertyChanged("CardFromPlayerB");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string MatchCode {
-            get {
-                return this.MatchCodeField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.MatchCodeField, value) != true)) {
-                    this.MatchCodeField = value;
-                    this.RaisePropertyChanged("MatchCode");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int PlayerAUserId {
-            get {
-                return this.PlayerAUserIdField;
-            }
-            set {
-                if ((this.PlayerAUserIdField.Equals(value) != true)) {
-                    this.PlayerAUserIdField = value;
-                    this.RaisePropertyChanged("PlayerAUserId");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int PlayerBUserId {
-            get {
-                return this.PlayerBUserIdField;
-            }
-            set {
-                if ((this.PlayerBUserIdField.Equals(value) != true)) {
-                    this.PlayerBUserIdField = value;
-                    this.RaisePropertyChanged("PlayerBUserId");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="GameService.IGameManager", CallbackContract=typeof(ArchsVsDinosClient.GameService.IGameManagerCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface IGameManager {
@@ -2311,12 +2125,6 @@ namespace ArchsVsDinosClient.GameService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/AttachBodyPartToDino", ReplyAction="http://tempuri.org/IGameManager/AttachBodyPartToDinoResponse")]
         System.Threading.Tasks.Task AttachBodyPartToDinoAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/SwapCardWithPlayer", ReplyAction="http://tempuri.org/IGameManager/SwapCardWithPlayerResponse")]
-        void SwapCardWithPlayer(string matchCode, int initiatorUserId, ArchsVsDinosClient.GameService.ExchangeCardDTO request);
-        
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/SwapCardWithPlayer", ReplyAction="http://tempuri.org/IGameManager/SwapCardWithPlayerResponse")]
-        System.Threading.Tasks.Task SwapCardWithPlayerAsync(string matchCode, int initiatorUserId, ArchsVsDinosClient.GameService.ExchangeCardDTO request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/TakeCardFromDiscardPile", ReplyAction="http://tempuri.org/IGameManager/TakeCardFromDiscardPileResponse")]
         void TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
@@ -2375,9 +2183,6 @@ namespace ArchsVsDinosClient.GameService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnCardTakenFromDiscard")]
         void OnCardTakenFromDiscard(ArchsVsDinosClient.GameService.CardTakenFromDiscardDTO data);
-        
-        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IGameManager/OnCardExchanged")]
-        void OnCardExchanged(ArchsVsDinosClient.GameService.CardExchangedDTO dto);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -2446,14 +2251,6 @@ namespace ArchsVsDinosClient.GameService {
         
         public System.Threading.Tasks.Task AttachBodyPartToDinoAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData) {
             return base.Channel.AttachBodyPartToDinoAsync(matchCode, userId, attachmentData);
-        }
-        
-        public void SwapCardWithPlayer(string matchCode, int initiatorUserId, ArchsVsDinosClient.GameService.ExchangeCardDTO request) {
-            base.Channel.SwapCardWithPlayer(matchCode, initiatorUserId, request);
-        }
-        
-        public System.Threading.Tasks.Task SwapCardWithPlayerAsync(string matchCode, int initiatorUserId, ArchsVsDinosClient.GameService.ExchangeCardDTO request) {
-            return base.Channel.SwapCardWithPlayerAsync(matchCode, initiatorUserId, request);
         }
         
         public void TakeCardFromDiscardPile(string matchCode, int userId, int cardId) {

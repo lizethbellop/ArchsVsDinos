@@ -178,7 +178,6 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        // ✅ NUEVO: Manejar cierre de lobby/game
         private void OnLobbyClosed(string reason)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -186,7 +185,6 @@ namespace ArchsVsDinosClient.ViewModels
                 AddSystemMessage($"⚠️ {reason}");
                 IsConnected = false;
 
-                // Notificar cierre
                 Task.Delay(2000).ContinueWith(_ =>
                 {
                     Application.Current.Dispatcher.Invoke(() =>

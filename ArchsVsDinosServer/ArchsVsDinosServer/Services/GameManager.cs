@@ -154,13 +154,6 @@ namespace ArchsVsDinosServer.Services
             });
         }
 
-        public void SwapCardWithPlayer(string matchCode, int initiatorUserId, ExchangeCardDTO request)
-        {
-            ExecuteSafe(() =>
-            {
-                gameLogic.ExchangeCard(matchCode, initiatorUserId, request);
-            });
-        }
         private void ExecuteSafe(Action action)
         {
             try

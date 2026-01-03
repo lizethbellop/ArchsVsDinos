@@ -33,9 +33,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
         public void NotifyCardDrawn(CardDrawnDTO data) => NotifyAll(cb => cb.OnCardDrawn(data));
 
-        public void NotifyCardExchanged(CardExchangedDTO data)=> NotifyAll(cb => cb.OnCardExchanged(data));
-
-
         public void NotifyDinoHeadPlayed(DinoPlayedDTO data) => NotifyAll(cb => cb.OnDinoHeadPlayed(data));
 
         public void NotifyGameEnded(GameEndedDTO data) => NotifyAll(cb => cb.OnGameEnded(data));

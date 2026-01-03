@@ -195,6 +195,7 @@
     <Compile Include="ViewModels\GameViewsModels\GameActionManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameBoardManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameSeeDeckViewModel.cs" />
+    <Compile Include="ViewModels\GameViewsModels\GameStatisticsViewModel.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameTimerManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameViewModel.cs" />
     <Compile Include="ViewModels\GameViewsModels\MatchProvokeViewModel.cs" />
@@ -1036,6 +1037,7 @@
     <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_1.png" />
     <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_2.png" />
     <Resource Include="Resources\Images\trashBack.png" />
+    <Resource Include="Resources\Images\stopEndMatch.png" />
     <Content Include="Resources\Music\MusicAttack.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

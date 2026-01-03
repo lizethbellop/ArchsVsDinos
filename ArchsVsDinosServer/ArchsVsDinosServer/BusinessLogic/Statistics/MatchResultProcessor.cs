@@ -30,78 +30,86 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                 {
                     try
                     {
-                        var match = context.GeneralMatch.FirstOrDefault(m => m.matchCode == matchResult.MatchId);
-
-                        if (match == null)
+                        var newMatch = new GeneralMatch
                         {
-                            logger.LogInfo($"ProcessMatchResults: Match {matchResult.MatchId} not found in database");
-                            return false;
-                        }
+                            matchCode = matchResult.MatchId,
+                            date = matchResult.MatchDate,
+                            gameTime = DateTime.Now.TimeOfDay
+                        };
 
-                        match.date = matchResult.MatchDate;
+                        context.GeneralMatch.Add(newMatch);
+
+                        context.SaveChanges();
 
                         foreach (var playerResult in matchResult.PlayerResults)
                         {
-                            var participant = context.MatchParticipants
-                                .FirstOrDefault(mp => mp.idGeneralMatch == match.idGeneralMatch &&
-                                                     mp.idPlayer == playerResult.UserId);
+                            if (playerResult.UserId <= 0) continue;
 
-                            if (participant != null)
+                            var participant = new MatchParticipants
                             {
-                                participant.points = playerResult.Points;
-                                participant.isWinner = playerResult.IsWinner;
+                                idGeneralMatch = newMatch.idGeneralMatch,
+                                idPlayer = playerResult.UserId,
+                                points = playerResult.Points,
+                                isWinner = playerResult.IsWinner,
+                                isDefeated = !playerResult.IsWinner,
+                                archaeologistsEliminated = playerResult.ArchaeologistsEliminated,
+                                supremeBossesEliminated = playerResult.SupremeBossesEliminated
+                            };
+                            context.MatchParticipants.Add(participant);
 
-                                participant.archaeologistsEliminated = playerResult.ArchaeologistsEliminated;
-                                participant.supremeBossesEliminated = playerResult.SupremeBossesEliminated;
-                            }
-                            else
+                            var dbPlayer = context.Player.FirstOrDefault(p => p.idPlayer == playerResult.UserId);
+
+                            if (dbPlayer != null)
                             {
-                                logger.LogWarning($"ProcessMatchResults: Participant not found for user {playerResult.UserId} in match {matchResult.MatchId}");
+                                dbPlayer.totalMatches++;
+                                dbPlayer.totalPoints += playerResult.Points;
+
+                                if (playerResult.IsWinner)
+                                {
+                                    dbPlayer.totalWins++;
+                                }
+                                else
+                                {
+                                    dbPlayer.totalLosses++;
+                                }
                             }
                         }
-
-                        UpdatePlayerStatistics(context, matchResult);
 
                         context.SaveChanges();
                         transaction.Commit();
 
-                        logger.LogInfo($"ProcessMatchResults: Successfully processed match {matchResult.MatchId}");
+                        logger.LogInfo($"ProcessMatchResults: Successfully saved match {matchResult.MatchId}");
                         return true;
                     }
                     catch (InvalidOperationException ex)
                     {
                         transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: Invalid operation in match {matchResult.MatchId} - {ex.Message}", ex);
+                        logger.LogError($"ProcessMatchResults: Invalid operation - {ex.Message}", ex);
                         return false;
                     }
                     catch (EntityException ex)
                     {
                         transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: Entity Framework error in match {matchResult.MatchId} - {ex.Message}", ex);
+                        logger.LogError($"ProcessMatchResults: Entity Framework error - {ex.Message}", ex);
                         return false;
                     }
                     catch (SqlException ex)
                     {
                         transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: SQL error in match {matchResult.MatchId} - {ex.Message}", ex);
-                        return false;
-                    }
-                    catch (ArgumentNullException ex)
-                    {
-                        transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: Argument null in match {matchResult.MatchId} - {ex.Message}", ex);
+                        logger.LogError($"ProcessMatchResults: SQL error - {ex.Message}", ex);
                         return false;
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        logger.LogError($"ProcessMatchResults: Transaction failed for match {matchResult.MatchId} - {ex.Message}", ex);
+                        logger.LogError($"ProcessMatchResults: Unexpected error - {ex.Message}", ex);
                         return false;
                     }
                 }
             }
         }
 
+        
         private void UpdatePlayerStatistics(IDbContext context, MatchResultDTO matchResult)
         {
             foreach (var playerResult in matchResult.PlayerResults)

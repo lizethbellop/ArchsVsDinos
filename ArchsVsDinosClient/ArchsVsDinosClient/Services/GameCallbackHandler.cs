@@ -17,7 +17,6 @@ namespace ArchsVsDinosClient.Services
         public event Action<BattleResultDTO> OnBattleResolvedEvent;
         public event Action<GameEndedDTO> OnGameEndedEvent;
         public event Action<PlayerExpelledDTO> OnPlayerExpelledEvent;
-        public event Action<CardExchangedDTO> OnCardExchangedEvent;
         public event Action<CardTakenFromDiscardDTO> OnCardTakenFromDiscardEvent;
 
         public void OnGameInitialized(GameInitializedDTO data)
@@ -73,11 +72,6 @@ namespace ArchsVsDinosClient.Services
         public void OnPlayerExpelled(PlayerExpelledDTO dto)
         {
             OnPlayerExpelledEvent?.Invoke(dto);
-        }
-
-        public void OnCardExchanged(CardExchangedDTO dto)
-        {
-            OnCardExchangedEvent?.Invoke(dto);
         }
 
         public void OnCardTakenFromDiscard(CardTakenFromDiscardDTO data)

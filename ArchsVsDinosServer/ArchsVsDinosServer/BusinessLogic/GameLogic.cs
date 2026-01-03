@@ -138,6 +138,14 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 var dto = CreateCardDrawnDTO(gameSession, playerSession, drawnCard);
                 gameNotifier.NotifyCardDrawn(dto);
+
+                if (gameSession.DrawDeck.Count == 0)
+                {
+                    loggerHelper.LogInfo($"[GAME OVER] Deck is empty in match {matchCode}. Calculating results...");
+
+                    EndGame(matchCode, GameEndType.Finished, "DeckEmpty");
+                }
+
                 return drawnCard;
             }
         }
@@ -174,55 +182,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return true;
             }
         }
-
-        public bool ExchangeCard(string matchCode, int userId, ExchangeCardDTO exchangeData)
-        {
-            var gameSession = GetActiveSession(matchCode);
-            var playerA = GetPlayer(gameSession, userId);
-            var playerB = GetPlayer(gameSession, exchangeData.TargetUserId);
-
-            if (playerA == null || playerB == null)
-                return false;
-
-            lock (gameSession.SyncRoot)
-            {
-                if (!gameSession.ConsumeMoves(1))
-                    return false;
-
-                var cardFromA = playerA.GetCardById(exchangeData.OfferedCardId);
-                var cardFromB = playerB.GetCardById(exchangeData.RequestedCardId);
-
-                if (cardFromA == null || cardFromB == null)
-                    return false;
-
-                if (cardFromA.PartType != cardFromB.PartType)
-                    return false;
-
-                var exchangeContext = new CardExchangeContext
-                {
-                    MatchCode = matchCode,
-                    PlayerA = playerA,
-                    PlayerB = playerB,
-                    CardFromA = cardFromA,
-                    CardFromB = cardFromB
-                };
-
-                ExecuteCardExchange(exchangeContext);
-                return true;
-            }
-        }
-
-        private void ExecuteCardExchange(CardExchangeContext context)
-        {
-            context.PlayerA.RemoveCard(context.CardFromA);
-            context.PlayerB.RemoveCard(context.CardFromB);
-
-            context.PlayerA.AddCard(context.CardFromB);
-            context.PlayerB.AddCard(context.CardFromA);
-
-            NotifyCardExchange(context);
-        }
-
         public Task<bool> InitializeMatch(string matchCode, List<GamePlayerInitDTO> initialPlayers)
         {
             if (!IsValidInitialization(matchCode, initialPlayers))
@@ -664,11 +623,12 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public GameEndResult EndGame(string matchCode, GameEndType gameType, string reason)
         {
-            if (string.IsNullOrWhiteSpace(matchCode))
-                throw new ArgumentException(nameof(matchCode));
+            var session = gameCoreContext.Sessions.GetSession(matchCode);
 
-            var session = gameCoreContext.Sessions.GetSession(matchCode)
-                ?? throw new InvalidOperationException($"Session {matchCode} not found.");
+            if (session == null)
+            { 
+                throw new InvalidOperationException("Session not found"); 
+            }
 
             lock (session.SyncRoot)
             {
@@ -677,38 +637,74 @@ namespace ArchsVsDinosServer.BusinessLogic
                 if (gameType == GameEndType.Finished)
                 {
                     if (!gameEndHandler.ShouldGameEnd(session))
-                        throw new InvalidOperationException("The game cannot end yet.");
+                        throw new InvalidOperationException("Game cannot end yet");
 
-                    result = gameEndHandler.EndGame(session)
-                        ?? throw new InvalidOperationException("Could not calculate the result.");
+                    result = gameEndHandler.EndGame(session);
 
-                    TrySaveMatchStatistics(session, result);
+                    try
+                    {
+                        var statsDto = new MatchResultDTO
+                        {
+                            MatchId = session.MatchCode,
+                            MatchDate = DateTime.UtcNow,
+                            WinnerUserId = result.Winner?.UserId ?? 0,
+                            PlayerResults = new List<PlayerMatchResultDTO>()
+                        };
+
+                        foreach (var player in result.FinalScores)
+                        {
+                            if (player.UserId > 0) 
+                            {
+                                statsDto.PlayerResults.Add(new PlayerMatchResultDTO
+                                {
+                                    UserId = player.UserId,
+                                    Points = player.Points,
+                                    IsWinner = (result.Winner != null && result.Winner.UserId == player.UserId),
+                                    ArchaeologistsEliminated = player.Points,
+                                    SupremeBossesEliminated = 0,
+                                    Position = player.Position
+                                });
+                            }
+                        }
+
+                        if (statsDto.PlayerResults.Count > 0)
+                        {
+                            statisticsManager.SaveMatchStatistics(statsDto);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        loggerHelper.LogError($"Failed to save stats for {matchCode}", ex);
+                    }
                 }
                 else
                 {
                     result = new GameEndResult
                     {
+                        Reason = "Aborted",
                         Winner = null,
                         WinnerPoints = 0,
-                        Reason = reason
+                        FinalScores = new List<PlayerScoreDTO>() 
                     };
+
+                    loggerHelper.LogInfo($"Match {matchCode} aborted. Clearing session.");
                 }
 
                 session.MarkAsFinished(gameType);
-                gameCoreContext.Sessions.RemoveSession(matchCode);
 
-                gameNotifier.NotifyGameEnded(new GameEndedDTO
+                gameCoreContext.Sessions.RemoveSession(matchCode);
+                gameNotifier.NotifyGameEnded(new Contracts.DTO.Game_DTO.GameEndedDTO
                 {
                     MatchCode = matchCode,
-                    WinnerUserId = result.Winner?.UserId ?? 0,
-                    Reason = reason,
-                    WinnerPoints = result.WinnerPoints
+                    WinnerUserId = 0,
+                    WinnerPoints = 0,
+                    Reason = result.Reason, 
+                    FinalScores = result.FinalScores
                 });
 
                 return result;
             }
         }
-
         private void SaveMatchStatistics(GameSession session, GameEndResult result)
         {
             if (session == null)
@@ -985,20 +981,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             if (bossCard != null)
                 points += 3;
             return points;
-        }
-
-        private void NotifyCardExchange(CardExchangeContext context)
-        {
-            var dto = new CardExchangedDTO
-            {
-                MatchCode = context.MatchCode,
-                PlayerAUserId = context.PlayerA.UserId,
-                PlayerBUserId = context.PlayerB.UserId,
-                CardFromPlayerA = CreateCardDTO(context.CardFromA),
-                CardFromPlayerB = CreateCardDTO(context.CardFromB)
-            };
-
-            gameNotifier.NotifyCardExchanged(dto);
         }
 
         private CardDTO CreateCardDTO(CardInGame card)

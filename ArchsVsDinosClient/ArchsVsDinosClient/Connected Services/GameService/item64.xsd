@@ -11,14 +11,6 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="AttachBodyPartDTO" nillable="true" type="tns:AttachBodyPartDTO" />
-  <xs:complexType name="ExchangeCardDTO">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="OfferedCardId" type="xs:int" />
-      <xs:element minOccurs="0" name="RequestedCardId" type="xs:int" />
-      <xs:element minOccurs="0" name="TargetUserId" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ExchangeCardDTO" nillable="true" type="tns:ExchangeCardDTO" />
   <xs:complexType name="GameInitializedDTO">
     <xs:sequence>
       <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
@@ -197,14 +189,4 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CardTakenFromDiscardDTO" nillable="true" type="tns:CardTakenFromDiscardDTO" />
-  <xs:complexType name="CardExchangedDTO">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="CardFromPlayerA" nillable="true" type="tns:CardDTO" />
-      <xs:element minOccurs="0" name="CardFromPlayerB" nillable="true" type="tns:CardDTO" />
-      <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="PlayerAUserId" type="xs:int" />
-      <xs:element minOccurs="0" name="PlayerBUserId" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="CardExchangedDTO" nillable="true" type="tns:CardExchangedDTO" />
 </xs:schema>

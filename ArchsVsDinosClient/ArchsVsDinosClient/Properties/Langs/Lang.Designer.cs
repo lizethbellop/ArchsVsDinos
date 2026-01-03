@@ -1402,6 +1402,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡Han sido derrotados por los arqueólogos!.
+        /// </summary>
+        public static string Match_DefeatedByArchs {
+            get {
+                return ResourceManager.GetString("Match_DefeatedByArchs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Este dinosaurio ya tiene torso.
         /// </summary>
         public static string Match_DinosaurAlreadyHasChest {
@@ -1438,6 +1447,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡LOS DINOS HAN GANADO!.
+        /// </summary>
+        public static string Match_DinosVictoryTitle {
+            get {
+                return ResourceManager.GetString("Match_DinosVictoryTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No hay cartas en la pila de descarte.
         /// </summary>
         public static string Match_DiscardPileEmpty {
@@ -1465,11 +1483,38 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error saliendo del juego.
+        /// </summary>
+        public static string Match_ErrorLeavingGame {
+            get {
+                return ResourceManager.GetString("Match_ErrorLeavingGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Error provocando arqueólgos, intenta de nuevo.
         /// </summary>
         public static string Match_ErrorProvokingArchs {
             get {
                 return ResourceManager.GetString("Match_ErrorProvokingArchs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error tomando la carta.
+        /// </summary>
+        public static string Match_ErrorTakingACard {
+            get {
+                return ResourceManager.GetString("Match_ErrorTakingACard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Saliendo en:.
+        /// </summary>
+        public static string Match_ExitingIn {
+            get {
+                return ResourceManager.GetString("Match_ExitingIn", resourceCulture);
             }
         }
         
@@ -1794,6 +1839,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_TimeMatch {
             get {
                 return ResourceManager.GetString("Match_TimeMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ek ganador es: .
+        /// </summary>
+        public static string Match_WhoIsTheWinner {
+            get {
+                return ResourceManager.GetString("Match_WhoIsTheWinner", resourceCulture);
             }
         }
         
@@ -2487,6 +2541,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Statistics_Loading {
             get {
                 return ResourceManager.GetString("Statistics_Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cargando estadísticas.
+        /// </summary>
+        public static string Statistics_LoadingStatistics {
+            get {
+                return ResourceManager.GetString("Statistics_LoadingStatistics", resourceCulture);
             }
         }
         

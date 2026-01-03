@@ -95,7 +95,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             if (playersHands == null) return;
 
-            var myHand = System.Linq.Enumerable.FirstOrDefault(playersHands, h => h.UserId == myUserId);
+            var myHand = System.Linq.Enumerable.FirstOrDefault(playersHands, hand => hand.UserId == myUserId);
 
             if (myHand != null && myHand.Cards != null)
             {
@@ -111,7 +111,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     }
                     else
                     {
-                        var exists = CardRepositoryModel.Cards.Any(c => c.IdCard == cardDTO.IdCard);
+                        var exists = CardRepositoryModel.Cards.Any(card => card.IdCard == cardDTO.IdCard);
                     }
                 }
             }

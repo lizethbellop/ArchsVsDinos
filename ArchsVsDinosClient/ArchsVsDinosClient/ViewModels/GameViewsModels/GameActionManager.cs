@@ -162,24 +162,8 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             }
         }
 
-        /*
         public void ClearSlotsByElement(ArmyType element)
         {
-            foreach (var slot in dinoSlots)
-            {
-                var dino = slot.Value;
-                if (dino.HasHead && GetElementFromCard(dino.Head) == element)
-                {
-                    dinoSlots[slot.Key] = new DinoBuilder();
-                    System.Diagnostics.Debug.WriteLine($"[ACTION MANAGER] Cleared {slot.Key} (element: {element})");
-                }
-            }
-        }
-        */
-
-        public void ClearSlotsByElement(ArmyType element)
-        {
-            // ✅ Primero recopila las llaves
             var keysToModify = new List<string>();
 
             foreach (var slot in dinoSlots)
@@ -191,7 +175,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 }
             }
 
-            // ✅ Luego modifica usando las llaves recopiladas
             foreach (var key in keysToModify)
             {
                 dinoSlots[key] = new DinoBuilder();
