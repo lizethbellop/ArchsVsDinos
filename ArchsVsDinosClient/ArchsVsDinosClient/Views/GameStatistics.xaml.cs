@@ -18,16 +18,29 @@ namespace ArchsVsDinosClient.Views
 
             viewModel = new GameStatisticsViewModel(gameEndedData, players);
 
-            viewModel.RequestClose += () => this.Close();
+            viewModel.RequestClose += GoToMenu;
 
             DataContext = viewModel;
         }
 
         private void Click_BtnExit(object sender, RoutedEventArgs e)
         {
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-            this.Close();
+            GoToMenu();
+        }
+
+        private void GoToMenu()
+        {
+            // Usamos el Dispatcher para asegurar que corre en el hilo de UI
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                // Solo abrimos si esta ventana aún es visible (evita dobles aperturas)
+                if (this.IsVisible)
+                {
+                    var mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    this.Close();
+                }
+            });
         }
 
         protected override void OnClosed(EventArgs e)
@@ -36,26 +49,10 @@ namespace ArchsVsDinosClient.Views
 
             if (viewModel != null)
             {
+                viewModel.RequestClose -= GoToMenu;
                 viewModel.Dispose();
             }
 
-            bool isMainWindowOpen = false;
-
-            foreach (Window window in Application.Current.Windows)
-            {
-                if (window is MainWindow)
-                {
-                    isMainWindowOpen = true;
-                    window.Show();
-                    break;
-                }
-            }
-
-            if (!isMainWindowOpen)
-            {
-                var mainWindow = new MainWindow();
-                mainWindow.Show();
-            }
         }
     }
 }
