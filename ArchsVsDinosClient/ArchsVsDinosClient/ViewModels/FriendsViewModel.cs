@@ -15,7 +15,7 @@ namespace ArchsVsDinosClient.ViewModels
 {
     public class FriendsViewModel
     {
-        private readonly IFriendServiceClient friendService;
+        private IFriendServiceClient friendService;
         private readonly IMessageService messageService;
 
         public string CurrentUsername { get; set; }
@@ -29,7 +29,27 @@ namespace ArchsVsDinosClient.ViewModels
             friendService = new FriendServiceClient();
             messageService = new MessageService();
             Friends = new string[0];
+            friendService.ConnectionError += OnConnectionError;
+        }
 
+        private void ResetFriendService()
+        {
+            if (friendService is ICommunicationObject comm)
+            {
+                try
+                {
+                    if (comm.State == CommunicationState.Faulted)
+                        comm.Abort();
+                    else
+                        comm.Close();
+                }
+                catch
+                {
+                    comm.Abort();
+                }
+            }
+
+            friendService = new FriendServiceClient();
             friendService.ConnectionError += OnConnectionError;
         }
 
@@ -41,18 +61,35 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            var response = await friendService.GetFriendsAsync(username);
-
-            if (response == null || !response.Success)
+            try
             {
-                string message = FriendResultCodeHelper.GetMessage(response?.ResultCode ?? FriendResultCode.Friend_UnexpectedError);
-                messageService.ShowMessage(message);
-                return;
+                var response = await friendService.GetFriendsAsync(username);
+
+                if (response == null || !response.Success)
+                {
+                    string message = FriendResultCodeHelper.GetMessage(response?.ResultCode ?? FriendResultCode.Friend_UnexpectedError);
+                    messageService.ShowMessage(message);
+                    return;
+                }
+
+                Friends = response.Friends;
+                FriendsLoaded?.Invoke(this, EventArgs.Empty);
             }
-
-            Friends = response.Friends;
-            FriendsLoaded?.Invoke(this, EventArgs.Empty);
-
+            catch (CommunicationException)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
+            catch (TimeoutException)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
         }
 
         public async Task RemoveFriendAsync(string username, string friendUsername)
@@ -63,20 +100,38 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            var response = await friendService.RemoveFriendAsync(username, friendUsername);
-
-            if (response == null)
+            try
             {
-                return;
+                var response = await friendService.RemoveFriendAsync(username, friendUsername);
+
+                if (response == null)
+                {
+                    return;
+                }
+
+                string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
+                messageService.ShowMessage(message);
+
+                if (response.Success)
+                {
+                    await LoadFriendsAsync(username);
+                    FriendRemoved?.Invoke(this, EventArgs.Empty);
+                }
             }
-
-            string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
-            messageService.ShowMessage(message);
-
-            if (response.Success)
+            catch (CommunicationException)
             {
-                await LoadFriendsAsync(username);
-                FriendRemoved?.Invoke(this, EventArgs.Empty);
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
+            catch (TimeoutException)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
             }
         }
 
@@ -88,19 +143,40 @@ namespace ArchsVsDinosClient.ViewModels
                 return false;
             }
 
-            var response = await friendService.AreFriendsAsync(username, friendUsername);
-
-            if (response == null || !response.Success)
+            try
             {
-                if (response != null) 
+                var response = await friendService.AreFriendsAsync(username, friendUsername);
+
+                if (response == null || !response.Success)
                 {
-                    string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
-                    messageService.ShowMessage(message);
+                    if (response != null)
+                    {
+                        string message = FriendResultCodeHelper.GetMessage(response.ResultCode);
+                        messageService.ShowMessage(message);
+                    }
+                    return false;
                 }
+
+                return response.AreFriends;
+            }
+            catch (CommunicationException)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
                 return false;
             }
-
-            return response.AreFriends;
+            catch (TimeoutException)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+                return false;
+            }
+            catch (Exception)
+            {
+                ResetFriendService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+                return false;
+            }
         }
 
         private void OnConnectionError(string title, string message)

@@ -52,9 +52,9 @@ namespace ArchsVsDinosClient.Views
 
         private void InitializeData()
         {
-            friendRequestViewModel.Subscribe(currentUsername);
+            friendRequestViewModel.SubscribeAsync(currentUsername);
             friendsViewModel.LoadFriendsAsync(currentUsername);
-            friendRequestViewModel.LoadPendingRequests(currentUsername);
+            friendRequestViewModel.LoadPendingRequestsAsync(currentUsername);
         }
 
         private void OnFriendsLoaded(object sender, EventArgs e)
@@ -78,17 +78,17 @@ namespace ArchsVsDinosClient.Views
         private async void OnRequestAccepted(object sender, EventArgs e)
         {
             await friendsViewModel.LoadFriendsAsync(currentUsername);
-            friendRequestViewModel.LoadPendingRequests(currentUsername);
+            friendRequestViewModel.LoadPendingRequestsAsync(currentUsername);
         }
 
         private void OnRequestRejected(object sender, EventArgs e)
         {
-            friendRequestViewModel.LoadPendingRequests(currentUsername);
+            friendRequestViewModel.LoadPendingRequestsAsync(currentUsername);
         }
 
         private void OnNewRequestReceived(object sender, string fromUser)
         {
-            friendRequestViewModel.LoadPendingRequests(currentUsername);
+            friendRequestViewModel.LoadPendingRequestsAsync(currentUsername);
         }
 
         private async void Click_BtnSearchFriend(object sender, RoutedEventArgs e)
@@ -142,7 +142,7 @@ namespace ArchsVsDinosClient.Views
             }
 
             string receiverUsername = button.Tag.ToString();
-            friendRequestViewModel.SendFriendRequest(currentUsername, receiverUsername);
+            friendRequestViewModel.SendFriendRequestAsync(currentUsername, receiverUsername);
         }
 
         private void Click_BtnAcceptRequest(object sender, RoutedEventArgs e)
@@ -161,7 +161,7 @@ namespace ArchsVsDinosClient.Views
                 return;
             }
 
-            friendRequestViewModel.AcceptFriendRequest(senderUsername, currentUsername);
+            friendRequestViewModel.AcceptFriendRequestAsync(senderUsername, currentUsername);
         }
 
         private void Click_BtnRejectRequest(object sender, RoutedEventArgs e)
@@ -180,7 +180,7 @@ namespace ArchsVsDinosClient.Views
                 return;
             }
 
-            friendRequestViewModel.RejectFriendRequest(senderUsername, currentUsername);
+            friendRequestViewModel.RejectFriendRequestAsync(senderUsername, currentUsername);
         }
 
         private async void Click_BtnRemoveFriend(object sender, RoutedEventArgs e)
@@ -209,7 +209,7 @@ namespace ArchsVsDinosClient.Views
             SoundButton.PlayDestroyingRockSound();
 
             UnsubscribeFromEvents();
-            friendRequestViewModel.Unsubscribe(currentUsername);
+            friendRequestViewModel.UnsubscribeAsync(currentUsername);
             friendRequestViewModel.Dispose();
 
             this.Close();

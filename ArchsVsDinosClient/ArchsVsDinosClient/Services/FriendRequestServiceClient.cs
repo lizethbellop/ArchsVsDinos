@@ -47,15 +47,21 @@ namespace ArchsVsDinosClient.Services
             callback.PendingRequestsReceived += OnPendingRequestsReceived;
             callback.FriendRequestReceived += OnFriendRequestReceived;
 
-            InitializeClient();
-
             guardian = new WcfConnectionGuardian(
                 onError: OnConnectionError,
                 logger: new Logger()
             );
 
+            try
+            {
+                InitializeClient();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error inicializando cliente: {ex.Message}");
+            }
+
             guardian.ServerStateChanged += OnServerStateChanged;
-            guardian.MonitorClientState(client);
         }
 
         private void InitializeClient()
@@ -68,28 +74,136 @@ namespace ArchsVsDinosClient.Services
                 };
 
                 client = new FriendRequestManagerClient(context);
+                guardian.MonitorClientState(client);
             }
         }
 
         private bool IsClientUsable()
         {
-            return client != null && client.State == CommunicationState.Opened;
-        }
-
-        private void EnsureClientIsUsable()
-        {
-            lock (clientLock)
+            try
             {
-                if (client == null ||
-                    client.State == CommunicationState.Closed ||
-                    client.State == CommunicationState.Faulted)
-                {
-                    try { client?.Abort(); } catch { }
-                    InitializeClient();
-                    guardian.MonitorClientState(client);
-                }
+                return client != null && client.State == CommunicationState.Opened;
+            }
+            catch
+            {
+                return false;
             }
         }
+
+        // ========================================
+        // MÉTODOS ASYNC con ExecuteWithThrowAsync
+        // ========================================
+
+        public async Task SendFriendRequestAsync(string fromUser, string toUser)
+        {
+            await guardian.ExecuteWithThrowAsync<bool>(
+                () =>
+                {
+                    client.SendFriendRequest(fromUser, toUser);
+                    return Task.FromResult(true);
+                },
+                operationName: "enviar solicitud de amistad"
+            );
+        }
+
+        public async Task AcceptFriendRequestAsync(string fromUser, string toUser)
+        {
+            await guardian.ExecuteWithThrowAsync<bool>(
+                () =>
+                {
+                    client.AcceptFriendRequest(fromUser, toUser);
+                    return Task.FromResult(true);
+                },
+                operationName: "aceptar solicitud de amistad"
+            );
+        }
+
+        public async Task RejectFriendRequestAsync(string fromUser, string toUser)
+        {
+            await guardian.ExecuteWithThrowAsync<bool>(
+                () =>
+                {
+                    client.RejectFriendRequest(fromUser, toUser);
+                    return Task.FromResult(true);
+                },
+                operationName: "rechazar solicitud de amistad"
+            );
+        }
+
+        public async Task GetPendingRequestsAsync(string username)
+        {
+            await guardian.ExecuteWithThrowAsync<bool>(
+                () =>
+                {
+                    client.GetPendingRequests(username);
+                    return Task.FromResult(true);
+                },
+                operationName: "obtener solicitudes pendientes"
+            );
+        }
+
+        public async Task SubscribeAsync(string username)
+        {
+            currentUsername = username;
+
+            await guardian.ExecuteWithThrowAsync<bool>(
+                () =>
+                {
+                    client.Subscribe(username);
+                    return Task.FromResult(true);
+                },
+                operationName: "suscribirse al servicio"
+            );
+        }
+
+        public async Task UnsubscribeAsync(string username)
+        {
+            if (!IsClientUsable())
+            {
+                currentUsername = null;
+                return;
+            }
+
+            try
+            {
+                await Task.Run(() => client.Unsubscribe(username));
+                currentUsername = null;
+            }
+            catch
+            {
+                currentUsername = null;
+            }
+        }
+
+        // Versiones síncronas para compatibilidad
+        public void SendFriendRequest(string fromUser, string toUser)
+        {
+            Task.Run(async () => await SendFriendRequestAsync(fromUser, toUser));
+        }
+
+        public void AcceptFriendRequest(string fromUser, string toUser)
+        {
+            Task.Run(async () => await AcceptFriendRequestAsync(fromUser, toUser));
+        }
+
+        public void RejectFriendRequest(string fromUser, string toUser)
+        {
+            Task.Run(async () => await RejectFriendRequestAsync(fromUser, toUser));
+        }
+
+        public void GetPendingRequests(string username)
+        {
+            Task.Run(async () => await GetPendingRequestsAsync(username));
+        }
+
+        public void Unsubscribe(string username)
+        {
+            Task.Run(async () => await UnsubscribeAsync(username));
+        }
+
+        // ========================================
+        // RECONEXIÓN AUTOMÁTICA
+        // ========================================
 
         private void OnServerStateChanged(object sender, ServerStateChangedEventArgs e)
         {
@@ -135,7 +249,6 @@ namespace ArchsVsDinosClient.Services
                 {
                     client?.Abort();
                     InitializeClient();
-                    guardian.MonitorClientState(client);
 
                     if (!string.IsNullOrEmpty(currentUsername))
                     {
@@ -154,74 +267,6 @@ namespace ArchsVsDinosClient.Services
         private void OnConnectionError(string title, string message)
         {
             ConnectionError?.Invoke(title, message);
-        }
-
-        public void SendFriendRequest(string fromUser, string toUser)
-        {
-            _ = guardian.ExecuteAsync(() =>
-            {
-                EnsureClientIsUsable();
-                client.SendFriendRequest(fromUser, toUser);
-                return Task.CompletedTask;
-            });
-        }
-
-        public void AcceptFriendRequest(string fromUser, string toUser)
-        {
-            _ = guardian.ExecuteAsync(() =>
-            {
-                EnsureClientIsUsable();
-                client.AcceptFriendRequest(fromUser, toUser);
-                return Task.CompletedTask;
-            });
-        }
-
-        public void RejectFriendRequest(string fromUser, string toUser)
-        {
-            _ = guardian.ExecuteAsync(() =>
-            {
-                EnsureClientIsUsable();
-                client.RejectFriendRequest(fromUser, toUser);
-                return Task.CompletedTask;
-            });
-        }
-
-        public void GetPendingRequests(string username)
-        {
-            _ = guardian.ExecuteAsync(() =>
-            {
-                EnsureClientIsUsable();
-                client.GetPendingRequests(username);
-                return Task.CompletedTask;
-            });
-        }
-
-        public async Task Subscribe(string username)
-        {
-            currentUsername = username;
-
-            await guardian.ExecuteAsync(() =>
-            {
-                EnsureClientIsUsable();
-                client.Subscribe(username);
-                return Task.CompletedTask;
-            });
-        }
-
-        public void Unsubscribe(string username)
-        {
-            if (!IsClientUsable())
-            {
-                currentUsername = null;
-                return;
-            }
-
-            try
-            {
-                client.Unsubscribe(username);
-                currentUsername = null;
-            }
-            catch { }
         }
 
         private void OnFriendRequestSent(bool success) =>
@@ -259,7 +304,6 @@ namespace ArchsVsDinosClient.Services
 
             isDisposed = true;
         }
-
     }
 
 }

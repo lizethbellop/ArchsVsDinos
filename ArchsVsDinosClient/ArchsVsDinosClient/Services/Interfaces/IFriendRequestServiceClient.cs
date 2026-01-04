@@ -9,20 +9,22 @@ namespace ArchsVsDinosClient.Services.Interfaces
     public interface IFriendRequestServiceClient : IDisposable
     {
         event Action<string, string> ConnectionError;
-
-        void SendFriendRequest(string fromUser, string toUser);
-        void AcceptFriendRequest(string fromUser, string toUser);
-        void RejectFriendRequest(string fromUser, string toUser);
-        void GetPendingRequests(string username);
-
-        Task Subscribe(string username);
-        void Unsubscribe(string username);
+        event Action ServerReconnected;
 
         event Action<bool> FriendRequestSent;
         event Action<bool> FriendRequestAccepted;
         event Action<bool> FriendRequestRejected;
         event Action<string[]> PendingRequestsReceived;
         event Action<string> FriendRequestReceived;
+
+        Task SendFriendRequestAsync(string fromUser, string toUser);
+        Task AcceptFriendRequestAsync(string fromUser, string toUser);
+        Task RejectFriendRequestAsync(string fromUser, string toUser);
+        Task GetPendingRequestsAsync(string username);
+
+        Task SubscribeAsync(string username);
+        Task UnsubscribeAsync(string username);
     }
+
 
 }

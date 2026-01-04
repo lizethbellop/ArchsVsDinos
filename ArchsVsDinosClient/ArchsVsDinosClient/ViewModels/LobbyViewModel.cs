@@ -86,7 +86,7 @@ namespace ArchsVsDinosClient.ViewModels
 
             string myUsername = UserSession.Instance.CurrentUser.Username;
             this.Friends = new FriendRequestViewModel(myUsername);
-            this.Friends.Subscribe(myUsername);
+            this.Friends.SubscribeAsync(myUsername);
 
             Chat = new ChatViewModel(new ChatServiceClient());
 
@@ -282,11 +282,11 @@ namespace ArchsVsDinosClient.ViewModels
                 {
                     try
                     {
-                        Friends.Subscribe(myUsername);
+                        Friends.SubscribeAsync(myUsername);
                     }
                     catch { }
 
-                    Friends.SendFriendRequest(myUsername, targetUsername);
+                    Friends.SendFriendRequestAsync(myUsername, targetUsername);
                     MessageBox.Show(Lang.FriendRequest_SentSuccess);
                 }
                 catch (CommunicationException)
@@ -601,7 +601,7 @@ namespace ArchsVsDinosClient.ViewModels
                         string myUser = UserSession.Instance.CurrentUser?.Username;
                         if (!string.IsNullOrEmpty(myUser))
                         {
-                            Friends.Unsubscribe(myUser);
+                            Friends.UnsubscribeAsync(myUser);
                         }
                         Friends.Dispose();
                         Debug.WriteLine("[LOBBY VM] ✅ Sistema de amigos limpiado");

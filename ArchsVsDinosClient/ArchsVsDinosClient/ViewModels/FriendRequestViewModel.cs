@@ -14,7 +14,7 @@ namespace ArchsVsDinosClient.ViewModels
 {
     public class FriendRequestViewModel
     {
-        private readonly IFriendRequestServiceClient friendRequestService;
+        private IFriendRequestServiceClient friendRequestService;
         private readonly IMessageService messageService;
         private readonly string currentUsername;
 
@@ -46,27 +46,74 @@ namespace ArchsVsDinosClient.ViewModels
             friendRequestService.FriendRequestReceived += OnFriendRequestReceived;
         }
 
-        public void Subscribe(string username)
+        private void ResetFriendRequestService()
+        {
+            if (friendRequestService is ICommunicationObject comm)
+            {
+                try
+                {
+                    if (comm.State == CommunicationState.Faulted)
+                        comm.Abort();
+                    else
+                        comm.Close();
+                }
+                catch
+                {
+                    comm.Abort();
+                }
+            }
+
+            friendRequestService = new FriendRequestServiceClient();
+            SubscribeToCallbacks();
+            friendRequestService.ConnectionError += OnConnectionError;
+        }
+
+        public async Task SubscribeAsync(string username)
         {
             if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username))
             {
                 return;
             }
 
-            friendRequestService.Subscribe(username);
+            try
+            {
+                await friendRequestService.SubscribeAsync(username);
+            }
+            catch (CommunicationException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
+            catch (TimeoutException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
         }
 
-        public void Unsubscribe(string username)
+        public async Task UnsubscribeAsync(string username)
         {
             if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username))
             {
                 return;
             }
 
-            friendRequestService.Unsubscribe(username);
+            try
+            {
+                await friendRequestService.UnsubscribeAsync(username);
+            }
+            catch
+            {
+                
+            }
         }
 
-        public void SendFriendRequest(string fromUser, string toUser)
+        public async Task SendFriendRequestAsync(string fromUser, string toUser)
         {
             if (!ValidateInputs(fromUser, toUser))
             {
@@ -74,10 +121,28 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            friendRequestService.SendFriendRequest(fromUser, toUser);
+            try
+            {
+                await friendRequestService.SendFriendRequestAsync(fromUser, toUser);
+            }
+            catch (CommunicationException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
+            catch (TimeoutException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
         }
 
-        public void AcceptFriendRequest(string fromUser, string toUser)
+        public async Task AcceptFriendRequestAsync(string fromUser, string toUser)
         {
             if (!ValidateInputs(fromUser, toUser))
             {
@@ -85,10 +150,28 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            friendRequestService.AcceptFriendRequest(fromUser, toUser);
+            try
+            {
+                await friendRequestService.AcceptFriendRequestAsync(fromUser, toUser);
+            }
+            catch (CommunicationException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
+            catch (TimeoutException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
         }
 
-        public void RejectFriendRequest(string fromUser, string toUser)
+        public async Task RejectFriendRequestAsync(string fromUser, string toUser)
         {
             if (!ValidateInputs(fromUser, toUser))
             {
@@ -96,10 +179,28 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            friendRequestService.RejectFriendRequest(fromUser, toUser);
+            try
+            {
+                await friendRequestService.RejectFriendRequestAsync(fromUser, toUser);
+            }
+            catch (CommunicationException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
+            catch (TimeoutException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
         }
 
-        public void LoadPendingRequests(string username)
+        public async Task LoadPendingRequestsAsync(string username)
         {
             if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username))
             {
@@ -107,7 +208,25 @@ namespace ArchsVsDinosClient.ViewModels
                 return;
             }
 
-            friendRequestService.GetPendingRequests(username);
+            try
+            {
+                await friendRequestService.GetPendingRequestsAsync(username);
+            }
+            catch (CommunicationException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
+            catch (TimeoutException)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerTimeout);
+            }
+            catch (Exception)
+            {
+                ResetFriendRequestService();
+                messageService.ShowMessage(Lang.GlobalServerUnavailable);
+            }
         }
 
         private void OnConnectionError(string title, string message)
