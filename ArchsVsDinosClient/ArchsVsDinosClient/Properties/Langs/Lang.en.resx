@@ -1065,5 +1065,13 @@
   </data>
   <data name="ChangeP_SuccessChangePassword" xml:space="preserve">
     <value>Password successfully changed</value>
+  <data name="GlobalDatabaseError" xml:space="preserve">
+    <value>An error with our database occurred, try later!</value>
+  </data>
+  <data name="Register_NoInternetCannotSendCode" xml:space="preserve">
+    <value>There is no internet connection. The verification code cannot be send. Try again later!</value>
+  </data>
+  <data name="GlobalNoConnectionToServer" xml:space="preserve">
+    <value>There is no connection with the server, try again later!</value>
   </data>
 </root>

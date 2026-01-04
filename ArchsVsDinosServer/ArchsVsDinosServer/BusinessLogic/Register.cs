@@ -10,6 +10,7 @@ using System.Data.Entity.Core;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.ServiceModel;
 using System.ServiceModel.Security.Tokens;
 using System.Text;
 using System.Threading.Tasks;
@@ -128,11 +129,25 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 return false;
             }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError("Database error at SendEmailRegister", ex);
+
+                throw new FaultException<string>(
+                    RegisterResultCode.Register_DatabaseError.ToString(),
+                    new FaultReason(RegisterResultCode.Register_DatabaseError.ToString())
+                );
+            }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Unexpected error at sending email", ex);
-                return false;
+                loggerHelper.LogError("Unexpected error at SendEmailRegister", ex);
+
+                throw new FaultException<string>(
+                    RegisterResultCode.Register_UnexpectedError.ToString(),
+                    new FaultReason(RegisterResultCode.Register_UnexpectedError.ToString())
+                );
             }
+
         }
 
         /*public bool CheckCode(string email, string code)

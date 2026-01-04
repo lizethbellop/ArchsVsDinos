@@ -16,9 +16,9 @@ namespace ArchsVsDinosClient.ViewModels
 {
     public class EditPasswordViewModel
     {
-        private readonly IProfileServiceClient profileService;
+        private IProfileServiceClient profileService;
         private readonly IMessageService messageService;
-        private readonly ServiceOperationHelper serviceHelper;
+        private readonly ProfileServiceClientResetHelper resetHelper;
 
         public string CurrentPassword { get; set; }
         public string NewPassword { get; set; }
@@ -28,7 +28,11 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
-            this.serviceHelper = new ServiceOperationHelper(messageService);
+
+            this.resetHelper = new ProfileServiceClientResetHelper(
+                () => new ProfileServiceClient(),
+                messageService
+            );
         }
 
         public async Task SaveEditPassword()
@@ -53,15 +57,17 @@ namespace ArchsVsDinosClient.ViewModels
             }
 
             string currentUsername = UserSession.Instance.CurrentUser.Username;
-            UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
+
+            var result = await resetHelper.ExecuteAsync(
                 profileService,
-                () => profileService.ChangePassworsAsync(currentUsername, CurrentPassword, NewPassword)
+                client => client.ChangePassworsAsync(currentUsername, CurrentPassword, NewPassword)
             );
 
+            profileService = result.Client;
+
+            UpdateResponse response = result.Result;
             if (response == null)
-            {
                 return;
-            }
 
             if (!response.Success)
             {
@@ -82,7 +88,9 @@ namespace ArchsVsDinosClient.ViewModels
 
         private static bool AreValidPasswords(string currentPassword, string newPassword)
         {
-            return !string.IsNullOrWhiteSpace(currentPassword) && !string.IsNullOrWhiteSpace(newPassword);
+            return !string.IsNullOrWhiteSpace(currentPassword)
+                && !string.IsNullOrWhiteSpace(newPassword);
         }
     }
+
 }

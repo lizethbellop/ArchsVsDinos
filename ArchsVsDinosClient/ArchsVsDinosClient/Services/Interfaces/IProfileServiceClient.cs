@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Services.Interfaces
 {
-    public interface IProfileServiceClient : IServiceClient
+    public interface IProfileServiceClient : IServiceClient, IDisposable
     {
         Task<UpdateResponse> UpdateNicknameAsync(string currentUsername, string newNickname);
         Task<UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername);

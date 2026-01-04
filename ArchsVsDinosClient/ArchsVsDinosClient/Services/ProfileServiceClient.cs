@@ -14,15 +14,15 @@ namespace ArchsVsDinosClient.Services
 {
     public class ProfileServiceClient : IProfileServiceClient
     {
-        private readonly ProfileManagerClient client;
+        private ProfileManagerClient client;
         private readonly WcfConnectionGuardian guardian;
         private readonly ILogger logger;
         private bool isDisposed;
 
+        public event Action<string, string> ConnectionError;
+
         public bool IsServerAvailable => guardian.IsServerAvailable;
-
         public string LastErrorTitle => guardian.LastErrorTitle;
-
         public string LastErrorMessage => guardian.LastErrorMessage;
 
         public ProfileServiceClient()
@@ -34,118 +34,84 @@ namespace ArchsVsDinosClient.Services
                 onError: (title, msg) =>
                 {
                     logger.LogError($"🔴 Guardian reportó error: {title} - {msg}");
+                    ConnectionError?.Invoke(title, msg);
                 },
                 logger: logger
             );
+
             guardian.MonitorClientState(client);
         }
 
-        public async Task<UpdateResponse> UpdateNicknameAsync(string currentUsername, string newNickname)
+        public Task<UpdateResponse> UpdateNicknameAsync(string currentUsername, string newNickname)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.UpdateNickname(currentUsername, newNickname)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "actualizar apodo"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.UpdateNickname(currentUsername, newNickname)),
+                operationName: "Actualizar apodo"
+            );
         }
 
-        public async Task<UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername)
+        public Task<UpdateResponse> UpdateUsernameAsync(string currentUsername, string newUsername)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.UpdateUsername(currentUsername, newUsername)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "actualizar nombre de usuario"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.UpdateUsername(currentUsername, newUsername)),
+                operationName: "Actualizar username"
+            );
         }
 
-        public async Task<UpdateResponse> ChangePassworsAsync(string currentUsername, string currentPassword, string newPassword)
+        public Task<UpdateResponse> ChangePassworsAsync(string currentUsername, string currentPassword, string newPassword)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.ChangePassword(currentUsername, currentPassword, newPassword)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "cambiar contraseña"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.ChangePassword(currentUsername, currentPassword, newPassword)),
+                operationName: "Cambiar contraseña"
+            );
         }
 
-        public async Task<UpdateResponse> UpdateFacebookAsync(string currentUsername, string newFacebookLink)
+        public Task<UpdateResponse> UpdateFacebookAsync(string currentUsername, string newFacebookLink)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.UpdateFacebook(currentUsername, newFacebookLink)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "actualizar Facebook"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.UpdateFacebook(currentUsername, newFacebookLink)),
+                operationName: "Actualizar Facebook"
+            );
         }
 
-        public async Task<UpdateResponse> UpdateInstagramAsync(string currentUsername, string newInstagramLink)
+        public Task<UpdateResponse> UpdateInstagramAsync(string currentUsername, string newInstagramLink)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.UpdateInstagram(currentUsername, newInstagramLink)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "actualizar Instagram"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.UpdateInstagram(currentUsername, newInstagramLink)),
+                operationName: "Actualizar Instagram"
+            );
         }
 
-        public async Task<UpdateResponse> UpdateXAsync(string currentUsername, string newXLink)
+        public Task<UpdateResponse> UpdateXAsync(string currentUsername, string newXLink)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.UpdateX(currentUsername, newXLink)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "actualizar X"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.UpdateX(currentUsername, newXLink)),
+                operationName: "Actualizar X"
+            );
         }
 
-        public async Task<UpdateResponse> UpdateTikTokAsync(string currentUsername, string newTikTokLink)
+        public Task<UpdateResponse> UpdateTikTokAsync(string currentUsername, string newTikTokLink)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.UpdateTikTok(currentUsername, newTikTokLink)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "actualizar TikTok"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.UpdateTikTok(currentUsername, newTikTokLink)),
+                operationName: "Actualizar TikTok"
+            );
         }
 
-        public async Task<UpdateResponse> ChangeProfilePictureAsync(string username, string avatarPath)
+        public Task<UpdateResponse> ChangeProfilePictureAsync(string username, string avatarPath)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.ChangeProfilePicture(username, avatarPath)),
-                    defaultValue: new UpdateResponse { Success = false },
-                    operationName: "cambiar avatar"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.ChangeProfilePicture(username, avatarPath)),
+                operationName: "Cambiar avatar"
+            );
         }
 
-        public async Task<string> GetProfilePictureAsync(string username)
+        public Task<string> GetProfilePictureAsync(string username)
         {
-            return await Task.Run(async () =>
-            {
-                return await guardian.ExecuteAsync(
-                    () => Task.FromResult(client.GetProfilePicture(username)),
-                    defaultValue: "/Resources/Images/Avatars/default_avatar_01.png",
-                    operationName: "obtener avatar"
-                );
-            });
+            return guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.GetProfilePicture(username)),
+                operationName: "Obtener avatar"
+            );
         }
 
         public void Dispose()
@@ -167,4 +133,5 @@ namespace ArchsVsDinosClient.Services
             isDisposed = true;
         }
     }
+
 }

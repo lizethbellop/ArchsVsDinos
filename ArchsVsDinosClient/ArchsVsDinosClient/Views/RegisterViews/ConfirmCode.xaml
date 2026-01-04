@@ -36,7 +36,7 @@
 
             <StackPanel>
                 <Border CornerRadius="15" Background="White" BorderBrush="Gray" BorderThickness="1"  Width="268" Height="24">
-                    <TextBox Name ="TxtB_Code" MaxLength="5" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox Name ="TxtB_Code" MaxLength="6" TextWrapping="NoWrap" FontFamily="Trebuchet MS" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Border>
             </StackPanel>
         </StackPanel>
