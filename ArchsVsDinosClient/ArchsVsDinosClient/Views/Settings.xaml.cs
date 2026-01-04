@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para Settings.xaml
-    /// </summary>
     public partial class Settings : Window
     {
         public Settings()
