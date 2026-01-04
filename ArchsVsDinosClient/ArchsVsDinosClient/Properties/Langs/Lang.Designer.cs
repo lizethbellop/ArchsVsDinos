@@ -628,6 +628,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ocurrió un error con nuestra base de datos, inténtelo más tarde.
+        /// </summary>
+        public static string GlobalDatabaseError {
+            get {
+                return ResourceManager.GetString("GlobalDatabaseError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Campos vacíos, por favor, verifique.
         /// </summary>
         public static string GlobalEmptyField {
@@ -2226,6 +2235,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Register_NicknameAlreadyExists {
             get {
                 return ResourceManager.GetString("Register_NicknameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No hay conexión a internet. No se pudo enviar el código de verificación. Verifica tu conexión e inténtalo nuevamente..
+        /// </summary>
+        public static string Register_NoInternetCannotSendCode {
+            get {
+                return ResourceManager.GetString("Register_NoInternetCannotSendCode", resourceCulture);
             }
         }
         

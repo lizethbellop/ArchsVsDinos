@@ -1030,4 +1030,10 @@
   <data name="Match_Can'tSaveStatistics" xml:space="preserve">
     <value>Statistics could'nt be saved</value>
   </data>
+  <data name="GlobalDatabaseError" xml:space="preserve">
+    <value>An error with our database occurred, try later!</value>
+  </data>
+  <data name="Register_NoInternetCannotSendCode" xml:space="preserve">
+    <value>There is no internet connection. The verification code cannot be send. Try again later!</value>
+  </data>
 </root>

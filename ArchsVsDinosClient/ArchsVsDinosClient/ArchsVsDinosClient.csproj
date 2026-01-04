@@ -153,12 +153,14 @@
     <Compile Include="Services\Interfaces\ILobbyServiceClient.cs" />
     <Compile Include="Services\Interfaces\IMessageService.cs" />
     <Compile Include="Services\Interfaces\IProfileServiceClient.cs" />
+    <Compile Include="Services\Interfaces\IRegisterServiceClient.cs" />
     <Compile Include="Services\Interfaces\IServiceClient.cs" />
     <Compile Include="Services\Interfaces\IStatisticsServiceClient.cs" />
     <Compile Include="Services\LobbyCallbackManager.cs" />
     <Compile Include="Services\LobbyServiceClient.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\ProfileServiceClient.cs" />
+    <Compile Include="Services\RegisterServiceClient.cs" />
     <Compile Include="Services\StatisticsServiceClient.cs" />
     <Compile Include="Utils\ConverterCard.cs" />
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
