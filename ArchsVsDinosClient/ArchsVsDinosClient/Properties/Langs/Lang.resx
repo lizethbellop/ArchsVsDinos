@@ -1029,6 +1029,41 @@
   <data name="Match_Can'tSaveStatistics" xml:space="preserve">
     <value>No se pudieron guardar las estadísticas</value>
   </data>
+  <data name="ChangeP_Title" xml:space="preserve">
+    <value>Reestablecer contraseña</value>
+  </data>
+  <data name="ChangeP_Indication" xml:space="preserve">
+    <value>Por favor, ingrese el nombre de usuario a recuperar contraseña</value>
+  </data>
+  <data name="ChangeP_NewPassword1" xml:space="preserve">
+    <value>Ingrese la nueva contraseña</value>
+  </data>
+  <data name="ChangeP_NewPassword" xml:space="preserve">
+    <value>Ingrese de nuevo la contraseña</value>
+  </data>
+  <data name="ChangeP_NewPasswordNotSame" xml:space="preserve">
+    <value>No coinciden las contraseñas</value>
+  </data>
+  <data name="GlobalSend" xml:space="preserve">
+    <value>Enviar</value>
+  </data>
+  <data name="ChangeP_EnterCode" xml:space="preserve">
+    <value>Ingrese el código enviado a su correo</value>
+  </data>
+  <data name="ChangeP_TimeRemaining" xml:space="preserve">
+    <value>Tiempo restante para enviar correo de nuevo:</value>
+  </data>
+  <data name="ChangeP_EmptyUsername" xml:space="preserve">
+    <value>Campo vacío, intenta de nuevo</value>
+  </data>
+  <data name="ChangeP_EmailAlreadySended" xml:space="preserve">
+    <value>Ya se ha enviado un correo recientemente. Por favor espera o revisa tu bandeja.</value>
+  </data>
+  <data name="ChangeP_UserDoesntExist" xml:space="preserve">
+    <value>El usuario no existe</value>
+  </data>
+  <data name="ChangeP_SuccessChangePassword" xml:space="preserve">
+    <value>Contraseña cambiada correctamente</value>
   <data name="GlobalDatabaseError" xml:space="preserve">
     <value>Ocurrió un error con nuestra base de datos, inténtelo más tarde</value>
   </data>

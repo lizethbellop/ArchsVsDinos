@@ -85,9 +85,9 @@
                     <PasswordBox Name ="PB_Password" MaxLength="20" BorderThickness="0" Background="Transparent" Padding="5,2" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
-            <!--.<UniformGrid>
-                <Button Content="{x:Static language:Lang.Login_IForgotMyPassword}" Background="{x:Null}" Foreground="#FF6A3D00" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" RenderTransformOrigin="0.531,0.268"/>
-            </UniformGrid>-->
+            <UniformGrid>
+                <Button Click="Click_BtnForgotPassword"  Content="{x:Static language:Lang.Login_IForgotMyPassword}" Background="{x:Null}" Foreground="#FF6A3D00" BorderBrush="Transparent" FontFamily="Tw Cen MT Condensed Extra Bold" FontSize="14" RenderTransformOrigin="0.531,0.268"/>
+            </UniformGrid>
         </StackPanel>
         <UniformGrid Grid.Row="4" Margin="0,10,0,-20" HorizontalAlignment="Center">
             <Label Content="{x:Static language:Lang.Login_DontYouHaveAccount}" FontFamily="Trebuchet MS" FontWeight="Bold"/>

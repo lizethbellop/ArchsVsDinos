@@ -62,6 +62,30 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
+        public async Task<RecoveryCodeResponse> SendRecoveryCodeAsync(string username)
+        {
+            return await guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.SendRecoveryCode(username)),
+                operationName: "SendRecoveryCode"
+            );
+        }
+
+        public async Task<bool> ValidateRecoveryCodeAsync(string username, string code)
+        {
+            return await guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.ValidateRecoveryCode(username, code)),
+                operationName: "ValidateRecoveryCode"
+            );
+        }
+
+        public async Task<bool> UpdatePasswordAsync(string username, string newPassword)
+        {
+            return await guardian.ExecuteWithThrowAsync(
+                () => Task.FromResult(client.UpdatePassword(username, newPassword)),
+                operationName: "UpdatePassword"
+            );
+        }
+
         public void Dispose()
         {
             if (isDisposed) return;
@@ -78,6 +102,4 @@ namespace ArchsVsDinosClient.Services
             isDisposed = true;
         }
     }
-
-
 }

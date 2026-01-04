@@ -7,7 +7,7 @@
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
         mc:Ignorable="d"
         Title="UpdateX" Height="340" Width="450"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" WindowStyle="None">
 
     <Window.Background>
 

@@ -12,4 +12,18 @@
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="LoginResultCode" nillable="true" type="tns:LoginResultCode" />
+  <xs:simpleType name="PasswordRecoveryResult">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PasswordRecovery_Success" />
+      <xs:enumeration value="PasswordRecovery_UserNotFound" />
+      <xs:enumeration value="PasswordRecovery_CooldownActive" />
+      <xs:enumeration value="PasswordRecovery_InvalidCode" />
+      <xs:enumeration value="PasswordRecovery_CodeExpired" />
+      <xs:enumeration value="PasswordRecovery_DatabaseError" />
+      <xs:enumeration value="PasswordRecovery_ServerError" />
+      <xs:enumeration value="PasswordRecovery_ConnectionError" />
+      <xs:enumeration value="PasswordRecovery_UnexpectedError" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="PasswordRecoveryResult" nillable="true" type="tns:PasswordRecoveryResult" />
 </xs:schema>

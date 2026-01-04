@@ -121,7 +121,30 @@ namespace ArchsVsDinosServer.Utils
 
             SendEmail(email, subject, body);
         }
-    }
 
+        public static void SendPasswordRecoveryEmail(string email, string code)
+        {
+            string subject = "Reset Password - Archs Vs Dinos";
+            string body = $@"
+        <div style='width:100%;padding:20px;background:#f5f5f5;font-family:Arial, sans-serif;'>
+            <div style='max-width:500px;margin:auto;background:white;padding:25px;border-radius:10px;box-shadow:0 3px 8px rgba(0,0,0,0.1);'>
+                <h2 style='text-align:center;color:#333;'>Reset Password</h2>
+                <p>A request has been received to change the password for your <b>Archs Vs Dinos</b> account.</p>
+                <p>Use the following code to proceed:</p>
+                <div style='text-align:center;margin:20px 0;'>
+                    <span style='display:inline-block;background:#FF5722;color:white;padding:12px 24px;
+                            font-size:22px;border-radius:8px;letter-spacing:3px;'>
+                        {code}
+                    </span>
+                </div>
+                <p style='color:#666;'>This code is valid for 10 minutes.</p>
+                <hr style='margin:25px 0;border:none;border-top:1px solid #ddd;' />
+                <p style='text-align:center;font-size:12px;color:#999;'>© 2025 Archs Vs Dinos</p>
+            </div>
+        </div>";
+
+            SendEmail(email, subject, body);
+        }
+    }
 
 }

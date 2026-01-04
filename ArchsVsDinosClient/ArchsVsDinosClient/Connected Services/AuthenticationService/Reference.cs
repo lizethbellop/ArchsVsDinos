@@ -414,6 +414,99 @@ namespace ArchsVsDinosClient.AuthenticationService {
         Authentication_UserAlreadyLoggedIn = 6,
     }
     
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RecoveryCodeResponse", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response")]
+    [System.SerializableAttribute()]
+    public partial class RecoveryCodeResponse : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private double RemainingSecondsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private ArchsVsDinosClient.AuthenticationService.PasswordRecoveryResult ResultField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public double RemainingSeconds {
+            get {
+                return this.RemainingSecondsField;
+            }
+            set {
+                if ((this.RemainingSecondsField.Equals(value) != true)) {
+                    this.RemainingSecondsField = value;
+                    this.RaisePropertyChanged("RemainingSeconds");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public ArchsVsDinosClient.AuthenticationService.PasswordRecoveryResult Result {
+            get {
+                return this.ResultField;
+            }
+            set {
+                if ((this.ResultField.Equals(value) != true)) {
+                    this.ResultField = value;
+                    this.RaisePropertyChanged("Result");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PasswordRecoveryResult", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum PasswordRecoveryResult : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_UserNotFound = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_CooldownActive = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_InvalidCode = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_CodeExpired = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_DatabaseError = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_ServerError = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_ConnectionError = 7,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PasswordRecovery_UnexpectedError = 8,
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="AuthenticationService.IAuthenticationManager")]
     public interface IAuthenticationManager {
@@ -429,6 +522,24 @@ namespace ArchsVsDinosClient.AuthenticationService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/Logout", ReplyAction="http://tempuri.org/IAuthenticationManager/LogoutResponse")]
         System.Threading.Tasks.Task LogoutAsync(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/SendRecoveryCode", ReplyAction="http://tempuri.org/IAuthenticationManager/SendRecoveryCodeResponse")]
+        ArchsVsDinosClient.AuthenticationService.RecoveryCodeResponse SendRecoveryCode(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/SendRecoveryCode", ReplyAction="http://tempuri.org/IAuthenticationManager/SendRecoveryCodeResponse")]
+        System.Threading.Tasks.Task<ArchsVsDinosClient.AuthenticationService.RecoveryCodeResponse> SendRecoveryCodeAsync(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/ValidateRecoveryCode", ReplyAction="http://tempuri.org/IAuthenticationManager/ValidateRecoveryCodeResponse")]
+        bool ValidateRecoveryCode(string username, string code);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/ValidateRecoveryCode", ReplyAction="http://tempuri.org/IAuthenticationManager/ValidateRecoveryCodeResponse")]
+        System.Threading.Tasks.Task<bool> ValidateRecoveryCodeAsync(string username, string code);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/UpdatePassword", ReplyAction="http://tempuri.org/IAuthenticationManager/UpdatePasswordResponse")]
+        bool UpdatePassword(string username, string newPassword);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IAuthenticationManager/UpdatePassword", ReplyAction="http://tempuri.org/IAuthenticationManager/UpdatePasswordResponse")]
+        System.Threading.Tasks.Task<bool> UpdatePasswordAsync(string username, string newPassword);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -472,6 +583,30 @@ namespace ArchsVsDinosClient.AuthenticationService {
         
         public System.Threading.Tasks.Task LogoutAsync(string username) {
             return base.Channel.LogoutAsync(username);
+        }
+        
+        public ArchsVsDinosClient.AuthenticationService.RecoveryCodeResponse SendRecoveryCode(string username) {
+            return base.Channel.SendRecoveryCode(username);
+        }
+        
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.AuthenticationService.RecoveryCodeResponse> SendRecoveryCodeAsync(string username) {
+            return base.Channel.SendRecoveryCodeAsync(username);
+        }
+        
+        public bool ValidateRecoveryCode(string username, string code) {
+            return base.Channel.ValidateRecoveryCode(username, code);
+        }
+        
+        public System.Threading.Tasks.Task<bool> ValidateRecoveryCodeAsync(string username, string code) {
+            return base.Channel.ValidateRecoveryCodeAsync(username, code);
+        }
+        
+        public bool UpdatePassword(string username, string newPassword) {
+            return base.Channel.UpdatePassword(username, newPassword);
+        }
+        
+        public System.Threading.Tasks.Task<bool> UpdatePasswordAsync(string username, string newPassword) {
+            return base.Channel.UpdatePasswordAsync(username, newPassword);
         }
     }
 }
