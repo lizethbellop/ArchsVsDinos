@@ -682,6 +682,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No hay conexión con el servidor, inténtalo más tarde.
+        /// </summary>
+        public static string GlobalNoConnectionToServer {
+            get {
+                return ResourceManager.GetString("GlobalNoConnectionToServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Regresar.
         /// </summary>
         public static string GlobalReturnText {

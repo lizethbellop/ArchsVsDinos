@@ -1036,4 +1036,7 @@
   <data name="Register_NoInternetCannotSendCode" xml:space="preserve">
     <value>There is no internet connection. The verification code cannot be send. Try again later!</value>
   </data>
+  <data name="GlobalNoConnectionToServer" xml:space="preserve">
+    <value>There is no connection with the server, try again later!</value>
+  </data>
 </root>

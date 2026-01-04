@@ -17,9 +17,9 @@ namespace ArchsVsDinosClient.ViewModels
 {
     public class EditNicknameViewModel
     {
-        private readonly IProfileServiceClient profileService;
+        private IProfileServiceClient profileService;
         private readonly IMessageService messageService;
-        private readonly ServiceOperationHelper serviceHelper;
+        private readonly ProfileServiceClientResetHelper resetHelper;
 
         public string NewNickname { get; set; }
         public event EventHandler RequestClose;
@@ -28,7 +28,11 @@ namespace ArchsVsDinosClient.ViewModels
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
-            this.serviceHelper = new ServiceOperationHelper(messageService);
+
+            this.resetHelper = new ProfileServiceClientResetHelper(
+                () => new ProfileServiceClient(),
+                messageService
+            );
         }
 
         public async Task SaveEditNickname()
@@ -40,15 +44,17 @@ namespace ArchsVsDinosClient.ViewModels
             }
 
             string currentUsername = UserSession.Instance.CurrentUser.Username;
-            UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
+
+            var result = await resetHelper.ExecuteAsync(
                 profileService,
-                () => profileService.UpdateNicknameAsync(currentUsername, NewNickname)
+                client => client.UpdateNicknameAsync(currentUsername, NewNickname)
             );
 
+            profileService = result.Client;
+
+            UpdateResponse response = result.Result;
             if (response == null)
-            {
                 return;
-            }
 
             if (!response.Success)
             {
@@ -74,4 +80,5 @@ namespace ArchsVsDinosClient.ViewModels
             return !string.IsNullOrWhiteSpace(nickname);
         }
     }
+
 }

@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.ProfileManagerService;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
@@ -15,58 +16,73 @@ namespace ArchsVsDinosClient.ViewModels
 {
     public class UpdateTikTokViewModel
     {
-        private readonly IProfileServiceClient profileService;
+        private IProfileServiceClient profileService;
         private readonly IMessageService messageService;
-        private readonly ServiceOperationHelper serviceHelper;
+        private readonly ProfileServiceClientResetHelper resetHelper;
 
         public string NewTikTokLink { get; set; }
         public event EventHandler RequestClose;
 
-        public UpdateTikTokViewModel(IProfileServiceClient profileService, IMessageService messageService)
+        public UpdateTikTokViewModel(
+            IProfileServiceClient profileService,
+            IMessageService messageService)
         {
             this.profileService = profileService ?? throw new ArgumentNullException(nameof(profileService));
             this.messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
-            this.serviceHelper = new ServiceOperationHelper(messageService);
+
+            resetHelper = new ProfileServiceClientResetHelper(
+                () => new ProfileServiceClient(),
+                messageService
+            );
         }
 
         public async Task SaveTikTokLink()
         {
             if (!SocialMediaValidator.IsValidTikTokLink(NewTikTokLink))
             {
-                messageService.ShowMessage(SocialMediaValidator.GetValidationErrorMessage(SocialMediaPlatform.TikTok));
+                messageService.ShowMessage(
+                    SocialMediaValidator.GetValidationErrorMessage(SocialMediaPlatform.TikTok)
+                );
                 return;
             }
 
             string currentUsername = UserSession.Instance.CurrentUser.Username;
-            UpdateResponse response = await serviceHelper.ExecuteServiceOperationAsync(
-                profileService,
-                () => profileService.UpdateTikTokAsync(currentUsername, NewTikTokLink)
-            );
 
-            if (response == null)
+            try
             {
-                return;
-            }
+                var result = await resetHelper.ExecuteAsync(
+                    profileService,
+                    client => client.UpdateTikTokAsync(currentUsername, NewTikTokLink)
+                );
 
-            if (!response.Success)
+                profileService = result.Client;
+
+                if (!result.Result.Success)
+                {
+                    messageService.ShowMessage(
+                        UpdateResultCodeHelper.GetMessage(result.Result.ResultCode)
+                    );
+                    return;
+                }
+
+                HandleSuccess(result.Result);
+            }
+            catch
             {
-                string message = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-                messageService.ShowMessage(message);
-                return;
+                
             }
-
-            HandleSuccess(response);
-
         }
 
         private void HandleSuccess(UpdateResponse response)
         {
-            string successMessage = UpdateResultCodeHelper.GetMessage(response.ResultCode);
-            messageService.ShowMessage(successMessage);
+            messageService.ShowMessage(
+                UpdateResultCodeHelper.GetMessage(response.ResultCode)
+            );
+
             UserSession.Instance.CurrentPlayer.Tiktok = NewTikTokLink;
             UserProfileObserver.Instance.NotifyProfileUpdated();
             RequestClose?.Invoke(this, EventArgs.Empty);
         }
-
     }
+
 }
