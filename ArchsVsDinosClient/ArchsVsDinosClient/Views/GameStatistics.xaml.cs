@@ -16,7 +16,7 @@ namespace ArchsVsDinosClient.Views
         {
             InitializeComponent();
 
-            viewModel = new GameStatisticsViewModel(gameEndedData, players);
+            viewModel = new GameStatisticsViewModel(gameEndedData.MatchCode, players);
 
             viewModel.RequestClose += GoToMenu;
 
@@ -30,10 +30,8 @@ namespace ArchsVsDinosClient.Views
 
         private void GoToMenu()
         {
-            // Usamos el Dispatcher para asegurar que corre en el hilo de UI
             Application.Current.Dispatcher.Invoke(() =>
             {
-                // Solo abrimos si esta ventana aún es visible (evita dobles aperturas)
                 if (this.IsVisible)
                 {
                     var mainWindow = new MainWindow();
@@ -55,4 +53,5 @@ namespace ArchsVsDinosClient.Views
 
         }
     }
+
 }

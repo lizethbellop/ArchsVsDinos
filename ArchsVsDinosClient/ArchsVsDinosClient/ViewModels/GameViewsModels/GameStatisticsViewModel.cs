@@ -1,12 +1,16 @@
-﻿using ArchsVsDinosClient.DTO; 
-using ArchsVsDinosClient.GameService;
+﻿using ArchsVsDinosClient.DTO;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
+using ArchsVsDinosClient.Services.Interfaces;
+using ArchsVsDinosClient.StatisticsService;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -16,135 +20,130 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 {
     public class GameStatisticsViewModel : INotifyPropertyChanged, IDisposable
     {
+        private readonly string matchCode;
+        private readonly List<LobbyPlayerDTO> playersInfo;
+        private ObservableCollection<PlayerStatItem> playerStats;
+
         private DispatcherTimer autoExitTimer;
         private int secondsToAutoExit = 60;
 
-        public event Action RequestClose;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public ObservableCollection<PlayerStatItem> PlayerStats { get; set; } = new ObservableCollection<PlayerStatItem>();
-
+        private string errorMessage;
+        private bool hasError;
+        private string matchDateText;
+        private string timerText;
         private string titleText;
-        public string TitleText
+        private bool isDisposed;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event Action RequestClose;
+
+        public GameStatisticsViewModel(string matchCode, List<LobbyPlayerDTO> playersInfo)
         {
-            get => titleText;
-            set
-            {
-                titleText = value;
-                OnPropertyChanged(nameof(TitleText));
-            }
+            this.matchCode = matchCode;
+            this.playersInfo = playersInfo;
+            PlayerStats = new ObservableCollection<PlayerStatItem>();
+
+            ExitCommand = new DelegateCommand(ExecuteExit);
+
+            LoadMatchStatisticsAsync();
+            StartAutoExitTimer();
         }
 
-        private string matchDateText;
+        public ObservableCollection<PlayerStatItem> PlayerStats
+        {
+            get => playerStats;
+            set { playerStats = value; OnPropertyChanged(); }
+        }
+
         public string MatchDateText
         {
             get => matchDateText;
-            set
-            {
-                matchDateText = value;
-                OnPropertyChanged(nameof(MatchDateText));
-            }
+            set { matchDateText = value; OnPropertyChanged(); }
         }
 
-        private string timerText;
         public string TimerText
         {
             get => timerText;
-            set
-            {
-                timerText = value;
-                OnPropertyChanged(nameof(TimerText));
-            }
+            set { timerText = value; OnPropertyChanged(); }
+        }
+
+        public string TitleText
+        {
+            get => titleText;
+            set { titleText = value; OnPropertyChanged(); }
         }
 
         public ICommand ExitCommand { get; }
 
-        public GameStatisticsViewModel(GameEndedDTO gameEndedData, List<LobbyPlayerDTO> playersInfo)
+        private async void LoadMatchStatisticsAsync()
         {
-            ExitCommand = new RelayCommand(ExecuteExit);
-            ProcessGameData(gameEndedData, playersInfo);
-            StartAutoExitTimer();
+            await LoadStatisticsAsync();
         }
 
-        private void ProcessGameData(GameEndedDTO gameEndedData, List<LobbyPlayerDTO> playersInfo)
+        private async Task LoadStatisticsAsync()
         {
-            MatchDateText = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            IStatisticsServiceClient statisticsClient = null;
 
-            if (gameEndedData == null) return;
+            try
+            {
+                statisticsClient = new StatisticsServiceClient();
+                var stats = await statisticsClient.GetMatchStatisticsAsync(matchCode);
 
-            if (gameEndedData.Reason == "ArchsVictory")
-            {
-                TitleText = Lang.Match_DefeatedByArchs;
-            }
-            else if (gameEndedData.Reason == "Aborted")
-            {
-                TitleText = Lang.Match_GameAbortedMessage;
-            }
-            else
-            {
-                TitleText = Lang.Match_DinosVictoryTitle;
-            }
-
-            if (gameEndedData.FinalScores != null)
-            {
-                var orderedScores = gameEndedData.FinalScores.OrderBy(player => player.Position);
-
-                foreach (var score in orderedScores)
+                if (stats?.PlayerStats != null)
                 {
-                    double heightValue = 200;
-                    string colorHex = "#A0A0A0";
-                    string iconSymbol = "";
+                    TitleText = Lang.Match_DinosVictoryTitle;
+                    MatchDateText = $"Fecha: {stats.MatchDate:dd/MM/yyyy HH:mm}";
+                    PlayerStats.Clear();
 
-                    switch (score.Position)
+                    foreach (var stat in stats.PlayerStats)
                     {
-                        case 1:
-                            heightValue = 320;
-                            colorHex = "#FFD700"; 
-                            iconSymbol = "👑";    
-                            break;
-                        case 2:
-                            heightValue = 280;
-                            colorHex = "#C0C0C0"; 
-                            iconSymbol = "🥈";    
-                            break;
-                        case 3:
-                            heightValue = 240;
-                            colorHex = "#CD7F32"; 
-                            iconSymbol = "🥉";    
-                            break;
-                        default:
-                            heightValue = 200;
-                            iconSymbol = "";      
-                            break;
-                    }
+                        var infoDelLobby = playersInfo?.FirstOrDefault(player =>
+                            player.IdPlayer == stat.UserId ||
+                            (player.Username != null && player.Username.Equals(stat.Username, StringComparison.OrdinalIgnoreCase)) ||
+                            (player.Nickname != null && player.Nickname.Equals(stat.Username, StringComparison.OrdinalIgnoreCase)));
 
-                    BitmapImage playerImage = null;
-
-                    if (playersInfo != null)
-                    {
-                        var playerInfo = playersInfo.FirstOrDefault(p => p.IdPlayer == score.UserId || p.Nickname == score.Username);
-                        if (playerInfo != null && !string.IsNullOrEmpty(playerInfo.ProfilePicture))
+                        BitmapImage playerImage = null;
+                        if (infoDelLobby != null && !string.IsNullOrEmpty(infoDelLobby.ProfilePicture))
                         {
-                            playerImage = LoadImageFromPath(playerInfo.ProfilePicture);
+                            playerImage = LoadImageFromPath(infoDelLobby.ProfilePicture);
                         }
-                    }
+                        if (playerImage == null) playerImage = LoadDefaultImage();
 
-                    if (playerImage == null)
-                    {
-                        playerImage = LoadDefaultImage();
-                    }
+                        double heightValue = 200;
+                        string colorHex = "#A0A0A0";
+                        string iconSymbol = "";
 
-                    PlayerStats.Add(new PlayerStatItem
-                    {
-                        Username = score.Username,
-                        Points = score.Points,
-                        Position = score.Position,
-                        Height = heightValue,
-                        BorderColor = colorHex,
-                        Icon = iconSymbol,      
-                        ProfileImage = playerImage 
-                    });
+                        switch (stat.Position)
+                        {
+                            case 1: heightValue = 320; colorHex = "#FFD700"; iconSymbol = "👑"; break;
+                            case 2: heightValue = 280; colorHex = "#C0C0C0"; iconSymbol = "🥈"; break;
+                            case 3: heightValue = 240; colorHex = "#CD7F32"; iconSymbol = "🥉"; break;
+                        }
+
+                        PlayerStats.Add(new PlayerStatItem
+                        {
+                            Username = stat.Username,
+                            Points = stat.Points,
+                            Position = stat.Position,
+                            Height = heightValue,
+                            BorderColor = colorHex,
+                            Icon = iconSymbol,
+                            ProfileImage = playerImage
+                        });
+                    }
                 }
+                else
+                {
+                    MessageBox.Show(Lang.Match_Can_tSaveStatistics);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{Lang.GlobalUnexpectedError} {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                if (statisticsClient != null) statisticsClient.Dispose();
             }
         }
 
@@ -153,37 +152,26 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             try
             {
                 if (string.IsNullOrEmpty(path)) return null;
-
+                string filename = System.IO.Path.GetFileName(path);
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                string cleanPath = path;
-
-                if (path.Contains(";component/"))
-                {
-                    cleanPath = path.Split(new[] { ";component/" }, StringSplitOptions.None)[1];
-                }
-                else if (path.StartsWith("pack://"))
-                {
-                    cleanPath = path.Replace("pack://application:,,,", "").TrimStart('/');
-                }
-
-                string fullPath = Path.Combine(baseDir, cleanPath.TrimStart('/', '\\'));
+                string fullPath = Path.Combine(baseDir, "Resources", "Images", "Avatars", filename);
 
                 if (File.Exists(fullPath))
                 {
                     var image = new BitmapImage();
-                    image.BeginInit();
-                    image.UriSource = new Uri(fullPath, UriKind.Absolute);
-                    image.CacheOption = BitmapCacheOption.OnLoad; 
-                    image.EndInit();
-                    image.Freeze(); 
+                    using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                    {
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.StreamSource = stream;
+                        image.EndInit();
+                    }
+                    image.Freeze();
                     return image;
                 }
                 return null;
             }
-            catch
-            {
-                return null;
-            }
+            catch { return null; }
         }
 
         private BitmapImage LoadDefaultImage()
@@ -196,19 +184,19 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 if (File.Exists(fullPath))
                 {
                     var image = new BitmapImage();
-                    image.BeginInit();
-                    image.UriSource = new Uri(fullPath, UriKind.Absolute);
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.EndInit();
+                    using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                    {
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad;
+                        image.StreamSource = stream;
+                        image.EndInit();
+                    }
                     image.Freeze();
                     return image;
                 }
                 return null;
             }
-            catch
-            {
-                return null;
-            }
+            catch { return null; }
         }
 
         private void StartAutoExitTimer()
@@ -220,65 +208,56 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             {
                 secondsToAutoExit--;
                 TimerText = $"{Lang.Match_ExitingIn} {secondsToAutoExit}s";
-
-                if (secondsToAutoExit <= 0)
-                {
-                    ExecuteExit(null);
-                }
+                if (secondsToAutoExit <= 0) ExecuteExit();
             };
             autoExitTimer.Start();
         }
 
-        private void ExecuteExit(object parameter)
+        private void ExecuteExit()
         {
-            Dispose();
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                var currentWindow = Application.Current.Windows.OfType<Window>()
-                    .FirstOrDefault(window => window.GetType().Name == "GameStatistics");
-                currentWindow?.Close();
-            });
+            RequestClose?.Invoke();
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void Dispose()
         {
-            if (autoExitTimer != null) autoExitTimer.Stop();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        protected void OnPropertyChanged(string propertyName)
+        protected virtual void Dispose(bool disposing)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class PlayerStatItem
-    {
-        public string Username { get; set; }
-        public int Points { get; set; }
-        public int Position { get; set; }
-        public double Height { get; set; }
-        public string BorderColor { get; set; }
-        public string Icon { get; set; }        
-        public object ProfileImage { get; set; }
-    }
-
-    public class RelayCommand : ICommand
-    {
-        private readonly Action<object> executeAction;
-        private readonly Predicate<object> canExecutePredicate;
-
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute = null)
-        {
-            executeAction = execute ?? throw new ArgumentNullException(nameof(execute));
-            canExecutePredicate = canExecute;
+            if (isDisposed) return;
+            if (disposing)
+            {
+                if (autoExitTimer != null) autoExitTimer.Stop();
+                PlayerStats?.Clear();
+            }
+            isDisposed = true;
         }
 
-        public bool CanExecute(object parameter) => canExecutePredicate == null || canExecutePredicate(parameter);
-        public void Execute(object parameter) => executeAction(parameter);
-        public event EventHandler CanExecuteChanged
+        public class PlayerStatItem
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            public string Username { get; set; }
+            public int Points { get; set; }
+            public int Position { get; set; }
+            public double Height { get; set; }
+            public string BorderColor { get; set; }
+            public string Icon { get; set; }
+            public BitmapImage ProfileImage { get; set; }
+        }
+
+        private class DelegateCommand : ICommand
+        {
+            private readonly Action execute;
+            public event EventHandler CanExecuteChanged { add { } remove { } }
+            public DelegateCommand(Action execute) { this.execute = execute; }
+            public bool CanExecute(object parameter) => true;
+            public void Execute(object parameter) => execute();
         }
     }
 }

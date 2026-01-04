@@ -130,7 +130,7 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                     }
 
                     var participants = context.MatchParticipants
-                        .Where(matchParticipant => matchParticipant.idGeneralMatch == match.idGeneralMatch && !matchParticipant.isDefeated)
+                        .Where(matchParticipant => matchParticipant.idGeneralMatch == match.idGeneralMatch)
                         .OrderByDescending(matchParticipant => matchParticipant.points)
                         .ThenByDescending(matchParticipant => matchParticipant.isWinner)
                         .ToList();

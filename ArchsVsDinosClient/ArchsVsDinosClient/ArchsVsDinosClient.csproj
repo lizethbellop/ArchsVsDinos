@@ -191,7 +191,6 @@
     <Compile Include="ViewModels\EditUsernameViewModel.cs" />
     <Compile Include="ViewModels\FriendRequestViewModel.cs" />
     <Compile Include="ViewModels\FriendsViewModel.cs" />
-    <Compile Include="ViewModels\GameStatisticsViewModel.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameActionManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameBoardManager.cs" />
     <Compile Include="ViewModels\GameViewsModels\GameSeeDeckViewModel.cs" />
@@ -987,13 +986,6 @@
     <Resource Include="Resources\Images\seeDeckHorizontalBackground.png" />
     <Resource Include="Resources\Images\teethDino.png" />
     <Resource Include="Resources\Images\bondDinoUser.png" />
-    <None Include="Connected Services\StatisticsService\item.disco" />
-    <None Include="Connected Services\StatisticsService\configuration91.svcinfo" />
-    <None Include="Connected Services\StatisticsService\configuration.svcinfo" />
-    <None Include="Connected Services\StatisticsService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Connected Services\GameService\configuration91.svcinfo" />
     <None Include="Connected Services\GameService\configuration.svcinfo" />
     <None Include="Connected Services\GameService\Reference.svcmap">
@@ -1016,6 +1008,13 @@
     <None Include="Connected Services\LobbyService\item1.disco" />
     <None Include="Connected Services\ProfileManagerService\item1.disco" />
     <None Include="Connected Services\RegisterService\item1.disco" />
+    <None Include="Connected Services\StatisticsService\item.disco" />
+    <None Include="Connected Services\StatisticsService\configuration91.svcinfo" />
+    <None Include="Connected Services\StatisticsService\configuration.svcinfo" />
+    <None Include="Connected Services\StatisticsService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Images\Avatars\default_avatar_00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

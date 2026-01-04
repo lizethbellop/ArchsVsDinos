@@ -61,6 +61,12 @@ namespace ArchsVsDinosServer.BusinessLogic
                 var playerSession = GetPlayer(gameSession, userId);
                 var dinoInstance = rulesValidator.FindDinoByHeadCardId(playerSession, attachmentData.DinoHeadCardId);
 
+                if (dinoInstance == null)
+                {
+                    loggerHelper.LogWarning($"AttachBodyPart: Dino not found (HeadID: {attachmentData.DinoHeadCardId}). Probabbly it was eliminated.");
+                    return false; 
+                }
+
                 var cardToAttach = playerSession.GetCardById(attachmentData.CardId);
 
                 if (cardToAttach == null)

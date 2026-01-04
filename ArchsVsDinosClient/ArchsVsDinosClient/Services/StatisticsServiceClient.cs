@@ -62,10 +62,10 @@ namespace ArchsVsDinosClient.Services
             );
         }
 
-        public async Task<GameStatisticsDTO> GetMatchStatisticsAsync(int matchId)
+        public async Task<GameStatisticsDTO> GetMatchStatisticsAsync(string matchCode)
         {
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetMatchStatistics(matchId)),
+                async () => await Task.Run(() => client.GetMatchStatistics(matchCode)),
                 operationName: "obtener estadísticas de partida"
             );
         }

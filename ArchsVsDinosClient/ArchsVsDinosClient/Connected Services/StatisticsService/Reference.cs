@@ -26,10 +26,10 @@ namespace ArchsVsDinosClient.StatisticsService {
         private System.DateTime MatchDateField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int MatchIdField;
+        private string MatchIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private ArchsVsDinosClient.StatisticsService.PlayerMatchResult[] PlayerResultsField;
+        private ArchsVsDinosClient.StatisticsService.PlayerMatchResultDTO[] PlayerResultsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int WinnerUserIdField;
@@ -58,12 +58,12 @@ namespace ArchsVsDinosClient.StatisticsService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int MatchId {
+        public string MatchId {
             get {
                 return this.MatchIdField;
             }
             set {
-                if ((this.MatchIdField.Equals(value) != true)) {
+                if ((object.ReferenceEquals(this.MatchIdField, value) != true)) {
                     this.MatchIdField = value;
                     this.RaisePropertyChanged("MatchId");
                 }
@@ -71,7 +71,7 @@ namespace ArchsVsDinosClient.StatisticsService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public ArchsVsDinosClient.StatisticsService.PlayerMatchResult[] PlayerResults {
+        public ArchsVsDinosClient.StatisticsService.PlayerMatchResultDTO[] PlayerResults {
             get {
                 return this.PlayerResultsField;
             }
@@ -108,9 +108,9 @@ namespace ArchsVsDinosClient.StatisticsService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="PlayerMatchResult", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PlayerMatchResultDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Statistics")]
     [System.SerializableAttribute()]
-    public partial class PlayerMatchResult : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+    public partial class PlayerMatchResultDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
@@ -636,10 +636,10 @@ namespace ArchsVsDinosClient.StatisticsService {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private System.DateTime MatchDateField;
+        private string MatchCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int MatchIdField;
+        private System.DateTime MatchDateField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ArchsVsDinosClient.StatisticsService.PlayerMatchStatsDTO[] PlayerStatsField;
@@ -655,6 +655,19 @@ namespace ArchsVsDinosClient.StatisticsService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string MatchCode {
+            get {
+                return this.MatchCodeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MatchCodeField, value) != true)) {
+                    this.MatchCodeField = value;
+                    this.RaisePropertyChanged("MatchCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public System.DateTime MatchDate {
             get {
                 return this.MatchDateField;
@@ -663,19 +676,6 @@ namespace ArchsVsDinosClient.StatisticsService {
                 if ((this.MatchDateField.Equals(value) != true)) {
                     this.MatchDateField = value;
                     this.RaisePropertyChanged("MatchDate");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public int MatchId {
-            get {
-                return this.MatchIdField;
-            }
-            set {
-                if ((this.MatchIdField.Equals(value) != true)) {
-                    this.MatchIdField = value;
-                    this.RaisePropertyChanged("MatchId");
                 }
             }
         }
@@ -723,6 +723,9 @@ namespace ArchsVsDinosClient.StatisticsService {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int PositionField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string ProfilePictureField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private int SupremeBossesEliminatedField;
@@ -791,6 +794,19 @@ namespace ArchsVsDinosClient.StatisticsService {
                 if ((this.PositionField.Equals(value) != true)) {
                     this.PositionField = value;
                     this.RaisePropertyChanged("Position");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ProfilePicture {
+            get {
+                return this.ProfilePictureField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ProfilePictureField, value) != true)) {
+                    this.ProfilePictureField = value;
+                    this.RaisePropertyChanged("ProfilePicture");
                 }
             }
         }
@@ -873,10 +889,10 @@ namespace ArchsVsDinosClient.StatisticsService {
         System.Threading.Tasks.Task<ArchsVsDinosClient.StatisticsService.MatchHistoryDTO[]> GetPlayerMatchHistoryAsync(int userId, int count);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IStatisticsManager/GetMatchStatistics", ReplyAction="http://tempuri.org/IStatisticsManager/GetMatchStatisticsResponse")]
-        ArchsVsDinosClient.StatisticsService.GameStatisticsDTO GetMatchStatistics(int matchId);
+        ArchsVsDinosClient.StatisticsService.GameStatisticsDTO GetMatchStatistics(string matchCode);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IStatisticsManager/GetMatchStatistics", ReplyAction="http://tempuri.org/IStatisticsManager/GetMatchStatisticsResponse")]
-        System.Threading.Tasks.Task<ArchsVsDinosClient.StatisticsService.GameStatisticsDTO> GetMatchStatisticsAsync(int matchId);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.StatisticsService.GameStatisticsDTO> GetMatchStatisticsAsync(string matchCode);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -938,12 +954,12 @@ namespace ArchsVsDinosClient.StatisticsService {
             return base.Channel.GetPlayerMatchHistoryAsync(userId, count);
         }
         
-        public ArchsVsDinosClient.StatisticsService.GameStatisticsDTO GetMatchStatistics(int matchId) {
-            return base.Channel.GetMatchStatistics(matchId);
+        public ArchsVsDinosClient.StatisticsService.GameStatisticsDTO GetMatchStatistics(string matchCode) {
+            return base.Channel.GetMatchStatistics(matchCode);
         }
         
-        public System.Threading.Tasks.Task<ArchsVsDinosClient.StatisticsService.GameStatisticsDTO> GetMatchStatisticsAsync(int matchId) {
-            return base.Channel.GetMatchStatisticsAsync(matchId);
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.StatisticsService.GameStatisticsDTO> GetMatchStatisticsAsync(string matchCode) {
+            return base.Channel.GetMatchStatisticsAsync(matchCode);
         }
     }
 }

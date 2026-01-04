@@ -27,11 +27,20 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
             {
                 try
                 {
-                    var player = context.Player.FirstOrDefault(p => p.idPlayer == userId);
+                    var userAccount = context.UserAccount.FirstOrDefault(user => user.idUser == userId);
+                    if (userAccount == null)
+                    {
+                        logger.LogWarning($"GetPlayerStatistics: UserAccount {userId} not found");
+                        return new PlayerStatisticsDTO();
+                    }
+
+                    int realPlayerId = userAccount.idPlayer; 
+
+                    var player = context.Player.FirstOrDefault(playerSelected => playerSelected.idPlayer == realPlayerId);
 
                     if (player == null)
                     {
-                        logger.LogWarning($"GetPlayerStatistics: Player {userId} not found");
+                        logger.LogWarning($"GetPlayerStatistics: Player profile {realPlayerId} (User {userId}) not found");
                         return new PlayerStatisticsDTO();
                     }
 
@@ -46,38 +55,16 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                         winRate = Math.Round((double)totalWins / totalMatches * 100, 2);
                     }
 
-                    string username = "";
-
-                    try
-                    {
-                        username = player.UserAccount.Single().username;
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        logger.LogError($"GetPlayerStatistics: Multiple or no UserAccounts found for player {userId}", ex);
-                        username = "Unknown";
-                    }
-
                     return new PlayerStatisticsDTO
                     {
-                        UserId = player.idPlayer,
-                        Username = username,
+                        UserId = userId, 
+                        Username = userAccount.username, 
                         TotalWins = totalWins,
                         TotalLosses = totalLosses,
                         TotalMatches = totalMatches,
                         TotalPoints = totalPoints,
                         WinRate = winRate
                     };
-                }
-                catch (NullReferenceException ex)
-                {
-                    logger.LogError($"GetPlayerStatistics: Null reference for user {userId} - {ex.Message}", ex);
-                    return new PlayerStatisticsDTO();
-                }
-                catch (DbUpdateException ex)
-                {
-                    logger.LogError($"GetPlayerStatistics: Database update error for user {userId} - {ex.Message}", ex);
-                    return new PlayerStatisticsDTO();
                 }
                 catch (Exception ex)
                 {
@@ -93,8 +80,16 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
             {
                 try
                 {
+                    var userAccount = context.UserAccount.FirstOrDefault(user => user.idUser == userId);
+                    if (userAccount == null)
+                    {
+                        return new List<MatchHistoryDTO>();
+                    }
+                    int realPlayerId = userAccount.idPlayer;
+
                     var matches = context.MatchParticipants
-                        .Where(mp => mp.idPlayer == userId)
+                        .Include("GeneralMatch")
+                        .Where(mp => mp.idPlayer == realPlayerId) 
                         .OrderByDescending(mp => mp.GeneralMatch.date)
                         .Take(count)
                         .ToList();
@@ -105,18 +100,14 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                     {
                         try
                         {
-                            if (match.GeneralMatch == null)
-                            {
-                                logger.LogWarning($"GetMatchHistory: GeneralMatch is null for match participant {match.idMatchParticipant}");
-                                continue;
-                            }
+                            if (match.GeneralMatch == null) continue;
 
                             var totalPlayers = context.MatchParticipants
-                                .Count(mp => mp.idGeneralMatch == match.idGeneralMatch);
+                                .Count(matchParticipant => matchParticipant.idGeneralMatch == match.idGeneralMatch);
 
                             var position = context.MatchParticipants
-                                .Where(mp => mp.idGeneralMatch == match.idGeneralMatch &&
-                                             mp.points > match.points)
+                                .Where(matchParticipant => matchParticipant.idGeneralMatch == match.idGeneralMatch &&
+                                             matchParticipant.points > match.points)
                                 .Count() + 1;
 
                             history.Add(new MatchHistoryDTO
@@ -129,22 +120,13 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                                 TotalPlayers = totalPlayers
                             });
                         }
-                        catch (NullReferenceException ex)
+                        catch (Exception ex)
                         {
-                            logger.LogError($"GetMatchHistory: Null reference in match participant {match.idMatchParticipant} - {ex.Message}", ex);
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            logger.LogError($"GetMatchHistory: Invalid operation in match participant {match.idMatchParticipant} - {ex.Message}", ex);
+                            logger.LogError($"Error processing match {match.idGeneralMatch}: {ex.Message}", ex);
                         }
                     }
 
                     return history;
-                }
-                catch (DbUpdateException ex)
-                {
-                    logger.LogError($"GetMatchHistory: Database error for user {userId} - {ex.Message}", ex);
-                    return new List<MatchHistoryDTO>();
                 }
                 catch (Exception ex)
                 {
@@ -159,37 +141,11 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
             using (var context = contextFactory())
             {
                 var stats = new List<PlayerStatisticsDTO>();
-
                 foreach (var userId in userIds)
                 {
-                    try
-                    {
-                        var playerStats = GetPlayerStatistics(userId);
-
-                        // Verificar si el DTO está vacío (UserId == 0)
-                        if (playerStats != null && playerStats.UserId != 0)
-                        {
-                            stats.Add(playerStats);
-                        }
-                        else
-                        {
-                            logger.LogInfo($"GetMultiplePlayerStatistics: Player stats not found for user {userId}");
-                        }
-                    }
-                    catch (NullReferenceException ex)
-                    {
-                        logger.LogError($"GetMultiplePlayerStatistics: Null reference for user {userId} - {ex.Message}", ex);
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        logger.LogError($"GetMultiplePlayerStatistics: Invalid operation for user {userId} - {ex.Message}", ex);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogInfo($"GetMultiplePlayerStatistics: Unexpected error for user {userId} - {ex.Message}");
-                    }
+                    var playerStats = GetPlayerStatistics(userId);
+                    if (playerStats != null && playerStats.UserId != 0) stats.Add(playerStats);
                 }
-
                 return stats;
             }
         }
@@ -199,12 +155,11 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
             using (var context = contextFactory())
             {
                 var history = new List<MatchHistoryDTO>();
-
                 try
                 {
                     var recentMatches = context.GeneralMatch
-                        .Where(m => m.MatchParticipants.Any(mp => mp.isWinner))
-                        .OrderByDescending(m => m.date)
+                        .Where(match => match.MatchParticipants.Any(matchParticipant => matchParticipant.isWinner))
+                        .OrderByDescending(match => match.date)
                         .Take(count)
                         .ToList();
 
@@ -212,11 +167,8 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                     {
                         try
                         {
-                            var totalPlayers = context.MatchParticipants
-                                .Count(mp => mp.idGeneralMatch == match.idGeneralMatch);
-
-                            var winnerParticipant = context.MatchParticipants
-                                .FirstOrDefault(mp => mp.idGeneralMatch == match.idGeneralMatch && mp.isWinner);
+                            var totalPlayers = context.MatchParticipants.Count(matchParticipant => matchParticipant.idGeneralMatch == match.idGeneralMatch);
+                            var winnerParticipant = context.MatchParticipants.FirstOrDefault(matchParticipant => matchParticipant.idGeneralMatch == match.idGeneralMatch && matchParticipant.isWinner);
 
                             if (winnerParticipant != null)
                             {
@@ -231,25 +183,10 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
                                 });
                             }
                         }
-                        catch (NullReferenceException ex)
-                        {
-                            logger.LogError($"GetRecentMatches: Null reference for match {match.idGeneralMatch} - {ex.Message}", ex);
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            logger.LogError($"GetRecentMatches: Invalid operation for match {match.idGeneralMatch} - {ex.Message}", ex);
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.LogInfo($"GetRecentMatches: Unexpected error for match {match.idGeneralMatch} - {ex.Message}");
-                        }
+                        catch (Exception) {}
                     }
                 }
-                catch (Exception ex)
-                {
-                    logger.LogError($"GetRecentMatches: Error retrieving recent matches - {ex.Message}", ex);
-                }
-
+                catch (Exception ex) { logger.LogError("RecentMatches error", ex); }
                 return history;
             }
         }

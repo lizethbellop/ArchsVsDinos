@@ -62,7 +62,7 @@
   <xs:element name="GetMatchStatistics">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="matchId" type="xs:int" />
+        <xs:element minOccurs="0" name="matchCode" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
