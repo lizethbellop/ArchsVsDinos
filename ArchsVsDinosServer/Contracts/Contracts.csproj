@@ -86,6 +86,7 @@
     <Compile Include="DTO\PlayerDTO.cs" />
     <Compile Include="DTO\Response\MatchCreationResponse.cs" />
     <Compile Include="DTO\Response\MatchJoinResponse.cs" />
+    <Compile Include="DTO\Response\RecoveryCodeResponse.cs" />
     <Compile Include="DTO\Response\RegisterResponse.cs" />
     <Compile Include="DTO\Response\UpdateResponse.cs" />
     <Compile Include="DTO\Result Codes\ChatResultCode.cs" />
@@ -98,11 +99,11 @@
     <Compile Include="DTO\Result Codes\LobbyResultCode.cs" />
     <Compile Include="DTO\Result Codes\LoginResultCode.cs" />
     <Compile Include="DTO\Result Codes\MatchCreationResultCode.cs" />
+    <Compile Include="DTO\Result Codes\PasswordRecoveryResult.cs" />
     <Compile Include="DTO\Result Codes\PlayCardResultCode.cs" />
     <Compile Include="DTO\Result Codes\ProvokeResultCode.cs" />
     <Compile Include="DTO\Result Codes\RegisterResultCode.cs" />
     <Compile Include="DTO\Result Codes\SaveMatchResultCode.cs" />
-    <Compile Include="DTO\Result Codes\SwapCardResultCode.cs" />
     <Compile Include="DTO\Result Codes\UpdateResultCode.cs" />
     <Compile Include="DTO\Statistics\GameStatisticsDTO.cs" />
     <Compile Include="DTO\Statistics\LeaderboardEntryDTO.cs" />

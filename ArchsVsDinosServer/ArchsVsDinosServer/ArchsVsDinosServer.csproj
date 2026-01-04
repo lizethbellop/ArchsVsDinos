@@ -167,6 +167,7 @@
     <Compile Include="BusinessLogic\LobbyLogic.cs" />
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyCoreContext.cs" />
     <Compile Include="BusinessLogic\Moderation\ModerationEngine.cs" />
+    <Compile Include="BusinessLogic\PasswordRecoveryLogic.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\BaseProfileService.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\PasswordManager.cs" />
     <Compile Include="BusinessLogic\ProfileManagement\ProfileInformation.cs" />

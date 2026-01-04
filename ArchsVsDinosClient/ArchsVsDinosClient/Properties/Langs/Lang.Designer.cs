@@ -259,6 +259,105 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ya se ha enviado un correo recientemente. Por favor espera o revisa tu bandeja..
+        /// </summary>
+        public static string ChangeP_EmailAlreadySended {
+            get {
+                return ResourceManager.GetString("ChangeP_EmailAlreadySended", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Campo vacío, intenta de nuevo.
+        /// </summary>
+        public static string ChangeP_EmptyUsername {
+            get {
+                return ResourceManager.GetString("ChangeP_EmptyUsername", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese el código enviado a su correo.
+        /// </summary>
+        public static string ChangeP_EnterCode {
+            get {
+                return ResourceManager.GetString("ChangeP_EnterCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Por favor, ingrese el nombre de usuario a recuperar contraseña.
+        /// </summary>
+        public static string ChangeP_Indication {
+            get {
+                return ResourceManager.GetString("ChangeP_Indication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese de nuevo la contraseña.
+        /// </summary>
+        public static string ChangeP_NewPassword {
+            get {
+                return ResourceManager.GetString("ChangeP_NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ingrese la nueva contraseña.
+        /// </summary>
+        public static string ChangeP_NewPassword1 {
+            get {
+                return ResourceManager.GetString("ChangeP_NewPassword1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No coinciden las contraseñas.
+        /// </summary>
+        public static string ChangeP_NewPasswordNotSame {
+            get {
+                return ResourceManager.GetString("ChangeP_NewPasswordNotSame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Contraseña cambiada correctamente.
+        /// </summary>
+        public static string ChangeP_SuccessChangePassword {
+            get {
+                return ResourceManager.GetString("ChangeP_SuccessChangePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tiempo restante para enviar correo de nuevo:.
+        /// </summary>
+        public static string ChangeP_TimeRemaining {
+            get {
+                return ResourceManager.GetString("ChangeP_TimeRemaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Reestablecer contraseña.
+        /// </summary>
+        public static string ChangeP_Title {
+            get {
+                return ResourceManager.GetString("ChangeP_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El usuario no existe.
+        /// </summary>
+        public static string ChangeP_UserDoesntExist {
+            get {
+                return ResourceManager.GetString("ChangeP_UserDoesntExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Nuevo apodo.
         /// </summary>
         public static string EditNickname_NewNickname {
@@ -687,6 +786,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string GlobalSaveText {
             get {
                 return ResourceManager.GetString("GlobalSaveText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Enviar.
+        /// </summary>
+        public static string GlobalSend {
+            get {
+                return ResourceManager.GetString("GlobalSend", resourceCulture);
             }
         }
         

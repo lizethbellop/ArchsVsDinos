@@ -13,6 +13,9 @@ namespace ArchsVsDinosClient.Services.Interfaces
         
         Task<LoginResponse> LoginAsync(string username, string password);
         Task LogoutAsync(string username);
+        Task<RecoveryCodeResponse> SendRecoveryCodeAsync(string username);
+        Task<bool> ValidateRecoveryCodeAsync(string username, string code);
+        Task<bool> UpdatePasswordAsync(string username, string newPassword);
 
         bool IsServerAvailable { get; }
         string LastErrorTitle { get; }

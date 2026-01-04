@@ -252,6 +252,15 @@
     <Compile Include="Views\LobbyViews\PlayerSlot.xaml.cs">
       <DependentUpon>PlayerSlot.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LoginRecoverPassword\CheckUsername.xaml.cs">
+      <DependentUpon>CheckUsername.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginRecoverPassword\EnterCode.xaml.cs">
+      <DependentUpon>EnterCode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoginRecoverPassword\NewPassword.xaml.cs">
+      <DependentUpon>NewPassword.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MatchViews\CardCell.xaml.cs">
       <DependentUpon>CardCell.xaml</DependentUpon>
     </Compile>
@@ -355,6 +364,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Login.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginRecoverPassword\CheckUsername.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginRecoverPassword\EnterCode.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoginRecoverPassword\NewPassword.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -465,6 +486,9 @@
     <None Include="Connected Services\AuthenticationService\ArchsVsDinosClient.AuthenticationService.LoginResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Connected Services\AuthenticationService\ArchsVsDinosClient.AuthenticationService.RecoveryCodeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\AuthenticationService\AuthenticationManager.wsdl" />
     <None Include="Connected Services\AuthenticationService\AuthenticationManager1.wsdl" />
     <None Include="Connected Services\AuthenticationService\item.xsd">
@@ -489,6 +513,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\AuthenticationService\item43.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\AuthenticationService\item5.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\ChatManager\ChatManager.wsdl" />

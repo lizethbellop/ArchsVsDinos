@@ -7,7 +7,7 @@
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
         mc:Ignorable="d"
         Title="EditUsername" Height="340" Width="450"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" WindowStyle="None">
 
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

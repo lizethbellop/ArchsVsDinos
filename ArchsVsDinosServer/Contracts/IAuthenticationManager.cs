@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Contracts.DTO;
+using Contracts.DTO.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using Contracts.DTO;
 namespace Contracts
 {
     [ServiceContract]
@@ -15,6 +16,15 @@ namespace Contracts
 
         [OperationContract]
         void Logout(string username);
+
+        [OperationContract]
+        RecoveryCodeResponse SendRecoveryCode(string username);
+
+        [OperationContract]
+        bool ValidateRecoveryCode(string username, string code);
+
+        [OperationContract]
+        bool UpdatePassword(string username, string newPassword);
     }
 
 }

@@ -6,6 +6,7 @@ using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views;
+using ArchsVsDinosClient.Views.LoginRecoverPassword;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,16 +97,6 @@ namespace ArchsVsDinosClient
             new MainWindow().ShowDialog();
         }
 
-        private bool ValidateInputs(string username, string password)
-        {
-            if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username) || (ValidationHelper.IsEmpty(password) || ValidationHelper.IsWhiteSpace(password)))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         private void OnRequestClose(object sender, System.EventArgs e)
         {
             var main = new MainWindow();
@@ -113,7 +104,11 @@ namespace ArchsVsDinosClient
             this.Close();
         }
 
-        
+        private void Click_BtnForgotPassword(object sender, RoutedEventArgs e)
+        {
+            var recover = new CheckUsername();
+            recover.Show();
+        }
 
     }
 }

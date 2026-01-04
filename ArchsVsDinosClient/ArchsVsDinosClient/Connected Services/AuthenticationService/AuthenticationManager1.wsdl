@@ -35,6 +35,7 @@
       <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
       <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO" />
       <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" />
+      <xsd:import schemaLocation="http://localhost:8080/?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Response" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IAuthenticationManager_Login_InputMessage">
@@ -49,6 +50,24 @@
   <wsdl:message name="IAuthenticationManager_Logout_OutputMessage">
     <wsdl:part name="parameters" element="tns:LogoutResponse" />
   </wsdl:message>
+  <wsdl:message name="IAuthenticationManager_SendRecoveryCode_InputMessage">
+    <wsdl:part name="parameters" element="tns:SendRecoveryCode" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticationManager_SendRecoveryCode_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SendRecoveryCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticationManager_ValidateRecoveryCode_InputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateRecoveryCode" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticationManager_ValidateRecoveryCode_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateRecoveryCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticationManager_UpdatePassword_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdatePassword" />
+  </wsdl:message>
+  <wsdl:message name="IAuthenticationManager_UpdatePassword_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdatePasswordResponse" />
+  </wsdl:message>
   <wsdl:portType name="IAuthenticationManager">
     <wsdl:operation name="Login">
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthenticationManager/Login" message="tns:IAuthenticationManager_Login_InputMessage" />
@@ -57,6 +76,18 @@
     <wsdl:operation name="Logout">
       <wsdl:input wsaw:Action="http://tempuri.org/IAuthenticationManager/Logout" message="tns:IAuthenticationManager_Logout_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IAuthenticationManager/LogoutResponse" message="tns:IAuthenticationManager_Logout_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SendRecoveryCode">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthenticationManager/SendRecoveryCode" message="tns:IAuthenticationManager_SendRecoveryCode_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthenticationManager/SendRecoveryCodeResponse" message="tns:IAuthenticationManager_SendRecoveryCode_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateRecoveryCode">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthenticationManager/ValidateRecoveryCode" message="tns:IAuthenticationManager_ValidateRecoveryCode_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthenticationManager/ValidateRecoveryCodeResponse" message="tns:IAuthenticationManager_ValidateRecoveryCode_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePassword">
+      <wsdl:input wsaw:Action="http://tempuri.org/IAuthenticationManager/UpdatePassword" message="tns:IAuthenticationManager_UpdatePassword_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IAuthenticationManager/UpdatePasswordResponse" message="tns:IAuthenticationManager_UpdatePassword_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="NetTcpBinding_IAuthenticationManager" type="tns:IAuthenticationManager">
@@ -73,6 +104,33 @@
     </wsdl:operation>
     <wsdl:operation name="Logout">
       <soap12:operation soapAction="http://tempuri.org/IAuthenticationManager/Logout" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendRecoveryCode">
+      <soap12:operation soapAction="http://tempuri.org/IAuthenticationManager/SendRecoveryCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateRecoveryCode">
+      <soap12:operation soapAction="http://tempuri.org/IAuthenticationManager/ValidateRecoveryCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePassword">
+      <soap12:operation soapAction="http://tempuri.org/IAuthenticationManager/UpdatePassword" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
