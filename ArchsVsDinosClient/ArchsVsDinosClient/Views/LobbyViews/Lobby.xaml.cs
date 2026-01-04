@@ -197,6 +197,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
             string nicknameToSend = UserSession.Instance.GetNickname();
 
+            viewModel?.CancelReconnectionAndExit();
+
             if (viewModel.CurrentClientIsHost())
             {
                 var result = MessageBox.Show(
@@ -295,6 +297,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
         protected override async void OnClosing(CancelEventArgs e)
         {
+            viewModel?.CancelReconnectionAndExit();
+
             if (viewModel != null)
             {
                 viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;

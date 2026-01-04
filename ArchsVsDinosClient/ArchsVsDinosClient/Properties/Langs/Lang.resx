@@ -1062,15 +1062,19 @@
   <data name="ChangeP_UserDoesntExist" xml:space="preserve">
     <value>El usuario no existe</value>
   </data>
-  <data name="ChangeP_SuccessChangePassword" xml:space="preserve">
+	<data name="ChangeP_SuccessChangePassword" xml:space="preserve">
     <value>Contraseña cambiada correctamente</value>
-  <data name="GlobalDatabaseError" xml:space="preserve">
+  </data>
+
+	<data name="GlobalDatabaseError" xml:space="preserve">
     <value>Ocurrió un error con nuestra base de datos, inténtelo más tarde</value>
   </data>
-  <data name="Register_NoInternetCannotSendCode" xml:space="preserve">
+
+	<data name="Register_NoInternetCannotSendCode" xml:space="preserve">
     <value>No hay conexión a internet. No se pudo enviar el código de verificación. Verifica tu conexión e inténtalo nuevamente.</value>
   </data>
-  <data name="GlobalNoConnectionToServer" xml:space="preserve">
+
+	<data name="GlobalNoConnectionToServer" xml:space="preserve">
     <value>No hay conexión con el servidor, inténtalo más tarde</value>
   </data>
 </root>

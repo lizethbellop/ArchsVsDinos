@@ -37,6 +37,7 @@ namespace ArchsVsDinosClient.ViewModels
         private int reconnectionAttempts = 0;
         private const int MAX_RECONNECTION_ATTEMPTS = 5;
         private const int RECONNECTION_INTERVAL_MS = 5000;
+        private bool userRequestedExit = false;
 
         private bool isInitializing = false;
 
@@ -545,7 +546,8 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 if (isAttemptingReconnection)
                 {
-                    Debug.WriteLine("[LOBBY VM] Deteniendo intentos de reconexión...");
+                    Debug.WriteLine("[LOBBY VM] Deteniendo intentos de reconexión en Cleanup...");
+                    userRequestedExit = true;
                     StopReconnectionAttempts(success: false);
                 }
 
@@ -896,27 +898,52 @@ namespace ArchsVsDinosClient.ViewModels
             Debug.WriteLine("[LOBBY VM] 🔄 Iniciando intentos de reconexión automática...");
             isAttemptingReconnection = true;
             reconnectionAttempts = 0;
+            userRequestedExit = false;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(
+                var result = MessageBox.Show(
                     "Se perdió la conexión con el servidor.\n\n" +
                     "Se intentará reconectar automáticamente durante los próximos 25 segundos.\n\n" +
-                    "Puedes quedarte aquí o regresar al menú principal.",
+                    "¿Deseas esperar la reconexión o regresar al menú principal?",
                     "Reconexión automática",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
                 );
+
+                if (result == MessageBoxResult.No)
+                {
+                    Debug.WriteLine("[LOBBY VM] Usuario eligió regresar, cancelando reconexión...");
+                    userRequestedExit = true;
+                    StopReconnectionAttempts(success: false);
+
+                    LobbyConnectionLost?.Invoke(
+                        "Saliendo del lobby",
+                        "Regresando al menú principal..."
+                    );
+                    return;
+                }
             });
 
-            reconnectionTimer = new System.Timers.Timer(RECONNECTION_INTERVAL_MS);
-            reconnectionTimer.Elapsed += OnReconnectionTimerElapsed;
-            reconnectionTimer.AutoReset = true;
-            reconnectionTimer.Start();
+            if (!userRequestedExit)
+            {
+                reconnectionTimer = new System.Timers.Timer(RECONNECTION_INTERVAL_MS);
+                reconnectionTimer.Elapsed += OnReconnectionTimerElapsed;
+                reconnectionTimer.AutoReset = true;
+                reconnectionTimer.Start();
+            }
         }
 
         private async void OnReconnectionTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+
+            if (userRequestedExit)
+            {
+                Debug.WriteLine("[LOBBY VM] Reconexión cancelada por el usuario");
+                StopReconnectionAttempts(success: false);
+                return;
+            }
+
             reconnectionAttempts++;
 
             Debug.WriteLine($"[LOBBY VM] Intento de reconexión #{reconnectionAttempts}/{MAX_RECONNECTION_ATTEMPTS}");
@@ -980,8 +1007,20 @@ namespace ArchsVsDinosClient.ViewModels
 
             isAttemptingReconnection = false;
             reconnectionAttempts = 0;
+            userRequestedExit = false;
 
             Debug.WriteLine($"[LOBBY VM] Intentos de reconexión detenidos. Éxito: {success}");
+        }
+
+        public void CancelReconnectionAndExit()
+        {
+            Debug.WriteLine("[LOBBY VM] CancelReconnectionAndExit llamado");
+            userRequestedExit = true;
+
+            if (isAttemptingReconnection)
+            {
+                StopReconnectionAttempts(success: false);
+            }
         }
 
     }

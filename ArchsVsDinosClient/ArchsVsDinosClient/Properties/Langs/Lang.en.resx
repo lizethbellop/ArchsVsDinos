@@ -1065,6 +1065,7 @@
   </data>
   <data name="ChangeP_SuccessChangePassword" xml:space="preserve">
     <value>Password successfully changed</value>
+  </data>
   <data name="GlobalDatabaseError" xml:space="preserve">
     <value>An error with our database occurred, try later!</value>
   </data>

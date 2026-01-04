@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.ServiceModel;
 
 namespace ArchsVsDinosClient.Services
 {
@@ -19,68 +20,104 @@ namespace ArchsVsDinosClient.Services
 
         public void PlayerJoinedLobby(string nickname)
         {
-            var localPlayerDto = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+            SafeInvoke(() =>
             {
-                Nickname = nickname,
-                IsReady = false
-            };
-
-            OnJoinedLobby?.Invoke(localPlayerDto);
+                var player = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+                {
+                    Nickname = nickname,
+                    IsReady = false
+                };
+                OnJoinedLobby?.Invoke(player);
+            }, nameof(PlayerJoinedLobby));
         }
 
         public void PlayerLeftLobby(string nickname)
         {
-            var localPlayerDto = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+            SafeInvoke(() =>
             {
-                Nickname = nickname
-            };
-
-            OnPlayerLeftLobby?.Invoke(localPlayerDto);
+                var player = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+                {
+                    Nickname = nickname
+                };
+                OnPlayerLeftLobby?.Invoke(player);
+            }, nameof(PlayerLeftLobby));
         }
 
-        public void UpdateListOfPlayers(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO[] servicePlayersArray)
+        public void UpdateListOfPlayers(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO[] servicePlayers)
         {
-            if (servicePlayersArray == null) return;
-
-            Debug.WriteLine($"[CALLBACK] Recibido del servidor {servicePlayersArray.Length} jugadores:");
-            foreach (var sp in servicePlayersArray)
+            SafeInvoke(() =>
             {
-                Debug.WriteLine($"  - Nickname: {sp.Nickname}, Username: '{sp.Username}'");
-            }
+                if (servicePlayers == null) return;
 
-            var localPlayersList = servicePlayersArray.Select(servicePlayer => new ArchsVsDinosClient.DTO.LobbyPlayerDTO
-            {
-                IdPlayer = servicePlayer.UserId,
-                Username = servicePlayer.Username,
-                Nickname = servicePlayer.Nickname,
-                IsReady = servicePlayer.IsReady,
-                IsHost = servicePlayer.IsHost,
-            ProfilePicture = servicePlayer.ProfilePicture
-            }).ToList();
+                var players = servicePlayers.Select(p => new ArchsVsDinosClient.DTO.LobbyPlayerDTO
+                {
+                    IdPlayer = p.UserId,
+                    Username = p.Username,
+                    Nickname = p.Nickname,
+                    IsReady = p.IsReady,
+                    IsHost = p.IsHost,
+                    ProfilePicture = p.ProfilePicture
+                }).ToList();
 
-            OnPlayerListUpdated?.Invoke(localPlayersList);
+                OnPlayerListUpdated?.Invoke(players);
+            }, nameof(UpdateListOfPlayers));
         }
 
         public void PlayerReadyStatusChanged(string nickname, bool isReady)
         {
-            OnPlayerReady?.Invoke(nickname, isReady);
+            SafeInvoke(() =>
+            {
+                OnPlayerReady?.Invoke(nickname, isReady);
+            }, nameof(PlayerReadyStatusChanged));
         }
 
         public void GameStarting()
         {
-            OnGameStart?.Invoke();
+            SafeInvoke(() =>
+            {
+                OnGameStart?.Invoke();
+            }, nameof(GameStarting));
         }
 
         public void PlayerKicked(string nickname, string reason)
         {
-            OnPlayerKicked?.Invoke(nickname, reason);
+            SafeInvoke(() =>
+            {
+                OnPlayerKicked?.Invoke(nickname, reason);
+            }, nameof(PlayerKicked));
         }
 
         public void LobbyInvitationReceived(LobbyInvitationDTO invitation)
         {
-            Debug.WriteLine($"[CALLBACK] Invitación recibida del lobby {invitation.LobbyCode} de {invitation.SenderNickname}");
-            OnLobbyInvitationReceived?.Invoke(invitation);
+            SafeInvoke(() =>
+            {
+                OnLobbyInvitationReceived?.Invoke(invitation);
+            }, nameof(LobbyInvitationReceived));
         }
 
+        private void SafeInvoke(Action action, string methodName)
+        {
+            try
+            {
+                action();
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[CALLBACK] CommunicationException in {methodName}: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[CALLBACK] TimeoutException in {methodName}: {ex.Message}");
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine($"[CALLBACK] ObjectDisposedException in {methodName}: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine($"[CALLBACK] InvalidOperationException in {methodName}: {ex.Message}");
+            }
+        }
     }
+
 }
