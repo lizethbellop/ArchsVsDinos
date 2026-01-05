@@ -358,6 +358,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error al conectar el chat.
+        /// </summary>
+        public static string Chat_CannotConnect {
+            get {
+                return ResourceManager.GetString("Chat_CannotConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Nuevo apodo.
         /// </summary>
         public static string EditNickname_NewNickname {
@@ -745,6 +754,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error.
+        /// </summary>
+        public static string GlobalError {
+            get {
+                return ResourceManager.GetString("GlobalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Salir.
         /// </summary>
         public static string GlobalExitText {
@@ -768,6 +786,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string GlobalGroupChatText {
             get {
                 return ResourceManager.GetString("GlobalGroupChatText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Información.
+        /// </summary>
+        public static string GlobalInformation {
+            get {
+                return ResourceManager.GetString("GlobalInformation", resourceCulture);
             }
         }
         
@@ -979,6 +1006,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Regresando al menú principal....
+        /// </summary>
+        public static string Lobby_ComingBackToMainWindow {
+            get {
+                return ResourceManager.GetString("Lobby_ComingBackToMainWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Reconexión exitosa.
+        /// </summary>
+        public static string Lobby_ConnectionReestablishedTitle {
+            get {
+                return ResourceManager.GetString("Lobby_ConnectionReestablishedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Correo de invitación enviado .
         /// </summary>
         public static string Lobby_EmailSended {
@@ -993,6 +1038,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_ErrorCreatingLobby {
             get {
                 return ResourceManager.GetString("Lobby_ErrorCreatingLobby", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ocurrió un error al intentar unirse al lobby.
+        /// </summary>
+        public static string Lobby_ErrorOccured {
+            get {
+                return ResourceManager.GetString("Lobby_ErrorOccured", resourceCulture);
             }
         }
         
@@ -1051,6 +1105,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo enviar la invitación.
+        /// </summary>
+        public static string Lobby_InvitationNotSent {
+            get {
+                return ResourceManager.GetString("Lobby_InvitationNotSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a te ha invitado a unirte a su lobby. ¿Deseas aceptar la invitación?.
         /// </summary>
         public static string Lobby_InvitationReceived {
@@ -1060,11 +1123,29 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Invitacion de lobby.
+        ///   Busca una cadena traducida similar a Invitación de lobby.
         /// </summary>
         public static string Lobby_InvitationReceivedTitle {
             get {
                 return ResourceManager.GetString("Lobby_InvitationReceivedTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Invitación enviada a {0}.
+        /// </summary>
+        public static string Lobby_InvitationSentMessage {
+            get {
+                return ResourceManager.GetString("Lobby_InvitationSentMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Invitación enviada.
+        /// </summary>
+        public static string Lobby_InvitationSentTitle {
+            get {
+                return ResourceManager.GetString("Lobby_InvitationSentTitle", resourceCulture);
             }
         }
         
@@ -1101,6 +1182,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_InviteFriends {
             get {
                 return ResourceManager.GetString("Lobby_InviteFriends", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Saliendo del lobby.
+        /// </summary>
+        public static string Lobby_LeavingLobby {
+            get {
+                return ResourceManager.GetString("Lobby_LeavingLobby", resourceCulture);
             }
         }
         
@@ -1168,6 +1258,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No hay lobby activo.
+        /// </summary>
+        public static string Lobby_NoActiveLobbyMessage {
+            get {
+                return ResourceManager.GetString("Lobby_NoActiveLobbyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error no hay lobby.
+        /// </summary>
+        public static string Lobby_NoActiveLobbyTitle {
+            get {
+                return ResourceManager.GetString("Lobby_NoActiveLobbyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No hay amigos disponibles en este momento.
         /// </summary>
         public static string Lobby_NoFriendsAvailable {
@@ -1186,6 +1294,24 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo restablecer la conexión después de varios intentos.\n\n Serás redirigido al menú principal.
+        /// </summary>
+        public static string Lobby_NoReconnectionMessage {
+            get {
+                return ResourceManager.GetString("Lobby_NoReconnectionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Reconexión fallida.
+        /// </summary>
+        public static string Lobby_NoReconnectionTitle {
+            get {
+                return ResourceManager.GetString("Lobby_NoReconnectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Sólo el host puede expulsar jugadores.
         /// </summary>
         public static string Lobby_OnlyHostCanKick {
@@ -1200,6 +1326,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Lobby_OnlyRegisteredInviteEmail {
             get {
                 return ResourceManager.GetString("Lobby_OnlyRegisteredInviteEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ocurrió un problema al tratar de mostrar a los jugadores. Intenta volver a unirte.
+        /// </summary>
+        public static string Lobby_PlayerUploadError {
+            get {
+                return ResourceManager.GetString("Lobby_PlayerUploadError", resourceCulture);
             }
         }
         
@@ -1231,6 +1366,33 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo restablecer la conexión con el servidor.
+        /// </summary>
+        public static string Lobby_ReconnectionFailed {
+            get {
+                return ResourceManager.GetString("Lobby_ReconnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Conexión restablecida exitosamente \n\n Ya puedes continuar en el lobby.
+        /// </summary>
+        public static string Lobby_ReconnectionReestablishedMessage {
+            get {
+                return ResourceManager.GetString("Lobby_ReconnectionReestablishedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Selecciona un amigo para invitar.
+        /// </summary>
+        public static string Lobby_SelectAFriendMessage {
+            get {
+                return ResourceManager.GetString("Lobby_SelectAFriendMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Solicitud de amistad enviada correctamente.
         /// </summary>
         public static string Lobby_SendFriendRequest {
@@ -1240,11 +1402,56 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Intenta darle clic al botón.
+        /// </summary>
+        public static string Lobby_TryClicking {
+            get {
+                return ResourceManager.GetString("Lobby_TryClicking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¡Intenta invitarlos por correo!.
         /// </summary>
         public static string Lobby_TryEmailInvite {
             get {
                 return ResourceManager.GetString("Lobby_TryEmailInvite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a {0} no se ha unido al lobby.\n¿Deseas enviarle una invitación por correo?.
+        /// </summary>
+        public static string Lobby_TryEmailMessage {
+            get {
+                return ResourceManager.GetString("Lobby_TryEmailMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Sin respuesta.
+        /// </summary>
+        public static string Lobby_TryEmailTitle {
+            get {
+                return ResourceManager.GetString("Lobby_TryEmailTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Reconexión automática.
+        /// </summary>
+        public static string Lobby_TryReconnectionTitle {
+            get {
+                return ResourceManager.GetString("Lobby_TryReconnectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se perdió la conexión con el servidor. \n\n  Se intentará reconectar automáticamente durante los próximos 25 segundos \n\n ¿Deseas esperar la reconexión o regresar el menú principal?.
+        /// </summary>
+        public static string Lobby_TryReconnectMessage {
+            get {
+                return ResourceManager.GetString("Lobby_TryReconnectMessage", resourceCulture);
             }
         }
         

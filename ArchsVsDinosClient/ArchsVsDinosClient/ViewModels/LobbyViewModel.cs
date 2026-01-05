@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosClient.DTO;
 using ArchsVsDinosClient.LobbyService;
 using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Properties;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
@@ -528,15 +529,15 @@ namespace ArchsVsDinosClient.ViewModels
             }
             catch (CommunicationException ex)
             {
-                OnChatDegraded($"No se pudo conectar al chat: {ex.Message}");
+                OnChatDegraded(Lang.Chat_CannotConnect);
             }
             catch (TimeoutException ex)
             {
-                OnChatDegraded($"Timeout al conectar al chat: {ex.Message}");
+                OnChatDegraded(Lang.Chat_CannotConnect);
             }
             catch (Exception ex)
             {
-                OnChatDegraded($"Error al conectar al chat: {ex.Message}");
+                OnChatDegraded(Lang.Chat_CannotConnect);
             }
         }
 
@@ -772,8 +773,8 @@ namespace ArchsVsDinosClient.ViewModels
                 if (playersInSlots == 0)
                 {
                     MessageBox.Show(
-                        "Error de sincronización: No se cargaron los jugadores del lobby.\n\nPor favor, sal y vuelve a unirte al lobby.",
-                        "Error",
+                        Lang.Lobby_PlayerUploadError,
+                        Lang.GlobalError,
                         MessageBoxButton.OK,
                         MessageBoxImage.Error
                     );
@@ -808,8 +809,8 @@ namespace ArchsVsDinosClient.ViewModels
         {
             string errorMsg = LobbyResultCodeHelper.GetMessage(resultCode);
             MessageBox.Show(
-                $"No se pudo unir al lobby: {errorMsg}",
-                "Error",
+                Lang.Lobby_ErrorOccured,
+                Lang.GlobalError,
                 MessageBoxButton.OK,
                 MessageBoxImage.Error
             );
@@ -819,8 +820,8 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Debug.WriteLine($"[LOBBY VM] Error en JoinInvitedLobby: {ex.Message}");
             MessageBox.Show(
-                "Ocurrió un error al intentar unirse al lobby.",
-                "Error",
+                Lang.Lobby_ErrorOccured,
+                Lang.GlobalError,
                 MessageBoxButton.OK,
                 MessageBoxImage.Error
             );
@@ -830,13 +831,13 @@ namespace ArchsVsDinosClient.ViewModels
         {
             if (string.IsNullOrWhiteSpace(MatchCode))
             {
-                MessageBox.Show("No hay un lobby activo.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.Lobby_NoActiveLobbyMessage, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(friendUsername))
             {
-                MessageBox.Show("Selecciona un amigo para invitar.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.Lobby_SelectAFriendMessage, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -845,12 +846,13 @@ namespace ArchsVsDinosClient.ViewModels
 
             if (sent)
             {
-                MessageBox.Show($"Invitación enviada a {friendUsername}.", "Invitación enviada", MessageBoxButton.OK, MessageBoxImage.Information);
+                string message = string.Format(Lang.Lobby_InvitationSentMessage, friendUsername);
+                MessageBox.Show(message, Lang.Lobby_InvitationSentTitle, MessageBoxButton.OK, MessageBoxImage.Information);
                 _ = CheckIfFriendJoined(friendUsername);
             }
             else
             {
-                MessageBox.Show("No se pudo enviar la invitación.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(Lang.Lobby_InvitationNotSent, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -866,16 +868,17 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    string message = string.Format(Lang.Lobby_TryEmailMessage, friendUsername);
                     var result = MessageBox.Show(
-                        $"{friendUsername} no se ha unido al lobby.\n¿Deseas enviarle una invitación por correo?",
-                        "Sin respuesta",
+                        message,
+                        Lang.Lobby_TryEmailTitle,
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question
                     );
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        MessageBox.Show("Funcionalidad de envío de correo pendiente.", "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show(Lang.Lobby_TryClicking, Lang.GlobalInformation, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 });
             }
@@ -903,10 +906,8 @@ namespace ArchsVsDinosClient.ViewModels
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var result = MessageBox.Show(
-                    "Se perdió la conexión con el servidor.\n\n" +
-                    "Se intentará reconectar automáticamente durante los próximos 25 segundos.\n\n" +
-                    "¿Deseas esperar la reconexión o regresar al menú principal?",
-                    "Reconexión automática",
+                    Lang.Lobby_TryReconnectMessage,
+                    Lang.Lobby_TryReconnectionTitle,
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question
                 );
@@ -918,8 +919,8 @@ namespace ArchsVsDinosClient.ViewModels
                     StopReconnectionAttempts(success: false);
 
                     LobbyConnectionLost?.Invoke(
-                        "Saliendo del lobby",
-                        "Regresando al menú principal..."
+                        Lang.Lobby_LeavingLobby,
+                        Lang.Lobby_ComingBackToMainWindow
                     );
                     return;
                 }
@@ -955,16 +956,15 @@ namespace ArchsVsDinosClient.ViewModels
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show(
-                        "No se pudo restablecer la conexión después de varios intentos.\n\n" +
-                        "Serás redirigido al menú principal.",
-                        "Reconexión fallida",
+                        Lang.Lobby_NoReconnectionMessage,
+                        Lang.Lobby_NoReconnectionTitle,
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning
                     );
 
                     LobbyConnectionLost?.Invoke(
-                        "Reconexión fallida",
-                        "No se pudo restablecer la conexión con el servidor."
+                        Lang.Lobby_NoReconnectionTitle,
+                        Lang.Lobby_ReconnectionFailed
                     );
                 });
 
@@ -982,9 +982,8 @@ namespace ArchsVsDinosClient.ViewModels
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     MessageBox.Show(
-                        "¡Conexión restablecida exitosamente!\n\n" +
-                        "Ya puedes continuar en el lobby.",
-                        "Reconexión exitosa",
+                        Lang.Lobby_ReconnectionReestablishedMessage,
+                        Lang.Lobby_ConnectionReestablishedTitle,
                         MessageBoxButton.OK,
                         MessageBoxImage.Information
                     );
