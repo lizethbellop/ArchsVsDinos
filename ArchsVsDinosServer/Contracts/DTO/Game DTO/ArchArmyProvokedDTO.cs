@@ -22,5 +22,8 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public BattleResultDTO BattleResult { get; set; }
+
+        [DataMember]
+        public List<int> DiscardedPlayerCardIds { get; set; }
     }
 }

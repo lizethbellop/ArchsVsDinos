@@ -361,20 +361,17 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         private void LoadStatisticsFromMemory()
         {
-            // 1. Configurar Textos
             MatchDateText = $"Fecha: {DateTime.Now:dd/MM/yyyy HH:mm}";
 
             if (gameData.Reason == "Aborted") TitleText = Lang.Match_GameAbortedMessage;
             else if (gameData.Reason == "ArchsVictory") TitleText = Lang.Match_DefeatedByArchs;
             else TitleText = Lang.Match_DinosVictoryTitle;
 
-            // 2. Verificar bandera del Servidor (¿Se guardó en BD?)
             if (!gameData.IsStatsSaved)
             {
                 HasWarning = true;
-                WarningMessage = Lang.Match_StatsSavePending; // "Conexión inestable. Se guardará más tarde."
+                WarningMessage = Lang.Match_StatsSavePending; 
 
-                // Mostrar MessageBox explícito
                 Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     MessageBox.Show(
@@ -385,7 +382,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 });
             }
 
-            // 3. Llenar Podio desde MEMORIA (gameData.FinalScores)
             PlayerStats.Clear();
             if (gameData.FinalScores != null)
             {
@@ -423,7 +419,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             }
         }
 
-        // --- Helpers ---
         private BitmapImage LoadImageFromPath(string path)
         {
             try

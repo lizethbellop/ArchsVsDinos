@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.Properties.Langs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             else
             {
                 IC_DiscardedCards.ItemsSource = discardedCards;
+                Debug.WriteLine($"[DISCARD WINDOW] Opened with {discardedCards?.Count ?? 0} cards.");
             }
         }
 

@@ -26,7 +26,7 @@ namespace ArchsVsDinosClient.Utils
 
         private MusicPlayer()
         {
-            musicPlayer.Volume = 0.6;
+            musicPlayer.Volume = GlobalSettings.MusicVolume;
             musicPlayer.MediaEnded += OnMusicFinishedRestart;
         }
 

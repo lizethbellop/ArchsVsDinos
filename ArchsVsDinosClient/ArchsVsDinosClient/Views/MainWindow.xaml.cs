@@ -23,7 +23,7 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : BaseSessionWindow
     {
 
         private readonly MainWindowViewModel viewModel;
@@ -35,7 +35,8 @@ namespace ArchsVsDinosClient
             viewModel = new MainWindowViewModel();
             this.DataContext = viewModel;
             ConfigureForTypeSession();
-            //MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Main);
+            MusicPlayer.Instance.StopBackgroundMusic();
+            MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Main);
         }
 
         private void ConfigureForTypeSession()
@@ -62,9 +63,10 @@ namespace ArchsVsDinosClient
         private void Click_BtnCreateMatch(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayMovingRockSound();
+            this.IsNavigating = true;
             var lobby = new Lobby();
             lobby.Show();
-            this.Hide();
+            this.Close();
         }
 
         private void Click_BtnJoinToMatch(object sender, RoutedEventArgs e)

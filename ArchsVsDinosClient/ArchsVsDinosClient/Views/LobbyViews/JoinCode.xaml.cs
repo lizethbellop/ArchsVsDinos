@@ -73,13 +73,16 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
                     foreach (Window window in Application.Current.Windows)
                     {
-                        if (window is MainWindow)
+                        if (window is MainWindow main)
                         {
-                            window.Close();
+                            main.IsNavigating = true;
+                            main.Close();
                             break;
                         }
                     }
 
+                    Application.Current.MainWindow = lobbyWindow;
+                    IsCancelled = false;
                     this.Close();
                 }
                 else

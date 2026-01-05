@@ -1,8 +1,9 @@
-﻿using Contracts;
+﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
+using Contracts;
+using Contracts.DTO.Game_DTO.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ArchsVsDinosServer.BusinessLogic.GameManagement.Cards;
 
 namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
 {
@@ -142,6 +143,16 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             lock (syncRoot)
             {
                 return nextDinoId++;
+            }
+        }
+
+        public void RemoveDinosByElement(ArmyType element)
+        {
+            var dinosToRemove = dinos.Where(dino => dino.Element == element).ToList();
+
+            foreach (var dino in dinosToRemove)
+            {
+                dinos.Remove(dino);
             }
         }
 

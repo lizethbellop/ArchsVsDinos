@@ -23,6 +23,8 @@ namespace ArchsVsDinosClient.Views.MatchViews
         public SettingsInMatch()
         {
             InitializeComponent();
+            Sl_VolumeMusic.Value = GlobalSettings.MusicVolume * 100;
+            Sl_VolumeSound.Value = GlobalSettings.SoundVolume * 100;
         }
 
         private void Click_BtnCancel(object sender, RoutedEventArgs e)
@@ -46,6 +48,26 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 RequestLeaveGame = true;
                 this.DialogResult = true;
                 this.Close();
+            }
+        }
+
+        private void Sl_VolumeMusic_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (IsLoaded) 
+            {
+                double vol = e.NewValue / 100;
+                GlobalSettings.MusicVolume = vol; 
+                MusicPlayer.Instance.SetBackgroundMusicVolume(vol);
+            }
+        }
+
+        private void Sl_VolumeSound_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (IsLoaded)
+            {
+                double vol = e.NewValue / 100;
+                GlobalSettings.SoundVolume = vol;
+                SoundButton.SetVolume(vol);
             }
         }
 

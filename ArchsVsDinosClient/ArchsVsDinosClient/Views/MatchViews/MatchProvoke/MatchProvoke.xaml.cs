@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosClient.GameService;
 using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Utils;
 using ArchsVsDinosClient.ViewModels.GameViewsModels;
 using System;
 using System.Linq;
@@ -41,6 +42,9 @@ namespace ArchsVsDinosClient.Views.MatchViews.MatchProvoke
             InitializeComponent();
             this.viewModel = viewModel;
             DataContext = viewModel;
+
+            MusicPlayer.Instance.StopBackgroundMusic();
+            MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Battle);
 
             InitializeReferences();
             LoadPlayersDinos();

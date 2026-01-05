@@ -4,6 +4,7 @@ using System.ServiceModel;
 
 namespace ArchsVsDinosClient.Services
 {
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant, UseSynchronizationContext = false)]
     public class GameCallbackHandler : IGameManagerCallback
     {
         public event Action<GameInitializedDTO> OnGameInitializedEvent;

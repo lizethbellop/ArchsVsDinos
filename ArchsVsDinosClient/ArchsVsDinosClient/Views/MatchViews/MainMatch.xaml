@@ -1,17 +1,18 @@
-﻿<Window x:Class="ArchsVsDinosClient.Views.MatchViews.MainMatch"
+﻿<views:BaseSessionWindow x:Class="ArchsVsDinosClient.Views.MatchViews.MainMatch"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
+        xmlns:views="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         Title="Match" Height="780" Width="1420" ResizeMode="CanResize"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs" xmlns:controls="clr-namespace:ArchsVsDinosClient.Views.MatchViews"
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
-    <Window.Background>
+    <views:BaseSessionWindow.Background>
         <ImageBrush ImageSource="/Resources/Images/matchBackground.png"/>
-    </Window.Background>
+    </views:BaseSessionWindow.Background>
 
     <Grid>
         <Grid Margin="15,15,15,15">
@@ -823,4 +824,4 @@
 
     </Grid>
 
-</Window>
+</views:BaseSessionWindow>

@@ -137,6 +137,7 @@
     <xs:sequence>
       <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="ArmyType" type="q5:ArmyType" />
       <xs:element minOccurs="0" name="BattleResult" nillable="true" type="tns:BattleResultDTO" />
+      <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="DiscardedPlayerCardIds" nillable="true" type="q6:ArrayOfint" />
       <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ProvokerUserId" type="xs:int" />
     </xs:sequence>
@@ -146,10 +147,10 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="ArchCards" nillable="true" type="tns:ArrayOfCardDTO" />
       <xs:element minOccurs="0" name="ArchPower" type="xs:int" />
-      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="ArmyType" type="q6:ArmyType" />
+      <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.Enums" minOccurs="0" name="ArmyType" type="q7:ArmyType" />
       <xs:element minOccurs="0" name="DinosWon" type="xs:boolean" />
       <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
-      <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerPowers" nillable="true" type="q7:ArrayOfKeyValueOfintint" />
+      <xs:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="PlayerPowers" nillable="true" type="q8:ArrayOfKeyValueOfintint" />
       <xs:element minOccurs="0" name="PointsAwarded" type="xs:int" />
       <xs:element minOccurs="0" name="WinnerPower" type="xs:int" />
       <xs:element minOccurs="0" name="WinnerUserId" nillable="true" type="xs:int" />

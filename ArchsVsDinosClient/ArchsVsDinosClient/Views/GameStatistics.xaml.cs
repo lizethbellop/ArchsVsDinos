@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Views
 {
-    public partial class GameStatistics : Window
+    public partial class GameStatistics : BaseSessionWindow
     {
         private readonly GameStatisticsViewModel viewModel;
 
@@ -17,10 +18,9 @@ namespace ArchsVsDinosClient.Views
             InitializeComponent();
 
             viewModel = new GameStatisticsViewModel(gameEndedData, players);
-
             viewModel.RequestClose += GoToMenu;
-
             DataContext = viewModel;
+            this.ExtraCleanupAction = async () => { await Task.CompletedTask; };
         }
 
         private void Click_BtnExit(object sender, RoutedEventArgs e)
@@ -34,7 +34,9 @@ namespace ArchsVsDinosClient.Views
             {
                 if (this.IsVisible)
                 {
+                    this.IsNavigating = true;
                     var mainWindow = new MainWindow();
+                    Application.Current.MainWindow = mainWindow;
                     mainWindow.Show();
                     this.Close();
                 }

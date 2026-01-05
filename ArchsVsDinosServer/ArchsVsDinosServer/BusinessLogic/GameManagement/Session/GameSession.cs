@@ -260,6 +260,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         {
             lock (SyncRoot)
             {
+                TurnNumber++;
                 CurrentTurn = nextUserId;
                 RemainingMoves = MaxMoves;
             }

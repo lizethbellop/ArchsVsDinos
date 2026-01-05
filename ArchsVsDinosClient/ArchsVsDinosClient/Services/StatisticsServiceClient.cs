@@ -52,7 +52,7 @@ namespace ArchsVsDinosClient.Services
         public async Task<List<LeaderboardEntryDTO>> GetLeaderboardAsync(int topN)
         {
             var result = await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetLeaderboard(topN)),
+                async () => await Task.Run(() =>  client.GetLeaderboard(topN)),
                 defaultValue: null,
                 operationName: "get leaderboard"
             );

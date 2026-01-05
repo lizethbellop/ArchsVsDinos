@@ -7,18 +7,6 @@ namespace ArchsVsDinosClient.Services.Interfaces
 {
     public interface IGameServiceClient
     {
-        /*
-        Task ConnectToGameAsync(string matchCode, int userId);
-        Task InitializeGameAsync(string matchCode);
-        Task StartGameAsync(string matchCode);
-        Task DrawCardAsync(string matchCode, int userId);
-        Task PlayDinoHeadAsync(string matchCode, int userId, int cardId);
-        Task AttachBodyPartAsync(string matchCode, int userId, AttachBodyPartDTO attachmentData);
-        Task ProvokeArchArmyAsync(string matchCode, int userId, ArmyType armyType);
-        Task EndTurnAsync(string matchCode, int userId);
-        Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
-        Task LeaveGameAsync(string matchCode, int userId);*/
-
         Task ConnectToGameAsync(string matchCode, int userId);
         Task InitializeGameAsync(string matchCode);
         Task StartGameAsync(string matchCode);

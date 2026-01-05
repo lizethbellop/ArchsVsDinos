@@ -20,25 +20,6 @@ namespace Contracts
         [OperationContract]
         void LeaveGame(string matchCode, int userId);
 
-        /*
-        [OperationContract]
-        void DrawCard(string matchCode, int userId);
-
-        [OperationContract]
-        void PlayDinoHead(string matchCode, int userId, int cardId);
-
-        [OperationContract]
-        void AttachBodyPartToDino(string matchCode, int userId, AttachBodyPartDTO attachmentData);
-
-        [OperationContract]
-        void TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
-
-        [OperationContract]
-        void ProvokeArchArmy(string matchCode, int userId, ArmyType armyType);
-
-        [OperationContract]
-        void EndTurn(string matchCode, int userId);*/
-
         [OperationContract]
         Task<DrawCardResultCode> DrawCard(string matchCode, int userId);
 

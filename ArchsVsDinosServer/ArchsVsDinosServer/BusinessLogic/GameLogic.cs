@@ -338,6 +338,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
+        /*
         public Task<bool> Provoke(string matchCode, int userId, ArmyType targetArmy)
         {
             var gameSession = GetActiveSession(matchCode);
@@ -387,6 +388,77 @@ namespace ArchsVsDinosServer.BusinessLogic
                     TurnNumber = gameSession.TurnNumber,
                     RemainingTime = TimeSpan.Zero,
                     PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points),
+                    TurnEndTime = gameSession.TurnEndTime
+                });
+
+                return Task.FromResult(true);
+            }
+        }*/
+
+        
+        public Task<bool> Provoke(string matchCode, int userId, ArmyType targetArmy)
+        {
+            var gameSession = GetActiveSession(matchCode);
+            var playerSession = GetPlayer(gameSession, userId);
+
+            if (!rulesValidator.CanProvoke(gameSession, userId))
+            {
+                throw new InvalidOperationException("Cannot provoke, insufficient moves.");
+            }
+                
+            lock (gameSession.SyncRoot)
+            {
+                gameSession.ConsumeMoves(gameSession.RemainingMoves);
+
+                var battleResolver = new BattleResolver(new ServiceDependencies());
+                var battleResult = battleResolver.ResolveBattle(gameSession, targetArmy);
+
+                var discardedArchIds = gameSession.CentralBoard.ClearArmy(targetArmy);
+                gameSession.AddToDiscard(discardedArchIds);
+
+                var discardedPlayerCardIds = new List<int>();
+                foreach (var player in gameSession.Players)
+                {
+                    var dinosToRemove = player.Dinos.Where(dino => dino.Element == targetArmy).ToList();
+                    foreach (var dino in dinosToRemove)
+                    {
+                        var cards = dino.GetAllCards().Select(card => card.IdCard).ToList();
+                        discardedPlayerCardIds.AddRange(cards);
+                        gameSession.AddToDiscard(cards);
+                    }
+                    player.RemoveDinosByElement(targetArmy);
+                }
+
+                var battleResultDto = CreateBattleResultDTO(matchCode, battleResult);
+                var provokedDto = new ArchArmyProvokedDTO
+                {
+                    MatchCode = matchCode,
+                    ProvokerUserId = userId,
+                    ArmyType = targetArmy,
+                    BattleResult = battleResultDto,
+                    DiscardedPlayerCardIds = discardedPlayerCardIds
+                };
+
+                gameNotifier.NotifyArchArmyProvoked(provokedDto);
+
+                loggerHelper.LogInfo($"Player {userId} provoked {targetArmy}. Dinos removed: {discardedPlayerCardIds.Count} cards added to discard.");
+
+                var nextPlayer = gameSession.Players.OrderBy(player => player.TurnOrder)
+                                                    .SkipWhile(player => player.UserId != userId)
+                                                    .Skip(1)
+                                                    .DefaultIfEmpty(gameSession.Players.OrderBy(player => player.TurnOrder).First())
+                                                    .First();
+
+                gameSession.EndTurn(nextPlayer.UserId);
+                gameSession.ResetTurnTimer();
+
+                gameNotifier.NotifyTurnChanged(new TurnChangedDTO
+                {
+                    MatchCode = matchCode,
+                    CurrentPlayerUserId = nextPlayer.UserId,
+                    TurnNumber = gameSession.TurnNumber,
+                    RemainingTime = TimeSpan.Zero,
+                    PlayerScores = gameSession.Players.ToDictionary(p => p.UserId, p => p.Points),
                     TurnEndTime = gameSession.TurnEndTime
                 });
 
@@ -804,6 +876,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
+        /*
         public void LeaveGame(string matchCode, int userId)
         {
             if (string.IsNullOrWhiteSpace(matchCode))
@@ -859,6 +932,50 @@ namespace ArchsVsDinosServer.BusinessLogic
                     if (session.Players.Count < 2 && !session.IsFinished)
                     {
                         EndGameDueToInsufficientPlayers(session);
+                    }
+                    else if (wasHisTurn)
+                    {
+                        PassTurnToNextActivePlayer(session);
+                    }
+                }
+            }
+        }*/
+
+        public void LeaveGame(string matchCode, int userId)
+        {
+            if (string.IsNullOrWhiteSpace(matchCode)) return;
+            var session = gameCoreContext.Sessions.GetSession(matchCode);
+            if (session == null) return;
+
+            lock (session.SyncRoot)
+            {
+                var playerLeaving = session.Players.FirstOrDefault(player => player.UserId == userId);
+                if (playerLeaving == null) return;
+
+                var cardsToRecycle = new List<int>();
+                cardsToRecycle.AddRange(playerLeaving.Hand.Select(card => card.IdCard));
+                foreach (var dino in playerLeaving.Dinos)
+                {
+                    cardsToRecycle.AddRange(dino.GetAllCards().Select(card => card.IdCard));
+                }
+
+                if (cardsToRecycle.Count > 0)
+                {
+                    session.AddToDiscard(cardsToRecycle);
+                }
+
+                bool wasHisTurn = session.CurrentTurn == userId;
+
+                if (session.RemovePlayer(userId))
+                {
+                    loggerHelper.LogInfo($"Player {playerLeaving.Nickname} ({userId}) left match {matchCode}");
+
+                    NotifyPlayersPlayerLeft(session, playerLeaving, cardsToRecycle);
+
+                    if (session.Players.Count < 2 && !session.IsFinished)
+                    {
+                        loggerHelper.LogInfo($"Match {matchCode} aborted: only {session.Players.Count} player(s) left.");
+                        EndGame(session.MatchCode, GameEndType.Aborted, "InsufficientPlayers");
                     }
                     else if (wasHisTurn)
                     {

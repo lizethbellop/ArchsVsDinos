@@ -168,54 +168,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             await gameServiceClient.ConnectToGameAsync(matchCode, userId);
         }
 
-        /*
-        public async Task<string> TryPlayCardAsync(Card card, string cellId)
-        {
-            string localError = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
-
-            if (localError != null)
-            {
-                return localError;
-            }
-
-            int userId = DetermineMyUserId();
-
-            try
-            {
-                if (card.Category == CardCategory.DinoHead)
-                {
-                    await gameServiceClient.PlayDinoHeadAsync(matchCode, userId, card.IdCard);
-                }
-                else if (card.Category == CardCategory.BodyPart)
-                {
-                    int headId = ActionManager.GetHeadIdFromCell(cellId);
-
-                    var attachment = new AttachBodyPartDTO
-                    {
-                        CardId = card.IdCard,
-                        DinoHeadCardId = headId
-                    };
-
-                    await gameServiceClient.AttachBodyPartAsync(matchCode, userId, attachment);
-                }
-
-                ActionManager.RegisterSuccessfulMove(card, cellId);
-                BoardManager.PlayerHand.Remove(card);
-                RemainingMoves--;
-
-                if (RemainingMoves <= 0)
-                {
-                    EndTurnAutomatically();
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                return "Error: " + ex.Message;
-            }
-        }*/
-
         public async Task<string> TryPlayCardAsync(Card card, string cellId)
         {
             string localError = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
@@ -284,26 +236,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             }
         }
 
-        /*
-        public async Task<string> ExecuteDrawCardFromView(int pileIndex)
-        {
-            if (!IsMyTurn || RemainingMoves <= 0)
-            {
-                return Lang.Match_NotYourTurn;
-            }
-
-            try
-            {
-                int userId = DetermineMyUserId();
-                await gameServiceClient.DrawCardAsync(matchCode, userId);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-        }*/
-
         public async Task<string> ExecuteDrawCardFromView(int pileIndex)
         {
             if (!IsMyTurn || RemainingMoves <= 0) return Lang.Match_NotYourTurn;
@@ -327,30 +259,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 return ex.Message;
             }
         }
-
-
-        /*
-        public async Task<bool> TakeCardFromDiscardPileAsync(int cardId)
-        {
-            if (!IsMyTurn || RemainingMoves <= 0)
-            {
-                return false;
-            }
-
-            try
-            {
-                int userId = DetermineMyUserId();
-                await gameServiceClient.TakeCardFromDiscardPileAsync(matchCode, userId, cardId);
-                System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Successfully requested card {cardId}");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Error: {ex.Message}");
-                MessageBox.Show($"{Lang.Match_ErrorTakingACard} {ex.Message}");
-                return false;
-            }
-        }*/
 
         public async Task<bool> TakeCardFromDiscardPileAsync(int cardId)
         {
@@ -378,28 +286,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 return false;
             }
         }
-
-        /*
-
-        public async Task EndTurnManuallyAsync()
-        {
-            if (!IsMyTurn)
-            {
-                MessageBox.Show(Lang.Match_NotYourTurn);
-                return;
-            }
-
-            try
-            {
-                int userId = DetermineMyUserId();
-                await gameServiceClient.EndTurnAsync(matchCode, userId);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[END TURN MANUAL] Error: {ex.Message}");
-                MessageBox.Show($"{Lang.Match_EndTurnError}: {ex.Message}");
-            }
-        }*/
 
         public async Task EndTurnManuallyAsync()
         {
@@ -545,7 +431,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             System.Diagnostics.Debug.WriteLine($"[CARD DRAWN] Card ID: {data.Card.IdCard}");
             System.Diagnostics.Debug.WriteLine($"[CARD DRAWN] Player who drew: {data.PlayerUserId}");
 
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 if (RemainingCardsInDeck > 0)
                 {
@@ -568,15 +454,20 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     if (IsMyTurn)
                     {
                         RemainingMoves--;
+                        Debug.WriteLine($"[CARD DRAWN] Remaining moves: {RemainingMoves}");  // ← AGREGAR ESTE LOG
+
+
                         if (RemainingMoves <= 0)
                         {
+                            Debug.WriteLine("[CARD DRAWN] Auto-ending turn");
                             EndTurnAutomatically();
                         }
                     }
                 }
 
-            });
+            }));
         }
+
         private void OnArchAdded(ArchAddedToBoardDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -748,40 +639,47 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         private void OnTurnChanged(TurnChangedDTO data)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current?.Dispatcher.BeginInvoke(new Action(() =>
             {
-                TimerManager.ResetTurnTimer(data.TurnEndTime);
-
-                int myUserId = DetermineMyUserId();
-                if (data.PlayerScores != null && data.PlayerScores.ContainsKey(myUserId))
+                try
                 {
-                    CurrentPoints = data.PlayerScores[myUserId];
-                }
+                    Debug.WriteLine($"[TURN CHANGED] New current user: {data.CurrentPlayerUserId}");
 
-                int currentPlayerId = data.CurrentPlayerUserId;
-                IsMyTurn = (currentPlayerId == myUserId);
+                    TimerManager.ResetTurnTimer(data.TurnEndTime);
+                    int myUserId = DetermineMyUserId();
 
-                if (IsMyTurn)
-                {
-                    RemainingMoves = 3;
-                    MessageBox.Show(Lang.Match_YourTurn);
-                }
-                else
-                {
-                    RemainingMoves = 0;
-                }
+                    if (data.PlayerScores != null && data.PlayerScores.ContainsKey(myUserId))
+                        CurrentPoints = data.PlayerScores[myUserId];
 
-                string currentPlayerName = GetUsernameById(currentPlayerId);
-                TurnChangedForUI?.Invoke(currentPlayerName);
-            });
+                    IsMyTurn = (data.CurrentPlayerUserId == myUserId);
+                    RemainingMoves = IsMyTurn ? 3 : 0;
+
+                    TurnChangedForUI?.Invoke(GetUsernameById(data.CurrentPlayerUserId));
+                }
+                catch (Exception ex) { Debug.WriteLine($"Error UI Turn: {ex.Message}"); }
+            }));
         }
 
         private void OnServiceError(string title, string msg)
         {
+            if (Application.Current == null || Application.Current.Dispatcher == null) return;
+
             Application.Current.Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(msg, title, MessageBoxButton.OK, MessageBoxImage.Error);
+                try
+                {
+                    MessageBox.Show(msg ?? "Error desconocido", title ?? "Error de Servicio",
+                                    MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch { }
             });
+        }
+
+        public async Task CleanupBeforeClosingAsync()
+        {
+            Debug.WriteLine("[GAME VM] Executing cleanup before window closes...");
+            await LeaveGameAsync(); 
+            this.Dispose();
         }
 
         private string GetUsernameById(int userId)
@@ -873,6 +771,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             });
         }
 
+        /*
         private void OnArchProvoked(ArchArmyProvokedDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -944,6 +843,96 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 MessageBox.Show(resultMessage, resultTitle);
 
                 DiscardPileUpdated?.Invoke();
+            });
+        }*/
+
+      
+        private void OnArchProvoked(ArchArmyProvokedDTO data)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[ARCH PROVOKED] Army: {data.ArmyType}, Winner: {data.BattleResult?.WinnerUsername ?? "None"}");
+
+                ActionManager.ClearSlotsByElement(data.ArmyType);
+
+                int myUserId = DetermineMyUserId();
+                if (data.ProvokerUserId == myUserId)
+                {
+                    RemainingMoves = 0;
+                    System.Diagnostics.Debug.WriteLine("[PROVOKE] All my moves consumed locally");
+                }
+
+                if (data.DiscardedPlayerCardIds != null)
+                {
+                    foreach (var cardId in data.DiscardedPlayerCardIds)
+                    {
+                        var card = CardRepositoryModel.GetById(cardId);
+                        if (card != null && !BoardManager.DiscardPile.Any(cardSelected => cardSelected.IdCard == cardId))
+                        {
+                            BoardManager.DiscardPile.Add(card);
+                        }
+                    }
+                }
+
+                if (data.BattleResult?.ArchCards != null)
+                {
+                    foreach (var cardDto in data.BattleResult.ArchCards)
+                    {
+                        var card = CardRepositoryModel.GetById(cardDto.IdCard);
+                        if (card != null && !BoardManager.DiscardPile.Any(cardSelected => cardSelected.IdCard == cardDto.IdCard))
+                        {
+                            BoardManager.DiscardPile.Add(card);
+                        }
+                    }
+                }
+
+                foreach (var player in allPlayers)
+                {
+                    BoardManager.ClearPlayerDinosByElement(player.IdPlayer, data.ArmyType);
+                    PlayerDinosClearedByElement?.Invoke(player.IdPlayer, data.ArmyType);
+                }
+
+                if (data.BattleResult != null &&
+                    data.BattleResult.DinosWon &&
+                    data.BattleResult.WinnerUserId.HasValue &&
+                    data.BattleResult.WinnerUserId.Value == myUserId)
+                {
+                    CurrentPoints += data.BattleResult.PointsAwarded;
+                }
+
+                switch (data.ArmyType)
+                {
+                    case ArmyType.Sand:
+                        BoardManager.SandArmy.Clear();
+                        SandArmyVisibility = Visibility.Collapsed;
+                        break;
+                    case ArmyType.Water:
+                        BoardManager.WaterArmy.Clear();
+                        WaterArmyVisibility = Visibility.Collapsed;
+                        break;
+                    case ArmyType.Wind:
+                        BoardManager.WindArmy.Clear();
+                        WindArmyVisibility = Visibility.Collapsed;
+                        break;
+                }
+
+                string resultMessage;
+                string resultTitle;
+
+                if (data.BattleResult != null && data.BattleResult.DinosWon)
+                {
+                    resultMessage = $"{Lang.Match_ProvokeVictoryMessagePlayer}{data.BattleResult.WinnerUsername} {Lang.Match_ProvokeVictoryMessagePlayer2} {data.BattleResult.PointsAwarded} {Lang.Match_ProvokeVictoryMessagePlayer3}";
+                    resultTitle = Lang.Match_ProvokeVictoryTitle;
+                }
+                else
+                {
+                    resultMessage = $"{Lang.Match_ProvokeTotalDefeatMessage1}";
+                    resultTitle = Lang.Match_ProvokeTotalDefeatTitle;
+                }
+
+                MessageBox.Show(resultMessage, resultTitle);
+                DiscardPileUpdated?.Invoke();
+                ArchArmyCleared?.Invoke(data.ArmyType);
             });
         }
 

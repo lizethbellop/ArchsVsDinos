@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>logoFotoPerfiles.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=3.2.0.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.3.2.0\lib\net462\log4net.dll</HintPath>
@@ -164,6 +167,7 @@
     <Compile Include="Services\StatisticsServiceClient.cs" />
     <Compile Include="Utils\ConverterCard.cs" />
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
+    <Compile Include="Utils\GlobalSettings.cs" />
     <Compile Include="Utils\ImageCompressor.cs" />
     <Compile Include="Utils\LoadingDisplayHelper.cs" />
     <Compile Include="Utils\LobbyResultCodeHelper.cs" />
@@ -216,6 +220,7 @@
     <Compile Include="Views\AvatarSelection.xaml.cs">
       <DependentUpon>AvatarSelection.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\BaseSessionWindow.cs" />
     <Compile Include="Views\EditAccountViews\EditNickname.xaml.cs">
       <DependentUpon>EditNickname.xaml</DependentUpon>
     </Compile>
@@ -933,100 +938,6 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Resource Include="Resources\Images\Cards\Reverse\reverse.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power0\A_Sand0_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power1\A_Sand1_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power2\A_Sand2_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power3\A_Sand3_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power3\A_Sand3_2.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power4\A_Sand4_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power4\A_Sand4_2.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power5\A_Sand5_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sand\Power5\A_Sand5_2.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power0\A_Sea0_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power1\A_Sea1_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power2\A_Sea2_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power4\A_Sea4_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power4\A_Sea4_2.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power5\A_Sea5_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power5\A_Sea5_2.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power0\A_Wind0_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power1\A_Wind1_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power2\A_Wind2_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power3\A_Wind3_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power3\A_Wind3_2.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power4\A_Wind4_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power4\A_Wind4_2.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power5\A_Wind5_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Wind\Power5\A_Wind5_2.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_2.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_3.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_4.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_5.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power1\ChestParts_Power1_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power1\ChestParts_Power1_2.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power1\ChestParts_Power1_3.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power0\ChestComplete_Power0_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power1\ChestComplete_Power1_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power2\ChestComplete_Power2_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power3\ChestComplete_Power3_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power0\D_Sand0_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power1\D_Sand1_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power1\D_Sand1_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power1\D_Sand1_3.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power2\D_Sand2_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power2\D_Sand2_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power3\D_Sand3_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power3\D_Sand3_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power0\D_Sea0_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power1\D_Sea1_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power1\D_Sea1_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power1\D_Sea1_3.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power2\D_Sea2_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power2\D_Sea2_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power3\D_Sea3_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power3\D_Sea3_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power0\D_Wind0_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power1\D_Wind1_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power1\D_Wind1_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power1\D_Wind1_3.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power2\D_Wind2_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power2\D_Wind2_2.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power3\D_Wind3_1.png" />
-    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power3\D_Wind3_2.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power0\Left_Power0_1.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power0\Left_Power0_2.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power0\Left_Power0_3.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_1.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_2.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_3.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_4.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_5.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power2\Left_Power2_1.png" />
-    <Resource Include="Resources\Images\Cards\LeftArm\Power3\Left_Power3_1.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power0\Legs_Power0_1.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power0\Legs_Power0_2.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power1\Legs_Power1_1.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power1\Legs_Power1_2.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power1\Legs_Power1_3.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power2\Legs_Power2_1.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power2\Legs_Power2_2.png" />
-    <Resource Include="Resources\Images\Cards\Legs\Power3\Legs_Power3_1.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power0\Right_Power0_1.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power0\Right_Power0_2.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power0\Right_Power0_3.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_1.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_2.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_3.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_4.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_5.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power2\Right_Power2_1.png" />
-    <Resource Include="Resources\Images\Cards\RightArm\Power3\Right_Power3_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power0\ChestArms_Power0_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_1.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_2.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_3.png" />
-    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power2\ChestArms_Power2_1.png" />
     <Resource Include="Resources\Images\provokeBackground.png" />
     <Resource Include="Resources\Images\seeDeckHorizontalBackground.png" />
     <Resource Include="Resources\Images\teethDino.png" />
@@ -1060,6 +971,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Resource Include="logoFotoPerfiles.ico" />
     <Content Include="Resources\Images\Avatars\default_avatar_00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1078,10 +990,104 @@
     <Content Include="Resources\Images\Avatars\default_avatar_05.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_1.png" />
-    <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_2.png" />
     <Resource Include="Resources\Images\trashBack.png" />
     <Resource Include="Resources\Images\stopEndMatch.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power0\A_Sand0_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power1\A_Sand1_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power2\A_Sand2_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power3\A_Sand3_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power3\A_Sand3_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power4\A_Sand4_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power4\A_Sand4_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power5\A_Sand5_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sand\Power5\A_Sand5_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power0\A_Sea0_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power1\A_Sea1_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power2\A_Sea2_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power3\A_Sea3_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power4\A_Sea4_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power4\A_Sea4_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power5\A_Sea5_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Sea\Power5\A_Sea5_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power0\A_Wind0_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power1\A_Wind1_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power2\A_Wind2_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power3\A_Wind3_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power3\A_Wind3_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power4\A_Wind4_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power4\A_Wind4_2.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power5\A_Wind5_1.png" />
+    <Resource Include="Resources\Images\Cards\Archs\Wind\Power5\A_Wind5_2.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power0\ChestArms_Power0_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_2.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power1\ChestArms_Power1_3.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArms\Power2\ChestArms_Power2_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_2.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_3.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_4.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power0\ChestParts_Power0_5.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power1\ChestParts_Power1_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power1\ChestParts_Power1_2.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestArmsLegs\Power1\ChestParts_Power1_3.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power0\ChestComplete_Power0_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power1\ChestComplete_Power1_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power2\ChestComplete_Power2_1.png" />
+    <Resource Include="Resources\Images\Cards\Chest\ChestComplete\Power3\ChestComplete_Power3_1.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power0\Left_Power0_1.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power0\Left_Power0_2.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power0\Left_Power0_3.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_1.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_2.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_3.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_4.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power1\Left_Power1_5.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power2\Left_Power2_1.png" />
+    <Resource Include="Resources\Images\Cards\LeftArm\Power3\Left_Power3_1.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power0\Legs_Power0_1.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power0\Legs_Power0_2.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power1\Legs_Power1_1.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power1\Legs_Power1_2.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power1\Legs_Power1_3.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power2\Legs_Power2_1.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power2\Legs_Power2_2.png" />
+    <Resource Include="Resources\Images\Cards\Legs\Power3\Legs_Power3_1.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power0\Right_Power0_1.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power0\Right_Power0_2.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power0\Right_Power0_3.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_1.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_2.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_3.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_4.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power1\Right_Power1_5.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power2\Right_Power2_1.png" />
+    <Resource Include="Resources\Images\Cards\RightArm\Power3\Right_Power3_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power0\D_Sand0_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power1\D_Sand1_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power1\D_Sand1_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power1\D_Sand1_3.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power2\D_Sand2_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power2\D_Sand2_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power3\D_Sand3_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sand\Power3\D_Sand3_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power0\D_Sea0_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power1\D_Sea1_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power1\D_Sea1_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power1\D_Sea1_3.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power2\D_Sea2_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power2\D_Sea2_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power3\D_Sea3_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Sea\Power3\D_Sea3_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power0\D_Wind0_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power1\D_Wind1_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power1\D_Wind1_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power1\D_Wind1_3.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power2\D_Wind2_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power2\D_Wind2_2.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power3\D_Wind3_1.png" />
+    <Resource Include="Resources\Images\Cards\Dinos\Wind\Power3\D_Wind3_2.png" />
     <Content Include="Resources\Music\MusicAttack.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

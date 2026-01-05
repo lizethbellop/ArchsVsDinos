@@ -13,7 +13,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         private DateTime targetTurnEndTime;
 
         private string matchTimeDisplayText = "20:00";
-        private string turnTimeDisplayText = "60";
+        private string turnTimeDisplayText = "30";
         private SolidColorBrush turnTimeDisplayBrush = new SolidColorBrush(Colors.White);
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -59,6 +59,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         public GameTimerManager()
         {
+            targetMatchEndTime = DateTime.UtcNow.AddMinutes(20);
+            targetTurnEndTime = DateTime.UtcNow.AddSeconds(30);
+
             visualTimer = new DispatcherTimer();
             visualTimer.Interval = TimeSpan.FromSeconds(0.2);
             visualTimer.Tick += OnVisualTimerTick;
@@ -67,31 +70,51 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         private void OnVisualTimerTick(object sender, EventArgs eventArgs)
         {
-            var currentUtcTime = DateTime.UtcNow;
-
-            var timeRemainingInMatch = targetMatchEndTime - currentUtcTime;
-            if (timeRemainingInMatch.TotalSeconds < 0)
+            try
             {
-                timeRemainingInMatch = TimeSpan.Zero;
+                var currentUtcTime = DateTime.UtcNow;
+
+                if (targetMatchEndTime == DateTime.MinValue)
+                {
+                    MatchTimeDisplay = "20:00";
+                }
+                else
+                {
+                    var timeRemainingInMatch = targetMatchEndTime - currentUtcTime;
+                    if (timeRemainingInMatch.TotalSeconds < 0)
+                    {
+                        timeRemainingInMatch = TimeSpan.Zero;
+                    }
+                    MatchTimeDisplay = timeRemainingInMatch.ToString(@"mm\:ss");
+                }
+
+                if (targetTurnEndTime == DateTime.MinValue)
+                {
+                    TurnTimeDisplay = "30";
+                }
+                else
+                {
+                    var timeRemainingInTurn = targetTurnEndTime - currentUtcTime;
+                    if (timeRemainingInTurn.TotalSeconds < 0)
+                    {
+                        timeRemainingInTurn = TimeSpan.Zero;
+                    }
+
+                    TurnTimeDisplay = ((int)timeRemainingInTurn.TotalSeconds).ToString();
+
+                    if (timeRemainingInTurn.TotalSeconds <= 10 && timeRemainingInTurn.TotalSeconds > 0)
+                    {
+                        TurnTimeColor = new SolidColorBrush(Colors.Red);
+                    }
+                    else
+                    {
+                        TurnTimeColor = new SolidColorBrush(Colors.White);
+                    }
+                }
             }
-
-            MatchTimeDisplay = timeRemainingInMatch.ToString(@"mm\:ss");
-
-            var timeRemainingInTurn = targetTurnEndTime - currentUtcTime;
-            if (timeRemainingInTurn.TotalSeconds < 0)
+            catch (Exception ex)
             {
-                timeRemainingInTurn = TimeSpan.Zero;
-            }
-
-            TurnTimeDisplay = ((int)timeRemainingInTurn.TotalSeconds).ToString();
-
-            if (timeRemainingInTurn.TotalSeconds <= 10 && timeRemainingInTurn.TotalSeconds > 0)
-            {
-                TurnTimeColor = new SolidColorBrush(Colors.Red);
-            }
-            else
-            {
-                TurnTimeColor = new SolidColorBrush(Colors.White);
+                System.Diagnostics.Debug.WriteLine($"[TIMER ERROR] {ex.Message}");
             }
         }
 

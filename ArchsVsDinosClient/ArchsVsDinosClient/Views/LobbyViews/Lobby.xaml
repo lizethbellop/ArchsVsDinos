@@ -1,23 +1,24 @@
-﻿<Window x:Class="ArchsVsDinosClient.Views.LobbyViews.Lobby"
+﻿<views:BaseSessionWindow x:Class="ArchsVsDinosClient.Views.LobbyViews.Lobby"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ArchsVsDinosClient.Views.LobbyViews"
+        xmlns:views="clr-namespace:ArchsVsDinosClient.Views"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
         Title="Lobby" Height="780" Width="1420"
         WindowStartupLocation="CenterScreen"
         Loaded="LobbyLoaded" WindowState="Maximized">
 
-    <Window.Background>
+    <views:BaseSessionWindow.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF5B64F3" Offset="0"/>
             <GradientStop Color="#FF52C57A" Offset="1"/>
             <GradientStop Color="#FFAD6CC4" Offset="0.097"/>
             <GradientStop Color="#FFE8F6B7" Offset="0.243"/>
         </LinearGradientBrush>
-    </Window.Background>
+    </views:BaseSessionWindow.Background>
 
     <Grid Margin="15,15,15,15">
 
@@ -433,4 +434,4 @@
 
     </Grid>
 
-</Window>
+</views:BaseSessionWindow>

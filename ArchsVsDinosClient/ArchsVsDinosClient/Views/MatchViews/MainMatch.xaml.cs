@@ -25,7 +25,7 @@ using System.Windows.Threading;
 
 namespace ArchsVsDinosClient.Views.MatchViews
 {
-    public partial class MainMatch : Window
+    public partial class MainMatch : BaseSessionWindow
     {
         private readonly ChatViewModel chatViewModel;
         private readonly GameViewModel gameViewModel;
@@ -47,6 +47,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
             this.currentUsername = myUsername;
             this.playersInMatch = players;
             this.gameMatchCode = gameMatchCode;
+
+            MusicPlayer.Instance.StopBackgroundMusic();
+            MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Match);
 
             try
             {
@@ -78,6 +81,53 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             gameViewModel.PropertyChanged += GameViewModelPropertyChanged;
             Loaded += MatchLoaded;
+
+            this.ExtraCleanupAction = async () =>
+            {
+                if (chatViewModel != null)
+                {
+                    try
+                    {
+                        await chatViewModel.DisconnectAsync();
+                        chatViewModel.Dispose();
+                    }
+                    catch { }
+                }
+
+                if (gameViewModel != null)
+                {
+                    try
+                    {
+                        System.Diagnostics.Debug.WriteLine("[EXIT] Leaving match...");
+                        await gameViewModel.LeaveGameAsync();
+
+                        gameViewModel.BoardManager.PlayerHand.CollectionChanged -= PlayerHandCollectionChanged;
+                        gameViewModel.TurnChangedForUI -= UpdateTurnGlow;
+                        gameViewModel.ArchCardPlaced -= ShowArchPlacedAnimation;
+                        gameViewModel.OpponentDinoHeadPlayed -= OnOpponentDinoHeadPlayed;
+                        gameViewModel.OpponentBodyPartAttached -= OnOpponentBodyPartAttached;
+                        gameViewModel.PlayerDinosClearedByElement -= OnPlayerDinosClearedByElement;
+                        gameViewModel.DiscardPileUpdated -= OnDiscardPileUpdated;
+                        gameViewModel.ArchArmyCleared -= OnArchArmyCleared;
+
+                        gameViewModel.Dispose();
+                    }
+                    catch { }
+                }
+            };
+
+            this.ExtraCleanupAction = async () =>
+            {
+                if (gameViewModel != null)
+                {
+                    await gameViewModel.CleanupBeforeClosingAsync();
+                }
+
+                if (chatViewModel != null)
+                {
+                    try { await chatViewModel.DisconnectAsync(); } catch { }
+                }
+            };
         }
 
         private async void MatchLoaded(object sender, RoutedEventArgs e)
@@ -1342,14 +1392,20 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             Gr_GameEndedOverlay.Visibility = Visibility.Collapsed;
 
+            this.IsNavigating = true;
+
             if (gameData.Reason == "Aborted")
             {
-                NavigateToMainWindow();
+                var mainWindow = new MainWindow();
+                Application.Current.MainWindow = mainWindow;
+                mainWindow.Show();
+                this.Close();
                 MessageBox.Show(Lang.Match_GameAbortedMessage, Lang.Match_GameOverTitle);
             }
             else
             {
                 var statisticsWindow = new GameStatistics(gameData, this.playersInMatch);
+                Application.Current.MainWindow = statisticsWindow;
                 statisticsWindow.Show();
                 this.Close();
             }
@@ -1411,6 +1467,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 }
 
                 var mainWindow = new MainWindow();
+                Application.Current.MainWindow = mainWindow;
                 mainWindow.Show();
                 this.Close();
 
@@ -1426,46 +1483,13 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             if (gameViewModel != null) gameViewModel.Dispose();
 
-            var mainWindow = new MainWindow(); 
+            this.IsNavigating = true;
+
+            var mainWindow = new MainWindow();
+            Application.Current.MainWindow = mainWindow;
             mainWindow.Show();
             this.Close();
         }
 
-        protected override async void OnClosing(CancelEventArgs e)
-        {
-            if (chatViewModel != null)
-            {
-                try
-                {
-                    await chatViewModel.DisconnectAsync();
-                    chatViewModel.Dispose();
-                }
-                catch
-                {
-
-                }
-            }
-
-            if (gameViewModel != null)
-            {
-                try
-                {
-                    gameViewModel.BoardManager.PlayerHand.CollectionChanged -= PlayerHandCollectionChanged;
-                    gameViewModel.TurnChangedForUI -= UpdateTurnGlow;
-                    gameViewModel.ArchCardPlaced -= ShowArchPlacedAnimation;
-                    gameViewModel.OpponentDinoHeadPlayed -= OnOpponentDinoHeadPlayed;
-                    gameViewModel.OpponentBodyPartAttached -= OnOpponentBodyPartAttached;
-                    gameViewModel.PlayerDinosClearedByElement -= OnPlayerDinosClearedByElement;
-                    gameViewModel.DiscardPileUpdated -= OnDiscardPileUpdated;
-                    gameViewModel.ArchArmyCleared -= OnArchArmyCleared;
-                    gameViewModel.Dispose();
-                }
-                catch
-                {
-
-                }
-            }
-            base.OnClosing(e);
-        }
     }
 }

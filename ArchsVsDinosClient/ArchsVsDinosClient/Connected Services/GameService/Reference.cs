@@ -1570,6 +1570,9 @@ namespace ArchsVsDinosClient.GameService {
         private ArchsVsDinosClient.GameService.BattleResultDTO BattleResultField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int[] DiscardedPlayerCardIdsField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string MatchCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -1607,6 +1610,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((object.ReferenceEquals(this.BattleResultField, value) != true)) {
                     this.BattleResultField = value;
                     this.RaisePropertyChanged("BattleResult");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int[] DiscardedPlayerCardIds {
+            get {
+                return this.DiscardedPlayerCardIdsField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DiscardedPlayerCardIdsField, value) != true)) {
+                    this.DiscardedPlayerCardIdsField = value;
+                    this.RaisePropertyChanged("DiscardedPlayerCardIds");
                 }
             }
         }

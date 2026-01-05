@@ -27,11 +27,12 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.LobbyViews
 {
-    public partial class Lobby : Window
+    public partial class Lobby : BaseSessionWindow
     {
         private readonly LobbyViewModel viewModel;
         private string currentUsername;
         private bool handledConnectionLost = false;
+        private bool isNavigatingToGame = false;
 
         public Lobby() : this(true) { }
 
@@ -68,6 +69,22 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     {
                         Close();
                     }
+                }
+            };
+
+            this.ExtraCleanupAction = async () =>
+            {
+                if (viewModel != null)
+                {
+                    viewModel.CancelReconnectionAndExit();
+                    if (viewModel.Chat != null)
+                    {
+                        try { await viewModel.Chat.DisconnectAsync(); } catch { }
+                    }
+                    viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;
+                    viewModel.NavigateToGame -= OnNavigateToGame;
+                    viewModel.NavigateToLobbyAsGuest -= OnNavigateToLobbyAsGuest;
+                    viewModel.Cleanup();
                 }
             };
         }
@@ -145,8 +162,21 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
         private void OnNavigateToGame()
         {
+            if (isNavigatingToGame)
+            {
+                return;
+            }
+
             Application.Current.Dispatcher.Invoke(() =>
             {
+
+                if (isNavigatingToGame)
+                {
+                    return;
+                }
+
+                isNavigatingToGame = true;
+
                 try
                 {
                     string matchCode = viewModel.MatchCode;
@@ -154,12 +184,15 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players = viewModel.GetCurrentPlayers();
                     int myLobbyUserId = viewModel.GetMyLobbyUserId();
 
+                    this.IsNavigating = true;
                     MainMatch gameWindow = new MainMatch(players, myUsername, matchCode, myLobbyUserId);
+                    Application.Current.MainWindow = gameWindow;
                     gameWindow.Show();
                     this.Close();
                 }
                 catch (Exception)
                 {
+                    isNavigatingToGame = false;
                     MessageBox.Show(Lang.Lobby_ErrorStartingGame);
                 }
             });
@@ -210,7 +243,9 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 if (result == MessageBoxResult.Yes)
                 {
                     viewModel.LeaveOfTheLobby(nicknameToSend);
+                    this.IsNavigating = true;
                     MainWindow main = new MainWindow();
+                    Application.Current.MainWindow = main; 
                     main.Show();
                     this.Close();
                 }
@@ -218,7 +253,10 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             else
             {
                 viewModel.LeaveOfTheLobby(nicknameToSend);
+                this.IsNavigating = true;
+                this.IsNavigating = true;
                 MainWindow main = new MainWindow();
+                Application.Current.MainWindow = main; 
                 main.Show();
                 this.Close();
             }
@@ -295,32 +333,5 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             Gr_InviteByEmail.Visibility = Visibility.Collapsed;
         }
 
-        protected override async void OnClosing(CancelEventArgs e)
-        {
-            viewModel?.CancelReconnectionAndExit();
-
-            if (viewModel != null)
-            {
-                viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;
-                viewModel.NavigateToGame -= OnNavigateToGame;
-                viewModel.NavigateToLobbyAsGuest -= OnNavigateToLobbyAsGuest;
-                viewModel.Cleanup();
-            }
-
-            if (viewModel?.Chat != null)
-            {
-                try
-                {
-                    await viewModel.Chat.DisconnectAsync();
-                    viewModel.Chat.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[LOBBY] Error disconnecting chat: {ex.Message}");
-                }
-            }
-
-            base.OnClosing(e);
-        }
     }
 }

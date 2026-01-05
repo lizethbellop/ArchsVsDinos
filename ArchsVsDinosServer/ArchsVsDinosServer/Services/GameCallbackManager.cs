@@ -11,6 +11,7 @@ namespace ArchsVsDinosServer.Services
     public class GameCallbackManager
     {
         private readonly List<IGameManagerCallback> activeCallbacks = new List<IGameManagerCallback>();
+
         private readonly object syncRoot = new object();
         private readonly ILoggerHelper loggerHelper;
 
