@@ -17,9 +17,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para PersonalStatistics.xaml
-    /// </summary>
     public partial class PersonalStatistics : Window
     {
         private readonly PersonalStatisticsViewModel viewModel;

@@ -89,13 +89,13 @@ namespace ArchsVsDinosClient.Services
                 var request = new ChatConnectionRequest
                 {
                     Username = username,
-                    Context = contextType,   // 0 = Lobby, 1 = InGame
+                    Context = contextType,   
                     MatchCode = matchCode
                 };
 
                 client.Connect(request);
                 return Task.CompletedTask;
-            }, operationName: "conexión al chat");
+            }, operationName: "connection to chat");
         }
 
         public async Task SendMessageAsync(string message, string username)
@@ -105,7 +105,7 @@ namespace ArchsVsDinosClient.Services
                 EnsureClientIsUsable();
                 client.SendMessageToRoom(message, username);
                 return Task.CompletedTask;
-            }, operationName: "envío de mensaje");
+            }, operationName: "message sending");
         }
 
         public async Task DisconnectAsync(string username)
@@ -115,7 +115,7 @@ namespace ArchsVsDinosClient.Services
                 EnsureClientIsUsable();
                 client.Disconnect(username);
                 return Task.CompletedTask;
-            }, operationName: "desconexión");
+            }, operationName: "desconnection");
         }
 
         private void OnMessageReceived(string roomId, string fromUser, string message) =>

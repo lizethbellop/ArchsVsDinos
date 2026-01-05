@@ -49,31 +49,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
-        /*
-        private void UpdateSlotVisuals(SlotLobby slotData)
-        {
-            if (string.IsNullOrWhiteSpace(slotData.Username))
-            {
-                Gr_Null.Visibility = Visibility.Visible;
-                Gr_IsNotFriend.Visibility = Visibility.Collapsed;
-                Gr_IsFriend.Visibility = Visibility.Collapsed;
-            }
-            else if (slotData.IsFriend)
-            {
-                Gr_Null.Visibility = Visibility.Collapsed;
-                Gr_IsNotFriend.Visibility = Visibility.Collapsed;
-                Gr_IsFriend.Visibility = Visibility.Visible;
-                LoadPlayerAvatar(slotData, ImgFriendAvatar);
-            }
-            else
-            {
-                Gr_Null.Visibility = Visibility.Collapsed;
-                Gr_IsNotFriend.Visibility = Visibility.Visible;
-                Gr_IsFriend.Visibility = Visibility.Collapsed;
-                LoadPlayerAvatar(slotData, ImgPlayerAvatar);
-            }
-        }*/
-
         private void UpdateSlotVisuals(SlotLobby slotData)
         {
             if (string.IsNullOrWhiteSpace(slotData.Username))
@@ -90,14 +65,12 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     Gr_IsNotFriend.Visibility = Visibility.Collapsed;
                     Gr_IsFriend.Visibility = Visibility.Visible;
-                    // Pasamos el pincel del grid de amigos
                     LoadPlayerAvatar(slotData, ImgFriendAvatar);
                 }
                 else
                 {
                     Gr_IsNotFriend.Visibility = Visibility.Visible;
                     Gr_IsFriend.Visibility = Visibility.Collapsed;
-                    // Pasamos el pincel del grid de no amigos
                     LoadPlayerAvatar(slotData, ImgPlayerAvatar);
                 }
             }

@@ -31,60 +31,6 @@ namespace ArchsVsDinosServer.Services
             logger = dependencies.loggerHelper;
             StatsRetryQueue.Configure(matchProcessor.ProcessMatchResults);
         }
-
-        /*
-        public SaveMatchResultCode SaveMatchStatistics(MatchResultDTO matchResult)
-        {
-            try
-            {
-                if (matchResult == null)
-                {
-                    logger.LogWarning("SaveMatchStatistics: matchResult is null");
-                    return SaveMatchResultCode.InvalidData;
-                }
-
-                if (string.IsNullOrWhiteSpace(matchResult.MatchId))
-                {
-                    logger.LogWarning($"SaveMatchStatistics: Invalid matchId {matchResult.MatchId}");
-                    return SaveMatchResultCode.InvalidData;
-                }
-
-                if (matchResult.PlayerResults == null || !matchResult.PlayerResults.Any())
-                {
-                    logger.LogWarning($"SaveMatchStatistics: No player results for match {matchResult.MatchId}");
-                    return SaveMatchResultCode.InvalidData;
-                }
-
-                var success = matchProcessor.ProcessMatchResults(matchResult);
-
-                if (success)
-                {
-                    logger.LogInfo($"SaveMatchStatistics: Successfully saved match {matchResult.MatchId}");
-                    return SaveMatchResultCode.Success;
-                }
-                else
-                {
-                    logger.LogInfo($"SaveMatchStatistics: Failed to save match {matchResult.MatchId}");
-                    return SaveMatchResultCode.DatabaseError;
-                }
-            }
-            catch (ArgumentException ex)
-            {
-                logger.LogError($"SaveMatchStatistics: Invalid argument - {ex.Message}", ex);
-                return SaveMatchResultCode.InvalidData;
-            }
-            catch (InvalidOperationException ex)
-            {
-                logger.LogError($"SaveMatchStatistics: Database error - {ex.Message}", ex);
-                return SaveMatchResultCode.DatabaseError;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"SaveMatchStatistics: Unexpected error - {ex.Message}", ex);
-                return SaveMatchResultCode.UnexpectedError;
-            }
-        }*/
-
         public SaveMatchResultCode SaveMatchStatistics(MatchResultDTO matchResult)
         {
             try

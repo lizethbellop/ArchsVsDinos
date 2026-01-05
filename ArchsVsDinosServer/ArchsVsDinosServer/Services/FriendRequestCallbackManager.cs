@@ -168,16 +168,16 @@ namespace ArchsVsDinosServer.Services
                         catch (CommunicationException)
                         {
                             subscribers.Remove(username);
-                            loggerHelper.LogWarning($"Usuario {username} desconectado, removido de suscriptores");
+                            loggerHelper.LogWarning($"User {username} disconnected, removed from subscribers");
                         }
                         catch (TimeoutException)
                         {
                             subscribers.Remove(username);
-                            loggerHelper.LogWarning($"Timeout al notificar a {username}, removido de suscriptores");
+                            loggerHelper.LogWarning($"Timeout when notifying {username}, removed from subscribers");
                         }
                         catch (Exception ex)
                         {
-                            loggerHelper.LogError($"Error al ejecutar callback para {username}", ex);
+                            loggerHelper.LogError($"Error executing callback for {username}", ex);
                             subscribers.Remove(username);
                         }
                     }
@@ -185,7 +185,7 @@ namespace ArchsVsDinosServer.Services
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error al notificar al usuario {username}", ex);
+                loggerHelper.LogError($"Error notifying the user {username}", ex);
             }
         }
     }

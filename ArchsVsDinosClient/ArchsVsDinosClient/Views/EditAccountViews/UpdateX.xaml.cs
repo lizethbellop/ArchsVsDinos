@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.EditAccountViews
 {
-    /// <summary>
-    /// Lógica de interacción para UpdateX.xaml
-    /// </summary>
     public partial class UpdateX : Window
     {
         private readonly UpdateXViewModel viewModel;
@@ -49,16 +46,6 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             SoundButton.PlayMovingRockSound();
             viewModel.NewXLink = TxtB_XLink.Text;
             await viewModel.SaveXLink();
-        }
-
-        private bool ValidateInputs(string xLink)
-        {
-            if (ValidationHelper.IsEmpty(xLink) || ValidationHelper.IsWhiteSpace(xLink))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void OnRequestClose(object sender, System.EventArgs e)

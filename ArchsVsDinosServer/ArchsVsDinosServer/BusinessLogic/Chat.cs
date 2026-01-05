@@ -96,7 +96,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return;
             }
 
-            // NUEVO: Primero envía la lista actual al usuario que se acaba de conectar
             var existingUsersInMatch = ConnectedUsers
                 .Where(u => u.Value.MatchCode == request.MatchCode)
                 .Select(u => u.Key)
@@ -257,57 +256,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 loggerHelper.LogWarning($"[CHAT MONITOR] Low players in game {matchCode}: {gamePlayers}.");
             }
         }
-
-        private void NotifyGameClosing(string matchCode, string reason)
-        {
-            foreach (var user in ConnectedUsers.Where(u => u.Value.MatchCode == matchCode).ToArray())
-            {
-                SafeCallbackInvoke(user.Key, () =>
-                {
-                    user.Value.Callback.LobbyClosedDueToInsufficientPlayers(reason);
-                });
-            }
-        }
-
-        private void NotifyLobbyClosing(string lobbyCode, string reason)
-        {
-            foreach (var user in ConnectedUsers
-                .Where(u => u.Value.Context == ContextLobby && u.Value.MatchCode == lobbyCode)
-                .ToArray())
-            {
-                SafeCallbackInvoke(user.Key, () =>
-                {
-                    user.Value.Callback.LobbyClosedDueToInsufficientPlayers(reason);
-                });
-            }
-        }
-
-        private void DisconnectLobbyUsers(string lobbyCode)
-        {
-            var lobbyUsers = ConnectedUsers
-                .Where(u => u.Value.Context == ContextLobby && u.Value.MatchCode == lobbyCode)
-                .Select(u => u.Key)
-                .ToList();
-
-            foreach (var username in lobbyUsers)
-            {
-                ConnectedUsers.TryRemove(username, out _);
-            }
-        }
-
-        private void DisconnectGameUsers(string matchCode)
-        {
-            var gameUsers = ConnectedUsers
-                .Where(u => u.Value.Context == ContextGame && u.Value.MatchCode == matchCode)
-                .Select(u => u.Key)
-                .ToList();
-
-            foreach (var username in gameUsers)
-            {
-                ConnectedUsers.TryRemove(username, out _);
-            }
-        }
-
         private int GetUserIdFromUsername(string username)
         {
             try
@@ -335,17 +283,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                         ChatResultCode.Chat_MessageBlocked,
                         $"Warning {currentStrikes}/3. At 3 warnings you will be expelled."
                     );
-                });
-            }
-        }
-
-        private void BroadcastSystemNotificationGlobal(ChatResultCode code, string message)
-        {
-            foreach (var user in ConnectedUsers.ToArray())
-            {
-                SafeCallbackInvoke(user.Key, () =>
-                {
-                    user.Value.Callback.ReceiveSystemNotification(code, message);
                 });
             }
         }

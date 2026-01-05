@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para Account.xaml
-    /// </summary>
     public partial class Account : Window
     {
         public Account()

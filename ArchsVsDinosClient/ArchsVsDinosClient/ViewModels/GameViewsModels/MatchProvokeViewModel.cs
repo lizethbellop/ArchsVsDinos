@@ -80,53 +80,15 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             OnPropertyChanged(nameof(SelectedArmyPower));
         }
 
-        /*
         private void LoadPlayersDinos()
         {
             PlayersDinos.Clear();
 
-            foreach (var playerEntry in boardManager.PlayerDecks)
-            {
-                int userId = playerEntry.Key;
-                var dinos = playerEntry.Value;
-
-                string playerName;
-                if (playerNames.ContainsKey(userId))
-                {
-                    playerName = playerNames[userId];
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"⚠️ [PROVOKE] Player {userId} not found in playerNames dictionary");
-                    playerName = $"Player {userId}";
-                }
-
-                int totalPower = CalculateTotalPowerForElement(dinos, selectedArmyType);
-
-                var playerDinosVM = new PlayerDinosViewModel
-                {
-                    UserId = userId,
-                    PlayerName = playerName,
-                    TotalPower = totalPower,
-                    Dinos = dinos,
-                    Element = selectedArmyType
-                };
-
-                PlayersDinos.Add(playerDinosVM);
-            }
-        }*/
-
-        private void LoadPlayersDinos()
-        {
-            PlayersDinos.Clear();
-
-            // ✅ Iterar sobre TODOS los jugadores de la partida (no solo los que tienen dinos en el board)
             foreach (var playerName in playerNames)
             {
                 int userId = playerName.Key;
                 string name = playerName.Value;
 
-                // Buscar si este jugador tiene dinos en el board
                 Dictionary<int, DinoBuilder> dinos = null;
                 if (boardManager.PlayerDecks.ContainsKey(userId))
                 {
@@ -134,7 +96,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 }
                 else
                 {
-                    // ✅ Si no tiene dinos, crear diccionario vacío
                     dinos = new Dictionary<int, DinoBuilder>();
                 }
 

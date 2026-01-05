@@ -292,7 +292,6 @@
     <Compile Include="Utils\StatsRetryQueue.cs" />
     <Compile Include="Utils\StrikeServiceDependencies.cs" />
     <Compile Include="Utils\UnregisteredPlayerGenerator.cs" />
-    <Compile Include="Utils\ValidationCodeManager.cs" />
     <Compile Include="Utils\ValidationHelper.cs" />
     <Compile Include="Utils\VerificationCodeManager.cs" />
     <Compile Include="Wrappers\CodeGeneratorWrapper.cs" />

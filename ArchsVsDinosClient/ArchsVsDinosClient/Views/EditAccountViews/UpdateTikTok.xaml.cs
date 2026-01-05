@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.EditAccountViews
 {
-    /// <summary>
-    /// Lógica de interacción para UpdateTikTok.xaml
-    /// </summary>
     public partial class UpdateTikTok : Window
     {
         private readonly UpdateTikTokViewModel viewModel;
@@ -49,16 +46,6 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             SoundButton.PlayMovingRockSound();
             viewModel.NewTikTokLink = TxtB_TikTokLink.Text;
             await viewModel.SaveTikTokLink();
-        }
-
-        private bool ValidateInputs(string tiktokLink)
-        {
-            if (ValidationHelper.IsEmpty(tiktokLink) || ValidationHelper.IsWhiteSpace(tiktokLink))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void OnRequestClose(object sender, System.EventArgs e)

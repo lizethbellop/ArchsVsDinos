@@ -20,9 +20,6 @@ using UserAccountDTO = ArchsVsDinosClient.DTO.UserAccountDTO;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para Register.xaml
-    /// </summary>
     public partial class Register : Window
     {
 

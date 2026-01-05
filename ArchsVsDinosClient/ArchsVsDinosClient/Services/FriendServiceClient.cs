@@ -46,27 +46,6 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        private void RegenerateClient()
-        {
-            lock (clientLock)
-            {
-                try
-                {
-                    if (client?.State == CommunicationState.Faulted)
-                        client.Abort();
-                    else
-                        client?.Close();
-                }
-                catch
-                {
-                    client?.Abort();
-                }
-
-                client = new FriendManagerClient();
-                guardian.MonitorClientState(client);
-            }
-        }
-
         public async Task<FriendResponse> RemoveFriendAsync(string username, string friendUsername)
         {
             return await guardian.ExecuteWithThrowAsync(
