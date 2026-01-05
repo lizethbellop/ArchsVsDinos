@@ -169,6 +169,9 @@ namespace UnitTest.ChatTests
         [TestMethod]
         public void TestConnectUserAlreadyConnectedSendsNotification()
         {
+            var mockCallback1 = new Mock<IChatManagerCallback>();
+            var mockCallback2 = new Mock<IChatManagerCallback>();
+
             string username = "user1";
             UserAccount user = new UserAccount { idUser = 1, username = username };
 
@@ -181,10 +184,13 @@ namespace UnitTest.ChatTests
 
             SetupMockUserSet(new List<UserAccount> { user });
 
-            chat.Connect(request);
+            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback1.Object);
             chat.Connect(request);
 
-            mockCallback.Verify(c => c.ReceiveSystemNotification(
+            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback2.Object);
+            chat.Connect(request);
+
+            mockCallback2.Verify(c => c.ReceiveSystemNotification(
                 ChatResultCode.Chat_UserAlreadyConnected,
                 "User already connected"), Times.Once);
         }
@@ -192,6 +198,9 @@ namespace UnitTest.ChatTests
         [TestMethod]
         public void TestConnectUserAlreadyConnectedDoesNotDuplicate()
         {
+            var mockCallback1 = new Mock<IChatManagerCallback>();
+            var mockCallback2 = new Mock<IChatManagerCallback>();
+
             string username = "user1";
             UserAccount user = new UserAccount { idUser = 1, username = username };
 
@@ -204,7 +213,10 @@ namespace UnitTest.ChatTests
 
             SetupMockUserSet(new List<UserAccount> { user });
 
+            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback1.Object);
             chat.Connect(request);
+
+            mockCallbackProvider.Setup(p => p.GetCallback()).Returns(mockCallback2.Object);
             chat.Connect(request);
 
             Assert.AreEqual(1, GetConnectedUsersCount());
@@ -278,7 +290,7 @@ namespace UnitTest.ChatTests
 
             chat.Disconnect(username1);
 
-            Assert.AreEqual(0, GetConnectedUsersCount());
+            Assert.AreEqual(1, GetConnectedUsersCount());
         }
 
         [TestMethod]
@@ -331,8 +343,12 @@ namespace UnitTest.ChatTests
         {
             if (connectedUsersField != null)
             {
-                var connectedUsers = connectedUsersField.GetValue(null) as ConcurrentDictionary<string, object>;
-                connectedUsers?.Clear();
+                var connectedUsers = connectedUsersField.GetValue(null);
+                if (connectedUsers != null)
+                {
+                    var clearMethod = connectedUsers.GetType().GetMethod("Clear");
+                    clearMethod?.Invoke(connectedUsers, null);
+                }
             }
         }
 
@@ -340,8 +356,12 @@ namespace UnitTest.ChatTests
         {
             if (connectedUsersField != null)
             {
-                var connectedUsers = connectedUsersField.GetValue(null) as ConcurrentDictionary<string, object>;
-                return connectedUsers?.Count ?? 0;
+                var connectedUsers = connectedUsersField.GetValue(null);
+                if (connectedUsers != null)
+                {
+                    var countProperty = connectedUsers.GetType().GetProperty("Count");
+                    return (int)(countProperty?.GetValue(connectedUsers) ?? 0);
+                }
             }
             return 0;
         }

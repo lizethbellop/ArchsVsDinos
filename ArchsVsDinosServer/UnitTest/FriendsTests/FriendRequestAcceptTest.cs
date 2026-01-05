@@ -55,15 +55,10 @@ namespace UnitTest.FriendsTests
 
             mockValidationHelper.Setup(v => v.IsEmpty(fromUser)).Returns(true);
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_EmptyUsername, result.ResultCode);
         }
 
         [TestMethod]
@@ -75,15 +70,10 @@ namespace UnitTest.FriendsTests
             mockValidationHelper.Setup(v => v.IsEmpty(fromUser)).Returns(false);
             mockValidationHelper.Setup(v => v.IsEmpty(toUser)).Returns(true);
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_EmptyUsername, result.ResultCode);
         }
 
         [TestMethod]
@@ -94,15 +84,10 @@ namespace UnitTest.FriendsTests
 
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(true);
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_EmptyUsername, result.ResultCode);
         }
 
         [TestMethod]
@@ -114,15 +99,10 @@ namespace UnitTest.FriendsTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             SetupMockUserSet(new List<UserAccount>());
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_UserNotFound
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_UserNotFound, result.ResultCode);
         }
 
         [TestMethod]
@@ -136,15 +116,10 @@ namespace UnitTest.FriendsTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             SetupMockUserSet(new List<UserAccount> { sender });
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_UserNotFound
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_UserNotFound, result.ResultCode);
         }
 
         [TestMethod]
@@ -160,15 +135,10 @@ namespace UnitTest.FriendsTests
             SetupMockUserSet(new List<UserAccount> { sender, receiver });
             SetupMockFriendRequestSet(new List<FriendRequest>());
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_RequestNotFound
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_RequestNotFound, result.ResultCode);
         }
 
         [TestMethod]
@@ -190,15 +160,10 @@ namespace UnitTest.FriendsTests
             SetupMockUserSet(new List<UserAccount> { sender, receiver });
             SetupMockFriendRequestSet(new List<FriendRequest> { request });
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_RequestNotFound
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_RequestNotFound, result.ResultCode);
         }
 
         [TestMethod]
@@ -225,15 +190,10 @@ namespace UnitTest.FriendsTests
             mockFriendshipSet.Setup(m => m.Add(It.IsAny<Friendship>()));
             mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = true,
-                ResultCode = FriendRequestResultCode.FriendRequest_Success
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_Success, result.ResultCode);
         }
 
         [TestMethod]
@@ -257,16 +217,33 @@ namespace UnitTest.FriendsTests
             SetupMockFriendshipSet(new List<Friendship>());
 
             List<Friendship> addedFriendships = new List<Friendship>();
-            mockFriendshipSet.Setup(m => m.Create()).Returns(new Friendship());
+            // IMPORTANTE: Usar Returns con función para crear nueva instancia cada vez
+            mockFriendshipSet.Setup(m => m.Create()).Returns(() => new Friendship());
             mockFriendshipSet.Setup(m => m.Add(It.IsAny<Friendship>()))
-                .Callback<Friendship>(f => addedFriendships.Add(f));
+                .Callback<Friendship>(f =>
+                {
+                    // Crear una copia con los valores actuales en el momento del Add
+                    addedFriendships.Add(new Friendship
+                    {
+                        idUser = f.idUser,
+                        idUserFriend = f.idUserFriend,
+                        status = f.status
+                    });
+                });
             mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
 
             friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(2, addedFriendships.Count);
-            Assert.IsTrue(addedFriendships.Any(f => f.idUser == 1 && f.idUserFriend == 2));
-            Assert.IsTrue(addedFriendships.Any(f => f.idUser == 2 && f.idUserFriend == 1));
+            Assert.AreEqual(2, addedFriendships.Count, "Debería haber agregado exactamente 2 friendships");
+
+            var friendship1 = addedFriendships.FirstOrDefault(f => f.idUser == 1 && f.idUserFriend == 2);
+            var friendship2 = addedFriendships.FirstOrDefault(f => f.idUser == 2 && f.idUserFriend == 1);
+
+            Assert.IsNotNull(friendship1, "Debería existir friendship de user1 a user2");
+            Assert.AreEqual("Active", friendship1.status, "El status de friendship1 debería ser Active");
+
+            Assert.IsNotNull(friendship2, "Debería existir friendship de user2 a user1");
+            Assert.AreEqual("Active", friendship2.status, "El status de friendship2 debería ser Active");
         }
 
         [TestMethod]
@@ -366,15 +343,10 @@ namespace UnitTest.FriendsTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new EntityException("DB Error"));
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_DatabaseError, result.ResultCode);
         }
 
         [TestMethod]
@@ -386,15 +358,10 @@ namespace UnitTest.FriendsTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new InvalidOperationException("Invalid Op"));
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_UnexpectedError, result.ResultCode);
         }
 
         [TestMethod]
@@ -406,15 +373,10 @@ namespace UnitTest.FriendsTests
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
             mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected"));
 
-            FriendRequestResponse expectedResult = new FriendRequestResponse
-            {
-                Success = false,
-                ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError
-            };
-
             FriendRequestResponse result = friendRequestLogic.AcceptFriendRequest(fromUser, toUser);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual(FriendRequestResultCode.FriendRequest_UnexpectedError, result.ResultCode);
         }
     }
 }

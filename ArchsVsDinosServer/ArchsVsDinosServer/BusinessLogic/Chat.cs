@@ -107,7 +107,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 callback.UpdateUserList(existingUsersInMatch);
             });
 
-            // Luego notifica a los DEMÁS usuarios del mismo match que alguien se unió
             BroadcastSystemNotificationToMatch(
                 ChatResultCode.Chat_UserConnected,
                 $"{request.Username} has joined",
@@ -233,7 +232,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 CheckMinimumPlayersInGame(matchCode);
         }
 
-        /*
         private void CheckMinimumPlayersInLobby(string lobbyCode)
         {
             int lobbyPlayers = ConnectedUsers.Count(u =>
@@ -242,29 +240,9 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             if (lobbyPlayers < MinimumPlayersRequired)
             {
-                loggerHelper.LogWarning($"Insufficient players in lobby {lobbyCode}. Current: {lobbyPlayers}");
-
-                NotifyLobbyClosing(lobbyCode, "Insufficient players. Minimum required: 2 players");
-                lobbyNotifier?.NotifyLobbyClosure(lobbyCode, "Insufficient players");
-                DisconnectLobbyUsers(lobbyCode);
-            }
-        }*/
-
-        private void CheckMinimumPlayersInLobby(string lobbyCode)
-        {
-            int lobbyPlayers = ConnectedUsers.Count(u =>
-                u.Value.Context == ContextLobby &&
-                u.Value.MatchCode == lobbyCode);
-
-            if (lobbyPlayers < MinimumPlayersRequired)
-            {
-                // Solo dejamos el log para saber qué pasa
                 loggerHelper.LogWarning($"[CHAT MONITOR] Low players in lobby {lobbyCode}: {lobbyPlayers}. Waiting for LobbyLogic decision.");
 
-                // COMENTA ESTAS LÍNEAS:
-                // NotifyLobbyClosing(lobbyCode, "... ");
-                // lobbyNotifier?.NotifyLobbyClosure(lobbyCode, "Insufficient players"); 
-                // DisconnectLobbyUsers(lobbyCode);
+                
             }
         }
 
