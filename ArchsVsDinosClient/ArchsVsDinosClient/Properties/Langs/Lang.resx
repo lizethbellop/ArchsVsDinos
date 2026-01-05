@@ -882,9 +882,6 @@
   <data name="Lobby_InvitationReceived" xml:space="preserve">
     <value>te ha invitado a unirte a su lobby. ¿Deseas aceptar la invitación?</value>
   </data>
-  <data name="Lobby_InvitationReceivedTitle" xml:space="preserve">
-    <value>Invitacion de lobby</value>
-  </data>
   <data name="Match_ArchAddedMessage" xml:space="preserve">
     <value>Arqueólogo arrastrado. Ejército:</value>
   </data>
@@ -1097,5 +1094,80 @@
   </data>
   <data name="Match_TryAgainLater" xml:space="preserve">
     <value>Intente más tarde</value>
+  </data>
+  <data name="Lobby_TryReconnectMessage" xml:space="preserve">
+    <value>Se perdió la conexión con el servidor. \n\n  Se intentará reconectar automáticamente durante los próximos 25 segundos \n\n ¿Deseas esperar la reconexión o regresar el menú principal?</value>
+  </data>
+  <data name="Lobby_InvitationReceivedTitle" xml:space="preserve">
+    <value>Invitación de lobby</value>
+  </data>
+  <data name="Lobby_TryReconnectionTitle" xml:space="preserve">
+    <value>Reconexión automática</value>
+  </data>
+  <data name="Lobby_LeavingLobby" xml:space="preserve">
+    <value>Saliendo del lobby</value>
+  </data>
+  <data name="Lobby_ComingBackToMainWindow" xml:space="preserve">
+    <value>Regresando al menú principal...</value>
+  </data>
+  <data name="Lobby_NoReconnectionMessage" xml:space="preserve">
+    <value>No se pudo restablecer la conexión después de varios intentos.\n\n Serás redirigido al menú principal</value>
+  </data>
+  <data name="Lobby_NoReconnectionTitle" xml:space="preserve">
+    <value>Reconexión fallida</value>
+  </data>
+  <data name="Lobby_ReconnectionFailed" xml:space="preserve">
+    <value>No se pudo restablecer la conexión con el servidor</value>
+  </data>
+  <data name="Lobby_ReconnectionReestablishedMessage" xml:space="preserve">
+    <value>Conexión restablecida exitosamente \n\n Ya puedes continuar en el lobby</value>
+  </data>
+  <data name="Lobby_ConnectionReestablishedTitle" xml:space="preserve">
+    <value>Reconexión exitosa</value>
+  </data>
+  <data name="Lobby_TryEmailMessage" xml:space="preserve">
+    <value>{0} no se ha unido al lobby.\n¿Deseas enviarle una invitación por correo?</value>
+  </data>
+  <data name="Lobby_TryEmailTitle" xml:space="preserve">
+    <value>Sin respuesta</value>
+  </data>
+  <data name="Lobby_NoActiveLobbyMessage" xml:space="preserve">
+    <value>No hay lobby activo</value>
+  </data>
+  <data name="Lobby_NoActiveLobbyTitle" xml:space="preserve">
+    <value>Error no hay lobby</value>
+  </data>
+  <data name="Lobby_SelectAFriendMessage" xml:space="preserve">
+    <value>Selecciona un amigo para invitar</value>
+  </data>
+  <data name="GlobalError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Lobby_InvitationSentMessage" xml:space="preserve">
+    <value>Invitación enviada a {0}</value>
+  </data>
+  <data name="Lobby_InvitationSentTitle" xml:space="preserve">
+    <value>Invitación enviada</value>
+  </data>
+  <data name="Lobby_InvitationNotSent" xml:space="preserve">
+    <value>No se pudo enviar la invitación</value>
+  </data>
+  <data name="Lobby_TryClicking" xml:space="preserve">
+    <value>Intenta darle clic al botón</value>
+  </data>
+  <data name="GlobalInformation" xml:space="preserve">
+    <value>Información</value>
+  </data>
+  <data name="Lobby_ErrorOccured" xml:space="preserve">
+    <value>Ocurrió un error al intentar unirse al lobby</value>
+  </data>
+  <data name="Lobby_PlayerUploadError" xml:space="preserve">
+    <value>Ocurrió un problema al tratar de mostrar a los jugadores. Intenta volver a unirte</value>
+  </data>
+  <data name="Chat_CannotConnect" xml:space="preserve">
+    <value>Error al conectar el chat</value>
+  </data>
+  <data name="Lobby_LobbyKeepWorking" xml:space="preserve">
+    <value>El lobby seguirá funcionando</value>
   </data>
 </root>

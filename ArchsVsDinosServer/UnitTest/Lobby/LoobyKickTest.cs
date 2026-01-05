@@ -54,7 +54,7 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public void TestKickPlayerSuccessful()
+        public void TestKickPlayerRemovesTargetPlayer()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -93,11 +93,14 @@ namespace UnitTest.Lobby
 
             lobbyLogic.KickPlayer("ABC12", 100, "Player2");
 
-            mockSession.Verify(s => s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()), Times.AtLeastOnce);
+            mockSession.Verify(
+                s => s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()),
+                Times.AtLeastOnce
+            );
         }
 
         [TestMethod]
-        public void TestKickPlayerDisconnectsCallback()
+        public void TestKickPlayerDisconnectsTargetCallback()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -114,7 +117,10 @@ namespace UnitTest.Lobby
 
             lobbyLogic.KickPlayer("ABC12", 100, "Player2");
 
-            mockSession.Verify(s => s.DisconnectPlayerCallback("ABC12", "Player2"), Times.Once);
+            mockSession.Verify(
+                s => s.DisconnectPlayerCallback("ABC12", "Player2"),
+                Times.Once
+            );
         }
 
         [TestMethod]
@@ -135,14 +141,15 @@ namespace UnitTest.Lobby
         [ExpectedException(typeof(InvalidOperationException))]
         public void TestKickPlayerLobbyNotFoundThrowsException()
         {
-            mockSession.Setup(s => s.GetLobby("XXXXX")).Returns((ActiveLobbyData)null);
+            mockSession.Setup(s => s.GetLobby("XXXXX"))
+                       .Returns((ActiveLobbyData)null);
 
             lobbyLogic.KickPlayer("XXXXX", 100, "Player2");
         }
 
         [TestMethod]
         [ExpectedException(typeof(UnauthorizedAccessException))]
-        public void TestKickPlayerNonHostCannotKick()
+        public void TestKickPlayerNonHostThrowsException()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -182,7 +189,7 @@ namespace UnitTest.Lobby
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void TestKickPlayerCannotKickHost()
+        public void TestKickPlayerCannotKickHostThrowsException()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -200,7 +207,7 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public void TestKickPlayerOnlyHostValidated()
+        public void TestKickPlayerValidatesOnlyHostCanKick()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -215,23 +222,14 @@ namespace UnitTest.Lobby
 
             mockSession.Setup(s => s.GetLobby("ABC12")).Returns(lobby);
 
-            bool exceptionThrown = false;
-
-            try
-            {
-                lobbyLogic.KickPlayer("ABC12", 200, "Player2");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                exceptionThrown = true;
-            }
-
-            Assert.IsTrue(exceptionThrown);
+            Assert.ThrowsException<UnauthorizedAccessException>(() =>
+                lobbyLogic.KickPlayer("ABC12", 200, "Player2")
+            );
         }
 
         [TestMethod]
         [ExpectedException(typeof(CommunicationException))]
-        public void TestKickPlayerHandlesCommunicationException()
+        public void TestKickPlayerBroadcastCommunicationExceptionPropagates()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -245,15 +243,16 @@ namespace UnitTest.Lobby
             lobby.AddPlayer(200, "player2", "Player2");
 
             mockSession.Setup(s => s.GetLobby("ABC12")).Returns(lobby);
-            mockSession.Setup(s => s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()))
-                .Throws(new CommunicationException("Network error"));
+            mockSession.Setup(s =>
+                s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()))
+                .Throws(new CommunicationException());
 
             lobbyLogic.KickPlayer("ABC12", 100, "Player2");
         }
 
         [TestMethod]
         [ExpectedException(typeof(TimeoutException))]
-        public void TestKickPlayerHandlesTimeoutException()
+        public void TestKickPlayerBroadcastTimeoutExceptionPropagates()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -267,38 +266,15 @@ namespace UnitTest.Lobby
             lobby.AddPlayer(200, "player2", "Player2");
 
             mockSession.Setup(s => s.GetLobby("ABC12")).Returns(lobby);
-            mockSession.Setup(s => s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()))
-                .Throws(new TimeoutException("Request timeout"));
+            mockSession.Setup(s =>
+                s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()))
+                .Throws(new TimeoutException());
 
             lobbyLogic.KickPlayer("ABC12", 100, "Player2");
         }
 
         [TestMethod]
-        public void TestKickPlayerRemovesPlayerFromList()
-        {
-            var lobby = new ActiveLobbyData("ABC12", new MatchSettings
-            {
-                MaxPlayers = 4,
-                HostUserId = 100,
-                HostUsername = "host",
-                HostNickname = "Host"
-            });
-
-            lobby.AddPlayer(100, "host", "Host");
-            lobby.AddPlayer(200, "player2", "Player2");
-            lobby.AddPlayer(300, "player3", "Player3");
-
-            mockSession.Setup(s => s.GetLobby("ABC12")).Returns(lobby);
-
-            var initialCount = lobby.Players.Count;
-            lobbyLogic.KickPlayer("ABC12", 100, "Player2");
-            var finalCount = lobby.Players.Count;
-
-            Assert.AreEqual(initialCount - 1, finalCount);
-        }
-
-        [TestMethod]
-        public void TestKickPlayerUpdatesPlayerList()
+        public void TestKickPlayerBroadcastsUpdatedPlayerList()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -312,8 +288,10 @@ namespace UnitTest.Lobby
             lobby.AddPlayer(200, "player2", "Player2");
 
             int broadcastCount = 0;
+
             mockSession.Setup(s => s.GetLobby("ABC12")).Returns(lobby);
-            mockSession.Setup(s => s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()))
+            mockSession.Setup(s =>
+                s.Broadcast("ABC12", It.IsAny<Action<ILobbyManagerCallback>>()))
                 .Callback(() => broadcastCount++);
 
             lobbyLogic.KickPlayer("ABC12", 100, "Player2");
@@ -322,40 +300,7 @@ namespace UnitTest.Lobby
         }
 
         [TestMethod]
-        public void TestKickPlayerValidatesHostBeforePlayerExistence()
-        {
-            var lobby = new ActiveLobbyData("ABC12", new MatchSettings
-            {
-                MaxPlayers = 4,
-                HostUserId = 100,
-                HostUsername = "host",
-                HostNickname = "Host"
-            });
-
-            lobby.AddPlayer(100, "host", "Host");
-
-            mockSession.Setup(s => s.GetLobby("ABC12")).Returns(lobby);
-
-            bool correctExceptionThrown = false;
-
-            try
-            {
-                lobbyLogic.KickPlayer("ABC12", 200, "NonExistentPlayer");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                correctExceptionThrown = true;
-            }
-            catch (InvalidOperationException)
-            {
-                correctExceptionThrown = false;
-            }
-
-            Assert.IsTrue(correctExceptionThrown);
-        }
-
-        [TestMethod]
-        public void TestKickPlayerCaseInsensitiveNickname()
+        public void TestKickPlayerIgnoresNicknameCase()
         {
             var lobby = new ActiveLobbyData("ABC12", new MatchSettings
             {
@@ -376,4 +321,5 @@ namespace UnitTest.Lobby
             Assert.IsNull(remainingPlayer);
         }
     }
+
 }

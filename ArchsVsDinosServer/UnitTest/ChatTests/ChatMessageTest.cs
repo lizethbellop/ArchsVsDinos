@@ -224,8 +224,12 @@ namespace UnitTest.ChatTests
         {
             if (connectedUsersField != null)
             {
-                var connectedUsers = connectedUsersField.GetValue(null) as ConcurrentDictionary<string, object>;
-                connectedUsers?.Clear();
+                var connectedUsers = connectedUsersField.GetValue(null);
+                if (connectedUsers != null)
+                {
+                    var clearMethod = connectedUsers.GetType().GetMethod("Clear");
+                    clearMethod?.Invoke(connectedUsers, null);
+                }
             }
         }
 
@@ -233,8 +237,12 @@ namespace UnitTest.ChatTests
         {
             if (connectedUsersField != null)
             {
-                var connectedUsers = connectedUsersField.GetValue(null) as ConcurrentDictionary<string, object>;
-                return connectedUsers?.Count ?? 0;
+                var connectedUsers = connectedUsersField.GetValue(null);
+                if (connectedUsers != null)
+                {
+                    var countProperty = connectedUsers.GetType().GetProperty("Count");
+                    return (int)(countProperty?.GetValue(connectedUsers) ?? 0);
+                }
             }
             return 0;
         }

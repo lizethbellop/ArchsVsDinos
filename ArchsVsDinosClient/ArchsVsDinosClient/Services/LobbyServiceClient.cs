@@ -90,42 +90,42 @@ namespace ArchsVsDinosClient.Services
             catch (EndpointNotFoundException endpointEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Servidor no disponible", "No se encontró el servidor del lobby.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerNotFound);
                 Debug.WriteLine($"[LOBBY CLIENT] EndpointNotFoundException: {endpointEx.Message}");
                 return MatchCreationResultCode.MatchCreation_ServerBusy;
             }
             catch (FaultException faultEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Error del servidor", $"El servidor reportó un error: {faultEx.Message}");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
                 Debug.WriteLine($"[LOBBY CLIENT] FaultException: {faultEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
             catch (CommunicationException commEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Error de comunicación", "No se pudo conectar con el servidor del lobby.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerUnavailable);
                 Debug.WriteLine($"[LOBBY CLIENT] CommunicationException: {commEx.Message}");
                 return MatchCreationResultCode.MatchCreation_Failure;
             }
             catch (TimeoutException timeoutEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Tiempo agotado", "El servidor no respondió a tiempo.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerTimeout);
                 Debug.WriteLine($"[LOBBY CLIENT] TimeoutException: {timeoutEx.Message}");
                 return MatchCreationResultCode.MatchCreation_Timeout;
             }
             catch (ObjectDisposedException objEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Conexión cerrada", "La conexión con el servidor fue cerrada inesperadamente.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
                 Debug.WriteLine($"[LOBBY CLIENT] ObjectDisposedException: {objEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
             catch (InvalidOperationException invEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Estado inválido", "La conexión con el servidor está en un estado inválido.");
+                ConnectionError?.Invoke(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
                 Debug.WriteLine($"[LOBBY CLIENT] InvalidOperationException: {invEx.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
@@ -152,49 +152,49 @@ namespace ArchsVsDinosClient.Services
             catch (EndpointNotFoundException endpointEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Servidor no disponible", "No se pudo encontrar el servidor del lobby.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerNotFound);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby EndpointNotFoundException: {endpointEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (FaultException<string> faultEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Error del lobby", faultEx.Detail);
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException<string>: {faultEx.Detail}");
                 return JoinMatchResultCode.JoinMatch_LobbyFull;
             }
             catch (FaultException faultEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Error del servidor", $"Error al unirse: {faultEx.Message}");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException: {faultEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (CommunicationException commEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Error de comunicación", "No se pudo unir al lobby. Verifica tu conexión.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerUnavailable);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby CommunicationException: {commEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (TimeoutException timeoutEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Tiempo agotado", "El servidor tardó demasiado en responder.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerTimeout);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby TimeoutException: {timeoutEx.Message}");
                 return JoinMatchResultCode.JoinMatch_Timeout;
             }
             catch (ObjectDisposedException objEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Conexión cerrada", "La conexión fue cerrada antes de unirse al lobby.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby ObjectDisposedException: {objEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
             catch (InvalidOperationException invEx)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke("Operación inválida", "No se puede realizar la operación en este momento.");
+                ConnectionError?.Invoke(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
                 Debug.WriteLine($"[LOBBY CLIENT] JoinLobby InvalidOperationException: {invEx.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
@@ -263,37 +263,37 @@ namespace ArchsVsDinosClient.Services
             catch (EndpointNotFoundException endpointEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite EndpointNotFoundException: {endpointEx.Message}");
-                MessageBox.Show("El servidor de invitaciones no está disponible.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.GlobalServerNotFound, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
             catch (FaultException faultEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite FaultException: {faultEx.Message}");
-                MessageBox.Show($"Error del servidor: {faultEx.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.GlobalServerError, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
             catch (CommunicationException commEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite CommunicationException: {commEx.Message}");
-                MessageBox.Show("No se pudo enviar la invitación. Verifica tu conexión.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.GlobalServerUnavailable, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
             catch (TimeoutException timeoutEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite TimeoutException: {timeoutEx.Message}");
-                MessageBox.Show("El servidor tardó demasiado en responder.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.GlobalServerTimeout, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
             catch (FormatException formatEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite FormatException: {formatEx.Message}");
-                MessageBox.Show("El formato del email es inválido.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("El formato del email es inválido.", Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
             catch (ArgumentNullException argEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite ArgumentNullException: {argEx.Message}");
-                MessageBox.Show("Datos incompletos para enviar la invitación.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Datos incompletos para enviar la invitación.", Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
         }
@@ -320,43 +320,43 @@ namespace ArchsVsDinosClient.Services
             catch (EndpointNotFoundException endpointEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend EndpointNotFoundException: {endpointEx.Message}");
-                ConnectionError?.Invoke("Servidor no disponible", "No se pudo enviar la invitación al amigo.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerNotFound);
                 return false;
             }
             catch (FaultException faultEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend FaultException: {faultEx.Message}");
-                ConnectionError?.Invoke("Error del servidor", $"Error al invitar: {faultEx.Message}");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
                 return false;
             }
             catch (CommunicationException commEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend CommunicationException: {commEx.Message}");
-                ConnectionError?.Invoke("Error de comunicación", "No se pudo enviar la invitación. Verifica tu conexión.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerUnavailable);
                 return false;
             }
             catch (TimeoutException timeoutEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend TimeoutException: {timeoutEx.Message}");
-                ConnectionError?.Invoke("Tiempo agotado", "El servidor tardó demasiado en responder.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerTimeout);
                 return false;
             }
             catch (ObjectDisposedException objEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend ObjectDisposedException: {objEx.Message}");
-                ConnectionError?.Invoke("Conexión cerrada", "La conexión fue cerrada inesperadamente.");
+                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
                 return false;
             }
             catch (InvalidOperationException invEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend InvalidOperationException: {invEx.Message}");
-                ConnectionError?.Invoke("Operación inválida", "No se puede realizar la operación en este momento.");
+                ConnectionError?.Invoke(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
                 return false;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendLobbyInviteToFriend Exception: {ex.Message}");
-                ConnectionError?.Invoke("Error inesperado", "No se pudo completar la invitación.");
+                ConnectionError?.Invoke(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
                 return false;
             }
         }

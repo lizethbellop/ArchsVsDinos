@@ -32,6 +32,11 @@ namespace UnitTest.ChatTests
         [TestInitialize]
         public void Setup()
         {
+            // IMPORTANTE: Limpiar ANTES de BaseSetup
+            connectedUsersField = typeof(Chat).GetField("ConnectedUsers",
+                BindingFlags.NonPublic | BindingFlags.Static);
+            ClearConnectedUsers();
+
             base.BaseSetup();
 
             mockLobbyNotifier = new Mock<ILobbyServiceNotifier>();
@@ -55,10 +60,6 @@ namespace UnitTest.ChatTests
                 mockLobbyNotifier.Object,
                 mockGameNotifier.Object
             );
-
-            connectedUsersField = typeof(Chat).GetField("ConnectedUsers",
-                BindingFlags.NonPublic | BindingFlags.Static);
-            ClearConnectedUsers();
         }
 
         [TestCleanup]
@@ -583,24 +584,53 @@ namespace UnitTest.ChatTests
                 .Returns(new ModerationResult { CanSendMessage = false, ShouldBan = true, CurrentStrikes = 3 });
             chat.SendMessageToRoom(badMessage, username1);
 
-            mockLobbyNotifier.Verify(n => n.NotifyLobbyClosure(lobbyCode, "Insufficient players"), Times.Once);
+            // Verificar que se expulsó al jugador
+            mockLobbyNotifier.Verify(n => n.NotifyPlayerExpelled(lobbyCode, user1.idUser, "Inappropriate language"), Times.Once);
+
+            // Verificar que quedó solo 1 jugador en el lobby después del ban
+            Assert.AreEqual(1, GetConnectedUsersCount());
+
+            // Verificar que el logger registró la advertencia de jugadores insuficientes
+            mockLoggerHelper.Verify(l => l.LogWarning(
+                It.Is<string>(s => s.Contains("Low players in lobby") && s.Contains(lobbyCode))),
+                Times.Once);
         }
 
         private void ClearConnectedUsers()
         {
+            if (connectedUsersField == null)
+            {
+                connectedUsersField = typeof(Chat).GetField("ConnectedUsers",
+                    BindingFlags.NonPublic | BindingFlags.Static);
+            }
+
             if (connectedUsersField != null)
             {
-                var connectedUsers = connectedUsersField.GetValue(null) as ConcurrentDictionary<string, object>;
-                connectedUsers?.Clear();
+                var connectedUsers = connectedUsersField.GetValue(null);
+                if (connectedUsers != null)
+                {
+                    var clearMethod = connectedUsers.GetType().GetMethod("Clear");
+                    clearMethod?.Invoke(connectedUsers, null);
+                }
             }
         }
 
         private int GetConnectedUsersCount()
         {
+            if (connectedUsersField == null)
+            {
+                connectedUsersField = typeof(Chat).GetField("ConnectedUsers",
+                    BindingFlags.NonPublic | BindingFlags.Static);
+            }
+
             if (connectedUsersField != null)
             {
-                var connectedUsers = connectedUsersField.GetValue(null) as ConcurrentDictionary<string, object>;
-                return connectedUsers?.Count ?? 0;
+                var connectedUsers = connectedUsersField.GetValue(null);
+                if (connectedUsers != null)
+                {
+                    var countProperty = connectedUsers.GetType().GetProperty("Count");
+                    return (int)(countProperty?.GetValue(connectedUsers) ?? 0);
+                }
             }
             return 0;
         }
