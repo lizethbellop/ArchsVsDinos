@@ -343,9 +343,27 @@ namespace UnitTest.ProfileManagementTests
             string username = "user123";
             string currentPassword = "Password123!";
             string newPassword = "NewPassword123!";
+            string hashedCurrentPassword = "hashedCurrent";
 
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = hashedCurrentPassword
+            };
+
+            // Configurar para que pase todas las validaciones previas
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-            mockDbContext.Setup(c => c.UserAccount).Throws(new DbEntityValidationException("Validation error"));
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
+            mockSecurityHelper.Setup(s => s.VerifyPassword(currentPassword, hashedCurrentPassword))
+                .Returns(true);
+
+            // Configurar el UserSet correctamente
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+
+            // Lanzar excepción al intentar guardar cambios
+            mockDbContext.Setup(c => c.SaveChanges()).Throws(new DbEntityValidationException("Validation error"));
 
             CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
@@ -354,9 +372,9 @@ namespace UnitTest.ProfileManagementTests
             );
 
             ServiceDependencies dependencies = new ServiceDependencies(
-                    coreDeps,
-                    () => mockDbContext.Object
-             );
+                coreDeps,
+                () => mockDbContext.Object
+            );
 
             PasswordManager passwordManagerException = new PasswordManager(dependencies, mockPasswordValidator.Object);
 
@@ -376,9 +394,27 @@ namespace UnitTest.ProfileManagementTests
             string username = "user123";
             string currentPassword = "Password123!";
             string newPassword = "NewPassword123!";
+            string hashedCurrentPassword = "hashedCurrent";
 
+            UserAccount userAccount = new UserAccount
+            {
+                idUser = 1,
+                username = username,
+                password = hashedCurrentPassword
+            };
+
+            // Configurar para que pase todas las validaciones previas
             mockValidationHelper.Setup(v => v.IsEmpty(It.IsAny<string>())).Returns(false);
-            mockDbContext.Setup(c => c.UserAccount).Throws(new Exception("Unexpected error"));
+            mockPasswordValidator.Setup(v => v.ValidatePassword(newPassword))
+                .Returns(new ValidationResult(true, UpdateResultCode.Profile_ChangePasswordSuccess));
+            mockSecurityHelper.Setup(s => s.VerifyPassword(currentPassword, hashedCurrentPassword))
+                .Returns(true);
+
+            // Configurar el UserSet correctamente
+            SetupMockUserSet(new List<UserAccount> { userAccount });
+
+            // Lanzar excepción al intentar guardar cambios
+            mockDbContext.Setup(c => c.SaveChanges()).Throws(new Exception("Unexpected error"));
 
             CoreDependencies coreDeps = new CoreDependencies(
                 mockSecurityHelper.Object,
@@ -387,9 +423,9 @@ namespace UnitTest.ProfileManagementTests
             );
 
             ServiceDependencies dependencies = new ServiceDependencies(
-                    coreDeps,
-                    () => mockDbContext.Object
-             );
+                coreDeps,
+                () => mockDbContext.Object
+            );
 
             PasswordManager passwordManagerException = new PasswordManager(dependencies, mockPasswordValidator.Object);
 

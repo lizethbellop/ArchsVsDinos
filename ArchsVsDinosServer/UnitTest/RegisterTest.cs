@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using ICodeGenerator = ArchsVsDinosServer.Interfaces.ICodeGenerator;
@@ -198,15 +199,15 @@ namespace UnitTest
         }
 
         [TestMethod]
+        [ExpectedException(typeof(FaultException<string>))]
         public void TestSendEmailRegisterExceptionThrown()
         {
             string email = "test@example.com";
 
-            mockCodeGenerator.Setup(c => c.GenerateVerificationCode()).Throws(new Exception("Unexpected error"));
+            mockCodeGenerator.Setup(c => c.GenerateVerificationCode())
+                .Throws(new Exception("Unexpected error"));
 
-            bool result = register.SendEmailRegister(email);
-
-            Assert.IsFalse(result);
+            register.SendEmailRegister(email);
         }
 
         [TestMethod]
