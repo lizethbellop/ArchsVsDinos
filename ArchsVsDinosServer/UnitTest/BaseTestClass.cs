@@ -23,7 +23,7 @@ namespace UnitTest
 
 
         [TestInitialize]
-        public void BaseSetup()
+        public virtual void BaseSetup()
         {
             mockLoggerHelper = new Mock<ILoggerHelper>();
             mockDbContext = new Mock<IDbContext>();
