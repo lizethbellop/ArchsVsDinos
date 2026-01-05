@@ -429,6 +429,20 @@ namespace ArchsVsDinosClient.ViewModels
             try
             {
                 Debug.WriteLine($"[LOBBY VM] Trying to exit from the lobby: {nickname}");
+
+                if (Chat != null && Chat.IsConnected)
+                {
+                    try
+                    {
+                        var disconnectTask = Chat.DisconnectAsync();
+                        Debug.WriteLine($"[LOBBY VM] Chat disconnected for {nickname}");
+                    }
+                    catch (Exception chatEx)
+                    {
+                        Debug.WriteLine($"[LOBBY VM] Error disconnecting from chat: {chatEx.Message}");
+                    }
+                }
+
                 lobbyServiceClient.LeaveLobby(nickname);
             }
             catch (Exception ex)
@@ -553,31 +567,6 @@ namespace ArchsVsDinosClient.ViewModels
                 }
 
                 string myUsername = UserSession.Instance.CurrentUser?.Username;
-                if (!string.IsNullOrEmpty(myUsername))
-                {
-                    try
-                    {
-                        Debug.WriteLine($"[LOBBY VM] Intentando desconectar: {myUsername}");
-                        LeaveOfTheLobby(myUsername);
-                        Debug.WriteLine($"[LOBBY VM] ✅ Desconexión completada");
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"[LOBBY VM] ⚠️ Error en desconexión (ignorado): {ex.Message}");
-                    }
-                }
-
-                if (lobbyServiceClient != null)
-                {
-                    Debug.WriteLine("[LOBBY VM] Desuscribiendo eventos de lobby...");
-                    lobbyServiceClient.ConnectionError -= OnLobbyConnectionError;
-                    lobbyServiceClient.PlayerKickedEvent -= OnPlayerKicked;
-                    lobbyServiceClient.PlayerLeft -= OnPlayerLeft;
-                    lobbyServiceClient.LobbyInvitationReceived -= OnLobbyInvitationReceived;
-                    lobbyServiceClient.PlayerListUpdated -= OnPlayerListUpdated;
-                    lobbyServiceClient.GameStartedEvent -= OnGameStarted;
-                    Debug.WriteLine("[LOBBY VM] ✅ Eventos de lobby desuscritos");
-                }
 
                 if (Chat != null)
                 {
@@ -594,6 +583,32 @@ namespace ArchsVsDinosClient.ViewModels
                     {
                         Debug.WriteLine($"[LOBBY VM] ⚠️ Error limpiando chat (ignorado): {ex.Message}");
                     }
+                }
+
+                if (!string.IsNullOrEmpty(myUsername))
+                {
+                    try
+                    {
+                        Debug.WriteLine($"[LOBBY VM] Intentando desconectar: {myUsername}");
+                        LeaveOfTheLobby(myUsername);
+                        Debug.WriteLine($"[LOBBY VM] ✅ Desconexión completada");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[LOBBY VM] ⚠️ Error en desconexión (ignorado): {ex.Message}");
+                    }
+                }
+
+                if (lobbyServiceClient != null)
+                {
+                    Debug.WriteLine("[LOBBY VM] Desuscribing events from lobby...");
+                    lobbyServiceClient.ConnectionError -= OnLobbyConnectionError;
+                    lobbyServiceClient.PlayerKickedEvent -= OnPlayerKicked;
+                    lobbyServiceClient.PlayerLeft -= OnPlayerLeft;
+                    lobbyServiceClient.LobbyInvitationReceived -= OnLobbyInvitationReceived;
+                    lobbyServiceClient.PlayerListUpdated -= OnPlayerListUpdated;
+                    lobbyServiceClient.GameStartedEvent -= OnGameStarted;
+                    Debug.WriteLine("[LOBBY VM] ✅ Eventos de lobby desuscritos");
                 }
 
                 if (Friends != null)

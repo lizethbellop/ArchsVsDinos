@@ -68,13 +68,11 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
 
             int userId = GetUserIdFromUsername(request.Username);
+
             if (userId == 0)
             {
-                SafeCallbackInvoke(request.Username, () =>
-                {
-                    callback.ReceiveSystemNotification(ChatResultCode.Chat_Error, "User not found");
-                });
-                return;
+                userId = -Math.Abs(request.Username.GetHashCode());
+                loggerHelper.LogInfo($"Guest '{request.Username}' connecting to chat with temporary userId: {userId}");
             }
 
             var context = request.Context;

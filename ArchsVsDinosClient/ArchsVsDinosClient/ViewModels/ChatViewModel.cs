@@ -93,11 +93,6 @@ namespace ArchsVsDinosClient.ViewModels
 
         public ChatViewModel() : this(new ChatServiceClient()) { }
 
-        // ------------------------------------------------------
-        //  CONNECTION
-        // ------------------------------------------------------
-
-        // ✅ NUEVO: Ahora acepta context y matchCode
         public async Task ConnectAsync(string username, int context = 0, string matchCode = null)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -140,7 +135,6 @@ namespace ArchsVsDinosClient.ViewModels
             return IsConnected && !string.IsNullOrWhiteSpace(MessageInput) && !IsBusy;
         }
 
-        // ✅ NUEVO: Manejar cuando el usuario actual es baneado
         private void OnUserBanned(string username, int strikes)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -150,7 +144,6 @@ namespace ArchsVsDinosClient.ViewModels
                     AddSystemMessage($"⚠️ Has sido expulsado del chat ({strikes} strikes)");
                     IsConnected = false;
 
-                    // Notificar cierre después de mostrar mensaje
                     Task.Delay(2000).ContinueWith(_ =>
                     {
                         Application.Current.Dispatcher.Invoke(() =>
@@ -169,7 +162,6 @@ namespace ArchsVsDinosClient.ViewModels
             });
         }
 
-        // ✅ NUEVO: Manejar expulsión de otros jugadores
         private void OnUserExpelled(string username, string reason)
         {
             Application.Current.Dispatcher.Invoke(() =>
