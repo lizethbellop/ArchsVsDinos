@@ -337,64 +337,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return newDino;
             }
         }
-
-        /*
-        public Task<bool> Provoke(string matchCode, int userId, ArmyType targetArmy)
-        {
-            var gameSession = GetActiveSession(matchCode);
-            var playerSession = GetPlayer(gameSession, userId);
-
-            if (!rulesValidator.CanProvoke(gameSession, userId))
-                throw new InvalidOperationException("Cannot provoke, insufficient moves.");
-
-            lock (gameSession.SyncRoot)
-            {
-                gameSession.ConsumeMoves(gameSession.RemainingMoves);
-
-                var battleResolver = new BattleResolver(new ServiceDependencies());
-                var battleResult = battleResolver.ResolveBattle(gameSession, targetArmy);
-
-                var battleResultDto = CreateBattleResultDTO(matchCode, battleResult);
-
-                var provokedDto = new ArchArmyProvokedDTO
-                {
-                    MatchCode = matchCode,
-                    ProvokerUserId = userId,
-                    ArmyType = targetArmy,
-                    BattleResult = battleResultDto
-                };
-
-                gameNotifier.NotifyArchArmyProvoked(provokedDto);
-
-                DiscardArmy(gameSession, targetArmy);
-                DiscardDinos(gameSession);
-
-                loggerHelper.LogInfo($"Player {userId} provoked {targetArmy} in {matchCode}. DinosWon: {battleResult?.DinosWon}, Winner: {battleResult?.Winner?.Nickname ?? "Nobody"}");
-
-                var nextPlayer = gameSession.Players.OrderBy(player => player.TurnOrder)
-                                                    .SkipWhile(player => player.UserId != userId)
-                                                    .Skip(1)
-                                                    .DefaultIfEmpty(gameSession.Players.OrderBy(player => player.TurnOrder).First())
-                                                    .First();
-
-                gameSession.EndTurn(nextPlayer.UserId);
-                gameSession.ResetTurnTimer();
-                loggerHelper.LogInfo($"[PROVOKE] Turn auto-ended. Next player: {nextPlayer.UserId}");
-
-                gameNotifier.NotifyTurnChanged(new TurnChangedDTO
-                {
-                    MatchCode = matchCode,
-                    CurrentPlayerUserId = nextPlayer.UserId,
-                    TurnNumber = gameSession.TurnNumber,
-                    RemainingTime = TimeSpan.Zero,
-                    PlayerScores = gameSession.Players.ToDictionary(player => player.UserId, player => player.Points),
-                    TurnEndTime = gameSession.TurnEndTime
-                });
-
-                return Task.FromResult(true);
-            }
-        }*/
-
         
         public Task<bool> Provoke(string matchCode, int userId, ArmyType targetArmy)
         {
@@ -875,71 +817,6 @@ namespace ArchsVsDinosServer.BusinessLogic
                 result.Reason = AppendReason(result.Reason, "statistics_entity_error");
             }
         }
-
-        /*
-        public void LeaveGame(string matchCode, int userId)
-        {
-            if (string.IsNullOrWhiteSpace(matchCode))
-            {
-                return;
-            }
-
-            var session = gameCoreContext.Sessions.GetSession(matchCode);
-
-            if (session == null) 
-            { 
-                return; 
-            }
-
-            lock (session.SyncRoot)
-            {
-                var playerLeaving = session.Players.FirstOrDefault(p => p.UserId == userId);
-
-                if (playerLeaving == null)
-                {
-                    return;
-                }
-
-                var cardsToRecycle = new List<int>();
-
-                if (playerLeaving.Hand != null && playerLeaving.Hand.Count > 0)
-                {
-                    cardsToRecycle.AddRange(playerLeaving.Hand.Select(c => c.IdCard));
-                }
-
-                if (playerLeaving.Dinos != null && playerLeaving.Dinos.Count > 0)
-                {
-                    foreach (var dino in playerLeaving.Dinos)
-                    {
-                        cardsToRecycle.AddRange(dino.GetAllCards().Select(c => c.IdCard));
-                    }
-                }
-
-                if (cardsToRecycle.Count > 0)
-                {
-                    session.AddToDiscard(cardsToRecycle);
-                    loggerHelper.LogInfo($"[LEAVE] Recycled {cardsToRecycle.Count} cards from player {userId} to discard pile.");
-                }
-
-                bool wasHisTurn = session.CurrentTurn == userId;
-
-                if (session.RemovePlayer(userId))
-                {
-                    loggerHelper.LogInfo($"Player {playerLeaving.Nickname} ({userId}) left the match {session.MatchCode}");
-
-                    NotifyPlayersPlayerLeft(session, playerLeaving, cardsToRecycle);
-
-                    if (session.Players.Count < 2 && !session.IsFinished)
-                    {
-                        EndGameDueToInsufficientPlayers(session);
-                    }
-                    else if (wasHisTurn)
-                    {
-                        PassTurnToNextActivePlayer(session);
-                    }
-                }
-            }
-        }*/
 
         public void LeaveGame(string matchCode, int userId)
         {

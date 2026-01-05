@@ -13,7 +13,7 @@ namespace ArchsVsDinosClient.Services
 {
     public class StatisticsServiceClient : IStatisticsServiceClient
     {
-        private readonly StatisticsManagerClient client;
+        private StatisticsManagerClient client;
         private readonly WcfConnectionGuardian guardian;
         private bool isDisposed;
 
@@ -41,13 +41,13 @@ namespace ArchsVsDinosClient.Services
 
         public async Task<PlayerStatisticsDTO> GetPlayerStatisticsAsync(int userId)
         {
+            var currentClient = GetClient();
             return await guardian.ExecuteAsync(
-                async () => await Task.Run(() => client.GetPlayerStatistics(userId)),
+                async () => await Task.Run(() => currentClient.GetPlayerStatistics(userId)),
                 defaultValue: null,
                 operationName: "get player statistics"
             );
         }
-
 
         public async Task<List<LeaderboardEntryDTO>> GetLeaderboardAsync(int topN)
         {
@@ -98,5 +98,24 @@ namespace ArchsVsDinosClient.Services
 
             isDisposed = true;
         }
+
+        private StatisticsManagerClient GetClient()
+        {
+            if (client == null || client.State == CommunicationState.Faulted || client.State == CommunicationState.Closed)
+            {
+                if (client?.State == CommunicationState.Faulted)
+                {
+                    client.Abort();
+                }
+
+                var newClient = new StatisticsManagerClient();
+
+                this.GetType().GetField("client", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(this, newClient);
+
+                guardian.MonitorClientState(newClient);
+            }
+            return client;
+        }
     }
 }
+

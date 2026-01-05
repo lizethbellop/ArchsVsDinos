@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosClient.LobbyService;
 using ArchsVsDinosClient.Logging;
 using ArchsVsDinosClient.Models;
+using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services.Interfaces;
 using ArchsVsDinosClient.Utils;
 using System;
