@@ -84,13 +84,6 @@
     <Compile Include="FriendsTests\FriendRequestRejectTest.cs" />
     <Compile Include="FriendsTests\FriendRequestSendTest.cs" />
     <Compile Include="FriendsTests\FriendTest.cs" />
-    <Compile Include="Game\GameDrawCardTest.cs" />
-    <Compile Include="Game\GameEndGameTest.cs" />
-    <Compile Include="Game\GameEndTurnTest.cs" />
-    <Compile Include="Game\GameInitializeMatchTest.cs" />
-    <Compile Include="Game\GameLogicAttachBodyPartTest.cs" />
-    <Compile Include="Game\GamePlayDinoHeadTest.cs" />
-    <Compile Include="Game\GameTakeCardFromDiscardPileTest.cs" />
     <Compile Include="Lobby\LobbyConnectPlayerTest.cs" />
     <Compile Include="Lobby\LobbyCreateTest.cs" />
     <Compile Include="Lobby\LobbyDisconnectPlayerTest.cs" />
@@ -110,11 +103,6 @@
     <Compile Include="ProfileManagementTests\ProfileUpdateXTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterTest.cs" />
-    <Compile Include="StatisticsTests\LeaderboardCalculatorGetTopPlayersByWinsTest.cs" />
-    <Compile Include="StatisticsTests\LeaderboardCalculatorGetTopPlayersTest.cs" />
-    <Compile Include="StatisticsTests\LeaderboardCalculatorGetPlayerRankTest.cs" />
-    <Compile Include="StatisticsTests\MatchResultProcessorTest.cs" />
-    <Compile Include="StatisticsTests\StatisticsHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

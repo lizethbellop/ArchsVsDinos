@@ -288,13 +288,13 @@ namespace ArchsVsDinosClient.Services
             catch (FormatException formatEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite FormatException: {formatEx.Message}");
-                MessageBox.Show("El formato del email es inválido.", Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.Register_InvalidEmail, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
             catch (ArgumentNullException argEx)
             {
                 Debug.WriteLine($"[LOBBY CLIENT] SendInvite ArgumentNullException: {argEx.Message}");
-                MessageBox.Show("Datos incompletos para enviar la invitación.", Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang.Authentication_UnexpectedError, Lang.GlobalError, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
         }
