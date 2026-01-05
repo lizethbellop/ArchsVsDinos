@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para EditUsername.xaml
-    /// </summary>
     public partial class EditUsername : Window
     {
 
@@ -51,16 +48,6 @@ namespace ArchsVsDinosClient.Views
             viewModel.NewUsername = TxtB_NewUsername.Text;
 
             await viewModel.SaveEditUsername();
-        }
-
-        private bool ValidateInputs(string username)
-        {
-            if (ValidationHelper.IsEmpty(username) || ValidationHelper.IsWhiteSpace(username))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void OnRequestClose(object sender, System.EventArgs e)

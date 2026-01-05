@@ -63,7 +63,7 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al comprimir imagen: {ex.Message}");
+                Console.WriteLine($"Error with the image: {ex.Message}");
                 throw;
             }
         }

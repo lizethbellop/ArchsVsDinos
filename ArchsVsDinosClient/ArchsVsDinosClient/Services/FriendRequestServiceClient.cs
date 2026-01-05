@@ -58,7 +58,7 @@ namespace ArchsVsDinosClient.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error inicializando cliente: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error initializing: {ex.Message}");
             }
 
             guardian.ServerStateChanged += OnServerStateChanged;
@@ -89,10 +89,6 @@ namespace ArchsVsDinosClient.Services
                 return false;
             }
         }
-
-        // ========================================
-        // MÉTODOS ASYNC con ExecuteWithThrowAsync
-        // ========================================
 
         public async Task SendFriendRequestAsync(string fromUser, string toUser)
         {
@@ -175,7 +171,6 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        // Versiones síncronas para compatibilidad
         public void SendFriendRequest(string fromUser, string toUser)
         {
             Task.Run(async () => await SendFriendRequestAsync(fromUser, toUser));
@@ -200,10 +195,6 @@ namespace ArchsVsDinosClient.Services
         {
             Task.Run(async () => await UnsubscribeAsync(username));
         }
-
-        // ========================================
-        // RECONEXIÓN AUTOMÁTICA
-        // ========================================
 
         private void OnServerStateChanged(object sender, ServerStateChangedEventArgs e)
         {

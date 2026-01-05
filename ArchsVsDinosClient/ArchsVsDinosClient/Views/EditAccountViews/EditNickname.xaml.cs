@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.EditAccountViews
 {
-    /// <summary>
-    /// Lógica de interacción para EditNickname.xaml
-    /// </summary>
     public partial class EditNickname : Window
     {
         private readonly EditNicknameViewModel viewModel;
@@ -51,16 +48,6 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
 
             await viewModel.SaveEditNickname();
 
-        }
-
-        private bool ValidateInputs(string nickname)
-        {
-            if (ValidationHelper.IsEmpty(nickname) || ValidationHelper.IsWhiteSpace(nickname))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void OnRequestClose(object sender, System.EventArgs e)

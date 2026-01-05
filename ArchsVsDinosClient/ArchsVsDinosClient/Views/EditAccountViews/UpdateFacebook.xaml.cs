@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.EditAccountViews
 {
-    /// <summary>
-    /// Lógica de interacción para UpdateFacebook.xaml
-    /// </summary>
     public partial class UpdateFacebook : Window
     {
         private readonly UpdateFacebookViewModel viewModel;
@@ -49,16 +46,6 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             SoundButton.PlayMovingRockSound();
             viewModel.NewFacebookLink = TxtB_FacebookLink.Text;
             await viewModel.SaveFacebookLink();
-        }
-
-        private bool ValidateInputs(string facebookLink)
-        {
-            if (ValidationHelper.IsEmpty(facebookLink) || ValidationHelper.IsWhiteSpace(facebookLink))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void OnRequestClose(object sender, System.EventArgs e)

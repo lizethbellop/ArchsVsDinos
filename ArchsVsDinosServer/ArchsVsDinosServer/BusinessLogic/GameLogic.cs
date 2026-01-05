@@ -624,23 +624,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             return player;
         }
 
-        private void DiscardDinos(GameSession session)
-        {
-            foreach (var playerSession in session.Players)
-            {
-                var dinoCards = playerSession.Dinos.SelectMany(dino => dino.GetAllCards()).Select(card => card.IdCard).ToList();
-                playerSession.ClearDinos();
-                session.AddToDiscard(dinoCards);
-            }
-        }
-
-        private void DiscardArmy(GameSession session, ArmyType armyType)
-        {
-            var discardedIds = session.CentralBoard.ClearArmy(armyType);
-
-            session.AddToDiscard(discardedIds);
-        }
-
         public GameEndResult EndGame(string matchCode, GameEndType gameType, string reason)
         {
             var session = gameCoreContext.Sessions.GetSession(matchCode);
@@ -734,90 +717,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private void SaveMatchStatistics(GameSession session, GameEndResult result)
-        {
-            if (session == null)
-                throw new ArgumentNullException(nameof(session), "Session cannot be null.");
-            if (result == null)
-                throw new ArgumentNullException(nameof(result), "GameEndResult cannot be null.");
-
-            if (statisticsManager == null)
-                throw new InvalidOperationException("StatisticsManager is not initialized.");
-
-            int safeWinnerId = (result.Winner != null && result.Winner.UserId > 0)
-                               ? result.Winner.UserId
-                               : 0;
-
-            var matchResultDto = new MatchResultDTO
-            {
-                MatchId = session.MatchCode,
-                MatchDate = session.StartTime ?? DateTime.UtcNow,
-
-                WinnerUserId = safeWinnerId,
-
-                PlayerResults = session.Players
-                .Where(player => player.UserId > 0)
-                .Select(player =>
-                {
-                    int archaeologistsEliminated = player.Dinos.Sum(dino => dino.ArchaeologistsEliminated);
-                    int supremeBossesEliminated = player.Dinos.Sum(dino => dino.SupremeBossesEliminated);
-
-                    return new PlayerMatchResultDTO
-                    {
-                        UserId = player.UserId,
-                        Points = player.Points,
-                        IsWinner = result.Winner?.UserId == player.UserId,
-                        ArchaeologistsEliminated = archaeologistsEliminated,
-                        SupremeBossesEliminated = supremeBossesEliminated
-                    };
-                }).ToList()
-            };
-
-            if (matchResultDto.PlayerResults.Count == 0)
-            {
-                loggerHelper.LogInfo($"No registered players in match {session.MatchCode}, skipping statistics save");
-                return;
-            }
-
-            var saveCode = statisticsManager.SaveMatchStatistics(matchResultDto);
-            if (saveCode != SaveMatchResultCode.Success)
-                throw new InvalidOperationException($"Could not save statistics. Code: {saveCode}");
-        }
-
-        private string AppendReason(string originalReason, string additionalReason)
-        {
-            if (string.IsNullOrWhiteSpace(originalReason)) return additionalReason;
-            return $"{originalReason};{additionalReason}";
-        }
-
-        private void TrySaveMatchStatistics(GameSession session, GameEndResult result)
-        {
-            try
-            {
-                SaveMatchStatistics(session, result);
-            }
-            catch (ArgumentNullException ex)
-            {
-                loggerHelper.LogError($"Statistics were not saved (ArgumentNullException) for {session.MatchCode} - {ex.Message}", ex);
-                result.Reason = AppendReason(result.Reason, "statistics_null_error");
-            }
-            catch (InvalidOperationException ex)
-            {
-                loggerHelper.LogError($"Statistics were not saved (InvalidOperationException) for {session.MatchCode} - {ex.Message}", ex);
-                result.Reason = AppendReason(result.Reason, "statistics_invalid_operation");
-            }
-            catch (SqlException ex)
-            {
-                loggerHelper.LogError($"Statistics were not saved (SQL) for {session.MatchCode} - {ex.Message}", ex);
-                result.Reason = AppendReason(result.Reason, "statistics_sql_error");
-            }
-            catch (EntityException ex)
-            {
-                loggerHelper.LogError($"Statistics were not saved (Entity Framework) for {session.MatchCode} - {ex.Message}", ex);
-                result.Reason = AppendReason(result.Reason, "statistics_entity_error");
-            }
-        }
-
         public void LeaveGame(string matchCode, int userId)
         {
             if (string.IsNullOrWhiteSpace(matchCode)) return;
@@ -885,17 +784,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
-        private PlayerSession RemovePlayerFromSession(GameSession session, int userId)
-        {
-            var player = session.Players.FirstOrDefault(p => p.UserId == userId);
-            if (player != null && session.RemovePlayer(userId))
-            {
-                loggerHelper.LogInfo($"Player {player.Nickname} ({userId}) left the match {session.MatchCode}");
-                return player;
-            }
-            return null;
-        }
-
         private void NotifyPlayersPlayerLeft(GameSession session, PlayerSession playerLeaving, List<int> recycledCards)
         {
             var dto = new PlayerExpelledDTO
@@ -908,11 +796,6 @@ namespace ArchsVsDinosServer.BusinessLogic
             };
 
             gameNotifier.NotifyPlayerExpelled(dto);
-        }
-
-        private void EndGameDueToInsufficientPlayers(GameSession session)
-        {
-            var result = EndGame(session.MatchCode, GameEndType.Aborted, "Someone left");
         }
 
         private BodyPartAttachedDTO CreateBodyPartAttachedDTO(AttachBodyPartContext context)

@@ -17,9 +17,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para AvatarSelection.xaml
-    /// </summary>
     public partial class AvatarSelection : Window
     {
         private readonly AvatarSelectionViewModel viewModel;

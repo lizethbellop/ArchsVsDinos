@@ -12,38 +12,6 @@ using System.Windows;
 
 namespace ArchsVsDinosClient.Utils
 {
-    /*public class SoundButton
-    {
-
-        private static readonly SoundPlayer destroyingRockSound = new SoundPlayer("Resources/Sounds/rockSound.wav");
-        private static readonly SoundPlayer movingRockSound = new SoundPlayer("Resources/Sounds/movingRock.wav");
-
-        private static void PlaySound(SoundPlayer sound)
-        {
-
-            try
-            {
-                sound.Stop();
-                sound.Play();
-            }
-            catch (FileNotFoundException e)
-            {
-                MessageBox.Show(Lang.GlobalSoundNotFound + " " + e.Message);
-            }
-        }
-
-        public static void PlayDestroyingRockSound()
-        {
-            PlaySound(destroyingRockSound);
-        }
-
-        public static void PlayMovingRockSound()
-        {
-            PlaySound(movingRockSound);
-        }
-
-    }*/
-
     public class SoundButton
     {
         private static MediaPlayer destroyingRockPlayer = new MediaPlayer();

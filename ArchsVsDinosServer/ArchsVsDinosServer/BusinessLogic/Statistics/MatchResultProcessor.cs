@@ -87,34 +87,6 @@ namespace ArchsVsDinosServer.BusinessLogic.Statistics
             }
         }
 
-        private void UpdatePlayerStatistics(IDbContext context, MatchResultDTO matchResult)
-        {
-            foreach (var playerResult in matchResult.PlayerResults)
-            {
-                var player = context.Player.FirstOrDefault(p => p.idPlayer == playerResult.UserId);
-
-                if (player != null)
-                {
-                    player.totalMatches++;
-
-                    if (playerResult.IsWinner)
-                    {
-                        player.totalWins++;
-                    }
-                    else
-                    {
-                        player.totalLosses++;
-                    }
-
-                    player.totalPoints += playerResult.Points;
-                }
-                else
-                {
-                    logger.LogWarning($"UpdatePlayerStatistics: Player {playerResult.UserId} not found in database");
-                }
-            }
-        }
-
         public GameStatisticsDTO GetMatchStatistics(string matchCode)
         {
             using (var context = contextFactory())

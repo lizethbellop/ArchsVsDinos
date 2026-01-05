@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views
 {
-    /// <summary>
-    /// Lógica de interacción para EditPassword.xaml
-    /// </summary>
     public partial class EditPassword : Window
     {
 
@@ -51,17 +48,6 @@ namespace ArchsVsDinosClient.Views
             viewModel.NewPassword = Pb_NewPasword.Password;
             await viewModel.SaveEditPassword();
 
-        }
-
-        private bool ValidateInputs(string currentPassword, string newPassword)
-        {
-            if (ValidationHelper.IsEmpty(currentPassword) || ValidationHelper.IsWhiteSpace(currentPassword) 
-                || ValidationHelper.IsEmpty(newPassword) || ValidationHelper.IsWhiteSpace(newPassword))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void OnRequestClose(object sender, System.EventArgs e)

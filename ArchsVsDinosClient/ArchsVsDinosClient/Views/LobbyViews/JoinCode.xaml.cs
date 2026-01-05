@@ -25,12 +25,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             InitializeComponent();
             lobbyServiceClient = new LobbyServiceClient();
-
-            /*
-            if (UserSession.Instance.CurrentUser == null)
-            {
-                UserSession.Instance.LoginAsGuest();
-            }*/
         }
 
         private async void Click_BtnAccept(object sender, RoutedEventArgs e)

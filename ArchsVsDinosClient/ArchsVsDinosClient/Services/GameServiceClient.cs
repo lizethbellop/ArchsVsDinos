@@ -30,40 +30,6 @@ namespace ArchsVsDinosClient.Services
         public event Action<CardTakenFromDiscardDTO> CardTakenFromDiscard;
         public event Action<string, string> ServiceError;
 
-        /*
-        public GameServiceClient()
-        {
-            var syncContext = SynchronizationContext.Current;
-            callback = new GameCallbackHandler();
-
-            callback.OnGameInitializedEvent += (d) => GameInitialized?.Invoke(d);
-            callback.OnGameStartedEvent += (d) => GameStarted?.Invoke(d);
-            callback.OnTurnChangedEvent += (d) => TurnChanged?.Invoke(d);
-            callback.OnCardDrawnEvent += (d) => CardDrawn?.Invoke(d);
-            callback.OnDinoPlayedEvent += (d) => DinoHeadPlayed?.Invoke(d);
-            callback.OnBodyPartAttachedEvent += (d) => BodyPartAttached?.Invoke(d);
-            callback.OnArchAddedEvent += (d) => ArchAdded?.Invoke(d);
-            callback.OnArchProvokedEvent += (d) => ArchProvoked?.Invoke(d);
-            callback.OnBattleResolvedEvent += (d) => BattleResolved?.Invoke(d);
-            callback.OnGameEndedEvent += (d) => GameEnded?.Invoke(d);
-            callback.OnPlayerExpelledEvent += (d) => PlayerExpelled?.Invoke(d);
-            callback.OnCardTakenFromDiscardEvent += (d) => CardTakenFromDiscard?.Invoke(d);
-
-            var context = new InstanceContext(callback);
-            if (syncContext != null)
-            {
-                context.SynchronizationContext = syncContext;
-            }
-
-            client = new GameManagerClient(context);
-
-            guardian = new WcfConnectionGuardian(
-                onError: (title, msg) => ServiceError?.Invoke(title, msg),
-                logger: new Logger()
-            );
-            guardian.MonitorClientState(client);
-        }*/
-
         public GameServiceClient()
         {
             callback = new GameCallbackHandler();

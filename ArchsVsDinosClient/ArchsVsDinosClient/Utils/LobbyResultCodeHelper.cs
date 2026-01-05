@@ -15,8 +15,6 @@ namespace ArchsVsDinosClient.Utils
         {
             switch (resultCode)
             {
-                /*case MatchCreationResultCode.MatchCreation_Success:
-                    return Lang.Lobby_CreatedSucces;*/
                 case MatchCreationResultCode.MatchCreation_ServerBusy:
                     return Lang.GlobalServerError; 
                 case MatchCreationResultCode.MatchCreation_InvalidSettings:
@@ -32,8 +30,6 @@ namespace ArchsVsDinosClient.Utils
         {
             switch (resultCode)
             {
-                /*case JoinMatchResultCode.JoinMatch_Success:
-                    return Lang.Lobby_JoinedSuccess;*/
                 case JoinMatchResultCode.JoinMatch_LobbyFull:
                     return Lang.Lobby_LobbyFull;
                 case JoinMatchResultCode.JoinMatch_LobbyNotFound:

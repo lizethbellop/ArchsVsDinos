@@ -13,7 +13,6 @@ namespace ArchsVsDinosServer.Utils
         private List<VerificationCode> verificationCodes = new List<VerificationCode>();
         private readonly ILoggerHelper loggerHelper;
 
-        // Constructor que recibe el logger
         public VerificationCodeManager(ILoggerHelper logger)
         {
             this.loggerHelper = logger;
@@ -47,12 +46,12 @@ namespace ArchsVsDinosServer.Utils
                 }
                 else
                 {
-                    loggerHelper.LogWarning($"✗ Code EXPIRED for {email}. Expiration: {dataCheck.Expiration}, Now: {DateTime.Now}");
+                    loggerHelper.LogWarning($" Code EXPIRED for {email}. Expiration: {dataCheck.Expiration}, Now: {DateTime.Now}");
                     return false;
                 }
             }
 
-            loggerHelper.LogWarning($"✗ Code NOT FOUND for {email}. Available codes: {verificationCodes.Count}");
+            loggerHelper.LogWarning($" Code NOT FOUND for {email}. Available codes: {verificationCodes.Count}");
             return false;
         }
     }

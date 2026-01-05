@@ -20,9 +20,6 @@ using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.EditAccountViews
 {
-    /// <summary>
-    /// Lógica de interacción para UpdateInstagram.xaml
-    /// </summary>
     public partial class UpdateInstagram : Window
     {
         private readonly UpdateInstagramViewModel viewModel;
@@ -49,16 +46,6 @@ namespace ArchsVsDinosClient.Views.EditAccountViews
             SoundButton.PlayMovingRockSound();
             viewModel.NewInstagramLink = TxtB_InstagramLink.Text;
             await viewModel.SaveInstagramLink();
-        }
-
-        private bool ValidateInputs(string instagramLink)
-        {
-            if (ValidationHelper.IsEmpty(instagramLink) || ValidationHelper.IsWhiteSpace(instagramLink))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void OnRequestClose(object sender, System.EventArgs e)

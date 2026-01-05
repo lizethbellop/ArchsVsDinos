@@ -33,7 +33,7 @@ namespace ArchsVsDinosClient.Utils
                 catch (Win32Exception ex)
                 {
                     
-                    log.LogInfo($"Win32Exception al abrir link: {ex.Message}");
+                    log.LogInfo($"Win32Exception to open link: {ex.Message}");
                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
                         ShowErrorMessage(Lang.SocialMedia_ErrorOpeningLink);
@@ -41,7 +41,7 @@ namespace ArchsVsDinosClient.Utils
                 }
                 catch (Exception ex)
                 {
-                    log.LogDebug($"Error al abrir link: {ex.Message}");
+                    log.LogDebug($"Error oppening link: {ex.Message}");
                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
                         ShowErrorMessage(Lang.SocialMedia_ErrorOpeningLink);

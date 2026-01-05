@@ -57,7 +57,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
                         return response;
                     }
 
-                    loggerHelper.LogDebug($"[SocialMediaManager] Actualizando campo {platform} en base de datos");
+                    loggerHelper.LogDebug($"[SocialMediaManager] Updating field {platform} in database");
 
                     switch (platform)
                     {
@@ -91,7 +91,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             }
             catch (Exception ex)
             {
-                loggerHelper.LogInfo($"[SocialMediaManager] Error inesperado al actualizar {platform} para {username}");
+                loggerHelper.LogInfo($"[SocialMediaManager] Unexpected error while updating {platform} for {username}");
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }

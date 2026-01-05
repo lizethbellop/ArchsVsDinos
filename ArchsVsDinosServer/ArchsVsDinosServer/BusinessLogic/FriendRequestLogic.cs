@@ -96,7 +96,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (EntityException ex)
             {
-                loggerHelper.LogError($"Error de conexión a BD en SendFriendRequest", ex);
+                loggerHelper.LogError($"Error connecting to database in SendFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -105,7 +105,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (SqlException ex)
             {
-                loggerHelper.LogError($"Error SQL en SendFriendRequest", ex);
+                loggerHelper.LogError($"Error SQL in SendFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -114,7 +114,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (InvalidOperationException ex)
             {
-                loggerHelper.LogError($"Error de operación inválida en SendFriendRequest", ex);
+                loggerHelper.LogError($"Invalid operation error in SendFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -123,7 +123,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error inesperado en SendFriendRequest: {ex.Message}", ex);
+                loggerHelper.LogError($"Unexpected error in SendFriendRequest: {ex.Message}", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -204,7 +204,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (EntityException ex)
             {
-                loggerHelper.LogError($"Error de conexión a BD en AcceptFriendRequest", ex);
+                loggerHelper.LogError($"Error connecting to database in AcceptFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -213,7 +213,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (SqlException ex)
             {
-                loggerHelper.LogError($"Error SQL en AcceptFriendRequest", ex);
+                loggerHelper.LogError($"SQL error in AcceptFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -222,7 +222,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (InvalidOperationException ex)
             {
-                loggerHelper.LogError($"Error de operación inválida en AcceptFriendRequest", ex);
+                loggerHelper.LogError($"Invalid operation error in AcceptFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -231,7 +231,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error inesperado en AcceptFriendRequest: {ex.Message}", ex);
+                loggerHelper.LogError($"Unexpected error in AcceptFriendRequest: {ex.Message}", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -287,7 +287,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (EntityException ex)
             {
-                loggerHelper.LogError($"Error de conexión a BD en RejectFriendRequest", ex);
+                loggerHelper.LogError($"Error connecting to database in RejectFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -296,7 +296,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (SqlException ex)
             {
-                loggerHelper.LogError($"Error SQL en RejectFriendRequest", ex);
+                loggerHelper.LogError($"SQL error in RejectFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -305,7 +305,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (InvalidOperationException ex)
             {
-                loggerHelper.LogError($"Error de operación inválida en RejectFriendRequest", ex);
+                loggerHelper.LogError($"Invalid operation error in RejectFriendRequest", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -314,7 +314,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error inesperado en RejectFriendRequest: {ex.Message}", ex);
+                loggerHelper.LogError($"Unexpected error in RejectFriendRequest: {ex.Message}", ex);
                 return new FriendRequestResponse
                 {
                     Success = false,
@@ -359,7 +359,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (EntityException ex)
             {
-                loggerHelper.LogError($"Error de conexión a BD en GetPendingRequests para usuario {username}", ex);
+                loggerHelper.LogError($"Unexpected error in RejectFriendRequest {username}", ex);
                 return new FriendRequestListResponse
                 {
                     Success = false,
@@ -369,7 +369,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (SqlException ex)
             {
-                loggerHelper.LogError($"Error SQL en GetPendingRequests para usuario {username}", ex);
+                loggerHelper.LogError($"SQL error in GetPendingRequests for user {username}", ex);
                 return new FriendRequestListResponse
                 {
                     Success = false,
@@ -379,7 +379,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (InvalidOperationException ex)
             {
-                loggerHelper.LogError($"Error de operación inválida en GetPendingRequests para usuario {username}", ex);
+                loggerHelper.LogError($"Invalid operation error in GetPendingRequests for user {username}", ex);
                 return new FriendRequestListResponse
                 {
                     Success = false,
@@ -389,7 +389,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error inesperado en GetPendingRequests para usuario {username}: {ex.Message}", ex);
+                loggerHelper.LogError($"Unexpected error in GetPendingRequests for user {username}: {ex.Message}", ex);
                 return new FriendRequestListResponse
                 {
                     Success = false,

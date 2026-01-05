@@ -67,12 +67,12 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             }
             catch (DbEntityValidationException ex)
             {
-                loggerHelper.LogError("Error de validacion de base de datos del UpdateNickname", ex);
+                loggerHelper.LogError("UpdateNickname database validation error", ex);
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_DatabaseError };
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error al actualizar el nickname: {ex.Message}", ex);
+                loggerHelper.LogError($"Error updating nickname: {ex.Message}", ex);
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }
@@ -127,7 +127,7 @@ namespace ArchsVsDinosServer.BusinessLogic.ProfileManagement
             }
             catch (Exception ex)
             {
-                loggerHelper.LogError($"Error al actualizar el username: {ex.Message}", ex);
+                loggerHelper.LogError($"Error updating username: {ex.Message}", ex);
                 return new UpdateResponse { Success = false, ResultCode = UpdateResultCode.Profile_UnexpectedError };
             }
         }

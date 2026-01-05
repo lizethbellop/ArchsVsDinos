@@ -33,7 +33,7 @@ namespace ArchsVsDinosClient.Services
             guardian = new WcfConnectionGuardian(
                 onError: (title, msg) =>
                 {
-                    logger.LogError($"🔴 Guardian reportó error: {title} - {msg}");
+                    logger.LogError($"Guardian reported error: {title} - {msg}");
                     ConnectionError?.Invoke(title, msg);
                 },
                 logger: logger

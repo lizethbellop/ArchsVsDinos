@@ -150,21 +150,6 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         }
 
-        /*public bool CheckCode(string email, string code)
-        {
-            var dataCheck = verificationCodes.Find(x => x.Email == email && x.Code == code);
-        
-            if (dataCheck != null && dataCheck.Expiration > DateTime.Now)
-            {
-                verificationCodes.Remove(dataCheck);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }*/
-
         public RegisterResponse ValidateUsernameAndNicknameResult(string newUsername, string newNickname)
         {
             try

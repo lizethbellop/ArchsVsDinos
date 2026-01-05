@@ -39,7 +39,7 @@ namespace ArchsVsDinosClient.Utils
 
             try
             {
-                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
+                logger.LogDebug($"Executing operation: {operationName}");
                 await operation();
                 UpdateServerState(true);
                 errorAlreadyReported = false;
@@ -62,7 +62,7 @@ namespace ArchsVsDinosClient.Utils
 
             try
             {
-                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
+                logger.LogDebug($"Executing operation: {operationName}");
                 var result = await operation();
                 UpdateServerState(true);
                 errorAlreadyReported = false;
@@ -85,7 +85,7 @@ namespace ArchsVsDinosClient.Utils
 
             try
             {
-                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación con throw: {operationName}");
+                logger.LogDebug($"Executing operation with trow: {operationName}");
                 var result = await operation();
                 UpdateServerState(true);
                 errorAlreadyReported = false;
@@ -94,7 +94,7 @@ namespace ArchsVsDinosClient.Utils
             catch (Exception ex)
             {
                 HandleException(ex, operationName);
-                throw; // ⭐ RELANZA para que el caller la atrape
+                throw; 
             }
             finally
             {
@@ -182,12 +182,12 @@ namespace ArchsVsDinosClient.Utils
             if (!suppressErrors && !errorAlreadyReported)
             {
                 errorAlreadyReported = true;
-                logger.LogDebug($"🔶 [GUARDIAN] Disparando onError para '{operationName}'");
+                logger.LogDebug($"Disparando onError para '{operationName}'");
                 onError?.Invoke(title, message);
             }
             else if (suppressErrors)
             {
-                logger.LogDebug($"🔷 [GUARDIAN] Error suprimido en '{operationName}' - no se notifica al usuario");
+                logger.LogDebug($"Error supprimed in '{operationName}'");
             }
         }
 
@@ -222,7 +222,7 @@ namespace ArchsVsDinosClient.Utils
 
             try
             {
-                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
+                logger.LogDebug($"Executing operation: {operationName}");
                 await operation();
                 UpdateServerState(true);
                 errorAlreadyReported = false;
@@ -249,7 +249,7 @@ namespace ArchsVsDinosClient.Utils
 
             try
             {
-                logger.LogDebug($"🔷 [GUARDIAN] Ejecutando operación: {operationName}");
+                logger.LogDebug($"Executing operation: {operationName}");
                 var result = await operation();
                 UpdateServerState(true);
                 errorAlreadyReported = false;
