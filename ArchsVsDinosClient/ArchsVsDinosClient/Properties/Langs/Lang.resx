@@ -1170,4 +1170,7 @@
   <data name="Lobby_LobbyKeepWorking" xml:space="preserve">
     <value>El lobby seguirá funcionando</value>
   </data>
+  <data name="GlobalTimeoutTitle" xml:space="preserve">
+    <value>Tiempo de espera agotado</value>
+  </data>
 </root>

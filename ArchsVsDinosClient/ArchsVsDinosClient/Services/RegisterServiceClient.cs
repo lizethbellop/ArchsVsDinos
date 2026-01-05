@@ -25,7 +25,7 @@ namespace ArchsVsDinosClient.Services
         {
             logger = new Logger(typeof(RegisterServiceClient));
             client = new RegisterManagerClient();
-
+        
             guardian = new WcfConnectionGuardian(
                 (title, msg) => ConnectionError?.Invoke(title, msg),
                 logger

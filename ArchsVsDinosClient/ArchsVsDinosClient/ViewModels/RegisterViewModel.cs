@@ -45,7 +45,6 @@ namespace ArchsVsDinosClient.ViewModels
             registerService?.Dispose();
 
             registerService = new RegisterServiceClient();
-            registerService.ConnectionError += OnConnectionError;
         }
 
         public async Task RegisterAsync()
@@ -113,10 +112,6 @@ namespace ArchsVsDinosClient.ViewModels
                     RecoverFromConnectionError(Lang.GlobalServerError);
                 }
             }
-            catch (TimeoutException)
-            {
-                RecoverFromConnectionError(Lang.GlobalServerTimeout);
-            }
             catch (CommunicationException ex)
             {
                 if (ex.InnerException is SocketException)
@@ -130,7 +125,10 @@ namespace ArchsVsDinosClient.ViewModels
                     RecoverFromConnectionError(Lang.GlobalServerUnavailable);
                 }
             }
-
+            catch (TimeoutException)
+            {
+                RecoverFromConnectionError(Lang.GlobalServerTimeout);
+            }
             catch (Exception ex)
             {
                 logger.LogError("Unexpected register error", ex);
@@ -145,13 +143,14 @@ namespace ArchsVsDinosClient.ViewModels
             messageService.ShowMessage(message);
         }
 
+        /*
         private void OnConnectionError(string title, string message)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
                 messageService.ShowMessage($"{title}: {message}");
             });
-        }
+        }*/
 
         private bool ValidateInputs(string name, string username, string email, string password, string nickname)
         {

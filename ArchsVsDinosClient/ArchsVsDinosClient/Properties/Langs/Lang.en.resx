@@ -1171,4 +1171,7 @@
   <data name="Lobby_LobbyKeepWorking" xml:space="preserve">
     <value>Lobby will keep working</value>
   </data>
+  <data name="GlobalTimeoutTitle" xml:space="preserve">
+    <value>Timeout expired</value>
+  </data>
 </root>

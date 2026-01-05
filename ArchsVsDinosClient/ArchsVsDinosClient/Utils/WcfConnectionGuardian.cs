@@ -79,13 +79,14 @@ namespace ArchsVsDinosClient.Utils
             }
         }
 
+
         public async Task<T> ExecuteWithThrowAsync<T>(Func<Task<T>> operation, string operationName = "Operación")
         {
             operationInProgress = true;
 
             try
             {
-                logger.LogDebug($"Executing operation with trow: {operationName}");
+                logger.LogDebug($"Executing operation with throw: {operationName}");
                 var result = await operation();
                 UpdateServerState(true);
                 errorAlreadyReported = false;
@@ -93,14 +94,16 @@ namespace ArchsVsDinosClient.Utils
             }
             catch (Exception ex)
             {
-                HandleException(ex, operationName);
-                throw; 
+                logger.LogError($"[{operationName}] Exception to be thrown: {ex.GetType().Name} - {ex.Message}", ex);
+                UpdateServerState(false);
+                throw;
             }
             finally
             {
                 operationInProgress = false;
             }
         }
+
 
         public void MonitorClientState(ICommunicationObject client)
         {
@@ -156,7 +159,7 @@ namespace ArchsVsDinosClient.Utils
 
                 case TimeoutException te:
                     logger.LogError($"[{operationName}] Tiempo de espera agotado", te);
-                    HandleWcfError("Timeout", $"Tiempo de espera agotado para '{operationName}'", te, operationName, suppressErrors);
+                    HandleWcfError("Timeout", $"No se ha logrado conectar con el servidor'{operationName}'", te, operationName, suppressErrors);
                     break;
 
                 default:
