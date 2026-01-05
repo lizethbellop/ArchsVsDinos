@@ -13,10 +13,11 @@ using System.Threading.Tasks;
 
 namespace UnitTest.StatisticsTests
 {
+    /*
     [TestClass]
     public class MatchResultProcessorTest : BaseTestClass
     {
-        /*private MatchResultProcessor matchResultProcessor;
+        private MatchResultProcessor matchResultProcessor;
 
         [TestInitialize]
         public void Setup()
@@ -38,7 +39,7 @@ namespace UnitTest.StatisticsTests
             {
                 MatchId = "NOTFOUND",
                 MatchDate = DateTime.Now,
-                PlayerResults = new List<PlayerMatchResult>()
+                PlayerResults = new List<PlayerMatchResultDTO>() 
             };
 
             SetupMockGeneralMatchSet(new List<GeneralMatch>());
@@ -59,74 +60,83 @@ namespace UnitTest.StatisticsTests
                 date = DateTime.Now.AddDays(-1)
             };
 
-            var player1 = new Player
-            {
+            var player1 = new Player 
+            { 
                 idPlayer = 1,
                 totalMatches = 5,
-                totalWins = 3,
-                totalLosses = 2,
-                totalPoints = 500
+                totalWins = 3, totalLosses = 2,
+                totalPoints = 500 
             };
 
-            var player2 = new Player
-            {
+            var player2 = new Player 
+            { 
                 idPlayer = 2,
-                totalMatches = 5,
+                totalMatches = 5, 
                 totalWins = 2,
-                totalLosses = 3,
-                totalPoints = 400
+                totalLosses = 3, 
+                totalPoints = 400 
             };
 
-            var participant1 = new MatchParticipants
-            {
-                idMatchParticipant = 1,
-                idGeneralMatch = 1,
-                idPlayer = 1,
-                points = 0,
-                isWinner = false,
-                archaeologistsEliminated = 0,
-                supremeBossesEliminated = 0
+            var participant1 = new MatchParticipants 
+            { 
+                idMatchParticipant = 1, 
+                idGeneralMatch = 1, 
+                idPlayer = 1, 
+                points = 0, 
+                isWinner = false 
             };
-
-            var participant2 = new MatchParticipants
-            {
-                idMatchParticipant = 2,
-                idGeneralMatch = 1,
-                idPlayer = 2,
-                points = 0,
-                isWinner = false,
-                archaeologistsEliminated = 0,
-                supremeBossesEliminated = 0
+            var participant2 = new MatchParticipants 
+            { 
+                idMatchParticipant = 2, 
+                idGeneralMatch = 1, 
+                idPlayer = 2, 
+                points = 0, 
+                isWinner = false 
             };
 
             var matchResult = new MatchResultDTO
             {
                 MatchId = "MATCH001",
                 MatchDate = matchDate,
-                PlayerResults = new List<PlayerMatchResult>
-            {
-                new PlayerMatchResult
+                PlayerResults = new List<PlayerMatchResultDTO> 
                 {
-                    UserId = 1,
-                    Points = 150,
-                    IsWinner = true,
-                    ArchaeologistsEliminated = 5,
-                    SupremeBossesEliminated = 2
-                },
-                new PlayerMatchResult
-                {
-                    UserId = 2,
-                    Points = 100,
-                    IsWinner = false,
-                    ArchaeologistsEliminated = 3,
-                    SupremeBossesEliminated = 1
+                    new PlayerMatchResultDTO 
+                    { 
+                        UserId = 1, 
+                        Points = 150, 
+                        IsWinner = true, 
+                        ArchaeologistsEliminated = 5,
+                        SupremeBossesEliminated = 2 
+                    },
+
+                    new PlayerMatchResultDTO 
+                    {
+                        UserId = 2,
+                        Points = 100,
+                        IsWinner = false, 
+                        ArchaeologistsEliminated = 3, 
+                        SupremeBossesEliminated = 1 
+                    }
                 }
-            }
             };
 
             SetupMockGeneralMatchSet(new List<GeneralMatch> { match });
             SetupMockMatchParticipantsSet(new List<MatchParticipants> { participant1, participant2 });
             SetupMockPlayerSet(new List<Player> { player1, player2 });
+
+            var userAccounts = new List<UserAccount> {
+                new UserAccount 
+                { 
+                    idUser = 1,
+                    idPlayer = 1 
+                },
+                new UserAccount
+                { 
+                    idUser = 2,
+                    idPlayer = 2 
+                }
+            };
+            SetupMockUserAccountSet(userAccounts);
 
             mockDbContext.Setup(c => c.SaveChanges()).Returns(1);
 
@@ -812,7 +822,7 @@ namespace UnitTest.StatisticsTests
             var result = matchResultProcessor.GetMatchStatistics("MATCH001");
 
             Assert.AreEqual(expectedResult, result);
-        }*/
+        }
 
-    }
+    }*/
 }

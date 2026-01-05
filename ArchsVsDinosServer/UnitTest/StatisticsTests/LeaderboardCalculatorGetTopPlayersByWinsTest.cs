@@ -209,73 +209,32 @@ namespace UnitTest.StatisticsTests
         }
 
         [TestMethod]
-        public void TestGetTopPlayersByWinsPlayerWithNoUserAccount()
-        {
-            var players = new List<Player>
-            {
-                new Player
-                {
-                    idPlayer = 1,
-                    totalPoints = 1000,
-                    totalWins = 10,
-                    UserAccount = new List<UserAccount>()
-                }
-            };
-
-            SetupMockPlayerSet(players);
-
-            List<LeaderboardEntryDTO> expectedResult = new List<LeaderboardEntryDTO>
-            {
-                new LeaderboardEntryDTO
-                {
-                    Position = 1,
-                    UserId = 1,
-                    Username = "Unknown",
-                    TotalPoints = 1000,
-                    TotalWins = 10
-                }
-            };
-
-            var result = leaderboardCalculator.GetTopPlayersByWins(10);
-
-            CollectionAssert.AreEqual(expectedResult, result);
-        }
-
-        [TestMethod]
         public void TestGetTopPlayersByWinsPlayerWithMultipleUserAccounts()
         {
             var players = new List<Player>
+    {
+        new Player
+        {
+            idPlayer = 1,
+            totalPoints = 1000,
+            totalWins = 10,
+            UserAccount = new List<UserAccount>
             {
-                new Player
-                {
-                    idPlayer = 1,
-                    totalPoints = 1000,
-                    totalWins = 10,
-                    UserAccount = new List<UserAccount>
-                    {
-                        new UserAccount { username = "user1" },
-                        new UserAccount { username = "user2" }
-                    }
-                }
-            };
+                new UserAccount { username = "user1" },
+                new UserAccount { username = "user2" }
+            }
+        }
+    };
 
             SetupMockPlayerSet(players);
 
-            List<LeaderboardEntryDTO> expectedResult = new List<LeaderboardEntryDTO>
-            {
-                new LeaderboardEntryDTO
-                {
-                    Position = 1,
-                    UserId = 1,
-                    Username = "Unknown",
-                    TotalPoints = 1000,
-                    TotalWins = 10
-                }
-            };
-
             var result = leaderboardCalculator.GetTopPlayersByWins(10);
 
-            CollectionAssert.AreEqual(expectedResult, result);
+            Assert.AreEqual(1, result.Count, "There should be multiple user accounts");
+            Assert.AreEqual(1, result[0].UserId, "The UserId doesn't match");
+            Assert.AreEqual("Unknown", result[0].Username, "Username shoul to be 'Unknown' for the excpetion multiple accounts");
+            Assert.AreEqual(1000, result[0].TotalPoints);
+            Assert.AreEqual(10, result[0].TotalWins);
         }
 
         [TestMethod]

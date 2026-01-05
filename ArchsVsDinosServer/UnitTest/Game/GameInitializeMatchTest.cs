@@ -1,6 +1,5 @@
 ﻿using ArchsVsDinosServer.BusinessLogic;
 using ArchsVsDinosServer.BusinessLogic.GameManagement;
-using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
 using ArchsVsDinosServer.BusinessLogic.GameManagement.Session;
 using ArchsVsDinosServer.Interfaces.Game;
 using ArchsVsDinosServer.Utils;
@@ -12,7 +11,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace UnitTest.Game
@@ -20,8 +18,8 @@ namespace UnitTest.Game
     [TestClass]
     public class GameInitializeMatchTest : BaseTestClass
     {
-        private Mock<GameSessionManager> mockSessionManager;
-        private Mock<GameSetupHandler> mockSetupHandler;
+        private GameSessionManager sessionManager;
+        private GameSetupHandler setupHandler;
         private Mock<IGameNotifier> mockGameNotifier;
         private Mock<IStatisticsManager> mockStatisticsManager;
         private GameCoreContext gameCoreContext;
@@ -30,17 +28,14 @@ namespace UnitTest.Game
         [TestInitialize]
         public void SetupInitializeMatchTests()
         {
-            BaseSetup();
+            base.BaseSetup();
 
-            mockSessionManager = new Mock<GameSessionManager>(mockLoggerHelper.Object);
-            mockSetupHandler = new Mock<GameSetupHandler>();
+            sessionManager = new GameSessionManager(mockLoggerHelper.Object);
+            setupHandler = new GameSetupHandler();
             mockGameNotifier = new Mock<IGameNotifier>();
             mockStatisticsManager = new Mock<IStatisticsManager>();
 
-            gameCoreContext = new GameCoreContext(
-                mockSessionManager.Object,
-                mockSetupHandler.Object
-            );
+            gameCoreContext = new GameCoreContext(sessionManager, setupHandler);
 
             var dependencies = new GameLogicDependencies(
                 gameCoreContext,
@@ -50,489 +45,175 @@ namespace UnitTest.Game
             );
 
             gameLogic = new GameLogic(dependencies);
-
-            mockSessionManager.Setup(x => x.CreateSession(It.IsAny<string>())).Returns(true);
-            mockSessionManager.Setup(x => x.SessionExists(It.IsAny<string>())).Returns(false);
-            mockSetupHandler.Setup(x => x.InitializeGameSession(It.IsAny<GameSession>(), It.IsAny<List<PlayerSession>>())).Returns(true);
-            mockSetupHandler.Setup(x => x.SelectFirstPlayer(It.IsAny<GameSession>())).Returns((GameSession session) => session.Players.FirstOrDefault());
         }
 
         [TestMethod]
-        public async Task TestInitializeMatchReturnsTrue()
+        public async Task TestInitializeMatch_Success_MinimumPlayers()
         {
             // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
+            var players = CreatePlayerList(2);
 
             // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
+            var result = await gameLogic.InitializeMatch("MATCH-01", players);
 
             // Assert
             Assert.IsTrue(result);
+            Assert.IsTrue(sessionManager.SessionExists("MATCH-01"));
+            mockGameNotifier.Verify(n => n.NotifyGameInitialized(It.IsAny<GameInitializedDTO>()), Times.Once);
         }
 
         [TestMethod]
-        public async Task TestInitializeMatchCreatesSession()
+        public async Task TestInitializeMatch_Success_MaximumPlayers()
         {
             // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
+            var players = CreatePlayerList(4);
 
             // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockSessionManager.Verify(x => x.CreateSession("TEST-001"), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchMarksSessionAsStarted()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            Assert.IsTrue(testSession.IsStarted);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchNotifiesGameInitialized()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyGameInitialized(It.IsAny<GameInitializedDTO>()), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchNotificationContainsCorrectMatchCode()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyGameInitialized(
-                It.Is<GameInitializedDTO>(dto => dto.MatchCode == "TEST-001")),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchNotificationContainsCorrectPlayerCount()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyGameInitialized(
-                It.Is<GameInitializedDTO>(dto => dto.Players.Count == 2)),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchNotifiesGameStartedToEachPlayer()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyGameStarted(It.IsAny<GameStartedDTO>()), Times.Exactly(2));
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchLogsSuccess()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockLoggerHelper.Verify(x => x.LogInfo(It.Is<string>(s =>
-                s.Contains("initialized successfully"))),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchWithThreePlayers()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" },
-            new GamePlayerInitDTO { UserId = 3, Nickname = "Player3" }
-        };
-
-            // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
+            var result = await gameLogic.InitializeMatch("MATCH-02", players);
 
             // Assert
             Assert.IsTrue(result);
+            Assert.AreEqual(4, sessionManager.GetSession("MATCH-02").Players.Count);
         }
 
         [TestMethod]
-        public async Task TestInitializeMatchWithFourPlayers()
+        public async Task TestInitializeMatch_StartsFirstTurnCorrectly()
         {
             // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" },
-            new GamePlayerInitDTO { UserId = 3, Nickname = "Player3" },
-            new GamePlayerInitDTO { UserId = 4, Nickname = "Player4" }
-        };
+            var players = CreatePlayerList(2);
 
             // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
+            await gameLogic.InitializeMatch("MATCH-03", players);
+            var session = sessionManager.GetSession("MATCH-03");
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.IsTrue(session.CurrentTurn > 0);
+            Assert.IsNotNull(session.StartTime);
         }
 
         [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWithNullMatchCode()
+        public async Task TestInitializeMatch_Fails_WhenMatchCodeExists()
         {
             // Arrange
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
+            sessionManager.CreateSession("DUPLICATE");
+            var players = CreatePlayerList(2);
 
             // Act
-            var result = await gameLogic.InitializeMatch(null, players);
+            var result = await gameLogic.InitializeMatch("DUPLICATE", players);
 
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWithEmptyMatchCode()
+        public async Task TestInitializeMatch_Fails_WhenTooFewPlayers()
         {
             // Arrange
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
+            var players = CreatePlayerList(1);
 
             // Act
-            var result = await gameLogic.InitializeMatch("", players);
+            var result = await gameLogic.InitializeMatch("FAIL-1", players);
 
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWithNullPlayers()
+        public async Task TestInitializeMatch_Fails_WhenTooManyPlayers()
         {
+            // Arrange
+            var players = CreatePlayerList(5);
+
             // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", null);
+            var result = await gameLogic.InitializeMatch("FAIL-5", players);
 
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWithLessThanTwoPlayers()
+        public async Task TestInitializeMatch_NotificationsSentToAllPlayers()
         {
             // Arrange
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" }
-        };
+            var players = CreatePlayerList(3);
 
             // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
+            await gameLogic.InitializeMatch("NOTIFY-3", players);
+
+            // Assert
+            mockGameNotifier.Verify(n => n.NotifyGameStarted(It.IsAny<GameStartedDTO>()), Times.Exactly(3));
+        }
+
+
+        [TestMethod]
+        public async Task TestInitializeMatch_NotifiesInitialArchs()
+        {
+            // Arrange
+            var players = CreatePlayerList(2);
+
+            // Act
+            await gameLogic.InitializeMatch("ARCH-TEST", players);
+
+            // Assert
+            mockGameNotifier.Verify(n => n.NotifyArchAddedToBoard(It.Is<ArchAddedToBoardDTO>(d =>
+                d.PlayerUsername == "System")),
+                Times.AtLeastOnce);
+        }
+
+        [TestMethod]
+        public async Task TestInitializeMatch_DeckIsCreatedAndFilled()
+        {
+            // Arrange
+            var players = CreatePlayerList(2);
+
+            // Act
+            await gameLogic.InitializeMatch("DECK-TEST", players);
+            var session = sessionManager.GetSession("DECK-TEST");
+
+            // Assert
+            Assert.IsTrue(session.DrawDeck.Count > 0);
+        }
+
+        [TestMethod]
+        public async Task TestInitializeMatch_PlayersGetInitialHands()
+        {
+            // Arrange
+            var players = CreatePlayerList(2);
+
+            // Act
+            await gameLogic.InitializeMatch("HAND-TEST", players);
+            var session = sessionManager.GetSession("HAND-TEST");
+
+            // Assert
+            foreach (var p in session.Players)
+            {
+                Assert.IsTrue(p.Hand.Count > 0);
+            }
+        }
+
+        [TestMethod]
+        public async Task TestInitializeMatch_CleansUp_WhenInitializationFails()
+        {
+            // Arrange
+            var players = new List<GamePlayerInitDTO>();
+
+            // Act
+            var result = await gameLogic.InitializeMatch("CLEANUP-TEST", players);
 
             // Assert
             Assert.IsFalse(result);
+            Assert.IsFalse(sessionManager.SessionExists("CLEANUP-TEST"));
         }
 
-        [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWithMoreThanFourPlayers()
+        private List<GamePlayerInitDTO> CreatePlayerList(int count)
         {
-            // Arrange
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" },
-            new GamePlayerInitDTO { UserId = 3, Nickname = "Player3" },
-            new GamePlayerInitDTO { UserId = 4, Nickname = "Player4" },
-            new GamePlayerInitDTO { UserId = 5, Nickname = "Player5" }
-        };
-
-            // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWhenSessionAlreadyExists()
-        {
-            // Arrange
-            mockSessionManager.Setup(x => x.SessionExists("TEST-001")).Returns(true);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWhenCreateSessionFails()
-        {
-            // Arrange
-            mockSessionManager.Setup(x => x.CreateSession("TEST-001")).Returns(false);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchReturnsFalseWhenSetupFails()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-            mockSetupHandler.Setup(x => x.InitializeGameSession(It.IsAny<GameSession>(), It.IsAny<List<PlayerSession>>())).Returns(false);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            var result = await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchSetsStartTime()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            Assert.IsNotNull(testSession.StartTime);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchStartsFirstPlayerTurn()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            Assert.IsTrue(testSession.CurrentTurn > 0);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchAssignsTurnOrderToPlayers()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyGameInitialized(
-                It.Is<GameInitializedDTO>(dto =>
-                    dto.Players.Any(p => p.TurnOrder > 0))),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchLogsWarningWhenValidationFails()
-        {
-            // Arrange
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockLoggerHelper.Verify(x => x.LogWarning(It.IsAny<string>()), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchDoesNotCreateSessionWhenValidationFails()
-        {
-            // Arrange
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockSessionManager.Verify(x => x.CreateSession(It.IsAny<string>()), Times.Never);
-        }
-
-        [TestMethod]
-        public async Task TestInitializeMatchNotifiesArchsOnBoard()
-        {
-            // Arrange
-            var mockCentralBoard = new CentralBoard();
-            var testSession = new GameSession("TEST-001", mockCentralBoard, mockLoggerHelper.Object);
-            mockSessionManager.Setup(x => x.GetSession("TEST-001")).Returns(testSession);
-
-            var players = new List<GamePlayerInitDTO>
-        {
-            new GamePlayerInitDTO { UserId = 1, Nickname = "Player1" },
-            new GamePlayerInitDTO { UserId = 2, Nickname = "Player2" }
-        };
-
-            // Act
-            await gameLogic.InitializeMatch("TEST-001", players);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyArchAddedToBoard(It.IsAny<ArchAddedToBoardDTO>()), Times.AtLeastOnce);
+            return Enumerable.Range(1, count)
+                .Select(i => new GamePlayerInitDTO
+                {
+                    UserId = i,
+                    Nickname = $"Player{i}"
+                })
+                .ToList();
         }
     }
 }

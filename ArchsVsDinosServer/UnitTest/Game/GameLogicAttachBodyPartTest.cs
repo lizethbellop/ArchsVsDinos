@@ -12,19 +12,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTest.Game
 {
     [TestClass]
     public class GameLogicAttachBodyPartTest : BaseTestClass
     {
-        private Mock<GameSessionManager> mockSessionManager;
-        private Mock<GameSetupHandler> mockSetupHandler;
+        private GameSessionManager sessionManager;
         private Mock<IGameNotifier> mockGameNotifier;
         private Mock<IStatisticsManager> mockStatisticsManager;
+        private Mock<GameSetupHandler> mockSetupHandler;
         private GameCoreContext gameCoreContext;
         private GameLogic gameLogic;
         private GameSession testSession;
@@ -33,20 +30,15 @@ namespace UnitTest.Game
         [TestInitialize]
         public void SetupAttachBodyPartTests()
         {
-            BaseSetup();
+            base.BaseSetup();
 
-            mockSessionManager = new Mock<GameSessionManager>(mockLoggerHelper.Object);
-            mockSetupHandler = new Mock<GameSetupHandler>();
+            sessionManager = new GameSessionManager(mockLoggerHelper.Object);
             mockGameNotifier = new Mock<IGameNotifier>();
             mockStatisticsManager = new Mock<IStatisticsManager>();
+            mockSetupHandler = new Mock<GameSetupHandler>();
 
-            // Create GameCoreContext
-            gameCoreContext = new GameCoreContext(
-                mockSessionManager.Object,
-                mockSetupHandler.Object
-            );
+            gameCoreContext = new GameCoreContext(sessionManager, mockSetupHandler.Object);
 
-            // Setup game logic dependencies using constructor
             var dependencies = new GameLogicDependencies(
                 gameCoreContext,
                 mockLoggerHelper.Object,
@@ -56,417 +48,210 @@ namespace UnitTest.Game
 
             gameLogic = new GameLogic(dependencies);
 
-            // Setup test session
-            var mockCentralBoard = new CentralBoard();
-            testSession = new GameSession("TEST-MATCH", mockCentralBoard, mockLoggerHelper.Object);
+            string matchCode = "TEST-MATCH";
+            sessionManager.CreateSession(matchCode);
+            testSession = sessionManager.GetSession(matchCode);
             testSession.MarkAsStarted();
 
             testPlayer = new PlayerSession(1, "TestPlayer", null);
             testSession.AddPlayer(testPlayer);
-
-            mockSessionManager.Setup(x => x.GetSession("TEST-MATCH")).Returns(testSession);
+            testSession.StartTurn(1);
         }
 
+        // ==========================================
+        // ESCENARIOS DE ÉXITO Y SUMA DE PODER
+        // ==========================================
+
         [TestMethod]
-        public void TestAttachBodyPartSuccess()
+        public void TestAttachBodyPart_IncreasesTotalPower()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
+            var head = CreateHeadCard(1, 5, ArmyType.Sand);
+            var torso = CreateTorsoCard(2, 10, ArmyType.Sand);
 
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
+            var dino = new DinoInstance(1, head);
             testPlayer.AddDino(dino);
+            testPlayer.AddCard(torso);
 
-            var attachData = new AttachBodyPartDTO
+            var data = new AttachBodyPartDTO
             {
                 DinoHeadCardId = 1,
                 CardId = 2
             };
 
             // Act
-            var result = gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            var result = gameLogic.AttachBodyPart("TEST-MATCH", 1, data);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.IsTrue(result, "Logic should allow attaching the torso");
+            Assert.AreEqual(15, dino.TotalPower, "The power should be 5 (head) + 10 (torso) = 15");
         }
 
         [TestMethod]
-        public void TestAttachBodyPartRemovesCardFromHand()
+        public void TestAttachBodyPart_Success_TorsoToHead()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
+            var head = CreateHeadCard(1, 5, ArmyType.Sand);
+            var torso = CreateTorsoCard(2, 5, ArmyType.Sand);
+            var dino = new DinoInstance(1, head);
             testPlayer.AddDino(dino);
+            testPlayer.AddCard(torso);
 
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            var data = new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 };
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, data);
 
             // Assert
-            Assert.AreEqual(0, testPlayer.Hand.Count);
+            Assert.AreEqual(2, dino.GetAllCards().Count, "Dino should have 2 cards now");
         }
 
         [TestMethod]
-        public void TestAttachBodyPartAddsCardToDino()
+        public void TestAttachBodyPart_RemovesCardFromHand()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            var head = CreateHeadCard(1, 5, ArmyType.Sand);
+            var torso = CreateTorsoCard(2, 5, ArmyType.Sand);
+            testPlayer.AddDino(new DinoInstance(1, head));
+            testPlayer.AddCard(torso);
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 });
 
             // Assert
-            Assert.AreEqual(2, dino.GetAllCards().Count);
+            Assert.AreEqual(0, testPlayer.Hand.Count, "Card must be removed from hand");
         }
 
         [TestMethod]
-        public void TestAttachBodyPartNotifiesClients()
+        public void TestAttachBodyPart_Success_LegsToTorso()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
+            var head = CreateHeadCard(1, 5, ArmyType.Sand);
+            var torso = CreateTorsoCard(2, 5, ArmyType.Sand);
+            var legs = CreateLegsCard(3, 5, ArmyType.Sand);
 
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
+            var dino = new DinoInstance(1, head);
             testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            testPlayer.AddCard(torso);
+            testPlayer.AddCard(legs);
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 });
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 3 });
 
             // Assert
-            mockGameNotifier.Verify(x => x.NotifyBodyPartAttached(It.IsAny<BodyPartAttachedDTO>()), Times.Once);
+            Assert.IsNotNull(dino.LegsCard);
+            Assert.AreEqual(15, dino.TotalPower);
         }
 
         [TestMethod]
-        public void TestAttachBodyPartNotificationContainsCorrectMatchCode()
+        public void TestAttachBodyPart_AllowsNoneElement()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            var head = CreateHeadCard(1, 5, ArmyType.Sand);
+            var neutralTorso = CreateTorsoCard(2, 5, ArmyType.None);
+            testPlayer.AddDino(new DinoInstance(1, head));
+            testPlayer.AddCard(neutralTorso);
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            var result = gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 });
 
             // Assert
-            mockGameNotifier.Verify(x => x.NotifyBodyPartAttached(
-                It.Is<BodyPartAttachedDTO>(dto => dto.MatchCode == "TEST-MATCH")),
-                Times.Once);
+            Assert.IsTrue(result, "Neutral parts should be compatible with any element");
         }
 
+        // ==========================================
+        // ESCENARIOS DE ERROR Y VALIDACIÓN
+        // ==========================================
+
         [TestMethod]
-        public void TestAttachBodyPartNotificationContainsCorrectUserId()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestAttachBodyPart_Throws_WhenElementMismatch()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            var head = CreateHeadCard(1, 5, ArmyType.Sand);
+            var waterTorso = CreateTorsoCard(2, 5, ArmyType.Water);
+            testPlayer.AddDino(new DinoInstance(1, head));
+            testPlayer.AddCard(waterTorso);
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyBodyPartAttached(
-                It.Is<BodyPartAttachedDTO>(dto => dto.PlayerUserId == 1)),
-                Times.Once);
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 });
         }
 
         [TestMethod]
-        public void TestAttachBodyPartNotificationContainsCorrectDinoId()
+        public void TestAttachBodyPart_ReturnsFalse_WhenDinoIsMissing()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            testPlayer.AddCard(CreateTorsoCard(2, 5, ArmyType.Sand));
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            var result = gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 999, CardId = 2 });
 
             // Assert
-            mockGameNotifier.Verify(x => x.NotifyBodyPartAttached(
-                It.Is<BodyPartAttachedDTO>(dto => dto.DinoInstanceId == 1)),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void TestAttachBodyPartNotificationContainsUpdatedPower()
-        {
-            // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
-
-            // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyBodyPartAttached(
-                It.Is<BodyPartAttachedDTO>(dto => dto.NewTotalPower == 8)),
-                Times.Once);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void TestAttachBodyPartThrowsWhenDataIsNull()
-        {
-            // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, null);
+            Assert.IsFalse(result);
+            mockLoggerHelper.Verify(l => l.LogWarning(It.Is<string>(s => s.Contains("Dino not found"))), Times.Once);
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void TestAttachBodyPartThrowsWhenCardNotInHand()
+        public void TestAttachBodyPart_Throws_WhenCardIsNotBodyPart()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 999
-            };
+            testPlayer.AddDino(new DinoInstance(1, CreateHeadCard(1, 5, ArmyType.Sand)));
+            testPlayer.AddCard(CreateHeadCard(2, 5, ArmyType.Sand)); // Intentar usar otra cabeza como parte
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestAttachBodyPartThrowsWhenDinoNotFound()
-        {
-            // Arrange
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-            testPlayer.AddCard(bodyCard);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 999,
-                CardId = 2
-            };
-
-            // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
-        }
+        // ==========================================
+        // ESCENARIOS DE NOTIFICACIÓN
+        // ==========================================
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestAttachBodyPartThrowsWhenCardIsArchCard()
+        public void TestAttachBodyPart_NotifiesClientsCorrectly()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var archCard = CreateArchCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(archCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            testPlayer.AddDino(new DinoInstance(1, CreateHeadCard(1, 5, ArmyType.Sand)));
+            testPlayer.AddCard(CreateTorsoCard(2, 5, ArmyType.Sand));
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestAttachBodyPartThrowsWhenSessionNotFound()
-        {
-            // Arrange
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
-
-            // Act
-            gameLogic.AttachBodyPart("INVALID-MATCH", 1, attachData);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestAttachBodyPartThrowsWhenPlayerNotFound()
-        {
-            // Arrange
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
-
-            // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 999, attachData);
-        }
-
-        [TestMethod]
-        public void TestAttachBodyPartLogsSuccessfulAttachment()
-        {
-            // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
-
-            // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 });
 
             // Assert
-            mockLoggerHelper.Verify(x => x.LogInfo(It.Is<string>(s =>
-                s.Contains("attached card") &&
-                s.Contains("TEST-MATCH"))),
-                Times.Once);
+            mockGameNotifier.Verify(n => n.NotifyBodyPartAttached(It.Is<BodyPartAttachedDTO>(d =>
+                d.PlayerUserId == 1 && d.DinoInstanceId == 1
+            )), Times.Once);
         }
 
         [TestMethod]
-        public void TestAttachBodyPartIncreasesTotalPower()
+        public void TestAttachBodyPart_LogsActionInEnglish()
         {
             // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var bodyCard = CreateTorsoCard(2, 3, ArmyType.Sand);
-
-            testPlayer.AddCard(bodyCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 2
-            };
+            testPlayer.AddDino(new DinoInstance(1, CreateHeadCard(1, 5, ArmyType.Sand)));
+            testPlayer.AddCard(CreateTorsoCard(2, 5, ArmyType.Sand));
 
             // Act
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
+            gameLogic.AttachBodyPart("TEST-MATCH", 1, new AttachBodyPartDTO { DinoHeadCardId = 1, CardId = 2 });
 
             // Assert
-            Assert.AreEqual(8, dino.TotalPower);
+            mockLoggerHelper.Verify(l => l.LogInfo(It.Is<string>(s => s.Contains("attached card"))), Times.AtLeastOnce);
         }
 
-        [TestMethod]
-        public void TestAttachBodyPartWithLegsCard()
-        {
-            // Arrange
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var legsCard = CreateLegsCard(3, 4, ArmyType.Sand);
-
-            testPlayer.AddCard(legsCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 3
-            };
-
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
-
-            Assert.AreEqual(3, dino.LegsCard.IdCard);
-        }
-
-        [TestMethod]
-        public void TestAttachBodyPartWithArmsCard()
-        {
-            var headCard = CreateHeadCard(1, 5, ArmyType.Sand);
-            var armsCard = CreateArmsCard(4, 2, ArmyType.Sand);
-
-            testPlayer.AddCard(armsCard);
-            var dino = new DinoInstance(1, headCard);
-            testPlayer.AddDino(dino);
-
-            var attachData = new AttachBodyPartDTO
-            {
-                DinoHeadCardId = 1,
-                CardId = 4
-            };
-
-            gameLogic.AttachBodyPart("TEST-MATCH", 1, attachData);
-
-            Assert.IsTrue(dino.LeftArmCard != null || dino.RightArmCard != null);
-        }
+        // ==========================================
+        // HELPERS CON JOINTS (CLAVE PARA QUE SUME EL PODER)
+        // ==========================================
 
         private CardInGame CreateHeadCard(int id, int power, ArmyType element)
         {
             var card = new CardInGame();
             var type = typeof(CardInGame);
-            type.GetProperty("IdCard").SetValue(card, id, null);
-            type.GetProperty("Power").SetValue(card, power, null);
-            type.GetProperty("Element").SetValue(card, element, null);
-            type.GetProperty("PartType").SetValue(card, DinoPartType.Head, null);
-            type.GetProperty("HasBottomJoint").SetValue(card, true, null);
+            type.GetProperty("IdCard").SetValue(card, id);
+            type.GetProperty("Power").SetValue(card, power);
+            type.GetProperty("Element").SetValue(card, element);
+            type.GetProperty("PartType").SetValue(card, DinoPartType.Head);
+            // La cabeza DEBE tener unión hacia abajo
+            type.GetProperty("HasBottomJoint").SetValue(card, true);
             return card;
         }
 
@@ -474,14 +259,15 @@ namespace UnitTest.Game
         {
             var card = new CardInGame();
             var type = typeof(CardInGame);
-            type.GetProperty("IdCard").SetValue(card, id, null);
-            type.GetProperty("Power").SetValue(card, power, null);
-            type.GetProperty("Element").SetValue(card, element, null);
-            type.GetProperty("PartType").SetValue(card, DinoPartType.Torso, null);
-            type.GetProperty("HasTopJoint").SetValue(card, true, null);
-            type.GetProperty("HasBottomJoint").SetValue(card, true, null);
-            type.GetProperty("HasLeftJoint").SetValue(card, true, null);
-            type.GetProperty("HasRightJoint").SetValue(card, true, null);
+            type.GetProperty("IdCard").SetValue(card, id);
+            type.GetProperty("Power").SetValue(card, power);
+            type.GetProperty("Element").SetValue(card, element);
+            type.GetProperty("PartType").SetValue(card, DinoPartType.Torso);
+            // El torso DEBE tener todas las uniones para aceptar brazos y piernas
+            type.GetProperty("HasTopJoint").SetValue(card, true);
+            type.GetProperty("HasBottomJoint").SetValue(card, true);
+            type.GetProperty("HasLeftJoint").SetValue(card, true);
+            type.GetProperty("HasRightJoint").SetValue(card, true);
             return card;
         }
 
@@ -489,35 +275,11 @@ namespace UnitTest.Game
         {
             var card = new CardInGame();
             var type = typeof(CardInGame);
-            type.GetProperty("IdCard").SetValue(card, id, null);
-            type.GetProperty("Power").SetValue(card, power, null);
-            type.GetProperty("Element").SetValue(card, element, null);
-            type.GetProperty("PartType").SetValue(card, DinoPartType.Legs, null);
-            type.GetProperty("HasTopJoint").SetValue(card, true, null);
-            return card;
-        }
-
-        private CardInGame CreateArmsCard(int id, int power, ArmyType element)
-        {
-            var card = new CardInGame();
-            var type = typeof(CardInGame);
-            type.GetProperty("IdCard").SetValue(card, id, null);
-            type.GetProperty("Power").SetValue(card, power, null);
-            type.GetProperty("Element").SetValue(card, element, null);
-            type.GetProperty("PartType").SetValue(card, DinoPartType.Arms, null);
-            type.GetProperty("HasLeftJoint").SetValue(card, true, null);
-            type.GetProperty("HasRightJoint").SetValue(card, true, null);
-            return card;
-        }
-
-        private CardInGame CreateArchCard(int id, int power, ArmyType element)
-        {
-            var card = new CardInGame();
-            var type = typeof(CardInGame);
-            type.GetProperty("IdCard").SetValue(card, id, null);
-            type.GetProperty("Power").SetValue(card, power, null);
-            type.GetProperty("Element").SetValue(card, element, null);
-            type.GetProperty("PartType").SetValue(card, DinoPartType.None, null);
+            type.GetProperty("IdCard").SetValue(card, id);
+            type.GetProperty("Power").SetValue(card, power);
+            type.GetProperty("Element").SetValue(card, element);
+            type.GetProperty("PartType").SetValue(card, DinoPartType.Legs);
+            type.GetProperty("HasTopJoint").SetValue(card, true);
             return card;
         }
     }

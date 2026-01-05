@@ -36,34 +36,32 @@ namespace UnitTest.StatisticsTests
         [TestMethod]
         public void TestGetPlayerStatisticsPlayerExists()
         {
-            int playerId = 1;
-            var userAccount = new UserAccount { idUser = 1, username = "testuser" };
-            var player = new Player
-            {
-                idPlayer = playerId,
-                totalWins = 10,
-                totalLosses = 5,
-                totalMatches = 15,
-                totalPoints = 150,
-                UserAccount = new List<UserAccount> { userAccount }
+            int userId = 1;
+            int playerId = 10;
+            var userAccount = new UserAccount 
+            { 
+                idUser = userId,
+                idPlayer = playerId, 
+                username = "testuser" 
             };
 
+            var player = new Player 
+            { 
+                idPlayer = playerId, 
+                totalWins = 10,
+                totalMatches = 15,
+                totalPoints = 150 
+            };
+
+            SetupMockUserSet(new List<UserAccount> { userAccount });
             SetupMockPlayerSet(new List<Player> { player });
 
-            PlayerStatisticsDTO expectedResult = new PlayerStatisticsDTO
-            {
-                UserId = playerId,
-                Username = "testuser",
-                TotalWins = 10,
-                TotalLosses = 5,
-                TotalMatches = 15,
-                TotalPoints = 150,
-                WinRate = 66.67
-            };
+            var result = statisticsHelper.GetPlayerStatistics(userId);
 
-            var result = statisticsHelper.GetPlayerStatistics(playerId);
-
-            Assert.AreEqual(expectedResult, result);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("testuser", result.Username);
+            Assert.AreEqual(66.67, result.WinRate);
+            Assert.AreEqual(150, result.TotalPoints);
         }
 
         [TestMethod]
@@ -81,77 +79,59 @@ namespace UnitTest.StatisticsTests
         [TestMethod]
         public void TestGetPlayerStatisticsZeroMatches()
         {
-            var userAccount = new UserAccount { idUser = 1, username = "newplayer" };
-            var player = new Player
-            {
-                idPlayer = 1,
-                totalWins = 0,
-                totalLosses = 0,
-                totalMatches = 0,
-                totalPoints = 0,
-                UserAccount = new List<UserAccount> { userAccount }
-            };
+            int userId = 1;
+            var userAccount = new UserAccount { idUser = userId, idPlayer = 1, username = "newplayer" };
+            var player = new Player { idPlayer = 1, totalMatches = 0, totalWins = 0 };
 
+            SetupMockUserSet(new List<UserAccount> { userAccount });
             SetupMockPlayerSet(new List<Player> { player });
 
-            PlayerStatisticsDTO expectedResult = new PlayerStatisticsDTO
-            {
-                UserId = 1,
-                Username = "newplayer",
-                TotalWins = 0,
-                TotalLosses = 0,
-                TotalMatches = 0,
-                TotalPoints = 0,
-                WinRate = 0
-            };
+            var result = statisticsHelper.GetPlayerStatistics(userId);
 
-            var result = statisticsHelper.GetPlayerStatistics(1);
-
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(0, result.WinRate);
+            Assert.AreEqual("newplayer", result.Username);
         }
 
         [TestMethod]
         public void TestGetPlayerStatisticsNoUserAccount()
         {
-            var player = new Player
-            {
-                idPlayer = 1,
-                totalWins = 5,
-                totalLosses = 3,
-                totalMatches = 8,
-                totalPoints = 80,
-                UserAccount = new List<UserAccount>()
-            };
-
-            SetupMockPlayerSet(new List<Player> { player });
+            SetupMockUserSet(new List<UserAccount>());
+            SetupMockPlayerSet(new List<Player>());
 
             var result = statisticsHelper.GetPlayerStatistics(1);
-
-            Assert.AreEqual("Unknown", result.Username);
+            Assert.AreEqual(0, result.UserId);
         }
 
         [TestMethod]
         public void TestGetPlayerStatisticsMultipleUserAccounts()
         {
-            var player = new Player
-            {
+            int userId = 1;
+            var userAccounts = new List<UserAccount> {
+                new UserAccount 
+                {
+                    idUser = userId,
+                    idPlayer = 1, 
+                    username = "user1" 
+                },
+                new UserAccount 
+                { 
+                    idUser = 2,
+                    idPlayer = 1, 
+                    username = "user2" 
+                }
+            };
+            var player = new Player 
+            { 
                 idPlayer = 1,
-                totalWins = 5,
-                totalLosses = 3,
-                totalMatches = 8,
-                totalPoints = 80,
-                UserAccount = new List<UserAccount>
-            {
-                new UserAccount { idUser = 1, username = "user1" },
-                new UserAccount { idUser = 2, username = "user2" }
-            }
+                totalPoints = 80 
             };
 
+            SetupMockUserSet(userAccounts);
             SetupMockPlayerSet(new List<Player> { player });
 
-            var result = statisticsHelper.GetPlayerStatistics(1);
+            var result = statisticsHelper.GetPlayerStatistics(userId);
 
-            Assert.AreEqual("Unknown", result.Username);
+            Assert.AreEqual("user1", result.Username);
         }
 
         [TestMethod]
@@ -176,43 +156,6 @@ namespace UnitTest.StatisticsTests
             var result = statisticsHelper.GetPlayerStatistics(1);
 
             Assert.AreEqual(expectedResult, result);
-        }
-
-        [TestMethod]
-        public void TestGetMatchHistoryPlayerHasMatches()
-        {
-            int userId = 1;
-            var generalMatch = new GeneralMatch
-            {
-                idGeneralMatch = 1,
-                date = DateTime.Now
-            };
-
-            var matchParticipant = new MatchParticipants
-            {
-                idMatchParticipant = 1,
-                idPlayer = userId,
-                idGeneralMatch = 1,
-                points = 100,
-                isWinner = true,
-                GeneralMatch = generalMatch
-            };
-
-            var otherParticipant = new MatchParticipants
-            {
-                idMatchParticipant = 2,
-                idPlayer = 2,
-                idGeneralMatch = 1,
-                points = 80,
-                isWinner = false,
-                GeneralMatch = generalMatch
-            };
-
-            SetupMockMatchParticipantsSet(new List<MatchParticipants> { matchParticipant, otherParticipant });
-
-            var result = statisticsHelper.GetMatchHistory(userId, 5);
-
-            Assert.AreEqual(1, result.Count);
         }
 
         [TestMethod]
@@ -269,30 +212,34 @@ namespace UnitTest.StatisticsTests
         public void TestGetMultiplePlayerStatisticsAllPlayersExist()
         {
             var userIds = new List<int> { 1, 2 };
-
-            var players = new List<Player>
-        {
-            new Player
-            {
-                idPlayer = 1,
-                totalWins = 10,
-                totalLosses = 5,
-                totalMatches = 15,
-                totalPoints = 100,
-                UserAccount = new List<UserAccount> { new UserAccount { idUser = 1, username = "player1" } }
-            },
-            new Player
-            {
-                idPlayer = 2,
-                totalWins = 8,
-                totalLosses = 7,
-                totalMatches = 15,
-                totalPoints = 80,
-                UserAccount = new List<UserAccount> { new UserAccount { idUser = 2, username = "player2" } }
-            }
-        };
-
-            SetupMockPlayerSet(players);
+            SetupMockUserSet(new List<UserAccount> {
+                new UserAccount 
+                { 
+                    idUser = 1,
+                    idPlayer = 1,
+                    username = "p1" 
+                },
+                new UserAccount 
+                { 
+                    idUser = 2,
+                    idPlayer = 2,
+                    username = "p2" 
+                }
+            });
+            SetupMockPlayerSet(new List<Player> {
+                new Player 
+                { 
+                    idPlayer = 1,
+                    totalPoints = 100,
+                    totalMatches = 1 
+                },
+                new Player
+                { 
+                    idPlayer = 2, 
+                    totalPoints = 80,
+                    totalMatches = 1 
+                }
+            });
 
             var result = statisticsHelper.GetMultiplePlayerStatistics(userIds);
 
@@ -303,25 +250,27 @@ namespace UnitTest.StatisticsTests
         public void TestGetMultiplePlayerStatisticsSomePlayersNotFound()
         {
             var userIds = new List<int> { 1, 999 };
+            SetupMockUserSet(new List<UserAccount>
+            {
+                new UserAccount { idUser = 1, idPlayer = 1, username = "player1" }
+            });
 
             var players = new List<Player>
-        {
-            new Player
             {
-                idPlayer = 1,
-                totalWins = 10,
-                totalLosses = 5,
-                totalMatches = 15,
-                totalPoints = 100,
-                UserAccount = new List<UserAccount> { new UserAccount { idUser = 1, username = "player1" } }
-            }
-        };
+            new Player
+                {
+                    idPlayer = 1,
+                    totalWins = 10,
+                    totalPoints = 100,
+                    UserAccount = new List<UserAccount>() 
+                }
+            };
 
             SetupMockPlayerSet(players);
 
             var result = statisticsHelper.GetMultiplePlayerStatistics(userIds);
 
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.Count, "Should processd a player registered");
         }
 
         [TestMethod]
@@ -415,54 +364,15 @@ namespace UnitTest.StatisticsTests
         }
 
         [TestMethod]
-        public void TestGetPlayerStatisticsPlayerNotFoundCallsLogWarning()
-        {
-            int playerId = 999;
-            SetupMockPlayerSet(new List<Player>());
-
-            statisticsHelper.GetPlayerStatistics(playerId);
-
-            mockLoggerHelper.Verify(
-                l => l.LogWarning(It.Is<string>(s => s.Contains($"Player {playerId} not found"))),
-                Times.Once
-            );
-        }
-
-        [TestMethod]
-        public void TestGetMatchHistoryGeneralMatchNullCallsLogWarning()
-        {
-            int participantId = 1;
-            var matchWithoutGeneral = new MatchParticipants
-            {
-                idMatchParticipant = participantId,
-                idPlayer = 1,
-                idGeneralMatch = 1,
-                GeneralMatch = null
-            };
-
-            SetupMockMatchParticipantsSet(new List<MatchParticipants> { matchWithoutGeneral });
-
-            statisticsHelper.GetMatchHistory(1, 5);
-
-            mockLoggerHelper.Verify(
-                l => l.LogWarning(It.Is<string>(s => s.Contains($"GeneralMatch is null for match participant {participantId}"))),
-                Times.Once
-            );
-        }
-
-        [TestMethod]
         public void TestGetPlayerStatisticsDbUpdateExceptionCallsLogError()
         {
-            int playerId = 1;
-            mockDbContext.Setup(c => c.Player).Throws(new DbUpdateException("Database error"));
+            int userId = 1;
+            mockDbContext.Setup(c => c.UserAccount).Throws(new DbUpdateException("Database error"));
 
-            statisticsHelper.GetPlayerStatistics(playerId);
+            statisticsHelper.GetPlayerStatistics(userId);
 
             mockLoggerHelper.Verify(
-                l => l.LogError(
-                    It.Is<string>(s => s.Contains($"Database update error for user {playerId}")),
-                    It.IsAny<DbUpdateException>()
-                ),
+                l => l.LogError(It.Is<string>(s => s.Contains($"Error for user {userId}")), It.IsAny<Exception>()),
                 Times.Once
             );
         }

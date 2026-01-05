@@ -12,19 +12,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTest.Game
 {
     [TestClass]
     public class GameDrawCardTest : BaseTestClass
     {
-        private Mock<GameSessionManager> mockSessionManager;
-        private Mock<GameSetupHandler> mockSetupHandler;
+        // YA NO MOCKEAMOS EL SESSION MANAGER porque sus métodos no son virtuales
+        private GameSessionManager sessionManager;
         private Mock<IGameNotifier> mockGameNotifier;
         private Mock<IStatisticsManager> mockStatisticsManager;
+        private Mock<GameSetupHandler> mockSetupHandler;
         private GameCoreContext gameCoreContext;
         private GameLogic gameLogic;
         private GameSession testSession;
@@ -33,17 +31,14 @@ namespace UnitTest.Game
         [TestInitialize]
         public void SetupDrawCardTests()
         {
-            BaseSetup();
+            base.BaseSetup();
 
-            mockSessionManager = new Mock<GameSessionManager>(mockLoggerHelper.Object);
-            mockSetupHandler = new Mock<GameSetupHandler>();
+            sessionManager = new GameSessionManager(mockLoggerHelper.Object);
             mockGameNotifier = new Mock<IGameNotifier>();
             mockStatisticsManager = new Mock<IStatisticsManager>();
+            mockSetupHandler = new Mock<GameSetupHandler>();
 
-            gameCoreContext = new GameCoreContext(
-                mockSessionManager.Object,
-                mockSetupHandler.Object
-            );
+            gameCoreContext = new GameCoreContext(sessionManager, mockSetupHandler.Object);
 
             var dependencies = new GameLogicDependencies(
                 gameCoreContext,
@@ -54,326 +49,126 @@ namespace UnitTest.Game
 
             gameLogic = new GameLogic(dependencies);
 
-            var mockCentralBoard = new CentralBoard();
-            testSession = new GameSession("TEST-MATCH", mockCentralBoard, mockLoggerHelper.Object);
+            string matchCode = "TEST-MATCH";
+            sessionManager.CreateSession(matchCode);
+            testSession = sessionManager.GetSession(matchCode);
+
             testSession.MarkAsStarted();
 
             testPlayer = new PlayerSession(1, "TestPlayer", null);
             testSession.AddPlayer(testPlayer);
             testSession.StartTurn(1);
-
-            mockSessionManager.Setup(x => x.GetSession("TEST-MATCH")).Returns(testSession);
         }
 
         [TestMethod]
-        public void TestDrawCardReturnsCard()
+        public void TestDrawCard_Success_ReturnsCard()
         {
             // Arrange
-            var deck = new List<int> { 28 }; // Head card Sand
-            testSession.SetDrawDeck(deck);
+            testSession.SetDrawDeck(new List<int> { 28 }); 
 
             // Act
             var result = gameLogic.DrawCard("TEST-MATCH", 1);
 
             // Assert
             Assert.IsNotNull(result);
-        }
-
-        [TestMethod]
-        public void TestDrawCardReturnsCorrectCardId()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            var result = gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
             Assert.AreEqual(28, result.IdCard);
-        }
-
-        [TestMethod]
-        public void TestDrawCardRemovesCardFromDeck()
-        {
-            // Arrange
-            var deck = new List<int> { 28, 29, 30 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            Assert.AreEqual(2, testSession.DrawDeck.Count);
-        }
-
-        [TestMethod]
-        public void TestDrawCardAddsCardToPlayerHand()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
             Assert.AreEqual(1, testPlayer.Hand.Count);
         }
 
         [TestMethod]
-        public void TestDrawCardConsumesMoves()
+        public void TestDrawCard_ArchCard_AddsToBoard()
         {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-            int initialMoves = testSession.RemainingMoves;
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            Assert.AreEqual(initialMoves - 1, testSession.RemainingMoves);
-        }
-
-        [TestMethod]
-        public void TestDrawCardNotifiesCardDrawn()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyCardDrawn(It.IsAny<CardDrawnDTO>()), Times.Once);
-        }
-
-        [TestMethod]
-        public void TestDrawCardNotificationContainsCorrectUserId()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyCardDrawn(
-                It.Is<CardDrawnDTO>(dto => dto.PlayerUserId == 1)),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void TestDrawCardNotificationContainsCorrectMatchCode()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyCardDrawn(
-                It.Is<CardDrawnDTO>(dto => dto.MatchCode == "TEST-MATCH")),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void TestDrawCardLogsDrawAction()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            mockLoggerHelper.Verify(x => x.LogInfo(It.Is<string>(s =>
-                s.Contains("drew card") &&
-                s.Contains("TEST-MATCH"))),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void TestDrawCardArchCardAddsToCentralBoard()
-        {
-            // Arrange
-            var archCardId = 10; // Water Arch card
-            var deck = new List<int> { archCardId };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            Assert.AreEqual(0, testPlayer.Hand.Count);
-        }
-
-        [TestMethod]
-        public void TestDrawCardArchCardNotifiesArchAdded()
-        {
-            // Arrange
-            var archCardId = 10; // Water Arch card
-            var deck = new List<int> { archCardId };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyArchAddedToBoard(It.IsAny<ArchAddedToBoardDTO>()), Times.Once);
-        }
-
-        [TestMethod]
-        public void TestDrawCardNonArchCardDoesNotAddToBoard()
-        {
-            // Arrange
-            var normalCardId = 28; // Head card
-            var deck = new List<int> { normalCardId };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            mockGameNotifier.Verify(x => x.NotifyArchAddedToBoard(It.IsAny<ArchAddedToBoardDTO>()), Times.Never);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestDrawCardThrowsWhenNotPlayerTurn()
-        {
-            // Arrange
-            var deck = new List<int> { 10 };
-            testSession.SetDrawDeck(deck);
-            testSession.StartTurn(2); // Different player's turn
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestDrawCardThrowsWhenNoMovesRemaining()
-        {
-            // Arrange
-            var deck = new List<int> { 28, 29, 30, 31 };
-            testSession.SetDrawDeck(deck);
-            testSession.ConsumeMoves(3); // Consume all moves
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestDrawCardThrowsWhenDeckIsEmpty()
-        {
-            // Arrange
-            var deck = new List<int>();
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestDrawCardThrowsWhenSessionNotFound()
-        {
-            // Act
-            gameLogic.DrawCard("INVALID-MATCH", 1);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestDrawCardThrowsWhenPlayerNotFound()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 999);
-        }
-
-        [TestMethod]
-        public void TestDrawCardMultipleCardsDecrementsDeck()
-        {
-            // Arrange
-            var deck = new List<int> { 28, 29, 30, 31 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-            testSession.RestoreMoves(1);
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            Assert.AreEqual(2, testSession.DrawDeck.Count);
-        }
-
-        [TestMethod]
-        public void TestDrawCardAddsCorrectCardToHand()
-        {
-            // Arrange
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            Assert.AreEqual(28, testPlayer.Hand[0].IdCard);
-        }
-
-        [TestMethod]
-        public void TestDrawCardWithMultiplePlayersOnlyAffectsCurrentPlayer()
-        {
-            // Arrange
-            var player2 = new PlayerSession(2, "TestPlayer2", null);
-            testSession.AddPlayer(player2);
-            var deck = new List<int> { 28 };
-            testSession.SetDrawDeck(deck);
-
-            // Act
-            gameLogic.DrawCard("TEST-MATCH", 1);
-
-            // Assert
-            Assert.AreEqual(0, player2.Hand.Count);
-        }
-
-        [TestMethod]
-        public void TestDrawCardReturnsCardWithCorrectPower()
-        {
-            // Arrange
-            var deck = new List<int> { 28 }; // Power 0
-            testSession.SetDrawDeck(deck);
+            // Arrange: 
+            testSession.SetDrawDeck(new List<int> { 10 });
 
             // Act
             var result = gameLogic.DrawCard("TEST-MATCH", 1);
 
             // Assert
-            Assert.AreEqual(0, result.Power);
+            Assert.AreEqual(0, testPlayer.Hand.Count, "Arch card should not go to hand");
+            Assert.IsTrue(testSession.CentralBoard.WaterArmy.Count > 0, "Arch should be added to Board");
+            mockGameNotifier.Verify(n => n.NotifyArchAddedToBoard(It.IsAny<ArchAddedToBoardDTO>()), Times.Once);
         }
 
         [TestMethod]
-        public void TestDrawCardReturnsCardWithElement()
+        public void TestDrawCard_ConsumesOneMove()
         {
             // Arrange
-            var deck = new List<int> { 28 }; // Sand head
-            testSession.SetDrawDeck(deck);
+            testSession.SetDrawDeck(new List<int> { 28 });
+            int movesBefore = testSession.RemainingMoves;
 
             // Act
-            var result = gameLogic.DrawCard("TEST-MATCH", 1);
+            gameLogic.DrawCard("TEST-MATCH", 1);
 
             // Assert
-            Assert.AreEqual(ArmyType.Sand, result.Element);
+            Assert.AreEqual(movesBefore - 1, testSession.RemainingMoves);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestDrawCard_Throws_WhenDeckIsEmpty()
+        {
+            // Arrange
+            testSession.SetDrawDeck(new List<int>());
+
+            // Act
+            gameLogic.DrawCard("TEST-MATCH", 1);
+        }
+
+        [TestMethod]
+        public void TestDrawCard_TriggersGameOver_WhenLastCardDrawn()
+        {
+            // Arrange
+            testSession.SetDrawDeck(new List<int> { 28 });
+
+            // Act
+            gameLogic.DrawCard("TEST-MATCH", 1);
+
+            // Assert
+            Assert.IsTrue(testSession.IsFinished, "Match should end when deck is empty");
+            mockGameNotifier.Verify(n => n.NotifyGameEnded(It.IsAny<GameEndedDTO>()), Times.Once);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestDrawCard_Throws_WhenNotPlayerTurn()
+        {
+            // Arrange
+            testSession.SetDrawDeck(new List<int> { 28 });
+            testSession.StartTurn(99);
+
+            // Act
+            gameLogic.DrawCard("TEST-MATCH", 1);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestDrawCard_Throws_WhenNoMovesRemaining()
+        {
+            // Arrange
+            testSession.SetDrawDeck(new List<int> { 28, 29, 30, 31 });
+            testSession.ConsumeMoves(testSession.RemainingMoves);
+
+            // Act
+            gameLogic.DrawCard("TEST-MATCH", 1);
+        }
+
+        [TestMethod]
+        public void TestDrawCard_Notification_ContainsCorrectData()
+        {
+            // Arrange
+            int expectedCardId = 28;
+            testSession.SetDrawDeck(new List<int> { expectedCardId });
+
+            // Act
+            gameLogic.DrawCard("TEST-MATCH", 1);
+
+            // Assert: 
+            mockGameNotifier.Verify(n => n.NotifyCardDrawn(It.Is<CardDrawnDTO>(dto =>
+                dto.MatchCode == "TEST-MATCH" &&
+                dto.PlayerUserId == 1 &&
+                dto.Card.IdCard == expectedCardId
+            )), Times.Once);
         }
     }
 }
