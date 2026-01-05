@@ -11,24 +11,24 @@ namespace Contracts.DTO.Result_Codes
     public enum PlayCardResultCode
     {
         [EnumMember]
-        Success,
+        PlayCard_Success,
         [EnumMember]
-        NotYourTurn,
+        PlayCard_NotYourTurn,
         [EnumMember]
-        CardNotInHand,
+        PlayCard_CardNotInHand,
         [EnumMember]
-        InvalidCardType,
+        PlayCard_InvalidCardType,
         [EnumMember]
-        AlreadyPlayedTwoCards,
+        PlayCard_AlreadyPlayedTwoCards,
         [EnumMember]
-        MustAttachToHead,
+        PlayCard_MustAttachToHead,
         [EnumMember]
-        InvalidDinoHead,
+        PlayCard_InvalidDinoHead,
         [EnumMember]
-        ArmyTypeMismatch,
+        PlayCard_ArmyTypeMismatch,
         [EnumMember]
-        DatabaseError,
+        PlayCard_DatabaseError,
         [EnumMember]
-        UnexpectedError
+        PlayCard_UnexpectedError
     }
 }

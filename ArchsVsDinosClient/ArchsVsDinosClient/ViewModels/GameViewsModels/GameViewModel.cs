@@ -168,6 +168,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             await gameServiceClient.ConnectToGameAsync(matchCode, userId);
         }
 
+        /*
         public async Task<string> TryPlayCardAsync(Card card, string cellId)
         {
             string localError = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
@@ -213,8 +214,77 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             {
                 return "Error: " + ex.Message;
             }
+        }*/
+
+        public async Task<string> TryPlayCardAsync(Card card, string cellId)
+        {
+            string localError = ActionManager.ValidateDrop(card, cellId, RemainingMoves, IsMyTurn);
+            if (localError != null) return localError;
+
+            int userId = DetermineMyUserId();
+            bool success = false;
+            string serverErrorMessage = null;
+
+            try
+            {
+                if (card.Category == CardCategory.DinoHead)
+                {
+                    var result = await gameServiceClient.PlayDinoHeadAsync(matchCode, userId, card.IdCard);
+
+                    if (result == PlayCardResultCode.PlayCard_Success)
+                    {
+                        success = true;
+                    }
+                    else
+                    {
+                        serverErrorMessage = TranslatePlayCardError(result);
+                    }
+                }
+                else if (card.Category == CardCategory.BodyPart)
+                {
+                    int headId = ActionManager.GetHeadIdFromCell(cellId);
+                    var attachment = new AttachBodyPartDTO
+                    {
+                        CardId = card.IdCard,
+                        DinoHeadCardId = headId
+                    };
+
+                    var result = await gameServiceClient.AttachBodyPartAsync(matchCode, userId, attachment);
+
+                    if (result == PlayCardResultCode.PlayCard_Success)
+                    {
+                        success = true;
+                    }
+                    else
+                    {
+                        serverErrorMessage = TranslatePlayCardError(result);
+                    }
+                }
+
+                if (success)
+                {
+                    ActionManager.RegisterSuccessfulMove(card, cellId);
+                    BoardManager.PlayerHand.Remove(card);
+                    RemainingMoves--;
+
+                    if (RemainingMoves <= 0)
+                    {
+                        EndTurnAutomatically();
+                    }
+                    return null; 
+                }
+                else
+                {
+                    return serverErrorMessage ?? Lang.GlobalUnexpectedError;
+                }
+            }
+            catch (Exception ex)
+            {
+                return "Error: " + ex.Message;
+            }
         }
 
+        /*
         public async Task<string> ExecuteDrawCardFromView(int pileIndex)
         {
             if (!IsMyTurn || RemainingMoves <= 0)
@@ -232,8 +302,34 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             {
                 return ex.Message;
             }
+        }*/
+
+        public async Task<string> ExecuteDrawCardFromView(int pileIndex)
+        {
+            if (!IsMyTurn || RemainingMoves <= 0) return Lang.Match_NotYourTurn;
+
+            try
+            {
+                int userId = DetermineMyUserId();
+                var result = await gameServiceClient.DrawCardAsync(matchCode, userId);
+
+                if (result == DrawCardResultCode.DrawCard_Success)
+                {
+                    return null;
+                }
+                else
+                {
+                    return TranslateDrawCardError(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
+
+        /*
         public async Task<bool> TakeCardFromDiscardPileAsync(int cardId)
         {
             if (!IsMyTurn || RemainingMoves <= 0)
@@ -254,7 +350,36 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 MessageBox.Show($"{Lang.Match_ErrorTakingACard} {ex.Message}");
                 return false;
             }
+        }*/
+
+        public async Task<bool> TakeCardFromDiscardPileAsync(int cardId)
+        {
+            if (!IsMyTurn || RemainingMoves <= 0) return false;
+
+            try
+            {
+                int userId = DetermineMyUserId();
+                var result = await gameServiceClient.TakeCardFromDiscardPileAsync(matchCode, userId, cardId);
+
+                if (result == DrawCardResultCode.DrawCard_Success)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Successfully took card {cardId}");
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show(TranslateDrawCardError(result));
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{Lang.Match_ErrorTakingACard} {ex.Message}");
+                return false;
+            }
         }
+
+        /*
 
         public async Task EndTurnManuallyAsync()
         {
@@ -273,6 +398,78 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             {
                 System.Diagnostics.Debug.WriteLine($"[END TURN MANUAL] Error: {ex.Message}");
                 MessageBox.Show($"{Lang.Match_EndTurnError}: {ex.Message}");
+            }
+        }*/
+
+        public async Task EndTurnManuallyAsync()
+        {
+            if (!IsMyTurn)
+            {
+                MessageBox.Show(Lang.Match_NotYourTurn);
+                return;
+            }
+
+            try
+            {
+                int userId = DetermineMyUserId();
+                var result = await gameServiceClient.EndTurnAsync(matchCode, userId);
+
+                if (result == EndTurnResultCode.EndTurn_DatabaseError)
+                {
+                    MessageBox.Show(Lang.GlobalDatabaseError);
+                }
+                else if (result != EndTurnResultCode.EndTurn_Success)
+                {
+                    MessageBox.Show(TranslateEndTurnError(result));
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[END TURN MANUAL] Error: {ex.Message}");
+                MessageBox.Show($"{Lang.Match_EndTurnError}: {ex.Message}");
+            }
+        }
+
+        private string TranslatePlayCardError(PlayCardResultCode code)
+        {
+            switch (code)
+            {
+                case PlayCardResultCode.PlayCard_NotYourTurn: 
+                    return Lang.Match_NotYourTurn;
+                case PlayCardResultCode.PlayCard_CardNotInHand: 
+                    return Lang.Match_CardNotFound;
+                case PlayCardResultCode.PlayCard_InvalidDinoHead: 
+                    return Lang.Match_InvalidCell;
+                case PlayCardResultCode.PlayCard_MustAttachToHead: 
+                    return Lang.Match_CellNeedDinoHead;
+                case PlayCardResultCode.PlayCard_AlreadyPlayedTwoCards: 
+                    return Lang.Match_AlreadyUsedRolls;
+                default: 
+                    return Lang.Match_CardCannotPlacedHere;
+            }
+        }
+
+        private string TranslateDrawCardError(DrawCardResultCode code)
+        {
+            switch (code)
+            {
+                case DrawCardResultCode.DrawCard_NotYourTurn: 
+                    return Lang.Match_NotYourTurn;
+                case DrawCardResultCode.DrawCard_DrawPileEmpty: 
+                    return Lang.Match_DeckEmpty;
+                case DrawCardResultCode.DrawCard_AlreadyDrewThisTurn: 
+                    return Lang.Match_AlreadyUsedRolls;
+                default: 
+                    return Lang.Match_ErrorDrawingCard;
+            }
+        }
+
+        private string TranslateEndTurnError(EndTurnResultCode code)
+        {
+            switch (code)
+            {
+                case EndTurnResultCode.EndTurn_NotYourTurn: return Lang.Match_NotYourTurn;
+                default: return Lang.Match_EndTurnError;
             }
         }
 

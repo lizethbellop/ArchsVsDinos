@@ -13,6 +13,76 @@ namespace ArchsVsDinosClient.GameService {
     using System;
     
     
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="DrawCardResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum DrawCardResultCode : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_NotYourTurn = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_DrawPileEmpty = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_InvalidDrawPile = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_InvalidParameter = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_NoCards = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_AlreadyDrewThisTurn = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_GameNotStarted = 7,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_DatabaseError = 8,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        DrawCard_UnexpectedError = 9,
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="PlayCardResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum PlayCardResultCode : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_NotYourTurn = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_CardNotInHand = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_InvalidCardType = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_AlreadyPlayedTwoCards = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_MustAttachToHead = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_InvalidDinoHead = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_ArmyTypeMismatch = 7,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_DatabaseError = 8,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        PlayCard_UnexpectedError = 9,
+    }
+    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="AttachBodyPartDTO", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO")]
@@ -89,6 +159,52 @@ namespace ArchsVsDinosClient.GameService {
         
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Wind = 3,
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ProvokeResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum ProvokeResultCode : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Provoke_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Provoke_NotYourTurn = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Provoke_InvalidArmyType = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Provoke_NoArchsInArmy = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Provoke_AlreadyTookAction = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Provoke_DatabaseError = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Provoke_UnexpectedError = 6,
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="EndTurnResultCode", Namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes")]
+    public enum EndTurnResultCode : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EndTurn_Success = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EndTurn_NotYourTurn = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EndTurn_GameEnded = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EndTurn_DatabaseError = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        EndTurn_UnexpectedError = 4,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -1733,6 +1849,9 @@ namespace ArchsVsDinosClient.GameService {
         private ArchsVsDinosClient.GameService.PlayerScoreDTO[] FinalScoresField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool IsStatsSavedField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string MatchCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -1763,6 +1882,19 @@ namespace ArchsVsDinosClient.GameService {
                 if ((object.ReferenceEquals(this.FinalScoresField, value) != true)) {
                     this.FinalScoresField = value;
                     this.RaisePropertyChanged("FinalScores");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool IsStatsSaved {
+            get {
+                return this.IsStatsSavedField;
+            }
+            set {
+                if ((this.IsStatsSavedField.Equals(value) != true)) {
+                    this.IsStatsSavedField = value;
+                    this.RaisePropertyChanged("IsStatsSaved");
                 }
             }
         }
@@ -2141,40 +2273,40 @@ namespace ArchsVsDinosClient.GameService {
         System.Threading.Tasks.Task LeaveGameAsync(string matchCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/DrawCard", ReplyAction="http://tempuri.org/IGameManager/DrawCardResponse")]
-        void DrawCard(string matchCode, int userId);
+        ArchsVsDinosClient.GameService.DrawCardResultCode DrawCard(string matchCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/DrawCard", ReplyAction="http://tempuri.org/IGameManager/DrawCardResponse")]
-        System.Threading.Tasks.Task DrawCardAsync(string matchCode, int userId);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.DrawCardResultCode> DrawCardAsync(string matchCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/PlayDinoHead", ReplyAction="http://tempuri.org/IGameManager/PlayDinoHeadResponse")]
-        void PlayDinoHead(string matchCode, int userId, int cardId);
+        ArchsVsDinosClient.GameService.PlayCardResultCode PlayDinoHead(string matchCode, int userId, int cardId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/PlayDinoHead", ReplyAction="http://tempuri.org/IGameManager/PlayDinoHeadResponse")]
-        System.Threading.Tasks.Task PlayDinoHeadAsync(string matchCode, int userId, int cardId);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.PlayCardResultCode> PlayDinoHeadAsync(string matchCode, int userId, int cardId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/AttachBodyPartToDino", ReplyAction="http://tempuri.org/IGameManager/AttachBodyPartToDinoResponse")]
-        void AttachBodyPartToDino(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData);
+        ArchsVsDinosClient.GameService.PlayCardResultCode AttachBodyPartToDino(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/AttachBodyPartToDino", ReplyAction="http://tempuri.org/IGameManager/AttachBodyPartToDinoResponse")]
-        System.Threading.Tasks.Task AttachBodyPartToDinoAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.PlayCardResultCode> AttachBodyPartToDinoAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/TakeCardFromDiscardPile", ReplyAction="http://tempuri.org/IGameManager/TakeCardFromDiscardPileResponse")]
-        void TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
+        ArchsVsDinosClient.GameService.DrawCardResultCode TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/TakeCardFromDiscardPile", ReplyAction="http://tempuri.org/IGameManager/TakeCardFromDiscardPileResponse")]
-        System.Threading.Tasks.Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.DrawCardResultCode> TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/ProvokeArchArmy", ReplyAction="http://tempuri.org/IGameManager/ProvokeArchArmyResponse")]
-        void ProvokeArchArmy(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType);
+        ArchsVsDinosClient.GameService.ProvokeResultCode ProvokeArchArmy(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/ProvokeArchArmy", ReplyAction="http://tempuri.org/IGameManager/ProvokeArchArmyResponse")]
-        System.Threading.Tasks.Task ProvokeArchArmyAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.ProvokeResultCode> ProvokeArchArmyAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/EndTurn", ReplyAction="http://tempuri.org/IGameManager/EndTurnResponse")]
-        void EndTurn(string matchCode, int userId);
+        ArchsVsDinosClient.GameService.EndTurnResultCode EndTurn(string matchCode, int userId);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IGameManager/EndTurn", ReplyAction="http://tempuri.org/IGameManager/EndTurnResponse")]
-        System.Threading.Tasks.Task EndTurnAsync(string matchCode, int userId);
+        System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.EndTurnResultCode> EndTurnAsync(string matchCode, int userId);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -2261,51 +2393,51 @@ namespace ArchsVsDinosClient.GameService {
             return base.Channel.LeaveGameAsync(matchCode, userId);
         }
         
-        public void DrawCard(string matchCode, int userId) {
-            base.Channel.DrawCard(matchCode, userId);
+        public ArchsVsDinosClient.GameService.DrawCardResultCode DrawCard(string matchCode, int userId) {
+            return base.Channel.DrawCard(matchCode, userId);
         }
         
-        public System.Threading.Tasks.Task DrawCardAsync(string matchCode, int userId) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.DrawCardResultCode> DrawCardAsync(string matchCode, int userId) {
             return base.Channel.DrawCardAsync(matchCode, userId);
         }
         
-        public void PlayDinoHead(string matchCode, int userId, int cardId) {
-            base.Channel.PlayDinoHead(matchCode, userId, cardId);
+        public ArchsVsDinosClient.GameService.PlayCardResultCode PlayDinoHead(string matchCode, int userId, int cardId) {
+            return base.Channel.PlayDinoHead(matchCode, userId, cardId);
         }
         
-        public System.Threading.Tasks.Task PlayDinoHeadAsync(string matchCode, int userId, int cardId) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.PlayCardResultCode> PlayDinoHeadAsync(string matchCode, int userId, int cardId) {
             return base.Channel.PlayDinoHeadAsync(matchCode, userId, cardId);
         }
         
-        public void AttachBodyPartToDino(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData) {
-            base.Channel.AttachBodyPartToDino(matchCode, userId, attachmentData);
+        public ArchsVsDinosClient.GameService.PlayCardResultCode AttachBodyPartToDino(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData) {
+            return base.Channel.AttachBodyPartToDino(matchCode, userId, attachmentData);
         }
         
-        public System.Threading.Tasks.Task AttachBodyPartToDinoAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.PlayCardResultCode> AttachBodyPartToDinoAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.AttachBodyPartDTO attachmentData) {
             return base.Channel.AttachBodyPartToDinoAsync(matchCode, userId, attachmentData);
         }
         
-        public void TakeCardFromDiscardPile(string matchCode, int userId, int cardId) {
-            base.Channel.TakeCardFromDiscardPile(matchCode, userId, cardId);
+        public ArchsVsDinosClient.GameService.DrawCardResultCode TakeCardFromDiscardPile(string matchCode, int userId, int cardId) {
+            return base.Channel.TakeCardFromDiscardPile(matchCode, userId, cardId);
         }
         
-        public System.Threading.Tasks.Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.DrawCardResultCode> TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId) {
             return base.Channel.TakeCardFromDiscardPileAsync(matchCode, userId, cardId);
         }
         
-        public void ProvokeArchArmy(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType) {
-            base.Channel.ProvokeArchArmy(matchCode, userId, armyType);
+        public ArchsVsDinosClient.GameService.ProvokeResultCode ProvokeArchArmy(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType) {
+            return base.Channel.ProvokeArchArmy(matchCode, userId, armyType);
         }
         
-        public System.Threading.Tasks.Task ProvokeArchArmyAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.ProvokeResultCode> ProvokeArchArmyAsync(string matchCode, int userId, ArchsVsDinosClient.GameService.ArmyType armyType) {
             return base.Channel.ProvokeArchArmyAsync(matchCode, userId, armyType);
         }
         
-        public void EndTurn(string matchCode, int userId) {
-            base.Channel.EndTurn(matchCode, userId);
+        public ArchsVsDinosClient.GameService.EndTurnResultCode EndTurn(string matchCode, int userId) {
+            return base.Channel.EndTurn(matchCode, userId);
         }
         
-        public System.Threading.Tasks.Task EndTurnAsync(string matchCode, int userId) {
+        public System.Threading.Tasks.Task<ArchsVsDinosClient.GameService.EndTurnResultCode> EndTurnAsync(string matchCode, int userId) {
             return base.Channel.EndTurnAsync(matchCode, userId);
         }
     }

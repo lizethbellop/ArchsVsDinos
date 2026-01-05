@@ -1062,19 +1062,40 @@
   <data name="ChangeP_UserDoesntExist" xml:space="preserve">
     <value>El usuario no existe</value>
   </data>
-	<data name="ChangeP_SuccessChangePassword" xml:space="preserve">
+  <data name="ChangeP_SuccessChangePassword" xml:space="preserve">
     <value>Contraseña cambiada correctamente</value>
   </data>
-
-	<data name="GlobalDatabaseError" xml:space="preserve">
+  <data name="GlobalDatabaseError" xml:space="preserve">
     <value>Ocurrió un error con nuestra base de datos, inténtelo más tarde</value>
   </data>
-
-	<data name="Register_NoInternetCannotSendCode" xml:space="preserve">
+  <data name="Register_NoInternetCannotSendCode" xml:space="preserve">
     <value>No hay conexión a internet. No se pudo enviar el código de verificación. Verifica tu conexión e inténtalo nuevamente.</value>
   </data>
-
-	<data name="GlobalNoConnectionToServer" xml:space="preserve">
+  <data name="GlobalNoConnectionToServer" xml:space="preserve">
     <value>No hay conexión con el servidor, inténtalo más tarde</value>
+  </data>
+  <data name="Match_CardNotFound" xml:space="preserve">
+    <value>La carta no fue encontrada</value>
+  </data>
+  <data name="Match_DeckEmpty" xml:space="preserve">
+    <value>Error, el mazo ya está vacío</value>
+  </data>
+  <data name="Match_ErrorDrawingCard" xml:space="preserve">
+    <value>Hubo un error sacando la carta, intente de nuevo</value>
+  </data>
+  <data name="Match_ConnectionLostTitle" xml:space="preserve">
+    <value>Conexión perdida</value>
+  </data>
+  <data name="Match_ConnectionLostMessage" xml:space="preserve">
+    <value>Se ha perdido la conexión con el servidor </value>
+  </data>
+  <data name="Match_StatsSavePending" xml:space="preserve">
+    <value>Conexión inestable. Se tratará de guardar los datos más tarde</value>
+  </data>
+  <data name="Match_StatsSavePendingMessage" xml:space="preserve">
+    <value>No se pudo conectar con la base de datos. Se intentará guardar más tarde...</value>
+  </data>
+  <data name="Match_TryAgainLater" xml:space="preserve">
+    <value>Intente más tarde</value>
   </data>
 </root>

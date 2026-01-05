@@ -1,7 +1,6 @@
 ﻿using Contracts.DTO.Game_DTO;
 using Contracts.DTO.Game_DTO.Enums;
 using Contracts.DTO.Game_DTO.State;
-using Contracts.DTO.Game_DTO.Swap;
 using Contracts.DTO.Result_Codes;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    [ServiceContract(CallbackContract = typeof(IGameManagerCallback),SessionMode = SessionMode.Required)]
+    [ServiceContract(CallbackContract = typeof(IGameManagerCallback), SessionMode = SessionMode.Required)]
     public interface IGameManager
     {
         [OperationContract]
@@ -21,6 +20,7 @@ namespace Contracts
         [OperationContract]
         void LeaveGame(string matchCode, int userId);
 
+        /*
         [OperationContract]
         void DrawCard(string matchCode, int userId);
 
@@ -37,7 +37,25 @@ namespace Contracts
         void ProvokeArchArmy(string matchCode, int userId, ArmyType armyType);
 
         [OperationContract]
-        void EndTurn(string matchCode, int userId);
+        void EndTurn(string matchCode, int userId);*/
+
+        [OperationContract]
+        Task<DrawCardResultCode> DrawCard(string matchCode, int userId);
+
+        [OperationContract]
+        Task<PlayCardResultCode> PlayDinoHead(string matchCode, int userId, int cardId);
+
+        [OperationContract]
+        Task<PlayCardResultCode> AttachBodyPartToDino(string matchCode, int userId, AttachBodyPartDTO attachmentData);
+
+        [OperationContract]
+        Task<DrawCardResultCode> TakeCardFromDiscardPile(string matchCode, int userId, int cardId);
+
+        [OperationContract]
+        Task<ProvokeResultCode> ProvokeArchArmy(string matchCode, int userId, ArmyType armyType);
+
+        [OperationContract]
+        Task<EndTurnResultCode> EndTurn(string matchCode, int userId);
     }
 
 }

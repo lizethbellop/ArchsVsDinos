@@ -63,8 +63,6 @@
     <Compile Include="DTO\Game DTO\PlayerInGameDTO.cs" />
     <Compile Include="DTO\Game DTO\PlayerScoreDTO.cs" />
     <Compile Include="DTO\Game DTO\State\CentralBoardDTO.cs" />
-    <Compile Include="DTO\Game DTO\Swap\CardSwappedDTO.cs" />
-    <Compile Include="DTO\Game DTO\Swap\SwapCardDTO.cs" />
     <Compile Include="DTO\Game DTO\TurnedChangedDTO.cs" />
     <Compile Include="DTO\GameFault.cs" />
     <Compile Include="DTO\GameFaultCodes.cs" />

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ArchsVsDinosClient"
         mc:Ignorable="d"
         xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
-        Title="Login" Height="530" Width="500"
+        Title="Login" Height="570" Width="500"
         WindowStartupLocation="CenterScreen">
 
     <Window.Background>

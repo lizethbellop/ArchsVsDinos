@@ -24,5 +24,8 @@ namespace Contracts.DTO.Game_DTO
 
         [DataMember]
         public List<PlayerScoreDTO> FinalScores { get; set; }
+
+        [DataMember]
+        public bool IsStatsSaved { get; set; }
     }
 }

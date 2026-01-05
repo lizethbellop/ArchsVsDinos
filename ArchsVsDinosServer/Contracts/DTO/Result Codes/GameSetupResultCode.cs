@@ -11,16 +11,16 @@ namespace Contracts.DTO.Result_Codes
     public enum GameSetupResultCode
     {
         [EnumMember]
-        Success,
+        GameSetup_Success,
         [EnumMember]
-        MatchNotFound,
+        GameSetup_MatchNotFound,
         [EnumMember]
-        GameAlreadyInitialized,
+        GameSetup_GameAlreadyInitialized,
         [EnumMember]
-        NotEnoughPlayers,
+        GameSetup_NotEnoughPlayers,
         [EnumMember]
-        DatabaseError,
+        GameSetup_DatabaseError,
         [EnumMember]
-        UnexpectedError
+        GameSetup_UnexpectedError
     }
 }

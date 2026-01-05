@@ -13,8 +13,8 @@ namespace ArchsVsDinosClient.Services.Interfaces
 
         Task<SaveMatchResultCode> SaveMatchStatisticsAsync(MatchResultDTO matchResult);
         Task<PlayerStatisticsDTO> GetPlayerStatisticsAsync(int userId);
-        Task<LeaderboardEntryDTO[]> GetLeaderboardAsync(int topN);
-        Task<MatchHistoryDTO[]> GetPlayerMatchHistoryAsync(int userId, int count);
+        Task<List<LeaderboardEntryDTO>> GetLeaderboardAsync(int topN);
+        Task<List<MatchHistoryDTO>> GetPlayerMatchHistoryAsync(int userId, int count);
         Task<GameStatisticsDTO> GetMatchStatisticsAsync(string matchCode);
 
     }

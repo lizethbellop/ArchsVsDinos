@@ -16,7 +16,7 @@ namespace ArchsVsDinosClient.Views
         {
             InitializeComponent();
 
-            viewModel = new GameStatisticsViewModel(gameEndedData.MatchCode, players);
+            viewModel = new GameStatisticsViewModel(gameEndedData, players);
 
             viewModel.RequestClose += GoToMenu;
 

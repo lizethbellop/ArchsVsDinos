@@ -34,7 +34,8 @@ namespace ArchsVsDinosClient.Services
         {
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.SaveMatchStatistics(matchResult)),
-                operationName: "guardar estadísticas"
+                defaultValue: SaveMatchResultCode.UnexpectedError,
+                operationName: "save statistics"
             );
         }
 
@@ -42,31 +43,40 @@ namespace ArchsVsDinosClient.Services
         {
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.GetPlayerStatistics(userId)),
-                operationName: "obtener estadísticas del jugador"
+                defaultValue: null,
+                operationName: "get player statistics"
             );
         }
 
-        public async Task<LeaderboardEntryDTO[]> GetLeaderboardAsync(int topN)
+
+        public async Task<List<LeaderboardEntryDTO>> GetLeaderboardAsync(int topN)
         {
-            return await guardian.ExecuteAsync(
+            var result = await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.GetLeaderboard(topN)),
-                operationName: "obtener leaderboard"
+                defaultValue: null,
+                operationName: "get leaderboard"
             );
+
+            return result != null ? result.ToList() : new List<LeaderboardEntryDTO>();
         }
 
-        public async Task<MatchHistoryDTO[]> GetPlayerMatchHistoryAsync(int userId, int count)
+        public async Task<List<MatchHistoryDTO>> GetPlayerMatchHistoryAsync(int userId, int count)
         {
-            return await guardian.ExecuteAsync(
+            var result = await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.GetPlayerMatchHistory(userId, count)),
-                operationName: "obtener historial de partidas"
+                defaultValue: null,
+                operationName: "get history matchs"
             );
+
+            return result != null ? result.ToList() : new List<MatchHistoryDTO>();
         }
 
         public async Task<GameStatisticsDTO> GetMatchStatisticsAsync(string matchCode)
         {
             return await guardian.ExecuteAsync(
                 async () => await Task.Run(() => client.GetMatchStatistics(matchCode)),
-                operationName: "obtener estadísticas de partida"
+                defaultValue: null,
+                operationName: "get match statistics"
             );
         }
 

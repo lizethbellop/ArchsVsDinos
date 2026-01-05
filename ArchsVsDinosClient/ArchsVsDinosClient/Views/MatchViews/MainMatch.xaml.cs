@@ -63,6 +63,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 var gameService = new GameServiceClient();
                 gameViewModel = new GameViewModel(gameService, this.gameMatchCode, currentUsername, players, myLobbyUserId);
                 DataContext = gameViewModel;
+                gameViewModel.gameServiceClient.ServiceError += OnCriticalServiceError;
             }
             catch (Exception)
             {
@@ -1363,6 +1364,61 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     cardControl.IsEnabled = true;
                     cardControl.Opacity = 1.0;
                 }
+            }
+        }
+
+        private void OnCriticalServiceError(string title, string message)
+        {
+            bool isFatalError = title.Contains("Conexión") ||
+                                message.Contains("EndpointNotFound") ||
+                                message.Contains("Faulted") ||
+                                message.Contains("Timeout");
+
+            if (isFatalError)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (gameViewModel == null) return;
+
+                    MessageBox.Show(
+                        $"{Lang.Match_ConnectionLostMessage}\n\nDetalle: {message}",
+                        Lang.Match_ConnectionLostTitle,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+
+                    ForceExitToMainWindow();
+                });
+            }
+        }
+
+        private void ForceExitToMainWindow()
+        {
+            try
+            {
+                if (gameViewModel != null && gameViewModel.gameServiceClient != null)
+                {
+                    gameViewModel.gameServiceClient.ServiceError -= OnCriticalServiceError;
+                }
+
+                if (gameViewModel != null)
+                {
+                    gameViewModel.Dispose();
+                }
+
+                if (chatViewModel != null)
+                {
+                    try { chatViewModel.Dispose(); } catch { }
+                }
+
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+                this.Close();
+
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Critical error exiting match: {ex.Message}");
+                Application.Current.Shutdown();
             }
         }
 

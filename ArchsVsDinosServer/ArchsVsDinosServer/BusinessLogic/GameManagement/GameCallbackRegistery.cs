@@ -18,6 +18,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         private GameCallbackRegistry()
         {
             playerCallbacks = new ConcurrentDictionary<int, IGameManagerCallback>();
+            matchLocks = new ConcurrentDictionary<string, object>();
         }
 
         public static GameCallbackRegistry Instance
@@ -70,6 +71,11 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
         public object GetMatchLock(string matchCode)
         {
             return matchLocks.GetOrAdd(matchCode, key => new object());
+        }
+
+        public KeyValuePair<int, IGameManagerCallback>[] GetRegisteredCallbacksSnapshot()
+        {
+            return playerCallbacks.ToArray();
         }
 
         public IEnumerable<IGameManagerCallback> GetAllCallbacks()

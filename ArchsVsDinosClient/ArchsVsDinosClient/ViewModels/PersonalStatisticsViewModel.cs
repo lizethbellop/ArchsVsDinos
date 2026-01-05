@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ArchsVsDinosClient.Properties;
 using ArchsVsDinosClient.Properties.Langs;
+using System.Windows;
 
 namespace ArchsVsDinosClient.ViewModels
 {
@@ -24,6 +25,7 @@ namespace ArchsVsDinosClient.ViewModels
         private PlayerStatisticsDTO playerStats;
         private ObservableCollection<LeaderboardEntryDTO> leaderboard;
         private ObservableCollection<MatchHistoryDTO> matchHistory;
+
         private bool isLoading;
         private string errorMessage;
         private bool hasError;
@@ -152,6 +154,7 @@ namespace ArchsVsDinosClient.ViewModels
 
         private async Task LoadStatisticsAsync()
         {
+            if (IsLoading) return;
             IsLoading = true;
             HasError = false;
             ErrorMessage = string.Empty;
@@ -159,33 +162,37 @@ namespace ArchsVsDinosClient.ViewModels
             try
             {
                 var stats = await statisticsClient.GetPlayerStatisticsAsync(currentUserId);
-                if (stats != null)
-                {
-                    PlayerStats = stats;
-                }
-                else
-                {
-                    HasError = true;
-                    ErrorMessage = Lang.Statistics_StatsNotFound;
-                }
 
-                var leaderboardData = await statisticsClient.GetLeaderboardAsync(10);
-                if (leaderboardData != null)
+                if (!HasError)
                 {
-                    Leaderboard.Clear();
-                    foreach (var entry in leaderboardData)
+                    if (stats != null)
                     {
-                        Leaderboard.Add(entry);
+                        PlayerStats = stats;
+                    }
+                    else
+                    {
+                        HasError = true;
+                        ErrorMessage = Lang.Statistics_StatsNotFound;
                     }
                 }
 
-                var historyData = await statisticsClient.GetPlayerMatchHistoryAsync(currentUserId, 20);
-                if (historyData != null)
+                if (!HasError)
                 {
-                    MatchHistory.Clear();
-                    foreach (var match in historyData.OrderByDescending(m => m.MatchDate))
+                    var leaderboardData = await statisticsClient.GetLeaderboardAsync(10);
+                    if (!HasError && leaderboardData != null)
                     {
-                        MatchHistory.Add(match);
+                        Leaderboard.Clear();
+                        foreach (var entry in leaderboardData) Leaderboard.Add(entry);
+                    }
+                }
+
+                if (!HasError)
+                {
+                    var historyData = await statisticsClient.GetPlayerMatchHistoryAsync(currentUserId, 20);
+                    if (!HasError && historyData != null)
+                    {
+                        MatchHistory.Clear();
+                        foreach (var match in historyData.OrderByDescending(matchSelected => matchSelected.MatchDate)) MatchHistory.Add(match);
                     }
                 }
             }
@@ -200,15 +207,26 @@ namespace ArchsVsDinosClient.ViewModels
             }
         }
 
+        private void OnConnectionError(string title, string message)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                IsLoading = false;
+
+                HasError = true;
+                ErrorMessage = $"{title}: {message}";
+
+                MessageBox.Show(
+                    $"{message}\n\n{Lang.Match_TryAgainLater}",
+                    title,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            });
+        }
+
         private void ExecuteClose()
         {
             Dispose();
-        }
-
-        private void OnConnectionError(string title, string message)
-        {
-            HasError = true;
-            ErrorMessage = $"{title}: {message}";
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

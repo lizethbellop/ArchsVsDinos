@@ -1,27 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:complexType name="ArrayOfKeyValueOfintint">
-    <xs:annotation>
-      <xs:appinfo>
-        <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
-      </xs:appinfo>
-    </xs:annotation>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO.State" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:8087/?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" />
+  <xs:complexType name="CentralBoardDTO">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfintint">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Key" type="xs:int" />
-            <xs:element name="Value" type="xs:int" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="SandArmy" nillable="true" type="q1:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="SandArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="SandArmyPower" type="xs:int" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="WaterArmy" nillable="true" type="q2:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="WaterArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="WaterArmyPower" type="xs:int" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Contracts.DTO.Game_DTO" minOccurs="0" name="WindArmy" nillable="true" type="q3:ArrayOfCardDTO" />
+      <xs:element minOccurs="0" name="WindArmyCount" type="xs:int" />
+      <xs:element minOccurs="0" name="WindArmyPower" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
-  <xs:element name="ArrayOfKeyValueOfintint" nillable="true" type="tns:ArrayOfKeyValueOfintint" />
-  <xs:complexType name="ArrayOfint">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="int" type="xs:int" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfint" nillable="true" type="tns:ArrayOfint" />
+  <xs:element name="CentralBoardDTO" nillable="true" type="tns:CentralBoardDTO" />
 </xs:schema>

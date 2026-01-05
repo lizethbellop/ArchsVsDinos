@@ -1483,6 +1483,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a La carta no fue encontrada.
+        /// </summary>
+        public static string Match_CardNotFound {
+            get {
+                return ResourceManager.GetString("Match_CardNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Para crear un dinosaurio, obligatoriamente se debe tener la cabeza..
         /// </summary>
         public static string Match_CellNeedDinoHead {
@@ -1528,11 +1537,38 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Se ha perdido la conexión con el servidor .
+        /// </summary>
+        public static string Match_ConnectionLostMessage {
+            get {
+                return ResourceManager.GetString("Match_ConnectionLostMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Conexión perdida.
+        /// </summary>
+        public static string Match_ConnectionLostTitle {
+            get {
+                return ResourceManager.GetString("Match_ConnectionLostTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¡El mazo de cartas está vacío!.
         /// </summary>
         public static string Match_DeckCardsEmpty {
             get {
                 return ResourceManager.GetString("Match_DeckCardsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error, el mazo ya está vacío.
+        /// </summary>
+        public static string Match_DeckEmpty {
+            get {
+                return ResourceManager.GetString("Match_DeckEmpty", resourceCulture);
             }
         }
         
@@ -1614,6 +1650,15 @@ namespace ArchsVsDinosClient.Properties.Langs {
         public static string Match_ErrorChatNotAvailable {
             get {
                 return ResourceManager.GetString("Match_ErrorChatNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Hubo un error sacando la carta, intente de nuevo.
+        /// </summary>
+        public static string Match_ErrorDrawingCard {
+            get {
+                return ResourceManager.GetString("Match_ErrorDrawingCard", resourceCulture);
             }
         }
         
@@ -1969,11 +2014,38 @@ namespace ArchsVsDinosClient.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Conexión inestable. Se tratará de guardar los datos más tarde.
+        /// </summary>
+        public static string Match_StatsSavePending {
+            get {
+                return ResourceManager.GetString("Match_StatsSavePending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo conectar con la base de datos. Se intentará guardar más tarde....
+        /// </summary>
+        public static string Match_StatsSavePendingMessage {
+            get {
+                return ResourceManager.GetString("Match_StatsSavePendingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Tiempo de partida.
         /// </summary>
         public static string Match_TimeMatch {
             get {
                 return ResourceManager.GetString("Match_TimeMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Intente más tarde.
+        /// </summary>
+        public static string Match_TryAgainLater {
+            get {
+                return ResourceManager.GetString("Match_TryAgainLater", resourceCulture);
             }
         }
         

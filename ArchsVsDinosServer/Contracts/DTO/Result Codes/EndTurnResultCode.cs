@@ -11,14 +11,14 @@ namespace Contracts.DTO.Result_Codes
     public enum EndTurnResultCode
     {
         [EnumMember]
-        Success,
+        EndTurn_Success,
         [EnumMember]
-        NotYourTurn,
+        EndTurn_NotYourTurn,
         [EnumMember]
-        GameEnded,
+        EndTurn_GameEnded,
         [EnumMember]
-        DatabaseError,
+        EndTurn_DatabaseError,
         [EnumMember]
-        UnexpectedError
+        EndTurn_UnexpectedError
     }
 }

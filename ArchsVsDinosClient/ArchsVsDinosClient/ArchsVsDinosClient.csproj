@@ -614,6 +614,18 @@
     <None Include="Connected Services\FriendService\item54.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.DrawCardResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.EndTurnResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.PlayCardResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\GameService\ArchsVsDinosClient.GameService.ProvokeResultCode.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\GameService\GameManager.wsdl" />
     <None Include="Connected Services\GameService\GameManager1.wsdl" />
     <None Include="Connected Services\GameService\item.xsd">
@@ -659,6 +671,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\GameService\item7.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\GameService\item8.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.MatchCreationResponse.datasource">

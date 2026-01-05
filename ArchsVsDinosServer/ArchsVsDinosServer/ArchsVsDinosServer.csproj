@@ -221,7 +221,6 @@
     </Compile>
     <Compile Include="Model\ActiveLobbyData.cs" />
     <Compile Include="Model\AttachBodyPartContext.cs" />
-    <Compile Include="Model\CardExchangeContext.cs" />
     <Compile Include="Model\GameEndType.cs" />
     <Compile Include="Model\LobbyPlayer.cs" />
     <Compile Include="Music.cs">
@@ -290,6 +289,7 @@
     <Compile Include="Utils\ServiceDependencies.cs" />
     <Compile Include="Utils\ServiceLocator.cs" />
     <Compile Include="Utils\SessionManager.cs" />
+    <Compile Include="Utils\StatsRetryQueue.cs" />
     <Compile Include="Utils\StrikeServiceDependencies.cs" />
     <Compile Include="Utils\UnregisteredPlayerGenerator.cs" />
     <Compile Include="Utils\ValidationCodeManager.cs" />

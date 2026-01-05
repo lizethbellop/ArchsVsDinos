@@ -643,6 +643,8 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 GameEndResult result;
 
+                bool isStatsSaved = true;
+
                 if (gameType == GameEndType.Finished)
                 {
                     if (!gameEndHandler.ShouldGameEnd(session))
@@ -678,12 +680,14 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                         if (statsDto.PlayerResults.Count > 0)
                         {
-                            statisticsManager.SaveMatchStatistics(statsDto);
+                            var saveCode = statisticsManager.SaveMatchStatistics(statsDto);
+                            isStatsSaved = (saveCode == SaveMatchResultCode.Success);
                         }
                     }
                     catch (Exception ex)
                     {
                         loggerHelper.LogError($"Failed to save stats for {matchCode}", ex);
+                        isStatsSaved = false;
                     }
                 }
                 else
@@ -702,13 +706,14 @@ namespace ArchsVsDinosServer.BusinessLogic
                 session.MarkAsFinished(gameType);
 
                 gameCoreContext.Sessions.RemoveSession(matchCode);
-                gameNotifier.NotifyGameEnded(new Contracts.DTO.Game_DTO.GameEndedDTO
+                gameNotifier.NotifyGameEnded(new GameEndedDTO
                 {
                     MatchCode = matchCode,
-                    WinnerUserId = 0,
-                    WinnerPoints = 0,
+                    WinnerUserId = result.Winner?.UserId ?? 0,
+                    WinnerPoints = result.WinnerPoints,
                     Reason = result.Reason, 
-                    FinalScores = result.FinalScores
+                    FinalScores = result.FinalScores,
+                    IsStatsSaved = isStatsSaved
                 });
 
                 return result;

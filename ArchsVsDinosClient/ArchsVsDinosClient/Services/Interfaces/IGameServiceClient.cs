@@ -7,6 +7,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
 {
     public interface IGameServiceClient
     {
+        /*
         Task ConnectToGameAsync(string matchCode, int userId);
         Task InitializeGameAsync(string matchCode);
         Task StartGameAsync(string matchCode);
@@ -16,8 +17,24 @@ namespace ArchsVsDinosClient.Services.Interfaces
         Task ProvokeArchArmyAsync(string matchCode, int userId, ArmyType armyType);
         Task EndTurnAsync(string matchCode, int userId);
         Task TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
+        Task LeaveGameAsync(string matchCode, int userId);*/
+
+        Task ConnectToGameAsync(string matchCode, int userId);
+        Task InitializeGameAsync(string matchCode);
+        Task StartGameAsync(string matchCode);
         Task LeaveGameAsync(string matchCode, int userId);
 
+        Task<DrawCardResultCode> DrawCardAsync(string matchCode, int userId);
+
+        Task<PlayCardResultCode> PlayDinoHeadAsync(string matchCode, int userId, int cardId);
+
+        Task<PlayCardResultCode> AttachBodyPartAsync(string matchCode, int userId, AttachBodyPartDTO attachmentData);
+
+        Task<ProvokeResultCode> ProvokeArchArmyAsync(string matchCode, int userId, ArmyType armyType);
+
+        Task<EndTurnResultCode> EndTurnAsync(string matchCode, int userId);
+
+        Task<DrawCardResultCode> TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId);
 
         event Action<GameInitializedDTO> GameInitialized;
         event Action<GameStartedDTO> GameStarted;

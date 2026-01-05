@@ -29,8 +29,10 @@ namespace ArchsVsDinosServer.Services
             leaderboardCalc = new LeaderboardCalculator(dependencies);
             statsHelper = new StatisticsHelper(dependencies);
             logger = dependencies.loggerHelper;
+            StatsRetryQueue.Configure(matchProcessor.ProcessMatchResults);
         }
 
+        /*
         public SaveMatchResultCode SaveMatchStatistics(MatchResultDTO matchResult)
         {
             try
@@ -79,6 +81,58 @@ namespace ArchsVsDinosServer.Services
             catch (Exception ex)
             {
                 logger.LogError($"SaveMatchStatistics: Unexpected error - {ex.Message}", ex);
+                return SaveMatchResultCode.UnexpectedError;
+            }
+        }*/
+
+        public SaveMatchResultCode SaveMatchStatistics(MatchResultDTO matchResult)
+        {
+            try
+            {
+                if (matchResult == null)
+                {
+                    return SaveMatchResultCode.InvalidData;
+                }
+
+                if (string.IsNullOrWhiteSpace(matchResult.MatchId))
+                {
+                    return SaveMatchResultCode.InvalidData;
+                }
+
+                if (matchResult.PlayerResults == null || !matchResult.PlayerResults.Any())
+                {
+                    return SaveMatchResultCode.InvalidData;
+                }
+
+                bool success = false;
+                try
+                {
+                    success = matchProcessor.ProcessMatchResults(matchResult);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"SaveMatchStatistics: DB Error immediate: {ex.Message}", ex);
+                    success = false;
+                }
+
+                if (success)
+                {
+                    logger.LogInfo($"SaveMatchStatistics: Successfully saved match {matchResult.MatchId}");
+                    return SaveMatchResultCode.Success;
+                }
+                else
+                {
+
+                    logger.LogWarning($"SaveMatchStatistics: Failed to save match {matchResult.MatchId}. Queuing for background retry.");
+                    StatsRetryQueue.Enqueue(matchResult);
+                    return SaveMatchResultCode.DatabaseError;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"SaveMatchStatistics: Critical error - {ex.Message}", ex);
+                StatsRetryQueue.Enqueue(matchResult);
+
                 return SaveMatchResultCode.UnexpectedError;
             }
         }

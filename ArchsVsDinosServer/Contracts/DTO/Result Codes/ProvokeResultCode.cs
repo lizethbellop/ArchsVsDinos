@@ -11,18 +11,18 @@ namespace Contracts.DTO.Result_Codes
     public enum ProvokeResultCode
     {
         [EnumMember]
-        Success,
+        Provoke_Success,
         [EnumMember]
-        NotYourTurn,
+        Provoke_NotYourTurn,
         [EnumMember]
-        InvalidArmyType,
+        Provoke_InvalidArmyType,
         [EnumMember]
-        NoArchsInArmy,
+        Provoke_NoArchsInArmy,
         [EnumMember]
-        AlreadyTookAction,
+        Provoke_AlreadyTookAction,
         [EnumMember]
-        DatabaseError,
+        Provoke_DatabaseError,
         [EnumMember]
-        UnexpectedError
+        Provoke_UnexpectedError
     }
 }

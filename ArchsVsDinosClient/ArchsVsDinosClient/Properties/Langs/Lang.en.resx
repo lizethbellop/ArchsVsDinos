@@ -1075,4 +1075,28 @@
   <data name="GlobalNoConnectionToServer" xml:space="preserve">
     <value>There is no connection with the server, try again later!</value>
   </data>
+  <data name="Match_CardNotFound" xml:space="preserve">
+    <value>The card was not found</value>
+  </data>
+  <data name="Match_DeckEmpty" xml:space="preserve">
+    <value>Error, the deck is empty</value>
+  </data>
+  <data name="Match_ErrorDrawingCard" xml:space="preserve">
+    <value>There was an error drawing the card, try again</value>
+  </data>
+  <data name="Match_ConnectionLostTitle" xml:space="preserve">
+    <value>Connection lost</value>
+  </data>
+  <data name="Match_ConnectionLostMessage" xml:space="preserve">
+    <value>The connection to the server has been lost</value>
+  </data>
+  <data name="Match_StatsSavePending" xml:space="preserve">
+    <value>Unstable connection. We will try to save the data later.</value>
+  </data>
+  <data name="Match_StatsSavePendingMessage" xml:space="preserve">
+    <value>Unable to connect to the database. Will attempt to save later...</value>
+  </data>
+  <data name="Match_TryAgainLater" xml:space="preserve">
+    <value>Try again later</value>
+  </data>
 </root>
