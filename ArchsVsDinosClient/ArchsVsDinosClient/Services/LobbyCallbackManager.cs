@@ -1,4 +1,5 @@
 ﻿using ArchsVsDinosClient.LobbyService;
+using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +10,8 @@ namespace ArchsVsDinosClient.Services
 {
     public class LobbyCallbackManager : ILobbyManagerCallback
     {
+        private GameConnectionTimer connectionTimer; // ← NUEVO
+
         public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO, string> OnCreatedLobby;
         public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO> OnJoinedLobby;
         public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO> OnPlayerLeftLobby;
@@ -18,8 +21,17 @@ namespace ArchsVsDinosClient.Services
         public event Action<LobbyInvitationDTO> OnLobbyInvitationReceived;
         public event Action OnGameStart;
 
+        /// <summary>
+        /// Establece el timer que se reseteará en cada callback
+        /// </summary>
+        public void SetConnectionTimer(GameConnectionTimer timer)
+        {
+            this.connectionTimer = timer;
+        }
+
         public void PlayerJoinedLobby(string nickname)
         {
+            connectionTimer?.Reset(); // ← AGREGAR
             SafeInvoke(() =>
             {
                 var player = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
@@ -33,6 +45,7 @@ namespace ArchsVsDinosClient.Services
 
         public void PlayerLeftLobby(string nickname)
         {
+            connectionTimer?.Reset(); // ← AGREGAR
             SafeInvoke(() =>
             {
                 var player = new ArchsVsDinosClient.DTO.LobbyPlayerDTO
@@ -45,10 +58,10 @@ namespace ArchsVsDinosClient.Services
 
         public void UpdateListOfPlayers(ArchsVsDinosClient.LobbyService.LobbyPlayerDTO[] servicePlayers)
         {
+            connectionTimer?.Reset(); // ← AGREGAR
             SafeInvoke(() =>
             {
                 if (servicePlayers == null) return;
-
                 var players = servicePlayers.Select(p => new ArchsVsDinosClient.DTO.LobbyPlayerDTO
                 {
                     IdPlayer = p.UserId,
@@ -58,13 +71,13 @@ namespace ArchsVsDinosClient.Services
                     IsHost = p.IsHost,
                     ProfilePicture = p.ProfilePicture
                 }).ToList();
-
                 OnPlayerListUpdated?.Invoke(players);
             }, nameof(UpdateListOfPlayers));
         }
 
         public void PlayerReadyStatusChanged(string nickname, bool isReady)
         {
+            connectionTimer?.Reset(); // ← AGREGAR
             SafeInvoke(() =>
             {
                 OnPlayerReady?.Invoke(nickname, isReady);
@@ -73,6 +86,7 @@ namespace ArchsVsDinosClient.Services
 
         public void GameStarting()
         {
+            connectionTimer?.Reset(); // ← AGREGAR
             SafeInvoke(() =>
             {
                 OnGameStart?.Invoke();
@@ -81,6 +95,7 @@ namespace ArchsVsDinosClient.Services
 
         public void PlayerKicked(string nickname, string reason)
         {
+            connectionTimer?.Reset(); // ← AGREGAR
             SafeInvoke(() =>
             {
                 OnPlayerKicked?.Invoke(nickname, reason);
@@ -89,6 +104,7 @@ namespace ArchsVsDinosClient.Services
 
         public void LobbyInvitationReceived(LobbyInvitationDTO invitation)
         {
+            connectionTimer?.Reset();
             SafeInvoke(() =>
             {
                 OnLobbyInvitationReceived?.Invoke(invitation);

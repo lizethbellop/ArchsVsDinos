@@ -31,5 +31,6 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<List<LobbyPlayerDTO>> PlayerListUpdated;
         event Action<string, string> PlayerKickedEvent;
         event Action<LobbyInvitationDTO> LobbyInvitationReceived;
+        event Action ConnectionLost;
     }
 }

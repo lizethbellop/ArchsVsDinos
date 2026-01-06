@@ -2,6 +2,7 @@
 using ArchsVsDinosClient.GameService; 
 using ArchsVsDinosClient.Models;     
 using ArchsVsDinosClient.Properties.Langs;
+using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -403,6 +404,12 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         private void OnGameEnded(GameEndedDTO data)
         {
+            if (gameServiceClient is GameServiceClient serviceClient)
+            {
+                serviceClient.StopConnectionMonitoring();
+                System.Diagnostics.Debug.WriteLine("[GAME ENDED] Connection monitoring stopped");
+            }
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 string message = "";
@@ -1042,5 +1049,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             var window = new Views.MatchViews.MatchSeeDeck.MatchSeeDeckHorizontal(viewModel);
             window.ShowDialog();
         }
+
+
     }
+
+
 }

@@ -38,5 +38,6 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<CardTakenFromDiscardDTO> CardTakenFromDiscard;
 
         event Action<string, string> ServiceError;
+        event Action ConnectionLost;
     }
 }

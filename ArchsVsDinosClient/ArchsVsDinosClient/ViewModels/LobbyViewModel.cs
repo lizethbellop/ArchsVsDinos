@@ -84,6 +84,7 @@ namespace ArchsVsDinosClient.ViewModels
                 this.lobbyServiceClient.PlayerKickedEvent += OnPlayerKicked;
                 this.lobbyServiceClient.PlayerLeft += OnPlayerLeft;
                 this.lobbyServiceClient.LobbyInvitationReceived += OnLobbyInvitationReceived;
+                this.lobbyServiceClient.ConnectionLost += OnConnectionTimerExpired;
             }
 
             string myUsername = UserSession.Instance.CurrentUser.Username;
@@ -128,6 +129,27 @@ namespace ArchsVsDinosClient.ViewModels
                 Debug.WriteLine($"[LOBBY] Error loading friends: {ex.Message}");
                 return new List<string>();
             }
+        }
+
+        private void OnConnectionTimerExpired()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine("[LOBBY VM] ⚠️ Connection timer expired - no server response");
+
+                if (lobbyServiceClient is LobbyServiceClient serviceClient)
+                {
+                    serviceClient.StopConnectionMonitoring();
+                }
+
+                if (isAttemptingReconnection)
+                {
+                    Debug.WriteLine("[LOBBY VM] Already attempting reconnection, ignoring timer expiration");
+                    return;
+                }
+
+                StartReconnectionAttempts();
+            });
         }
 
         private void RefreshFriendStatusInSlots()
@@ -247,6 +269,11 @@ namespace ArchsVsDinosClient.ViewModels
                         IsReady = false
                     });
 
+                    if (lobbyServiceClient is LobbyServiceClient serviceClient)
+                    {
+                        serviceClient.StartConnectionMonitoring(timeoutSeconds: 12);
+                    }
+
                     await ConnectChatAsync();
                     return true;
                 }
@@ -261,8 +288,8 @@ namespace ArchsVsDinosClient.ViewModels
             catch
             {
                 LobbyConnectionLost?.Invoke(
-                    "Error de conexión",
-                    "No se pudo conectar con el servidor."
+                    Lang.WcfNoConnection,
+                    Lang.GlobalServerError
                 );
                 return false;
             }
@@ -559,6 +586,11 @@ namespace ArchsVsDinosClient.ViewModels
         {
             try
             {
+                if (lobbyServiceClient is LobbyServiceClient serviceClient)
+                {
+                    serviceClient.StopConnectionMonitoring();
+                }
+
                 if (isAttemptingReconnection)
                 {
                     Debug.WriteLine("[LOBBY VM] Deteniendo intentos de reconexión en Cleanup...");
@@ -608,6 +640,7 @@ namespace ArchsVsDinosClient.ViewModels
                     lobbyServiceClient.LobbyInvitationReceived -= OnLobbyInvitationReceived;
                     lobbyServiceClient.PlayerListUpdated -= OnPlayerListUpdated;
                     lobbyServiceClient.GameStartedEvent -= OnGameStarted;
+                    lobbyServiceClient.ConnectionLost -= OnConnectionTimerExpired;
                     Debug.WriteLine("[LOBBY VM] ✅ Eventos de lobby desuscritos");
                 }
 
@@ -1022,6 +1055,12 @@ namespace ArchsVsDinosClient.ViewModels
             isAttemptingReconnection = false;
             reconnectionAttempts = 0;
             userRequestedExit = false;
+
+            if (success && lobbyServiceClient is LobbyServiceClient serviceClient)
+            {
+                serviceClient.StartConnectionMonitoring(timeoutSeconds: 12);
+                Debug.WriteLine("[LOBBY VM] Connection monitoring restarted after successful reconnection");
+            }
 
             Debug.WriteLine($"[LOBBY VM] Intentos de reconexión detenidos. Éxito: {success}");
         }

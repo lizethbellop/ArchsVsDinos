@@ -36,6 +36,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
         private DispatcherTimer errorNotificationTimer;
         private CardCell lastHoveredCardCell;
         private bool isProvokeModeActive = false;
+        private bool isHandlingDisconnection = false;
 
         private int player2UserId = 0;
         private int player3UserId = 0;
@@ -66,7 +67,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 var gameService = new GameServiceClient();
                 gameViewModel = new GameViewModel(gameService, this.gameMatchCode, currentUsername, players, myLobbyUserId);
                 DataContext = gameViewModel;
+
                 gameViewModel.gameServiceClient.ServiceError += OnCriticalServiceError;
+                gameViewModel.gameServiceClient.ConnectionLost += OnConnectionLost; // ← NUEVO
             }
             catch (Exception)
             {
@@ -118,6 +121,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             this.ExtraCleanupAction = async () =>
             {
+                if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.StopConnectionMonitoring();
+                }
+
                 if (gameViewModel != null)
                 {
                     await gameViewModel.CleanupBeforeClosingAsync();
@@ -160,6 +168,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
                 await gameViewModel.ConnectToGameAsync();
 
+                if (gameViewModel.gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.StartConnectionMonitoring(timeoutSeconds: 7);
+                }
+
                 await Application.Current.Dispatcher.InvokeAsync(() => UpdatePlayerHandVisual(), DispatcherPriority.Loaded);
             }
 
@@ -176,6 +189,33 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     System.Diagnostics.Debug.WriteLine($"Error conecting chat in match: {ex.Message}");
                 }
             }
+
+
+        }
+
+        private void OnConnectionLost()
+        {
+            if (isHandlingDisconnection) return;
+            isHandlingDisconnection = true;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                System.Diagnostics.Debug.WriteLine("[DISCONNECT] ⚠️ Connection timeout - no server response");
+
+                if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.StopConnectionMonitoring();
+                }
+
+                MessageBox.Show(
+                    Lang.Match_ConnectionLostMessage ?? "La conexión con el servidor se ha perdido.\n\nLa partida será cerrada.",
+                    Lang.Match_ConnectionLostTitle ?? "Conexión perdida",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+
+                ForceExitToMainWindow();
+            });
         }
 
         public void ManualDragOver(Point windowMousePosition, Card cardBeingDragged)
@@ -1451,9 +1491,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             try
             {
-                if (gameViewModel != null && gameViewModel.gameServiceClient != null)
+                if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
                 {
-                    gameViewModel.gameServiceClient.ServiceError -= OnCriticalServiceError;
+                    serviceClient.StopConnectionMonitoring();
+                    serviceClient.ConnectionLost -= OnConnectionLost;
+                    serviceClient.ServiceError -= OnCriticalServiceError;
                 }
 
                 if (gameViewModel != null)

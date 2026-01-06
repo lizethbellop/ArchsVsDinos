@@ -167,6 +167,7 @@
     <Compile Include="Services\StatisticsServiceClient.cs" />
     <Compile Include="Utils\ConverterCard.cs" />
     <Compile Include="Utils\FriendResultCodeHelper.cs" />
+    <Compile Include="Utils\GameConnectionTimer.cs" />
     <Compile Include="Utils\GlobalSettings.cs" />
     <Compile Include="Utils\ImageCompressor.cs" />
     <Compile Include="Utils\LoadingDisplayHelper.cs" />

@@ -19,6 +19,7 @@ namespace ArchsVsDinosClient.Services
         private LobbyManagerClient lobbyManagerClient;
         private readonly LobbyCallbackManager lobbyCallbackManager;
         private readonly WcfConnectionGuardian connectionGuardian;
+        private GameConnectionTimer connectionTimer;
 
         public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO, string> LobbyCreated;
         public event Action<ArchsVsDinosClient.DTO.LobbyPlayerDTO> PlayerJoined;
@@ -29,6 +30,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<List<ArchsVsDinosClient.DTO.LobbyPlayerDTO>> PlayerListUpdated;
         public event Action<string, string> PlayerKickedEvent;
         public event Action<LobbyInvitationDTO> LobbyInvitationReceived;
+        public event Action ConnectionLost;
 
         public LobbyServiceClient()
         {
@@ -412,6 +414,8 @@ namespace ArchsVsDinosClient.Services
             {
                 Debug.WriteLine($"[LOBBY CLIENT] Trying to reconnect to the lobby {matchCode}...");
 
+                connectionTimer?.Stop();
+
                 EnsureClientIsUsable();
 
                 bool connected = await connectionGuardian.ExecuteAsync(
@@ -424,6 +428,7 @@ namespace ArchsVsDinosClient.Services
 
                 if (connected)
                 {
+                    connectionTimer?.Start();
                     Debug.WriteLine($"[LOBBY CLIENT] Reconnection to the lobby successfully {matchCode}");
                     return true;
                 }
@@ -438,6 +443,30 @@ namespace ArchsVsDinosClient.Services
                 Debug.WriteLine($"[LOBBY CLIENT] Error in connection {ex.Message}");
                 return false;
             }
+        }
+
+        public void StartConnectionMonitoring(int timeoutSeconds)
+        {
+            if (connectionTimer != null)
+            {
+                connectionTimer.Dispose();
+            }
+
+            connectionTimer = new GameConnectionTimer(
+                timeoutSeconds,
+                onTimeout: () => ConnectionLost?.Invoke()
+            );
+
+            lobbyCallbackManager.SetConnectionTimer(connectionTimer);
+
+            connectionTimer.Start();
+            System.Diagnostics.Debug.WriteLine($"[LOBBY TIMER] Started with {timeoutSeconds}s timeout");
+        }
+
+        public void StopConnectionMonitoring()
+        {
+            connectionTimer?.Stop();
+            System.Diagnostics.Debug.WriteLine("[LOBBY TIMER] Stopped");
         }
     }
 }

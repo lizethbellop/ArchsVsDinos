@@ -10,11 +10,12 @@ using System.Threading.Tasks;
 
 namespace ArchsVsDinosClient.Services
 {
-    public class GameServiceClient : IGameServiceClient
+    public class GameServiceClient : IGameServiceClient, IDisposable
     {
         private readonly GameManagerClient client;
         private readonly GameCallbackHandler callback;
         private readonly WcfConnectionGuardian guardian;
+        private GameConnectionTimer connectionTimer;
 
         public event Action<GameInitializedDTO> GameInitialized;
         public event Action<GameStartedDTO> GameStarted;
@@ -29,6 +30,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<PlayerExpelledDTO> PlayerExpelled;
         public event Action<CardTakenFromDiscardDTO> CardTakenFromDiscard;
         public event Action<string, string> ServiceError;
+        public event Action ConnectionLost; 
 
         public GameServiceClient()
         {
@@ -48,7 +50,6 @@ namespace ArchsVsDinosClient.Services
             callback.OnCardTakenFromDiscardEvent += (d) => CardTakenFromDiscard?.Invoke(d);
 
             var context = new InstanceContext(callback);
-
             context.SynchronizationContext = null;
 
             client = new GameManagerClient(context);
@@ -58,6 +59,30 @@ namespace ArchsVsDinosClient.Services
                 logger: new Logger()
             );
             guardian.MonitorClientState(client);
+        }
+
+        public void StartConnectionMonitoring(int timeoutSeconds)
+        {
+            if (connectionTimer != null)
+            {
+                connectionTimer.Dispose();
+            }
+
+            connectionTimer = new GameConnectionTimer(
+                timeoutSeconds,
+                onTimeout: () => ConnectionLost?.Invoke()
+            );
+
+            callback.SetConnectionTimer(connectionTimer);
+
+            connectionTimer.Start();
+            System.Diagnostics.Debug.WriteLine($"[CONNECTION TIMER] Started with {timeoutSeconds}s timeout");
+        }
+
+        public void StopConnectionMonitoring()
+        {
+            connectionTimer?.Stop();
+            System.Diagnostics.Debug.WriteLine("[CONNECTION TIMER] Stopped");
         }
 
         public async Task ConnectToGameAsync(string matchCode, int userId)
@@ -141,6 +166,12 @@ namespace ArchsVsDinosClient.Services
             },
             defaultValue: defaultErrorValue,
             operationName: "GameAction");
+        }
+
+        public void Dispose()
+        {
+            connectionTimer?.Dispose();
+            connectionTimer = null;
         }
     }
 }
