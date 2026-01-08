@@ -149,8 +149,10 @@ namespace ArchsVsDinosServer.BusinessLogic
                 {
                     Success = true,
                     ResultCode = JoinMatchResultCode.JoinMatch_Success,
-                    LobbyCode = request.LobbyCode
+                    LobbyCode = request.LobbyCode,
+                    UserId = finalUserId
                 });
+
             }
             catch (ArgumentException ex)
             {

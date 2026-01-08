@@ -29,6 +29,9 @@ namespace ArchsVsDinosClient.ChatManager {
         private string MatchCodeField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int UserIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string UsernameField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
@@ -63,6 +66,19 @@ namespace ArchsVsDinosClient.ChatManager {
                 if ((object.ReferenceEquals(this.MatchCodeField, value) != true)) {
                     this.MatchCodeField = value;
                     this.RaisePropertyChanged("MatchCode");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int UserId {
+            get {
+                return this.UserIdField;
+            }
+            set {
+                if ((this.UserIdField.Equals(value) != true)) {
+                    this.UserIdField = value;
+                    this.RaisePropertyChanged("UserId");
                 }
             }
         }

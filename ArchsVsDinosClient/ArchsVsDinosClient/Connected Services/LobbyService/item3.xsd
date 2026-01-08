@@ -14,6 +14,7 @@
       <xs:element minOccurs="0" name="LobbyCode" nillable="true" type="xs:string" />
       <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Contracts.DTO.Result_Codes" minOccurs="0" name="ResultCode" type="q2:JoinMatchResultCode" />
       <xs:element minOccurs="0" name="Success" type="xs:boolean" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="MatchJoinResponse" nillable="true" type="tns:MatchJoinResponse" />

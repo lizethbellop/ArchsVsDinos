@@ -76,6 +76,17 @@ namespace ArchsVsDinosClient.Models
             IsGuest = true;
         }
 
+        public void UpdateUserId(int userId)
+        {
+            if (CurrentUser == null)
+            {
+                CurrentUser = new UserDTO();
+            }
+
+            CurrentUser.IdUser = userId;
+        }
+
+
         public string GetUsername() =>CurrentUser?.Username ?? string.Empty;
         public string GetNickname() => CurrentUser?.Nickname ?? string.Empty;
         public string GetName() => CurrentUser?.Name ?? string.Empty;

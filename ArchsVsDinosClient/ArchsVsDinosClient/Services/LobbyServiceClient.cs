@@ -150,6 +150,19 @@ namespace ArchsVsDinosClient.Services
                 var matchJoinResponse = await connectionGuardian.ExecuteWithThrowAsync(() =>
                     Task.FromResult(lobbyManagerClient.JoinLobby(request)));
 
+                
+                if (matchJoinResponse.ResultCode == JoinMatchResultCode.JoinMatch_Success)
+                {
+                    if (UserSession.Instance.IsGuest)
+                    {
+                        UserSession.Instance.UpdateUserId(matchJoinResponse.UserId);
+
+                        Debug.WriteLine(
+                            $"[LOBBY CLIENT] Guest assigned UserId: {matchJoinResponse.UserId}"
+                        );
+                    }
+                }
+
                 return matchJoinResponse.ResultCode;
             }
             catch (EndpointNotFoundException endpointEx)

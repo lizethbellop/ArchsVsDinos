@@ -133,9 +133,9 @@
   </wsdl:binding>
   <wsdl:service name="ChatManager">
     <wsdl:port name="NetTcpBinding_IChatManager" binding="tns:NetTcpBinding_IChatManager">
-      <soap12:address location="net.tcp://localhost:8095/ChatManager" />
+      <soap12:address location="net.tcp://0.0.0.0:8095/ChatManager" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://localhost:8095/ChatManager</wsa10:Address>
+        <wsa10:Address>net.tcp://0.0.0.0:8095/ChatManager</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

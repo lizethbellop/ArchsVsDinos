@@ -4,6 +4,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="Context" type="xs:int" />
       <xs:element minOccurs="0" name="MatchCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserId" type="xs:int" />
       <xs:element minOccurs="0" name="Username" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>

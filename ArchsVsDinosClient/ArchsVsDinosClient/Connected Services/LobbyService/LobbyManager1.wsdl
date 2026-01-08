@@ -281,9 +281,9 @@
   </wsdl:binding>
   <wsdl:service name="LobbyManager">
     <wsdl:port name="NetTcpBinding_ILobbyManager" binding="tns:NetTcpBinding_ILobbyManager">
-      <soap12:address location="net.tcp://localhost:8094/MatchLobbyManager" />
+      <soap12:address location="net.tcp://0.0.0.0:8094/MatchLobbyManager" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://localhost:8094/MatchLobbyManager</wsa10:Address>
+        <wsa10:Address>net.tcp://0.0.0.0:8094/MatchLobbyManager</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

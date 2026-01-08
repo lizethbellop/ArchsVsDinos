@@ -17,7 +17,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         event Action<string, string> UserExpelled;
         event Action<string> LobbyClosed;
 
-       Task ConnectAsync(string username, int context = 0, string matchCode = null);
+       Task ConnectAsync(string username, int userdId, int context = 0, string matchCode = null);
 
         Task SendMessageAsync(string message, string username);
         Task DisconnectAsync(string username);

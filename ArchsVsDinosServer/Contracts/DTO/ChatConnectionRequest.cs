@@ -10,13 +10,10 @@ namespace Contracts.DTO
     [DataContract]
     public class ChatConnectionRequest
     {
-        [DataMember]
-        public string Username { get; set; }
-
-        [DataMember]
-        public int Context { get; set; } 
-
-        [DataMember]
-        public string MatchCode { get; set; }
+        [DataMember] public int UserId { get; set; }
+        [DataMember] public string Username { get; set; }
+        [DataMember] public int Context { get; set; }
+        [DataMember] public string MatchCode { get; set; }
     }
+
 }

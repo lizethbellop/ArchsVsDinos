@@ -564,6 +564,7 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 await Chat.ConnectAsync(
                     UserSession.Instance.CurrentUser.Username,
+                    UserSession.Instance.CurrentUser.IdUser,
                     context: 0,
                     matchCode: MatchCode
                 );
@@ -843,6 +844,7 @@ namespace ArchsVsDinosClient.ViewModels
                 await Task.Delay(500);
                 await Chat.ConnectAsync(
                     UserSession.Instance.CurrentUser.Username,
+                    UserSession.Instance.CurrentUser.IdUser,
                     context: 0,
                     matchCode: lobbyCode
                 );

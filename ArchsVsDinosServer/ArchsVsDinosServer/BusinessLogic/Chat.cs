@@ -56,52 +56,109 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         public void Connect(ChatConnectionRequest request)
         {
-            IChatManagerCallback callback;
+            if (!ValidateConnectionRequest(request))
+                return;
+
+            IChatManagerCallback callback = GetCallback(request.Username);
+            if (callback == null)
+                return;
+
+            if (!ValidateUserId(request))
+                return;
+
+            HandleUserReconnection(request.Username, request.MatchCode);
+
+            var userConnection = CreateUserConnection(request, callback);
+
+            if (!TryAddUser(request.Username, userConnection, callback))
+                return;
+
+            NotifySuccessfulConnection(request);
+        }
+
+        private bool ValidateConnectionRequest(ChatConnectionRequest request)
+        {
+            if (request == null ||
+                string.IsNullOrWhiteSpace(request.Username) ||
+                string.IsNullOrWhiteSpace(request.MatchCode))
+            {
+                loggerHelper.LogWarning("[CHAT] Invalid connection request");
+                return false;
+            }
+            return true;
+        }
+
+        private IChatManagerCallback GetCallback(string username)
+        {
             try
             {
-                callback = callbackProvider.GetCallback();
+                return callbackProvider.GetCallback();
             }
             catch (InvalidOperationException ex)
             {
-                loggerHelper.LogError($"Error obtaining callback: {ex.Message}", ex);
-                return;
+                loggerHelper.LogError($"[CHAT] Error obtaining callback for {username}: {ex.Message}", ex);
+                return null;
             }
+        }
 
-            int userId = GetUserIdFromUsername(request.Username);
-
-            if (userId == 0)
+        private bool ValidateUserId(ChatConnectionRequest request)
+        {
+            if (request.UserId == 0)
             {
-                userId = -Math.Abs(request.Username.GetHashCode());
-                loggerHelper.LogInfo($"Guest '{request.Username}' connecting to chat with temporary userId: {userId}");
+                loggerHelper.LogWarning(
+                    $"[CHAT] Connection rejected: invalid UserId for {request.Username}");
+                return false;
             }
+            return true;
+        }
 
-            var context = request.Context;
-
-            var userConnection = new UserConnection
+        private void HandleUserReconnection(string username, string newMatchCode)
+        {
+            if (ConnectedUsers.TryGetValue(username, out var existingConnection))
             {
-                UserId = userId,
+                if (existingConnection.MatchCode != newMatchCode)
+                {
+                    loggerHelper.LogInfo(
+                        $"[CHAT] User {username} reconnecting from {existingConnection.MatchCode} to {newMatchCode}");
+                    Disconnect(username);
+                }
+            }
+        }
+
+        private UserConnection CreateUserConnection(ChatConnectionRequest request, IChatManagerCallback callback)
+        {
+            return new UserConnection
+            {
+                UserId = request.UserId,
                 Callback = callback,
-                Context = context,
+                Context = request.Context,
                 MatchCode = request.MatchCode
             };
+        }
 
-            if (!ConnectedUsers.TryAdd(request.Username, userConnection))
+        private bool TryAddUser(string username, UserConnection userConnection, IChatManagerCallback callback)
+        {
+            if (!ConnectedUsers.TryAdd(username, userConnection))
             {
-                SafeCallbackInvoke(request.Username, () =>
+                SafeCallbackInvoke(username, () =>
                 {
-                    callback.ReceiveSystemNotification(ChatResultCode.Chat_UserAlreadyConnected, "User already connected");
+                    callback.ReceiveSystemNotification(
+                        ChatResultCode.Chat_UserAlreadyConnected,
+                        "User already connected"
+                    );
                 });
-                return;
+                return false;
             }
+            return true;
+        }
 
-            var existingUsersInMatch = ConnectedUsers
-                .Where(u => u.Value.MatchCode == request.MatchCode)
-                .Select(u => u.Key)
-                .ToList();
+        private void NotifySuccessfulConnection(ChatConnectionRequest request)
+        {
+            var existingUsersInMatch = GetUsersInMatch(request.MatchCode);
 
             SafeCallbackInvoke(request.Username, () =>
             {
-                callback.UpdateUserList(existingUsersInMatch);
+                ConnectedUsers[request.Username].Callback.UpdateUserList(existingUsersInMatch);
             });
 
             BroadcastSystemNotificationToMatch(
@@ -111,7 +168,19 @@ namespace ArchsVsDinosServer.BusinessLogic
             );
 
             UpdateUserListForMatch(request.MatchCode);
+
+            loggerHelper.LogInfo(
+                $"[CHAT] User connected: {request.Username} (UserId={request.UserId}, Match={request.MatchCode})");
         }
+
+        private List<string> GetUsersInMatch(string matchCode)
+        {
+            return ConnectedUsers
+                .Where(u => u.Value.MatchCode == matchCode)
+                .Select(u => u.Key)
+                .ToList();
+        }
+
 
         private void UpdateUserListForMatch(string matchCode)
         {
@@ -182,9 +251,22 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             if (!result.CanSendMessage)
             {
-                if (result.ShouldBan)
+                if (result.IsGuest)
                 {
-                    HandleUserBan(username, result.CurrentStrikes, user.Context, user.MatchCode);
+                    NotifyGuestMessageBlocked(username);
+                }
+                else if (result.ShouldBan)
+                {
+                    var banContext = new UserBanContext
+                    {
+                        Username = username,
+                        Strikes = result.CurrentStrikes,
+                        Context = user.Context,
+                        MatchCode = user.MatchCode,
+                        IsGuest = result.IsGuest,
+                        UserId = user.UserId
+                    };
+                    HandleUserBan(banContext);
                 }
                 else
                 {
@@ -197,36 +279,87 @@ namespace ArchsVsDinosServer.BusinessLogic
             BroadcastMessageToMatch(username, message, user.MatchCode);
         }
 
-        private void HandleUserBan(string username, int strikes, int context, string matchCode)
+        private void HandleUserBan(UserBanContext banContext)
         {
-            loggerHelper.LogWarning($"User {username} banned with {strikes} strikes");
-
-            if (ConnectedUsers.TryGetValue(username, out var user))
+            if (banContext.IsGuest)
             {
-                SafeCallbackInvoke(username, () =>
+                loggerHelper.LogWarning($"Guest {banContext.Username} expelled for inappropriate behavior");
+
+                if (ConnectedUsers.TryGetValue(banContext.Username, out var user))
                 {
-                    user.Callback.UserBannedFromChat(username, strikes);
+                    SafeCallbackInvoke(banContext.Username, () =>
+                    {
+                        user.Callback.ReceiveSystemNotification(
+                            ChatResultCode.Chat_UserBanned,
+                            "You have been expelled for inappropriate behavior"
+                        );
+                    });
+                }
+
+                BroadcastSystemNotificationToMatch(
+                    ChatResultCode.Chat_UserBanned,
+                    $"{banContext.Username} has been expelled for inappropriate behavior",
+                    banContext.MatchCode
+                );
+
+                if (banContext.Context == ContextLobby)
+                    lobbyNotifier?.NotifyPlayerExpelled(banContext.MatchCode, banContext.UserId, "Inappropriate language");
+                else
+                    gameNotifier?.NotifyPlayerExpelled(banContext.MatchCode, banContext.UserId, "Inappropriate language");
+
+                ConnectedUsers.TryRemove(banContext.Username, out _);
+                UpdateUserListForMatch(banContext.MatchCode);
+
+                if (banContext.Context == ContextLobby)
+                    CheckMinimumPlayersInLobby(banContext.MatchCode);
+                else
+                    CheckMinimumPlayersInGame(banContext.MatchCode);
+
+                return;
+            }
+
+            loggerHelper.LogWarning($"User {banContext.Username} banned with {banContext.Strikes} strikes");
+
+            if (ConnectedUsers.TryGetValue(banContext.Username, out var registeredUser))
+            {
+                SafeCallbackInvoke(banContext.Username, () =>
+                {
+                    registeredUser.Callback.UserBannedFromChat(banContext.Username, banContext.Strikes);
                 });
             }
 
             BroadcastSystemNotificationToMatch(
                 ChatResultCode.Chat_UserBanned,
-                $"{username} has been expelled for inappropriate behavior",
-                matchCode
+                $"{banContext.Username} has been expelled for inappropriate behavior",
+                banContext.MatchCode
             );
 
-            if (context == ContextLobby)
-                lobbyNotifier?.NotifyPlayerExpelled(matchCode, user.UserId, "Inappropriate language");
+            if (banContext.Context == ContextLobby)
+                lobbyNotifier?.NotifyPlayerExpelled(banContext.MatchCode, registeredUser.UserId, "Inappropriate language");
             else
-                gameNotifier?.NotifyPlayerExpelled(matchCode, user.UserId, "Inappropriate language");
+                gameNotifier?.NotifyPlayerExpelled(banContext.MatchCode, registeredUser.UserId, "Inappropriate language");
 
-            ConnectedUsers.TryRemove(username, out _);
-            UpdateUserList();
+            ConnectedUsers.TryRemove(banContext.Username, out _);
+            UpdateUserListForMatch(banContext.MatchCode);
 
-            if (context == ContextLobby)
-                CheckMinimumPlayersInLobby(matchCode);
+            if (banContext.Context == ContextLobby)
+                CheckMinimumPlayersInLobby(banContext.MatchCode);
             else
-                CheckMinimumPlayersInGame(matchCode);
+                CheckMinimumPlayersInGame(banContext.MatchCode);
+        }
+
+        private void NotifyGuestMessageBlocked(string username)
+        {
+            if (ConnectedUsers.TryGetValue(username, out var userConnection))
+            {
+                SafeCallbackInvoke(username, () =>
+                {
+                    userConnection.Callback.ReceiveSystemNotification(
+                        ChatResultCode.Chat_MessageBlocked,
+                        "Your message contains inappropriate content and cannot be sent."
+                    );
+                });
+            }
         }
 
         private void CheckMinimumPlayersInLobby(string lobbyCode)

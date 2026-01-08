@@ -192,6 +192,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
 
         }
+        //
 
         private void OnConnectionLost()
         {
@@ -1487,6 +1488,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
+        /// <summary>
+        /// ////////////////////////////
+        /// </summary>
         private void ForceExitToMainWindow()
         {
             try

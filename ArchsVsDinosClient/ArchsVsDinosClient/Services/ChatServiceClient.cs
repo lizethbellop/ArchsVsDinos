@@ -80,7 +80,7 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        public async Task ConnectAsync(string username, int contextType = 0, string matchCode = null)
+        public async Task ConnectAsync(string username, int userId, int contextType = 0, string matchCode = null)
         {
             await guardian.ExecuteAsync(() =>
             {
@@ -89,6 +89,7 @@ namespace ArchsVsDinosClient.Services
                 var request = new ChatConnectionRequest
                 {
                     Username = username,
+                    UserId = userId,
                     Context = contextType,   
                     MatchCode = matchCode
                 };

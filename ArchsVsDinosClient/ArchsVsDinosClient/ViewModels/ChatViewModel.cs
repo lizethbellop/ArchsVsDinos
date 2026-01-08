@@ -23,6 +23,21 @@ namespace ArchsVsDinosClient.ViewModels
         private bool isConnected;
         private bool isBusy;
         private bool isDisposed;
+        private int currentUserId;
+        private bool isGuest;
+
+        public bool IsGuest
+        {
+            get => isGuest;
+            private set
+            {
+                if (isGuest != value)
+                {
+                    isGuest = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public ObservableCollection<string> Messages { get; }
         public ObservableCollection<string> OnlineUsers { get; }
@@ -93,7 +108,7 @@ namespace ArchsVsDinosClient.ViewModels
 
         public ChatViewModel() : this(new ChatServiceClient()) { }
 
-        public async Task ConnectAsync(string username, int context = 0, string matchCode = null)
+        public async Task ConnectAsync(string username, int userId, int context = 0, string matchCode = null)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -103,8 +118,15 @@ namespace ArchsVsDinosClient.ViewModels
 
             IsBusy = true;
             currentUsername = username;
+            currentUserId = userId;
+            IsGuest = userId < 0; 
 
-            await chatService.ConnectAsync(username, context, matchCode);
+            if (IsGuest)
+            {
+                AddSystemMessage("ℹ️ Connected like guest - limited functionality");
+            }
+
+            await chatService.ConnectAsync(username, userId, context, matchCode);
             IsConnected = true;
             IsBusy = false;
         }
@@ -141,7 +163,7 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 if (username == currentUsername)
                 {
-                    AddSystemMessage($"⚠️ Has sido expulsado del chat ({strikes} strikes)");
+                    AddSystemMessage($"🚫 Has sido baneado permanentemente ({strikes} strikes)");
                     IsConnected = false;
 
                     Task.Delay(2000).ContinueWith(_ =>
@@ -149,15 +171,15 @@ namespace ArchsVsDinosClient.ViewModels
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             RequestWindowClose?.Invoke(
-                                "Expulsado del chat",
-                                "Has sido expulsado por comportamiento inapropiado."
+                                "Baneado del chat",
+                                $"Has sido baneado permanentemente por acumular {strikes} strikes."
                             );
                         });
                     });
                 }
                 else
                 {
-                    AddSystemMessage($"⚠️ {username} fue expulsado del chat");
+                    AddSystemMessage($"🚫 {username} fue baneado permanentemente");
                 }
             });
         }
@@ -220,9 +242,45 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                AddSystemMessage($"[{code}] {notification}");
+                string icon = GetIconForCode(code);
+                AddSystemMessage($"{icon} {notification}");
+
+                if (code == ChatResultCode.Chat_UserBanned && notification.Contains("You have been expelled"))
+                {
+                    IsConnected = false;
+                    Task.Delay(2000).ContinueWith(_ =>
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            RequestWindowClose?.Invoke(
+                                "Expulsado del chat",
+                                "Has sido expulsado por comportamiento inapropiado."
+                            );
+                        });
+                    });
+                }
             });
         }
+
+        private string GetIconForCode(ChatResultCode code)
+        {
+            switch (code)
+            {
+                case ChatResultCode.Chat_UserConnected:
+                    return "✅";
+                case ChatResultCode.Chat_UserDisconnected:
+                    return "👋";
+                case ChatResultCode.Chat_UserBanned:
+                    return "🚫";
+                case ChatResultCode.Chat_MessageBlocked:
+                    return "⛔";
+                case ChatResultCode.Chat_UserAlreadyConnected:
+                    return "⚠️";
+                default:
+                    return "ℹ️";
+            }
+        }
+
 
         private void OnUserListUpdated(List<string> users)
         {

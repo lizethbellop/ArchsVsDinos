@@ -8,22 +8,24 @@ using System.Threading.Tasks;
 namespace Contracts.DTO
 {
     [DataContract]
-    public class ModerationResult
+    public class UserBanContext
     {
         [DataMember]
-        public bool CanSendMessage { get; set; }
+        public string Username { get; set; }
 
         [DataMember]
-        public bool ShouldBan { get; set; }
+        public int Strikes { get; set; }
 
         [DataMember]
-        public int CurrentStrikes { get; set; }
+        public int Context { get; set; }
 
         [DataMember]
-        public string Reason { get; set; }
+        public string MatchCode { get; set; }
 
         [DataMember]
         public bool IsGuest { get; set; }
-    }
 
+        [DataMember]
+        public int UserId { get; set; }
+    }
 }

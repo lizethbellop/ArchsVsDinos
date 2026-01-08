@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\BanResult.cs" />
     <Compile Include="DTO\ChatConnectionRequest.cs" />
     <Compile Include="DTO\ChatContext.cs" />
     <Compile Include="DTO\ConfigurationDTO.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="DTO\Statistics\PlayerMatchStatsDTO.cs" />
     <Compile Include="DTO\Statistics\PlayerStatisticsDTO.cs" />
     <Compile Include="DTO\UserAccountDTO.cs" />
+    <Compile Include="DTO\UserBanContext.cs" />
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\ValiUserNickResultDTO.cs" />
     <Compile Include="DTO\VerificationCode.cs" />

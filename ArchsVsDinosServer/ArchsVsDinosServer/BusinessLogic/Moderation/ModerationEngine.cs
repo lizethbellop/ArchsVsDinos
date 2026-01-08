@@ -29,14 +29,30 @@ namespace ArchsVsDinosServer.BusinessLogic.Moderation
                 request.Message
             );
 
+            string reason = "";
+            if (!strikeResult.CanSendMessage)
+            {
+                if (strikeResult.IsGuest)
+                {
+                    reason = "Message blocked due to inappropriate content";
+                }
+                else if (strikeResult.ShouldBan)
+                {
+                    reason = "User expelled due to repeated inappropriate messages";
+                }
+                else
+                {
+                    reason = $"Warning {strikeResult.CurrentStrikes}/3";
+                }
+            }
+
             return new ModerationResult
             {
                 CanSendMessage = strikeResult.CanSendMessage,
                 ShouldBan = strikeResult.ShouldBan,
                 CurrentStrikes = strikeResult.CurrentStrikes,
-                Reason = strikeResult.ShouldBan
-                    ? "User expelled due to repeated inappropriate messages"
-                    : $"Warning {strikeResult.CurrentStrikes}/3"
+                IsGuest = strikeResult.IsGuest,
+                Reason = reason
             };
         }
     }

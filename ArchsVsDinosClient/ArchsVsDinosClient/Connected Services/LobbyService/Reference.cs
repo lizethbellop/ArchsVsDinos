@@ -336,6 +336,9 @@ namespace ArchsVsDinosClient.LobbyService {
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool SuccessField;
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private int UserIdField;
+        
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
             get {
@@ -381,6 +384,19 @@ namespace ArchsVsDinosClient.LobbyService {
                 if ((this.SuccessField.Equals(value) != true)) {
                     this.SuccessField = value;
                     this.RaisePropertyChanged("Success");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public int UserId {
+            get {
+                return this.UserIdField;
+            }
+            set {
+                if ((this.UserIdField.Equals(value) != true)) {
+                    this.UserIdField = value;
+                    this.RaisePropertyChanged("UserId");
                 }
             }
         }
