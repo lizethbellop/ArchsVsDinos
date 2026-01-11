@@ -13,11 +13,19 @@ namespace ArchsVsDinosClient.Views
         private bool isReadyToClose = false;
         protected Func<Task> ExtraCleanupAction { get; set; }
 
-        public bool IsNavigating { get; set; } = false; 
+        public bool IsNavigating { get; set; } = false;
+
+        public bool ForceLogoutOnClose { get; set; } = false;
 
         protected override async void OnClosing(CancelEventArgs e)
         {
-            if (IsNavigating || isReadyToClose || UserSession.Instance.IsGuest || UserSession.Instance.CurrentUser == null)
+            if (isReadyToClose || UserSession.Instance.IsGuest || UserSession.Instance.CurrentUser == null)
+            {
+                base.OnClosing(e);
+                return;
+            }
+
+            if (IsNavigating && !ForceLogoutOnClose)
             {
                 base.OnClosing(e);
                 return;
@@ -43,17 +51,14 @@ namespace ArchsVsDinosClient.Views
                     }
                 }
             }
-            catch (Exception ex) 
-            { 
-                System.Diagnostics.Debug.WriteLine(ex.Message); 
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
             }
             finally
             {
-                if (!IsNavigating)
-                {
-                    UserSession.Instance.Logout();
-                    MusicPlayer.Instance.StopBackgroundMusic();
-                }
+                UserSession.Instance.Logout();
+                MusicPlayer.Instance.StopBackgroundMusic();
 
                 isReadyToClose = true;
 

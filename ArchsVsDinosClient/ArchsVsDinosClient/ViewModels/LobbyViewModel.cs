@@ -365,10 +365,14 @@ namespace ArchsVsDinosClient.ViewModels
                     if (UserSession.Instance.GetPlayerId() == 0 && meInList.IdPlayer != 0)
                     {
                         if (UserSession.Instance.CurrentUser != null)
+                        {
                             UserSession.Instance.CurrentUser.IdUser = meInList.IdPlayer;
+                        }
 
                         if (UserSession.Instance.CurrentPlayer != null)
+                        {
                             UserSession.Instance.CurrentPlayer.IdPlayer = meInList.IdPlayer;
+                        }
                     }
                 }
 
@@ -387,7 +391,10 @@ namespace ArchsVsDinosClient.ViewModels
 
                 for (int i = 0; i < 4; i++)
                 {
-                    if (i >= Slots.Count) Slots.Add(new SlotLobby());
+                    if (i >= Slots.Count)
+                    {
+                        Slots.Add(new SlotLobby());
+                    }
 
                     if (i < orderedPlayers.Count)
                     {
@@ -411,7 +418,10 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void UpdateSlot(int index, DTO.LobbyPlayerDTO player)
         {
-            if (index < 0 || index >= Slots.Count) return;
+            if (index < 0 || index >= Slots.Count)
+            {
+                return;
+            }
 
             SlotLobby currentSlot = Slots[index];
             string currentNickname = UserSession.Instance.GetNickname();
@@ -434,13 +444,13 @@ namespace ArchsVsDinosClient.ViewModels
                 isFriend = currentFriendsList.Contains(officialUsername);
             }
 
-            currentSlot.Username = officialUsername; 
-            currentSlot.Nickname = player.Nickname; 
+            currentSlot.Username = officialUsername;
+            currentSlot.Nickname = player.Nickname;
             currentSlot.IsReady = player.IsReady;
             currentSlot.IsLocalPlayer = isMe;
             currentSlot.CanKick = this.isHost && !isMe;
             currentSlot.IsGuest = player.IdPlayer <= 0;
-            currentSlot.IsFriend = isFriend; 
+            currentSlot.IsFriend = isFriend;
             currentSlot.ProfilePicture = player.ProfilePicture;
             currentSlot.LocalUserIsGuest = UserSession.Instance.GetPlayerId() <= 0;
             currentSlot.IdPlayer = player.IdPlayer;
@@ -449,6 +459,39 @@ namespace ArchsVsDinosClient.ViewModels
         public void StartTheGame(string matchCode, string username)
         {
             lobbyServiceClient.StartGame(matchCode);
+        }
+
+
+        public async Task CleanupBeforeClosingAsync()
+        {
+            try
+            {
+                CancelReconnectionAndExit();
+
+                if (lobbyServiceClient is LobbyServiceClient serviceClient)
+                {
+                    serviceClient.StopConnectionMonitoring();
+
+                    await serviceClient.LeaveLobbyAsync();
+                }
+                else
+                {
+                    lobbyServiceClient.LeaveLobby(UserSession.Instance.GetNickname());
+                }
+
+                if (Chat != null && Chat.IsConnected)
+                {
+                    await Chat.DisconnectAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY VM] CleanupBeforeClosingAsync error: {ex.Message}");
+            }
+            finally
+            {
+                Cleanup();
+            }
         }
 
         public void LeaveOfTheLobby(string nickname)
@@ -505,8 +548,20 @@ namespace ArchsVsDinosClient.ViewModels
 
         public event Action NavigateToGame;
 
-        private void OnGameStarted(string matchCode)
+        private async void OnGameStarted(string matchCode)
         {
+            try
+            {
+                if (Chat != null && Chat.IsConnected)
+                {
+                    await Chat.DisconnectAsync();
+                    Debug.WriteLine("[LOBBY VM] Chat disconnected before navigating to match");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY VM] Error disconnecting chat before match: {ex.Message}");
+            }
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Debug.WriteLine("[LOBBY VM] Game starting - navigating to game");
@@ -1040,7 +1095,7 @@ namespace ArchsVsDinosClient.ViewModels
                 });
 
                 await Task.Delay(1000);
-                
+
             }
         }
 

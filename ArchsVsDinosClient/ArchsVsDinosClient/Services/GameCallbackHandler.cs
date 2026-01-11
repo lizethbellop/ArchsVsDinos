@@ -1,13 +1,16 @@
 ﻿using ArchsVsDinosClient.GameService;
 using ArchsVsDinosClient.Utils;
 using System;
+using System.Diagnostics;
 using System.ServiceModel;
 
 namespace ArchsVsDinosClient.Services
 {
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant, UseSynchronizationContext = false)]
-    public class GameCallbackHandler : IGameManagerCallback
+    public sealed class GameCallbackHandler : IGameManagerCallback
     {
+        private const string CallbackLogPrefix = "[GAME CALLBACK]";
+
         private GameConnectionTimer connectionTimer;
 
         public event Action<GameInitializedDTO> OnGameInitializedEvent;
@@ -23,84 +26,115 @@ namespace ArchsVsDinosClient.Services
         public event Action<PlayerExpelledDTO> OnPlayerExpelledEvent;
         public event Action<CardTakenFromDiscardDTO> OnCardTakenFromDiscardEvent;
 
-        /// <summary>
-        /// Establece el timer que se reseteará en cada callback del servidor
-        /// </summary>
         public void SetConnectionTimer(GameConnectionTimer timer)
         {
-            this.connectionTimer = timer;
+            connectionTimer = timer;
+            MarkActivity();
         }
 
         public void OnGameInitialized(GameInitializedDTO data)
         {
-            connectionTimer?.Reset();
-            OnGameInitializedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnGameInitializedEvent?.Invoke(data), nameof(OnGameInitialized));
         }
 
         public void OnGameStarted(GameStartedDTO data)
         {
-            connectionTimer?.Reset();
-            OnGameStartedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnGameStartedEvent?.Invoke(data), nameof(OnGameStarted));
         }
 
         public void OnTurnChanged(TurnChangedDTO data)
         {
-            connectionTimer?.Reset();
-            OnTurnChangedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnTurnChangedEvent?.Invoke(data), nameof(OnTurnChanged));
         }
 
         public void OnCardDrawn(CardDrawnDTO data)
         {
-            connectionTimer?.Reset();
-            OnCardDrawnEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnCardDrawnEvent?.Invoke(data), nameof(OnCardDrawn));
         }
 
         public void OnDinoHeadPlayed(DinoPlayedDTO data)
         {
-            connectionTimer?.Reset();
-            OnDinoPlayedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnDinoPlayedEvent?.Invoke(data), nameof(OnDinoHeadPlayed));
         }
 
         public void OnBodyPartAttached(BodyPartAttachedDTO data)
         {
-            connectionTimer?.Reset();
-            OnBodyPartAttachedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnBodyPartAttachedEvent?.Invoke(data), nameof(OnBodyPartAttached));
         }
 
         public void OnArchAddedToBoard(ArchAddedToBoardDTO data)
         {
-            connectionTimer?.Reset();
-            OnArchAddedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnArchAddedEvent?.Invoke(data), nameof(OnArchAddedToBoard));
         }
 
         public void OnArchArmyProvoked(ArchArmyProvokedDTO data)
         {
-            connectionTimer?.Reset();
-            OnArchProvokedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnArchProvokedEvent?.Invoke(data), nameof(OnArchArmyProvoked));
         }
 
         public void OnBattleResolved(BattleResultDTO data)
         {
-            connectionTimer?.Reset();
-            OnBattleResolvedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnBattleResolvedEvent?.Invoke(data), nameof(OnBattleResolved));
         }
 
         public void OnGameEnded(GameEndedDTO data)
         {
-            connectionTimer?.Reset();
-            OnGameEndedEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnGameEndedEvent?.Invoke(data), nameof(OnGameEnded));
         }
 
         public void OnPlayerExpelled(PlayerExpelledDTO dto)
         {
-            connectionTimer?.Reset();
-            OnPlayerExpelledEvent?.Invoke(dto);
+            MarkActivity();
+            SafeInvoke(() => OnPlayerExpelledEvent?.Invoke(dto), nameof(OnPlayerExpelled));
         }
 
         public void OnCardTakenFromDiscard(CardTakenFromDiscardDTO data)
         {
-            connectionTimer?.Reset();
-            OnCardTakenFromDiscardEvent?.Invoke(data);
+            MarkActivity();
+            SafeInvoke(() => OnCardTakenFromDiscardEvent?.Invoke(data), nameof(OnCardTakenFromDiscard));
+        }
+
+        private void MarkActivity()
+        {
+            connectionTimer?.NotifyActivity();
+        }
+
+        private void SafeInvoke(Action action, string methodName)
+        {
+            try
+            {
+                action?.Invoke();
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"{CallbackLogPrefix} CommunicationException in {methodName}: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"{CallbackLogPrefix} TimeoutException in {methodName}: {ex.Message}");
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine($"{CallbackLogPrefix} ObjectDisposedException in {methodName}: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine($"{CallbackLogPrefix} InvalidOperationException in {methodName}: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"{CallbackLogPrefix} Unexpected exception in {methodName}: {ex.Message}");
+            }
         }
     }
 }

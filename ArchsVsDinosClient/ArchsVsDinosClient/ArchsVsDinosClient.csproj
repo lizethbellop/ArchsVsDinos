@@ -175,6 +175,7 @@
     <Compile Include="Utils\ImageCompressor.cs" />
     <Compile Include="Utils\LoadingDisplayHelper.cs" />
     <Compile Include="Utils\LobbyResultCodeHelper.cs" />
+    <Compile Include="Utils\LocalizationManager.cs" />
     <Compile Include="Utils\LoginResultCodeHelper.cs" />
     <Compile Include="Utils\MappingHelper.cs" />
     <Compile Include="Utils\MusicPlayer.cs" />

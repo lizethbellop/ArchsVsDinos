@@ -1,66 +1,91 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace ArchsVsDinosClient.Utils
 {
-    public class GameConnectionTimer : IDisposable
+    public sealed class GameConnectionTimer : IDisposable
     {
-        private readonly DispatcherTimer timer;
+        private const int TickIntervalSeconds = 1;
+
+        private readonly DispatcherTimer dispatcherTimer;
         private readonly Action onTimeout;
-        private bool hasExpired = false;
+        private readonly TimeSpan timeout;
+
+        private DateTime lastActivityUtc;
+        private bool isExpired;
 
         public GameConnectionTimer(int timeoutSeconds, Action onTimeout)
         {
-            this.onTimeout = onTimeout;
-
-            timer = new DispatcherTimer
+            if (timeoutSeconds <= 0)
             {
-                Interval = TimeSpan.FromSeconds(timeoutSeconds)
+                throw new ArgumentOutOfRangeException(nameof(timeoutSeconds));
+            }
+
+            this.onTimeout = onTimeout ?? throw new ArgumentNullException(nameof(onTimeout));
+            timeout = TimeSpan.FromSeconds(timeoutSeconds);
+
+            lastActivityUtc = DateTime.UtcNow;
+
+            dispatcherTimer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromSeconds(TickIntervalSeconds)
             };
 
-            timer.Tick += OnTimerExpired;
+            dispatcherTimer.Tick += OnTick;
         }
 
         public void Start()
         {
-            hasExpired = false;
-            timer.Start();
-        }
-
-        public void Reset()
-        {
-            if (!hasExpired)
-            {
-                timer.Stop();
-                timer.Start();
-            }
+            isExpired = false;
+            lastActivityUtc = DateTime.UtcNow;
+            dispatcherTimer.Start();
         }
 
         public void Stop()
         {
-            timer.Stop();
+            dispatcherTimer.Stop();
         }
 
-        private void OnTimerExpired(object sender, EventArgs e)
+        public void Reset()
         {
-            if (hasExpired) return;
+            NotifyActivity();
+        }
 
-            hasExpired = true;
-            timer.Stop();
+        public void NotifyActivity()
+        {
+            if (isExpired)
+            {
+                return;
+            }
 
-            System.Diagnostics.Debug.WriteLine("[CONNECTION TIMER] ⚠️ No server response - timeout expired");
+            lastActivityUtc = DateTime.UtcNow;
+        }
 
-            onTimeout?.Invoke();
+        private void OnTick(object sender, EventArgs e)
+        {
+            if (isExpired)
+            {
+                return;
+            }
+
+            TimeSpan elapsed = DateTime.UtcNow - lastActivityUtc;
+            if (elapsed < timeout)
+            {
+                return;
+            }
+
+            isExpired = true;
+            dispatcherTimer.Stop();
+
+            System.Diagnostics.Debug.WriteLine("[CONNECTION TIMER] Timeout expired - no server activity.");
+
+            onTimeout.Invoke();
         }
 
         public void Dispose()
         {
-            timer.Stop();
-            timer.Tick -= OnTimerExpired;
+            dispatcherTimer.Stop();
+            dispatcherTimer.Tick -= OnTick;
         }
     }
 }

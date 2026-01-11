@@ -7,6 +7,7 @@ using ArchsVsDinosClient.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,15 @@ namespace ArchsVsDinosClient.Services
 {
     public class LobbyServiceClient : ILobbyServiceClient
     {
+        private const int DefaultMaxPlayers = 4;
+        private const int MinimumTimeoutSeconds = 30;
+        private const int MaxConsecutiveTimeouts = 3;
+
+        private readonly SynchronizationContext uiContext;
+        private readonly SemaphoreSlim reconnectSemaphore;
+
+        private int consecutiveTimeoutCount;
+
         private LobbyManagerClient lobbyManagerClient;
         private readonly LobbyCallbackManager lobbyCallbackManager;
         private readonly WcfConnectionGuardian connectionGuardian;
@@ -34,35 +44,37 @@ namespace ArchsVsDinosClient.Services
 
         public LobbyServiceClient()
         {
-            var synchronizationContext = SynchronizationContext.Current;
+            uiContext = SynchronizationContext.Current;
+            reconnectSemaphore = new SemaphoreSlim(1, 1);
+            consecutiveTimeoutCount = 0;
+
             lobbyCallbackManager = new LobbyCallbackManager();
 
-            lobbyCallbackManager.OnJoinedLobby += (playerDto) => PlayerJoined?.Invoke(playerDto);
-            lobbyCallbackManager.OnPlayerLeftLobby += (playerDto) => PlayerLeft?.Invoke(playerDto);
-            lobbyCallbackManager.OnPlayerListUpdated += (playerList) => PlayerListUpdated?.Invoke(playerList);
+            lobbyCallbackManager.OnJoinedLobby += playerDto => PlayerJoined?.Invoke(playerDto);
+            lobbyCallbackManager.OnPlayerLeftLobby += playerDto => PlayerLeft?.Invoke(playerDto);
+            lobbyCallbackManager.OnPlayerListUpdated += playerList => PlayerListUpdated?.Invoke(playerList);
             lobbyCallbackManager.OnPlayerReady += (nickname, isReady) => PlayerReadyEvent?.Invoke(nickname, isReady);
-            lobbyCallbackManager.OnGameStart += () => GameStartedEvent?.Invoke("");
-            lobbyCallbackManager.OnLobbyInvitationReceived += (invitation) => LobbyInvitationReceived?.Invoke(invitation);
+            lobbyCallbackManager.OnGameStart += () => GameStartedEvent?.Invoke(string.Empty);
+            lobbyCallbackManager.OnLobbyInvitationReceived += invitation => LobbyInvitationReceived?.Invoke(invitation);
 
-            lobbyCallbackManager.OnPlayerKicked += (nickname, reason) =>
-            {
-                if (PlayerKickedEvent != null) PlayerKickedEvent(nickname, reason);
-            };
+            lobbyCallbackManager.OnPlayerKicked += (nickname, reason) => PlayerKickedEvent?.Invoke(nickname, reason);
 
             var instanceContext = new InstanceContext(lobbyCallbackManager);
-            if (synchronizationContext != null)
+            if (uiContext != null)
             {
-                instanceContext.SynchronizationContext = synchronizationContext;
+                instanceContext.SynchronizationContext = uiContext;
             }
 
             lobbyManagerClient = new LobbyManagerClient(instanceContext);
 
             connectionGuardian = new WcfConnectionGuardian(
-                onError: (title, message) => ConnectionError?.Invoke(title, message),
+                onError: (title, message) => RaiseConnectionError(title, message),
                 logger: new Logger()
             );
+
             connectionGuardian.MonitorClientState(lobbyManagerClient);
         }
+
 
         public async Task<MatchCreationResultCode> CreateLobbyAsync(ArchsVsDinosClient.DTO.UserAccountDTO userAccount)
         {
@@ -70,7 +82,7 @@ namespace ArchsVsDinosClient.Services
             {
                 HostNickname = UserSession.Instance.CurrentUser.Nickname,
                 HostUsername = UserSession.Instance.CurrentUser.Username,
-                MaxPlayers = 4,
+                MaxPlayers = DefaultMaxPlayers,
                 HostUserId = UserSession.Instance.CurrentUser.IdUser
             };
 
@@ -79,8 +91,7 @@ namespace ArchsVsDinosClient.Services
                 EnsureClientIsUsable();
 
                 var response = await connectionGuardian.ExecuteWithThrowAsync(() =>
-                    Task.FromResult(lobbyManagerClient.CreateLobby(matchSettings))
-                );
+                    Task.FromResult(lobbyManagerClient.CreateLobby(matchSettings)));
 
                 if (response.Success)
                 {
@@ -90,46 +101,46 @@ namespace ArchsVsDinosClient.Services
 
                 return response.ResultCode;
             }
-            catch (EndpointNotFoundException endpointEx)
+            catch (EndpointNotFoundException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerNotFound);
-                Debug.WriteLine($"[LOBBY CLIENT] EndpointNotFoundException: {endpointEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerNotFound);
+                Debug.WriteLine($"[LOBBY CLIENT] EndpointNotFoundException: {ex.Message}");
                 return MatchCreationResultCode.MatchCreation_ServerBusy;
             }
-            catch (FaultException faultEx)
+            catch (FaultException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
-                Debug.WriteLine($"[LOBBY CLIENT] FaultException: {faultEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerError);
+                Debug.WriteLine($"[LOBBY CLIENT] FaultException: {ex.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
-            catch (CommunicationException commEx)
+            catch (CommunicationException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerUnavailable);
-                Debug.WriteLine($"[LOBBY CLIENT] CommunicationException: {commEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerUnavailable);
+                Debug.WriteLine($"[LOBBY CLIENT] CommunicationException: {ex.Message}");
                 return MatchCreationResultCode.MatchCreation_Failure;
             }
-            catch (TimeoutException timeoutEx)
+            catch (TimeoutException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerTimeout);
-                Debug.WriteLine($"[LOBBY CLIENT] TimeoutException: {timeoutEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerTimeout);
+                Debug.WriteLine($"[LOBBY CLIENT] TimeoutException: {ex.Message}");
                 return MatchCreationResultCode.MatchCreation_Timeout;
             }
-            catch (ObjectDisposedException objEx)
+            catch (ObjectDisposedException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
-                Debug.WriteLine($"[LOBBY CLIENT] ObjectDisposedException: {objEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerError);
+                Debug.WriteLine($"[LOBBY CLIENT] ObjectDisposedException: {ex.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
-            catch (InvalidOperationException invEx)
+            catch (InvalidOperationException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
-                Debug.WriteLine($"[LOBBY CLIENT] InvalidOperationException: {invEx.Message}");
+                RaiseConnectionError(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
+                Debug.WriteLine($"[LOBBY CLIENT] InvalidOperationException: {ex.Message}");
                 return MatchCreationResultCode.MatchCreation_UnexpectedError;
             }
         }
@@ -139,6 +150,7 @@ namespace ArchsVsDinosClient.Services
             try
             {
                 EnsureClientIsUsable();
+
                 var request = new ArchsVsDinosClient.LobbyService.JoinLobbyRequest
                 {
                     LobbyCode = matchCode,
@@ -147,71 +159,64 @@ namespace ArchsVsDinosClient.Services
                     Username = userAccount.Username
                 };
 
-                var matchJoinResponse = await connectionGuardian.ExecuteWithThrowAsync(() =>
+                var response = await connectionGuardian.ExecuteWithThrowAsync(() =>
                     Task.FromResult(lobbyManagerClient.JoinLobby(request)));
 
-                
-                if (matchJoinResponse.ResultCode == JoinMatchResultCode.JoinMatch_Success)
+                if (response.ResultCode == JoinMatchResultCode.JoinMatch_Success && UserSession.Instance.IsGuest)
                 {
-                    if (UserSession.Instance.IsGuest)
-                    {
-                        UserSession.Instance.UpdateUserId(matchJoinResponse.UserId);
-
-                        Debug.WriteLine(
-                            $"[LOBBY CLIENT] Guest assigned UserId: {matchJoinResponse.UserId}"
-                        );
-                    }
+                    UserSession.Instance.UpdateUserId(response.UserId);
+                    Debug.WriteLine($"[LOBBY CLIENT] Guest assigned UserId: {response.UserId}");
                 }
 
-                return matchJoinResponse.ResultCode;
+                return response.ResultCode;
             }
-            catch (EndpointNotFoundException endpointEx)
+            catch (EndpointNotFoundException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerNotFound);
-                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby EndpointNotFoundException: {endpointEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerNotFound);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby EndpointNotFoundException: {ex.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
-            catch (FaultException<string> faultEx)
+            catch (FaultException<string> ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
-                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException<string>: {faultEx.Detail}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerError);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException<string>: {ex.Detail}");
                 return JoinMatchResultCode.JoinMatch_LobbyFull;
             }
-            catch (FaultException faultEx)
+            catch (FaultException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
-                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException: {faultEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerError);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby FaultException: {ex.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
-            catch (CommunicationException commEx)
+            catch (CommunicationException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerUnavailable);
-                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby CommunicationException: {commEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerUnavailable);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby CommunicationException: {ex.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
-            catch (TimeoutException timeoutEx)
+            catch (TimeoutException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerTimeout);
-                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby TimeoutException: {timeoutEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerTimeout);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby TimeoutException: {ex.Message}");
                 return JoinMatchResultCode.JoinMatch_Timeout;
             }
-            catch (ObjectDisposedException objEx)
+            catch (ObjectDisposedException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalSystemError, Lang.GlobalServerError);
-                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby ObjectDisposedException: {objEx.Message}");
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.GlobalServerError);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby ObjectDisposedException: {ex.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
-            catch (InvalidOperationException invEx)
+            catch (InvalidOperationException ex)
             {
                 ResetLobbyClient();
-                ConnectionError?.Invoke(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
-                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby InvalidOperationException: {invEx.Message}");
+                RaiseConnectionError(Lang.GlobalUnexpectedError, Lang.GlobalServerError);
+                Debug.WriteLine($"[LOBBY CLIENT] JoinLobby InvalidOperationException: {ex.Message}");
                 return JoinMatchResultCode.JoinMatch_UnexpectedError;
             }
         }
@@ -224,36 +229,250 @@ namespace ArchsVsDinosClient.Services
             }, operationName: "ConnectToLobby");
         }
 
-
-        public void LeaveLobby(string username)
+        public async Task<bool> TryReconnectToLobbyAsync(string matchCode, string nickname)
         {
-            var currentMatchCode = UserSession.Instance.CurrentMatchCode;
-
-            if (lobbyManagerClient != null)
+            try
             {
-                var state = ((ICommunicationObject)lobbyManagerClient).State;
+                Debug.WriteLine($"[LOBBY CLIENT] Trying to reconnect to lobby {matchCode}...");
 
-                Debug.WriteLine($"[LOBBY CLIENT] LeaveLobby - Estado del cliente: {state}");
+                connectionTimer?.Stop();
+                EnsureClientIsUsable();
 
-                if (state == CommunicationState.Faulted ||
-                    state == CommunicationState.Closed)
+                bool connected = await connectionGuardian.ExecuteAsync(async () =>
                 {
-                    Debug.WriteLine($"[LOBBY CLIENT] ⚠️ No se puede desconectar: conexión en estado {state}");
-                    Debug.WriteLine($"[LOBBY CLIENT] Regenerando proxy...");
-                    ResetLobbyClient();
+                    await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
+                }, operationName: "ReconnectToLobby");
+
+                if (connected)
+                {
+                    connectionTimer?.Start();
+                    connectionTimer?.NotifyActivity();
+                    Debug.WriteLine($"[LOBBY CLIENT] Reconnected to lobby {matchCode}");
+                    return true;
+                }
+
+                Debug.WriteLine("[LOBBY CLIENT] Reconnect failed.");
+                return false;
+            }
+            catch (EndpointNotFoundException ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] Reconnect EndpointNotFoundException: {ex.Message}");
+                return false;
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] Reconnect CommunicationException: {ex.Message}");
+                return false;
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] Reconnect TimeoutException: {ex.Message}");
+                return false;
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] Reconnect ObjectDisposedException: {ex.Message}");
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] Reconnect InvalidOperationException: {ex.Message}");
+                return false;
+            }
+        }
+
+        public void StartConnectionMonitoring(int timeoutSeconds)
+        {
+            int effectiveTimeoutSeconds = timeoutSeconds < MinimumTimeoutSeconds
+                ? MinimumTimeoutSeconds
+                : timeoutSeconds;
+
+            consecutiveTimeoutCount = 0;
+
+            connectionTimer?.Dispose();
+            connectionTimer = new GameConnectionTimer(effectiveTimeoutSeconds, OnConnectionTimeout);
+
+            lobbyCallbackManager.SetConnectionTimer(connectionTimer);
+
+            connectionTimer.Start();
+            connectionTimer.NotifyActivity();
+        }
+
+        public void StopConnectionMonitoring()
+        {
+            connectionTimer?.Stop();
+            Debug.WriteLine("[LOBBY TIMER] Stopped");
+        }
+
+        private void OnConnectionTimeout()
+        {
+            Task ignoredTask = HandleTimeoutAsync();
+        }
+
+        private async Task HandleTimeoutAsync()
+        {
+            bool entered = await reconnectSemaphore.WaitAsync(0);
+            if (!entered)
+            {
+                return;
+            }
+
+            try
+            {
+                consecutiveTimeoutCount++;
+
+                string matchCode = UserSession.Instance.CurrentMatchCode ?? string.Empty;
+                string nickname = UserSession.Instance.CurrentUser?.Nickname ?? string.Empty;
+
+                bool reconnected = await TryReconnectToLobbyAsync(matchCode, nickname);
+                if (reconnected)
+                {
+                    consecutiveTimeoutCount = 0;
                     return;
+                }
+
+                if (consecutiveTimeoutCount >= MaxConsecutiveTimeouts)
+                {
+                    RaiseConnectionLost();
+                }
+            }
+            finally
+            {
+                reconnectSemaphore.Release();
+            }
+        }
+
+        private void EnsureClientIsUsable()
+        {
+            if (lobbyManagerClient == null)
+            {
+                ResetLobbyClient();
+                return;
+            }
+
+            var state = ((ICommunicationObject)lobbyManagerClient).State;
+            if (state == CommunicationState.Faulted || state == CommunicationState.Closed)
+            {
+                ResetLobbyClient();
+            }
+        }
+
+        private void ResetLobbyClient()
+        {
+            if (lobbyManagerClient is ICommunicationObject comm)
+            {
+                try
+                {
+                    if (comm.State == CommunicationState.Faulted)
+                    {
+                        comm.Abort();
+                    }
+                    else
+                    {
+                        comm.Close();
+                    }
+                }
+                catch
+                {
+                    comm.Abort();
                 }
             }
 
-            Task ignoredTask = connectionGuardian.ExecuteAsync(
-                operation: async () =>
-                {
-                    await Task.Run(() => lobbyManagerClient.DisconnectFromLobby(currentMatchCode, username));
-                },
-                operationName: "DisconnectFromLobby",
-                suppressErrors: true
-            );
+            var synchronizationContext = SynchronizationContext.Current;
+            var instanceContext = new InstanceContext(lobbyCallbackManager);
+
+            if (synchronizationContext != null)
+            {
+                instanceContext.SynchronizationContext = synchronizationContext;
+            }
+
+            lobbyManagerClient = new LobbyManagerClient(instanceContext);
+            connectionGuardian.MonitorClientState(lobbyManagerClient);
+
+            if (connectionTimer != null)
+            {
+                lobbyCallbackManager.SetConnectionTimer(connectionTimer);
+            }
         }
+
+        private void RaiseConnectionLost()
+        {
+            if (uiContext != null)
+            {
+                uiContext.Post(_ => ConnectionLost?.Invoke(), null);
+                return;
+            }
+
+            Application.Current?.Dispatcher?.Invoke(() => ConnectionLost?.Invoke());
+        }
+
+        private void RaiseConnectionError(string title, string message)
+        {
+            if (uiContext != null)
+            {
+                uiContext.Post(_ => ConnectionError?.Invoke(title, message), null);
+                return;
+            }
+
+            Application.Current?.Dispatcher?.Invoke(() => ConnectionError?.Invoke(title, message));
+        }
+
+        public Task LeaveLobbyAsync()
+        {
+            string lobbyCode = UserSession.Instance.CurrentMatchCode ?? string.Empty;
+
+            List<string> identifiers = BuildDisconnectIdentifiers();
+            if (string.IsNullOrWhiteSpace(lobbyCode) || identifiers.Count == 0)
+            {
+                return Task.CompletedTask;
+            }
+
+            return LeaveLobbyInternalAsync(lobbyCode, identifiers);
+        }
+
+        private async Task LeaveLobbyInternalAsync(string lobbyCode, List<string> identifiers)
+        {
+            EnsureClientIsUsable();
+
+            foreach (string id in identifiers)
+            {
+                await connectionGuardian.ExecuteAsync(
+                    operation: async () =>
+                    {
+                        await Task.Run(() => lobbyManagerClient.DisconnectFromLobby(lobbyCode, id));
+                    },
+                    operationName: "DisconnectFromLobby",
+                    suppressErrors: true
+                );
+            }
+        }
+
+        private static List<string> BuildDisconnectIdentifiers()
+        {
+            var identifiers = new List<string>();
+
+            string nickname = UserSession.Instance.GetNickname();
+            if (!string.IsNullOrWhiteSpace(nickname))
+            {
+                identifiers.Add(nickname);
+            }
+
+            string username = UserSession.Instance.CurrentUser?.Username;
+            if (!string.IsNullOrWhiteSpace(username) &&
+                !identifiers.Any(x => string.Equals(x, username, StringComparison.OrdinalIgnoreCase)))
+            {
+                identifiers.Add(username);
+            }
+
+            return identifiers;
+        }
+
+
+        public void LeaveLobby(string username)
+        {
+            _ = LeaveLobbyAsync();
+        }
+
 
         public void StartGame(string matchCode)
         {
@@ -377,109 +596,6 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        private void EnsureClientIsUsable()
-        {
-            if (lobbyManagerClient == null)
-            {
-                ResetLobbyClient();
-                return;
-            }
 
-            var state = ((ICommunicationObject)lobbyManagerClient).State;
-
-            if (state == CommunicationState.Faulted ||
-                state == CommunicationState.Closed)
-            {
-                ResetLobbyClient();
-            }
-        }
-
-        private void ResetLobbyClient()
-        {
-            if (lobbyManagerClient is ICommunicationObject comm)
-            {
-                try
-                {
-                    if (comm.State == CommunicationState.Faulted)
-                        comm.Abort();
-                    else
-                        comm.Close();
-                }
-                catch
-                {
-                    comm.Abort();
-                }
-            }
-
-            var synchronizationContext = SynchronizationContext.Current;
-            var instanceContext = new InstanceContext(lobbyCallbackManager);
-
-            if (synchronizationContext != null)
-                instanceContext.SynchronizationContext = synchronizationContext;
-
-            lobbyManagerClient = new LobbyManagerClient(instanceContext);
-            connectionGuardian.MonitorClientState(lobbyManagerClient);
-        }
-
-        public async Task<bool> TryReconnectToLobbyAsync(string matchCode, string nickname)
-        {
-            try
-            {
-                Debug.WriteLine($"[LOBBY CLIENT] Trying to reconnect to the lobby {matchCode}...");
-
-                connectionTimer?.Stop();
-
-                EnsureClientIsUsable();
-
-                bool connected = await connectionGuardian.ExecuteAsync(
-                    async () =>
-                    {
-                        await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
-                    },
-                    operationName: "ReconnectToLobby"
-                );
-
-                if (connected)
-                {
-                    connectionTimer?.Start();
-                    Debug.WriteLine($"[LOBBY CLIENT] Reconnection to the lobby successfully {matchCode}");
-                    return true;
-                }
-                else
-                {
-                    Debug.WriteLine($"[LOBBY CLIENT] Failing connecting to the lobby");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[LOBBY CLIENT] Error in connection {ex.Message}");
-                return false;
-            }
-        }
-
-        public void StartConnectionMonitoring(int timeoutSeconds)
-        {
-            if (connectionTimer != null)
-            {
-                connectionTimer.Dispose();
-            }
-
-            connectionTimer = new GameConnectionTimer(
-                timeoutSeconds,
-                onTimeout: () => ConnectionLost?.Invoke()
-            );
-
-            lobbyCallbackManager.SetConnectionTimer(connectionTimer);
-
-            connectionTimer.Start();
-            System.Diagnostics.Debug.WriteLine($"[LOBBY TIMER] Started with {timeoutSeconds}s timeout");
-        }
-
-        public void StopConnectionMonitoring()
-        {
-            connectionTimer?.Stop();
-            System.Diagnostics.Debug.WriteLine("[LOBBY TIMER] Stopped");
-        }
     }
 }

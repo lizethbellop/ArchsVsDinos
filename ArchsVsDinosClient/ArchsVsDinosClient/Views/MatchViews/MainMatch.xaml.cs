@@ -11,7 +11,9 @@ using ArchsVsDinosClient.Views.MatchViews.MatchSeeDeck;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,16 +29,35 @@ namespace ArchsVsDinosClient.Views.MatchViews
 {
     public partial class MainMatch : BaseSessionWindow
     {
+        private const int ChatContextMatch = 1;
+
+        private const int ErrorNotificationSeconds = 3;
+        private const double ErrorNotificationOpacity = 0.9;
+        private const double ErrorFadeOutSeconds = 0.5;
+
+        private const double DefaultHandCanvasWidth = 800;
+        private const double HandCardWidth = 80;
+        private const double HandCardOverlap = 50;
+        private const double HandMinStartX = 10;
+
+        private readonly int currentUserId;
+
         private readonly ChatViewModel chatViewModel;
         private readonly GameViewModel gameViewModel;
         private readonly string currentUsername;
         private readonly List<LobbyPlayerDTO> playersInMatch;
         private readonly string gameMatchCode;
-        private Dictionary<string, int> playerPositionToUserId = new Dictionary<string, int>();
+
+        private readonly Dictionary<string, int> playerPositionToUserId = new Dictionary<string, int>();
+
         private DispatcherTimer errorNotificationTimer;
         private CardCell lastHoveredCardCell;
+
         private bool isProvokeModeActive = false;
         private bool isHandlingDisconnection = false;
+
+        private bool closeCleanupExecuted = false;
+        private bool isClosingHandled = false;
 
         private int player2UserId = 0;
         private int player3UserId = 0;
@@ -45,9 +66,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
         public MainMatch(List<LobbyPlayerDTO> players, string myUsername, string gameMatchCode, int myLobbyUserId)
         {
             InitializeComponent();
-            this.currentUsername = myUsername;
-            this.playersInMatch = players;
+
+            currentUsername = myUsername;
+            playersInMatch = players;
             this.gameMatchCode = gameMatchCode;
+            currentUserId = myLobbyUserId;
 
             MusicPlayer.Instance.StopBackgroundMusic();
             MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Match);
@@ -57,22 +80,27 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 chatViewModel = new ChatViewModel(new ChatServiceClient());
                 Gr_Chat.DataContext = chatViewModel;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine($"[MATCH] Chat init error: {ex.Message}");
                 MessageBox.Show(Lang.Match_ErrorChatNotAvailable);
             }
 
             try
             {
-                var gameService = new GameServiceClient();
+                IGameServiceClient gameService = new GameServiceClient();
                 gameViewModel = new GameViewModel(gameService, this.gameMatchCode, currentUsername, players, myLobbyUserId);
                 DataContext = gameViewModel;
 
-                gameViewModel.gameServiceClient.ServiceError += OnCriticalServiceError;
-                gameViewModel.gameServiceClient.ConnectionLost += OnConnectionLost; // ← NUEVO
+                if (gameViewModel.gameServiceClient != null)
+                {
+                    gameViewModel.gameServiceClient.ServiceError += OnCriticalServiceError;
+                    gameViewModel.gameServiceClient.ConnectionLost += OnConnectionLost;
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine($"[MATCH] Game init error: {ex.Message}");
                 MessageBox.Show(Lang.GlobalSystemError);
                 Close();
                 return;
@@ -85,88 +113,60 @@ namespace ArchsVsDinosClient.Views.MatchViews
             gameViewModel.PropertyChanged += GameViewModelPropertyChanged;
             Loaded += MatchLoaded;
 
-            this.ExtraCleanupAction = async () =>
+            ExtraCleanupAction = CleanupBeforeCloseAsync;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (IsNavigating || isClosingHandled)
             {
-                if (chatViewModel != null)
-                {
-                    try
-                    {
-                        await chatViewModel.DisconnectAsync();
-                        chatViewModel.Dispose();
-                    }
-                    catch { }
-                }
+                base.OnClosing(e);
+                return;
+            }
 
-                if (gameViewModel != null)
-                {
-                    try
-                    {
-                        System.Diagnostics.Debug.WriteLine("[EXIT] Leaving match...");
-                        await gameViewModel.LeaveGameAsync();
+            e.Cancel = true;
+            isClosingHandled = true;
 
-                        gameViewModel.BoardManager.PlayerHand.CollectionChanged -= PlayerHandCollectionChanged;
-                        gameViewModel.TurnChangedForUI -= UpdateTurnGlow;
-                        gameViewModel.ArchCardPlaced -= ShowArchPlacedAnimation;
-                        gameViewModel.OpponentDinoHeadPlayed -= OnOpponentDinoHeadPlayed;
-                        gameViewModel.OpponentBodyPartAttached -= OnOpponentBodyPartAttached;
-                        gameViewModel.PlayerDinosClearedByElement -= OnPlayerDinosClearedByElement;
-                        gameViewModel.DiscardPileUpdated -= OnDiscardPileUpdated;
-                        gameViewModel.ArchArmyCleared -= OnArchArmyCleared;
-
-                        gameViewModel.Dispose();
-                    }
-                    catch { }
-                }
-            };
-
-            this.ExtraCleanupAction = async () =>
+            Dispatcher.BeginInvoke(new Action(async () =>
             {
-                if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+                try
                 {
-                    serviceClient.StopConnectionMonitoring();
-                }
+                    Func<Task> cleanup = ExtraCleanupAction;
+                    ExtraCleanupAction = null;
 
-                if (gameViewModel != null)
-                {
-                    await gameViewModel.CleanupBeforeClosingAsync();
+                    if (cleanup != null)
+                    {
+                        await cleanup();
+                    }
+                    else
+                    {
+                        await CleanupBeforeCloseAsync();
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[MATCH] OnClosing cleanup error: {ex.Message}");
+                }
+                finally
+                {
+                    ForceLogoutOnClose = true;
+                    IsNavigating = true;
+                    Close();
+                }
+            }));
 
-                if (chatViewModel != null)
-                {
-                    try { await chatViewModel.DisconnectAsync(); } catch { }
-                }
-            };
+            base.OnClosing(e);
         }
 
         private async void MatchLoaded(object sender, RoutedEventArgs e)
         {
-            if (chatViewModel != null)
-            {
-                try
-                {
-                    await chatViewModel.ConnectAsync(currentUsername, context: 0, matchCode: gameMatchCode);
-                }
-                catch
-                {
-
-                }
-            }
+            await ConnectChatSafelyAsync();
 
             if (gameViewModel != null)
             {
-                gameViewModel.BoardManager.PlayerHand.CollectionChanged += PlayerHandCollectionChanged;
-                gameViewModel.TurnChangedForUI += UpdateTurnGlow;
-                gameViewModel.ArchCardPlaced += ShowArchPlacedAnimation;
-                gameViewModel.OpponentDinoHeadPlayed += OnOpponentDinoHeadPlayed;
-                gameViewModel.OpponentBodyPartAttached += OnOpponentBodyPartAttached;
-                gameViewModel.PlayerDinosClearedByElement += OnPlayerDinosClearedByElement;
-                gameViewModel.DiscardPileUpdated += OnDiscardPileUpdated;
-                gameViewModel.ArchArmyCleared += OnArchArmyCleared;
-                MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
-                gameViewModel.GameEnded += OnGameEndedReceived;
-                gameViewModel.PlayerLeftMatch += OnPlayerLeftMatchReceived;
+                HookGameViewModelEvents();
 
-                await gameViewModel.ConnectToGameAsync();
+                await ConnectGameSafelyAsync();
 
                 if (gameViewModel.gameServiceClient is GameServiceClient serviceClient)
                 {
@@ -175,38 +175,262 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
                 await Application.Current.Dispatcher.InvokeAsync(() => UpdatePlayerHandVisual(), DispatcherPriority.Loaded);
             }
+        }
 
-            if (chatViewModel != null)
+        private async Task ConnectChatSafelyAsync()
+        {
+            if (chatViewModel == null)
             {
-                try
-                {
-                    await Task.Delay(1000);
-
-                    await chatViewModel.ConnectAsync(currentUsername, context: 0, matchCode: gameMatchCode);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error conecting chat in match: {ex.Message}");
-                }
+                return;
             }
 
-
+            try
+            {
+                await chatViewModel.ConnectAsync(
+                    username: currentUsername,
+                    userId: currentUserId,
+                    context: ChatContextMatch,
+                    matchCode: gameMatchCode
+                );
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[MATCH] Chat connect CommunicationException: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[MATCH] Chat connect TimeoutException: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Chat connect Exception: {ex.Message}");
+            }
         }
-        //
+
+        private async Task ConnectGameSafelyAsync()
+        {
+            try
+            {
+                await gameViewModel.ConnectToGameAsync();
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[MATCH] ConnectToGame CommunicationException: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[MATCH] ConnectToGame TimeoutException: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] ConnectToGame Exception: {ex.Message}");
+            }
+        }
+
+        private void HookGameViewModelEvents()
+        {
+            gameViewModel.BoardManager.PlayerHand.CollectionChanged += PlayerHandCollectionChanged;
+            gameViewModel.TurnChangedForUI += UpdateTurnGlow;
+            gameViewModel.ArchCardPlaced += ShowArchPlacedAnimation;
+            gameViewModel.OpponentDinoHeadPlayed += OnOpponentDinoHeadPlayed;
+            gameViewModel.OpponentBodyPartAttached += OnOpponentBodyPartAttached;
+            gameViewModel.PlayerDinosClearedByElement += OnPlayerDinosClearedByElement;
+            gameViewModel.DiscardPileUpdated += OnDiscardPileUpdated;
+            gameViewModel.ArchArmyCleared += OnArchArmyCleared;
+
+            MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
+
+            gameViewModel.GameEnded += OnGameEndedReceived;
+            gameViewModel.PlayerLeftMatch += OnPlayerLeftMatchReceived;
+        }
+
+        private void UnhookGameViewModelEvents()
+        {
+            if (gameViewModel == null)
+            {
+                return;
+            }
+
+            try
+            {
+                gameViewModel.GameEnded -= OnGameEndedReceived;
+                gameViewModel.PlayerLeftMatch -= OnPlayerLeftMatchReceived;
+
+                if (gameViewModel.BoardManager != null && gameViewModel.BoardManager.PlayerHand != null)
+                {
+                    gameViewModel.BoardManager.PlayerHand.CollectionChanged -= PlayerHandCollectionChanged;
+                }
+
+                gameViewModel.TurnChangedForUI -= UpdateTurnGlow;
+                gameViewModel.ArchCardPlaced -= ShowArchPlacedAnimation;
+                gameViewModel.OpponentDinoHeadPlayed -= OnOpponentDinoHeadPlayed;
+                gameViewModel.OpponentBodyPartAttached -= OnOpponentBodyPartAttached;
+                gameViewModel.PlayerDinosClearedByElement -= OnPlayerDinosClearedByElement;
+                gameViewModel.DiscardPileUpdated -= OnDiscardPileUpdated;
+                gameViewModel.ArchArmyCleared -= OnArchArmyCleared;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Unhook events error: {ex.Message}");
+            }
+        }
+
+        private async Task CleanupBeforeCloseAsync()
+        {
+            if (closeCleanupExecuted)
+            {
+                return;
+            }
+
+            closeCleanupExecuted = true;
+
+            StopMonitoringSafely();
+            UnsubscribeServiceClientSafely();
+            UnhookGameViewModelEvents();
+
+            await LeaveGameSafelyAsync();
+            await DisconnectChatSafelyAsync();
+
+            DisposeSafely();
+        }
+
+        private void StopMonitoringSafely()
+        {
+            try
+            {
+                if (gameViewModel != null && gameViewModel.gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.StopConnectionMonitoring();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] StopConnectionMonitoring error: {ex.Message}");
+            }
+        }
+
+        private void UnsubscribeServiceClientSafely()
+        {
+            try
+            {
+                if (gameViewModel != null && gameViewModel.gameServiceClient != null)
+                {
+                    gameViewModel.gameServiceClient.ConnectionLost -= OnConnectionLost;
+                    gameViewModel.gameServiceClient.ServiceError -= OnCriticalServiceError;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Unsubscribe service events error: {ex.Message}");
+            }
+        }
+
+        private async Task LeaveGameSafelyAsync()
+        {
+            if (gameViewModel == null)
+            {
+                return;
+            }
+
+            try
+            {
+                Debug.WriteLine("[MATCH] Leaving game...");
+                await gameViewModel.LeaveGameAsync();
+                Debug.WriteLine("[MATCH] LeaveGameAsync completed.");
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[MATCH] LeaveGameAsync CommunicationException: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[MATCH] LeaveGameAsync TimeoutException: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] LeaveGameAsync Exception: {ex.Message}");
+            }
+        }
+
+        private async Task DisconnectChatSafelyAsync()
+        {
+            if (chatViewModel == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await chatViewModel.DisconnectAsync();
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[MATCH] Chat Disconnect CommunicationException: {ex.Message}");
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[MATCH] Chat Disconnect TimeoutException: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Chat Disconnect Exception: {ex.Message}");
+            }
+        }
+
+        private void DisposeSafely()
+        {
+            try
+            {
+                if (errorNotificationTimer != null)
+                {
+                    errorNotificationTimer.Stop();
+                    errorNotificationTimer = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Timer dispose error: {ex.Message}");
+            }
+
+            try
+            {
+                if (chatViewModel != null)
+                {
+                    chatViewModel.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Chat dispose error: {ex.Message}");
+            }
+
+            try
+            {
+                if (gameViewModel != null)
+                {
+                    gameViewModel.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] GameViewModel dispose error: {ex.Message}");
+            }
+        }
 
         private void OnConnectionLost()
         {
-            if (isHandlingDisconnection) return;
+            if (isHandlingDisconnection)
+            {
+                return;
+            }
+
             isHandlingDisconnection = true;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                System.Diagnostics.Debug.WriteLine("[DISCONNECT] ⚠️ Connection timeout - no server response");
+                Debug.WriteLine("[MATCH] Connection timeout - no server response");
 
-                if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
-                {
-                    serviceClient.StopConnectionMonitoring();
-                }
+                StopMonitoringSafely();
 
                 MessageBox.Show(
                     Lang.Match_ConnectionLostMessage ?? "La conexión con el servidor se ha perdido.\n\nLa partida será cerrada.",
@@ -215,8 +439,168 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     MessageBoxImage.Warning
                 );
 
-                ForceExitToMainWindow();
+                ForceExitToLoginWindow();
             });
+        }
+
+        private void OnCriticalServiceError(string title, string message)
+        {
+            bool isFatalError = (title != null && title.Contains("Conexión")) ||
+                                (message != null && (message.Contains("EndpointNotFound") || message.Contains("Faulted") || message.Contains("Timeout")));
+
+            if (!isFatalError)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (gameViewModel == null)
+                {
+                    return;
+                }
+
+                MessageBox.Show(
+                    $"{Lang.Match_ConnectionLostMessage}\n\nDetalle: {message}",
+                    Lang.Match_ConnectionLostTitle,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+
+                ForceExitToLoginWindow();
+            });
+        }
+
+        private void ForceExitToLoginWindow()
+        {
+            try
+            {
+                StopMonitoringSafely();
+                UnsubscribeServiceClientSafely();
+                UnhookGameViewModelEvents();
+
+                ForceLogoutOnClose = true;
+                IsNavigating = true;
+
+                Window mainWindow = TryCreateMainWindow();
+                if (mainWindow == null)
+                {
+                    Debug.WriteLine("[MATCH] Login window not found by reflection. Falling back to MainWindow.");
+                    mainWindow = new MainWindow();
+                }
+
+                Application.Current.MainWindow = mainWindow;
+                mainWindow.Show();
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] ForceExitToLoginWindow error: {ex.Message}");
+                Application.Current.Shutdown();
+            }
+        }
+
+        private void NavigateToMainWindow()
+        {
+            try
+            {
+                if (gameViewModel != null)
+                {
+                    gameViewModel.Dispose();
+                }
+
+                IsNavigating = true;
+
+                Window mainWindow = TryCreateMainWindow();
+                if (mainWindow == null)
+                {
+                    Debug.WriteLine("[MATCH] Login window not found by reflection. Falling back to MainWindow.");
+                    mainWindow = new MainWindow();
+                }
+
+                Application.Current.MainWindow = mainWindow;
+                mainWindow.Show();
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] NavigateToMainWindow error: {ex.Message}");
+                Application.Current.Shutdown();
+            }
+        }
+
+        private Window TryCreateMainWindow()
+        {
+            try
+            {
+                Assembly assembly = typeof(MainMatch).Assembly;
+                Type mainType = FindMainWindowType(assembly);
+
+                if (mainType == null)
+                {
+                    return null;
+                }
+
+                object instance = Activator.CreateInstance(mainType);
+                return instance as Window;
+            }
+            catch (MissingMethodException ex)
+            {
+                Debug.WriteLine($"[MATCH] Login window ctor missing: {ex.Message}");
+                return null;
+            }
+            catch (TargetInvocationException ex)
+            {
+                Debug.WriteLine($"[MATCH] Login window ctor threw: {ex.Message}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] TryCreateMainWindow error: {ex.Message}");
+                return null;
+            }
+        }
+
+        private Type FindMainWindowType(Assembly assembly)
+        {
+            Type[] types;
+
+            try
+            {
+                types = assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                types = ex.Types.Where(t => t != null).ToArray();
+                Debug.WriteLine("[MATCH] ReflectionTypeLoadException while scanning window types.");
+            }
+
+            Type exactMainWindow = types.FirstOrDefault(t =>
+                typeof(Window).IsAssignableFrom(t) &&
+                string.Equals(t.Name, "MainWindow", StringComparison.Ordinal) &&
+                t.GetConstructor(Type.EmptyTypes) != null);
+
+            if (exactMainWindow != null)
+            {
+                return exactMainWindow;
+            }
+
+            Type exactMain = types.FirstOrDefault(t =>
+                typeof(Window).IsAssignableFrom(t) &&
+                string.Equals(t.Name, "MainWindow", StringComparison.Ordinal) &&
+                t.GetConstructor(Type.EmptyTypes) != null);
+
+            if (exactMain != null)
+            {
+                return exactMain;
+            }
+
+            Type firstMainLike = types.FirstOrDefault(t =>
+                typeof(Window).IsAssignableFrom(t) &&
+                t.Name.IndexOf("MainWindow", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                t.GetConstructor(Type.EmptyTypes) != null);
+
+            return firstMainLike;
         }
 
         public void ManualDragOver(Point windowMousePosition, Card cardBeingDragged)
@@ -230,33 +614,28 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             lastHoveredCardCell = cardCellUnderMouse;
 
-            if (cardCellUnderMouse != null)
+            if (cardCellUnderMouse == null)
             {
-                ClearAllCellEffects(cardCellUnderMouse);
+                return;
+            }
 
-                string logicError = gameViewModel.ActionManager.ValidateDrop(
-                    cardBeingDragged,
-                    cardCellUnderMouse.CellId,
-                    gameViewModel.RemainingMoves,
-                    gameViewModel.IsMyTurn);
+            ClearAllCellEffects(cardCellUnderMouse);
 
-                bool isLogicallyValid = logicError == null;
-                int targetSubIndex = GetCorrectIndexForCard(cardBeingDragged);
+            string logicError = gameViewModel.ActionManager.ValidateDrop(
+                cardBeingDragged,
+                cardCellUnderMouse.CellId,
+                gameViewModel.RemainingMoves,
+                gameViewModel.IsMyTurn
+            );
 
-                Color highlightColor;
-                if (isLogicallyValid)
-                {
-                    highlightColor = Colors.Lime;
-                }
-                else
-                {
-                    highlightColor = Colors.Red;
-                }
+            bool isLogicallyValid = logicError == null;
+            int targetSubIndex = GetCorrectIndexForCard(cardBeingDragged);
 
-                if (targetSubIndex != -1)
-                {
-                    ApplyNeonEffect(cardCellUnderMouse, targetSubIndex, highlightColor);
-                }
+            Color highlightColor = isLogicallyValid ? Colors.Lime : Colors.Red;
+
+            if (targetSubIndex != -1)
+            {
+                ApplyNeonEffect(cardCellUnderMouse, targetSubIndex, highlightColor);
             }
         }
 
@@ -270,23 +649,21 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 lastHoveredCardCell = null;
             }
 
-            if (targetCardCell != null)
+            if (targetCardCell == null)
             {
-                string errorMessage = await gameViewModel.TryPlayCardAsync(cardBeingDropped, targetCardCell.CellId);
-
-                if (errorMessage == null)
-                {
-                    PlaceCardImageInGrid(targetCardCell, cardBeingDropped);
-                    Gr_ErrorNotification.Visibility = Visibility.Collapsed;
-                    return true;
-                }
-                else
-                {
-                    ShowErrorNotification(errorMessage);
-                    return false;
-                }
+                return false;
             }
 
+            string errorMessage = await gameViewModel.TryPlayCardAsync(cardBeingDropped, targetCardCell.CellId);
+
+            if (errorMessage == null)
+            {
+                PlaceCardImageInGrid(targetCardCell, cardBeingDropped);
+                Gr_ErrorNotification.Visibility = Visibility.Collapsed;
+                return true;
+            }
+
+            ShowErrorNotification(errorMessage);
             return false;
         }
 
@@ -294,17 +671,20 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             const int mainDrawPileIndex = 0;
 
-            if (sender is Button button)
+            if (!(sender is Button button))
             {
-                button.IsEnabled = false;
-                string errorMessage = await gameViewModel.ExecuteDrawCardFromView(mainDrawPileIndex);
-
-                if (errorMessage != null)
-                {
-                    ShowErrorNotification(errorMessage);
-                }
-                CheckDrawButtonState();
+                return;
             }
+
+            button.IsEnabled = false;
+
+            string errorMessage = await gameViewModel.ExecuteDrawCardFromView(mainDrawPileIndex);
+            if (errorMessage != null)
+            {
+                ShowErrorNotification(errorMessage);
+            }
+
+            CheckDrawButtonState();
         }
 
         private int GetCorrectIndexForCard(Card card)
@@ -328,16 +708,17 @@ namespace ArchsVsDinosClient.Views.MatchViews
                         return 8;
                 }
             }
+
             return -1;
         }
 
         private CardCell FindCellUnderMouse(Point windowMousePosition)
         {
-            Point screenMousePos = this.PointToScreen(windowMousePosition);
+            Point screenMousePos = PointToScreen(windowMousePosition);
 
             for (int i = 1; i <= 6; i++)
             {
-                var cell = BottomPlayerCards.GetCombinationCell(i);
+                CardCell cell = BottomPlayerCards.GetCombinationCell(i);
                 if (cell == null)
                 {
                     continue;
@@ -353,6 +734,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     return cell;
                 }
             }
+
             return null;
         }
 
@@ -363,26 +745,29 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 return;
             }
 
-            var targetBorder = cell.GetSubCell(index);
-            if (targetBorder != null)
+            Border targetBorder = cell.GetSubCell(index);
+            if (targetBorder == null)
             {
-                targetBorder.Effect = new DropShadowEffect
-                {
-                    Color = color,
-                    Direction = 0,
-                    ShadowDepth = 0,
-                    BlurRadius = 25,
-                    Opacity = 1
-                };
+                return;
             }
+
+            targetBorder.Effect = new DropShadowEffect
+            {
+                Color = color,
+                Direction = 0,
+                ShadowDepth = 0,
+                BlurRadius = 25,
+                Opacity = 1
+            };
         }
 
         private void ClearAllCellEffects(CardCell cell)
         {
             int[] validIndices = { 2, 4, 5, 6, 8 };
-            foreach (var i in validIndices)
+
+            foreach (int i in validIndices)
             {
-                var sub = cell.GetSubCell(i);
+                Border sub = cell.GetSubCell(i);
                 if (sub != null)
                 {
                     sub.Effect = null;
@@ -415,22 +800,30 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 targetBorder = cell.Part_Legs;
             }
 
-            if (targetBorder != null)
+            if (targetBorder == null)
             {
-                var brush = new ImageBrush(new BitmapImage(new Uri(card.CardRoute)));
-                targetBorder.Background = brush;
+                return;
+            }
+
+            try
+            {
+                targetBorder.Background = new ImageBrush(new BitmapImage(new Uri(card.CardRoute)));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] PlaceCardImageInGrid error: {ex.Message}");
             }
         }
 
         private void InitializePlayersVisuals(List<LobbyPlayerDTO> players, string myUsername)
         {
             string myNickname = UserSession.Instance.GetNickname();
-            var others = players.Where(player =>
-                player.Username != myUsername &&
-                player.Nickname != myNickname
-            ).ToList();
 
-            var me = players.FirstOrDefault(p => p.Username == myUsername || p.Nickname == myNickname);
+            List<LobbyPlayerDTO> others = players
+                .Where(player => player.Username != myUsername && player.Nickname != myNickname)
+                .ToList();
+
+            LobbyPlayerDTO me = players.FirstOrDefault(p => p.Username == myUsername || p.Nickname == myNickname);
             if (me != null)
             {
                 playerPositionToUserId["P1"] = me.IdPlayer;
@@ -470,8 +863,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void InitializeErrorTimer()
         {
-            errorNotificationTimer = new DispatcherTimer();
-            errorNotificationTimer.Interval = TimeSpan.FromSeconds(3);
+            errorNotificationTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(ErrorNotificationSeconds)
+            };
+
             errorNotificationTimer.Tick += (s, e) =>
             {
                 errorNotificationTimer.Stop();
@@ -483,14 +879,16 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             for (int i = 1; i <= 6; i++)
             {
-                var cell = BottomPlayerCards.GetCombinationCell(i);
-                if (cell != null)
+                CardCell cell = BottomPlayerCards.GetCombinationCell(i);
+                if (cell == null)
                 {
-                    cell.AllowDrop = true;
-                    cell.Drop += OnCardDrop;
-                    cell.DragOver += OnCardDragOver;
-                    cell.DragLeave += OnCardDragLeave;
+                    continue;
                 }
+
+                cell.AllowDrop = true;
+                cell.Drop += OnCardDrop;
+                cell.DragOver += OnCardDragOver;
+                cell.DragLeave += OnCardDragLeave;
             }
         }
 
@@ -500,16 +898,18 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 UpdatePlayerHandVisual();
                 CheckDrawButtonState();
-
             });
         }
 
         private void OnCardDragLeave(object sender, DragEventArgs e)
         {
-            if (sender is CardCell cell)
+            CardCell cell = sender as CardCell;
+            if (cell == null)
             {
-                ClearAllCellEffects(cell);
+                return;
             }
+
+            ClearAllCellEffects(cell);
         }
 
         private void OnCardDragOver(object sender, DragEventArgs e)
@@ -519,26 +919,30 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 e.Effects = DragDropEffects.None;
                 return;
             }
+
             e.Effects = DragDropEffects.Move;
             e.Handled = true;
         }
 
         private async void OnCardDrop(object sender, DragEventArgs e)
         {
-            if (sender is CardCell cell && e.Data.GetDataPresent(typeof(Card)))
+            if (!(sender is CardCell cell) || !e.Data.GetDataPresent(typeof(Card)))
             {
-                ClearAllCellEffects(cell);
-                var card = (Card)e.Data.GetData(typeof(Card));
+                return;
+            }
 
-                string error = await gameViewModel.TryPlayCardAsync(card, cell.CellId);
-                if (error == null)
-                {
-                    PlaceCardImageInGrid(cell, card);
-                }
-                else
-                {
-                    ShowErrorNotification(error);
-                }
+            ClearAllCellEffects(cell);
+
+            Card card = (Card)e.Data.GetData(typeof(Card));
+            string error = await gameViewModel.TryPlayCardAsync(card, cell.CellId);
+
+            if (error == null)
+            {
+                PlaceCardImageInGrid(cell, card);
+            }
+            else
+            {
+                ShowErrorNotification(error);
             }
         }
 
@@ -551,59 +955,63 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     e.PropertyName == nameof(GameViewModel.RemainingCardsInDeck))
                 {
                     CheckDrawButtonState();
+                    return;
                 }
-                else if (e.PropertyName == nameof(GameViewModel.SandArmyVisibility))
+
+                if (e.PropertyName == nameof(GameViewModel.SandArmyVisibility))
                 {
                     if (Gr_SandArchs != null)
+                    {
                         Gr_SandArchs.Visibility = gameViewModel.SandArmyVisibility;
+                    }
+
+                    return;
                 }
-                else if (e.PropertyName == nameof(GameViewModel.WaterArmyVisibility))
+
+                if (e.PropertyName == nameof(GameViewModel.WaterArmyVisibility))
                 {
                     if (Gr_SeaArchs != null)
+                    {
                         Gr_SeaArchs.Visibility = gameViewModel.WaterArmyVisibility;
+                    }
+
+                    return;
                 }
-                else if (e.PropertyName == nameof(GameViewModel.WindArmyVisibility))
+
+                if (e.PropertyName == nameof(GameViewModel.WindArmyVisibility))
                 {
                     if (Gr_WindArchs != null)
+                    {
                         Gr_WindArchs.Visibility = gameViewModel.WindArmyVisibility;
+                    }
                 }
             });
         }
 
         private void CheckDrawButtonState()
         {
-            var drawButton = Gr_AllCards.FindName("Btn_TakeACard") as Button;
+            Button drawButton = Gr_AllCards.FindName("Btn_TakeACard") as Button;
             if (drawButton == null)
             {
                 return;
             }
 
-            if (gameViewModel.RemainingCardsInDeck <= 0)
-            {
-                drawButton.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                drawButton.Visibility = Visibility.Visible;
-            }
+            drawButton.Visibility = gameViewModel.RemainingCardsInDeck <= 0
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
-            if (gameViewModel.IsMyTurn && gameViewModel.RemainingMoves > 0)
-            {
-                drawButton.IsEnabled = true;
-            }
-            else
-            {
-                drawButton.IsEnabled = false;
-            }
+            drawButton.IsEnabled = gameViewModel.IsMyTurn && gameViewModel.RemainingMoves > 0;
         }
 
         private void ShowErrorNotification(string message)
         {
             errorNotificationTimer.Stop();
             Gr_ErrorNotification.BeginAnimation(OpacityProperty, null);
+
             TxtB_ErrorNotificationContainer.Text = message;
             Gr_ErrorNotification.Visibility = Visibility.Visible;
-            Gr_ErrorNotification.Opacity = 0.9;
+            Gr_ErrorNotification.Opacity = ErrorNotificationOpacity;
+
             errorNotificationTimer.Start();
         }
 
@@ -611,10 +1019,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             var fadeOut = new DoubleAnimation
             {
-                From = 0.9,
+                From = ErrorNotificationOpacity,
                 To = 0.0,
-                Duration = new Duration(TimeSpan.FromSeconds(0.5))
+                Duration = new Duration(TimeSpan.FromSeconds(ErrorFadeOutSeconds))
             };
+
             fadeOut.Completed += (s, e) => Gr_ErrorNotification.Visibility = Visibility.Collapsed;
             Gr_ErrorNotification.BeginAnimation(OpacityProperty, fadeOut);
         }
@@ -633,12 +1042,16 @@ namespace ArchsVsDinosClient.Views.MatchViews
             if (IsPlayerName(Lb_TopPlayerName, currentPlayerUsername))
             {
                 HighlightPlayer(Lb_TopPlayerName);
+                return;
             }
-            else if (Grid_LeftPlayer.Visibility == Visibility.Visible && IsPlayerName(Lb_LeftPlayerName, currentPlayerUsername))
+
+            if (Grid_LeftPlayer.Visibility == Visibility.Visible && IsPlayerName(Lb_LeftPlayerName, currentPlayerUsername))
             {
                 HighlightPlayer(Lb_LeftPlayerName);
+                return;
             }
-            else if (Grid_RightPlayer.Visibility == Visibility.Visible && IsPlayerName(Lb_RightPlayerName, currentPlayerUsername))
+
+            if (Grid_RightPlayer.Visibility == Visibility.Visible && IsPlayerName(Lb_RightPlayerName, currentPlayerUsername))
             {
                 HighlightPlayer(Lb_RightPlayerName);
             }
@@ -675,35 +1088,34 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 return;
             }
 
-            double canvasWidth = MyDeckCanvas.ActualWidth > 0 ? MyDeckCanvas.ActualWidth : 800;
+            double canvasWidth = MyDeckCanvas.ActualWidth > 0 ? MyDeckCanvas.ActualWidth : DefaultHandCanvasWidth;
 
             MyDeckCanvas.Children.Clear();
 
-            var cards = gameViewModel.BoardManager.PlayerHand.ToList();
+            List<Card> cards = gameViewModel.BoardManager.PlayerHand.ToList();
             if (cards.Count == 0)
             {
                 return;
             }
 
-            double cardWidth = 80;
-            double overlap = 50;
-            double totalWidth = (cards.Count - 1) * overlap + cardWidth;
+            double totalWidth = (cards.Count - 1) * HandCardOverlap + HandCardWidth;
             double startX = (canvasWidth - totalWidth) / 2;
 
-            if (startX < 10)
+            if (startX < HandMinStartX)
             {
-                startX = 10;
+                startX = HandMinStartX;
             }
 
             for (int i = 0; i < cards.Count; i++)
             {
                 var cardControl = new DeckCardSelection { Card = cards[i] };
-                double leftPosition = startX + (i * overlap);
+                double leftPosition = startX + (i * HandCardOverlap);
+
                 cardControl.SetInitialPosition(leftPosition, -70);
                 Panel.SetZIndex(cardControl, i);
                 MyDeckCanvas.Children.Add(cardControl);
 
-                System.Diagnostics.Debug.WriteLine($"[UI] Added card {cards[i].IdCard} at position {i}, left={leftPosition}");
+                Debug.WriteLine($"[MATCH UI] Added card {cards[i].IdCard} at position {i}, left={leftPosition}");
             }
         }
 
@@ -741,38 +1153,40 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             notification.Child = text;
 
-            var mainGrid = this.Content as Grid;
-            if (mainGrid != null)
+            Grid mainGrid = Content as Grid;
+            if (mainGrid == null)
             {
-                mainGrid.Children.Add(notification);
-                Panel.SetZIndex(notification, 1000);
+                return;
+            }
 
-                var fadeIn = new DoubleAnimation
+            mainGrid.Children.Add(notification);
+            Panel.SetZIndex(notification, 1000);
+
+            var fadeIn = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(0.5)
+            };
+
+            notification.BeginAnimation(OpacityProperty, fadeIn);
+
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+            timer.Tick += (s, args) =>
+            {
+                timer.Stop();
+
+                var fadeOut = new DoubleAnimation
                 {
-                    From = 0,
-                    To = 1,
+                    From = 1,
+                    To = 0,
                     Duration = TimeSpan.FromSeconds(0.5)
                 };
 
-                notification.BeginAnimation(OpacityProperty, fadeIn);
-
-                var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
-                timer.Tick += (s, args) =>
-                {
-                    timer.Stop();
-
-                    var fadeOut = new DoubleAnimation
-                    {
-                        From = 1,
-                        To = 0,
-                        Duration = TimeSpan.FromSeconds(0.5)
-                    };
-
-                    fadeOut.Completed += (ss, ee) => mainGrid.Children.Remove(notification);
-                    notification.BeginAnimation(OpacityProperty, fadeOut);
-                };
-                timer.Start();
-            }
+                fadeOut.Completed += (ss, ee) => mainGrid.Children.Remove(notification);
+                notification.BeginAnimation(OpacityProperty, fadeOut);
+            };
+            timer.Start();
         }
 
         private CardCell GetCombinationCellForUserId(int userId, int cellIndex)
@@ -799,10 +1213,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Opponent {userId} played head in dino {dinoInstanceId}");
+                Debug.WriteLine($"[MATCH] Opponent {userId} played head in dino {dinoInstanceId}");
 
                 CardCell targetCell = GetCombinationCellForUserId(userId, dinoInstanceId);
-
                 if (targetCell != null)
                 {
                     PlaceCardImageInGrid(targetCell, headCard);
@@ -814,10 +1227,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Opponent {userId} attached {bodyCard.BodyPartType} to dino {dinoInstanceId}");
+                Debug.WriteLine($"[MATCH] Opponent {userId} attached {bodyCard.BodyPartType} to dino {dinoInstanceId}");
 
                 CardCell targetCell = GetCombinationCellForUserId(userId, dinoInstanceId);
-
                 if (targetCell != null)
                 {
                     PlaceCardImageInGrid(targetCell, bodyCard);
@@ -842,17 +1254,18 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     break;
             }
 
-            if (targetGrid == null) return;
+            if (targetGrid == null)
+            {
+                return;
+            }
 
-            var glowEffect = new DropShadowEffect
+            targetGrid.Effect = new DropShadowEffect
             {
                 Color = Colors.Gold,
                 ShadowDepth = 0,
                 BlurRadius = 40,
                 Opacity = 1
             };
-
-            targetGrid.Effect = glowEffect;
 
             var pulseAnimation = new DoubleAnimation
             {
@@ -953,8 +1366,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 return;
             }
 
-            var discardedCards = gameViewModel.BoardManager.DiscardPile.ToList();
-
+            List<Card> discardedCards = gameViewModel.BoardManager.DiscardPile.ToList();
             if (discardedCards.Count == 0)
             {
                 MessageBox.Show(Lang.Match_DiscardPileEmpty);
@@ -971,7 +1383,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
                 if (success)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Successfully took card {selectedCardId} from discard pile");
+                    Debug.WriteLine($"[MATCH] Took card {selectedCardId} from discard pile");
                     UpdateArmyVisibility();
                 }
             }
@@ -983,23 +1395,26 @@ namespace ArchsVsDinosClient.Views.MatchViews
             settings.Owner = this;
             settings.ShowDialog();
 
-            if (settings.RequestLeaveGame)
+            if (!settings.RequestLeaveGame)
+            {
+                return;
+            }
+
+            try
             {
                 if (gameViewModel != null)
                 {
                     gameViewModel.GameEnded -= OnGameEndedReceived;
                 }
 
-                if (chatViewModel != null)
-                {
-                    try 
-                    {
-                        await chatViewModel.DisconnectAsync();
-                    } 
-                    catch { }
-                }
+                await DisconnectChatSafelyAsync();
+                await LeaveGameSafelyAsync();
 
-                await gameViewModel.LeaveGameAsync();
+                NavigateToMainWindow();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Options leave error: {ex.Message}");
                 NavigateToMainWindow();
             }
         }
@@ -1010,12 +1425,16 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 TopPlayerCards.Visibility = Visibility.Hidden;
                 Lb_TopPlayerName.Content = "";
+                return;
             }
-            else if (player3UserId == userId)
+
+            if (player3UserId == userId)
             {
                 Grid_LeftPlayer.Visibility = Visibility.Hidden;
+                return;
             }
-            else if (player4UserId == userId)
+
+            if (player4UserId == userId)
             {
                 Grid_RightPlayer.Visibility = Visibility.Hidden;
             }
@@ -1023,44 +1442,20 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void UpdateArmyVisibility()
         {
-            if (gameViewModel.BoardManager.SandArmy.Count > 0)
-            {
-                Gr_SandArchs.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Gr_SandArchs.Visibility = Visibility.Collapsed;
-            }
+            Gr_SandArchs.Visibility = gameViewModel.BoardManager.SandArmy.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            Gr_SeaArchs.Visibility = gameViewModel.BoardManager.WaterArmy.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            Gr_WindArchs.Visibility = gameViewModel.BoardManager.WindArmy.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-            if (gameViewModel.BoardManager.WaterArmy.Count > 0)
-            {
-                Gr_SeaArchs.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Gr_SeaArchs.Visibility = Visibility.Collapsed;
-            }
-
-            if (gameViewModel.BoardManager.WindArmy.Count > 0)
-            {
-                Gr_WindArchs.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Gr_WindArchs.Visibility = Visibility.Collapsed;
-            }
-
-            System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Army visibility updated - Sand: {Gr_SandArchs.Visibility}, Water: {Gr_SeaArchs.Visibility}, Wind: {Gr_WindArchs.Visibility}");
+            Debug.WriteLine($"[MATCH] Army visibility - Sand:{Gr_SandArchs.Visibility}, Water:{Gr_SeaArchs.Visibility}, Wind:{Gr_WindArchs.Visibility}");
         }
 
         private void ActivateProvokeMode()
         {
-
             if (gameViewModel.BoardManager.SandArmy.Count == 0 &&
                 gameViewModel.BoardManager.WaterArmy.Count == 0 &&
                 gameViewModel.BoardManager.WindArmy.Count == 0)
             {
-                MessageBox.Show(Lang.Match_NoArmiesToProvoke); 
+                MessageBox.Show(Lang.Match_NoArmiesToProvoke);
                 return;
             }
 
@@ -1072,7 +1467,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             for (int i = 1; i <= 6; i++)
             {
-                var cell = BottomPlayerCards.GetCombinationCell(i);
+                CardCell cell = BottomPlayerCards.GetCombinationCell(i);
                 if (cell != null)
                 {
                     cell.AllowDrop = false;
@@ -1102,7 +1497,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 Gr_WindArchs.MouseLeftButtonDown += OnArmyClick;
             }
 
-            System.Diagnostics.Debug.WriteLine("[PROVOKE] Attack mode activated - Click on an army");
+            Debug.WriteLine("[MATCH] Provoke mode activated.");
         }
 
         private void DesactivateAttackMode()
@@ -1121,13 +1516,13 @@ namespace ArchsVsDinosClient.Views.MatchViews
             Gr_SeaArchs.MouseLeftButtonDown -= OnArmyClick;
             Gr_WindArchs.MouseLeftButtonDown -= OnArmyClick;
 
-            CheckDrawButtonState(); 
+            CheckDrawButtonState();
             Btn_EndTurn.IsEnabled = gameViewModel.IsMyTurn;
             Btn_ProvokeNow.IsEnabled = gameViewModel.IsMyTurn;
 
             for (int i = 1; i <= 6; i++)
             {
-                var cell = BottomPlayerCards.GetCombinationCell(i);
+                CardCell cell = BottomPlayerCards.GetCombinationCell(i);
                 if (cell != null)
                 {
                     cell.AllowDrop = true;
@@ -1135,23 +1530,31 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
 
             EnablePlayerHandDragging();
-
         }
 
         private void OnArmyClick(object sender, MouseButtonEventArgs e)
         {
-            if (!isProvokeModeActive) return;
+            if (!isProvokeModeActive)
+            {
+                return;
+            }
 
             ArmyType selectedArmy = ArmyType.Sand;
 
             if (sender == Gr_SandArchs)
+            {
                 selectedArmy = ArmyType.Sand;
+            }
             else if (sender == Gr_SeaArchs)
+            {
                 selectedArmy = ArmyType.Water;
+            }
             else if (sender == Gr_WindArchs)
+            {
                 selectedArmy = ArmyType.Wind;
+            }
 
-            System.Diagnostics.Debug.WriteLine($"[PROVOKE] Army selected: {selectedArmy}");
+            Debug.WriteLine($"[MATCH] Provoke army selected: {selectedArmy}");
 
             DesactivateAttackMode();
             OpenProvokeWindow(selectedArmy);
@@ -1159,6 +1562,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void AddGlowToArmy(Grid armyGrid)
         {
+            if (armyGrid == null)
+            {
+                return;
+            }
+
             armyGrid.Effect = new DropShadowEffect
             {
                 Color = Colors.OrangeRed,
@@ -1185,6 +1593,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void RemoveGlowFromArmy(Grid armyGrid)
         {
+            if (armyGrid == null)
+            {
+                return;
+            }
+
             armyGrid.Effect = null;
             armyGrid.RenderTransform = null;
             armyGrid.BeginAnimation(Grid.OpacityProperty, null);
@@ -1193,7 +1606,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
         private void OpenProvokeWindow(ArmyType selectedArmy)
         {
             var playerNames = new Dictionary<int, string>();
-            foreach (var player in playersInMatch)
+            foreach (LobbyPlayerDTO player in playersInMatch)
             {
                 playerNames[player.IdPlayer] = player.Nickname ?? player.Username;
             }
@@ -1221,11 +1634,22 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 int userId = gameViewModel.DetermineMyUserId();
                 await gameViewModel.gameServiceClient.ProvokeArchArmyAsync(gameMatchCode, userId, armyType);
 
-                System.Diagnostics.Debug.WriteLine($"[PROVOKE] Successfully provoked {armyType}");
+                Debug.WriteLine($"[MATCH] Provoked {armyType} successfully.");
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine($"[MATCH] Provoke CommunicationException: {ex.Message}");
+                MessageBox.Show(Lang.Match_ErrorProvokingArchs);
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine($"[MATCH] Provoke TimeoutException: {ex.Message}");
+                MessageBox.Show(Lang.Match_ErrorProvokingArchs);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{Lang.Match_ErrorProvokingArchs} {ex.Message}");
+                Debug.WriteLine($"[MATCH] Provoke Exception: {ex.Message}");
+                MessageBox.Show(Lang.Match_ErrorProvokingArchs);
             }
         }
 
@@ -1244,7 +1668,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     ClearOpponentDinosByElement(userId, element);
                 }
 
-                System.Diagnostics.Debug.WriteLine($"[MAIN MATCH] Cleared {element} dinos for player {userId}");
+                Debug.WriteLine($"[MATCH] Cleared {element} dinos for player {userId}");
             });
         }
 
@@ -1252,15 +1676,17 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             for (int i = 1; i <= 6; i++)
             {
-                var cell = BottomPlayerCards.GetCombinationCell(i);
-                if (cell != null && cell is CardCell cardCell)
+                CardCell cell = BottomPlayerCards.GetCombinationCell(i);
+                if (cell == null)
                 {
-                    if (GetCellElement(cardCell) == element)
-                    {
-                        ClearCardCell(cardCell);
-                        string cellId = $"IdCombinationCell_{i}";
-                        gameViewModel.ActionManager.ClearSlot(cellId);
-                    }
+                    continue;
+                }
+
+                if (GetCellElement(cell) == element)
+                {
+                    ClearCardCell(cell);
+                    string cellId = $"IdCombinationCell_{i}";
+                    gameViewModel.ActionManager.ClearSlot(cellId);
                 }
             }
         }
@@ -1269,44 +1695,35 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             if (player2UserId == userId)
             {
-                for (int i = 1; i <= 6; i++)
-                {
-                    var cell = TopPlayerCards.GetCombinationCell(i);
-                    if (cell != null && cell is CardCell cardCell)
-                    {
-                        if (GetCellElement(cardCell) == element)
-                        {
-                            ClearCardCell(cardCell);
-                        }
-                    }
-                }
+                ClearOpponentCellsByElement(TopPlayerCards, element);
+                return;
             }
-            else if (player3UserId == userId)
+
+            if (player3UserId == userId)
             {
-                for (int i = 1; i <= 6; i++)
-                {
-                    var cell = LeftPlayerCell.GetCombinationCell(i);
-                    if (cell != null && cell is CardCell cardCell)
-                    {
-                        if (GetCellElement(cardCell) == element)
-                        {
-                            ClearCardCell(cardCell);
-                        }
-                    }
-                }
+                ClearOpponentCellsByElement(LeftPlayerCell, element);
+                return;
             }
-            else if (player4UserId == userId)
+
+            if (player4UserId == userId)
             {
-                for (int i = 1; i <= 6; i++)
+                ClearOpponentCellsByElement(RightPlayerCards, element);
+            }
+        }
+
+        private void ClearOpponentCellsByElement(dynamic playerCardsControl, ArmyType element)
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                CardCell cell = playerCardsControl.GetCombinationCell(i);
+                if (cell == null)
                 {
-                    var cell = RightPlayerCards.GetCombinationCell(i);
-                    if (cell != null && cell is CardCell cardCell)
-                    {
-                        if (GetCellElement(cardCell) == element)
-                        {
-                            ClearCardCell(cardCell);
-                        }
-                    }
+                    continue;
+                }
+
+                if (GetCellElement(cell) == element)
+                {
+                    ClearCardCell(cell);
                 }
             }
         }
@@ -1315,46 +1732,44 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             var grayBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#222"));
 
-            if (cell.Part_Head != null)
-                cell.Part_Head.Background = grayBrush;
-
-            if (cell.Part_Chest != null)
-                cell.Part_Chest.Background = grayBrush;
-
-            if (cell.Part_LeftArm != null)
-                cell.Part_LeftArm.Background = grayBrush;
-
-            if (cell.Part_RightArm != null)
-                cell.Part_RightArm.Background = grayBrush;
-
-            if (cell.Part_Legs != null)
-                cell.Part_Legs.Background = grayBrush;
+            if (cell.Part_Head != null) cell.Part_Head.Background = grayBrush;
+            if (cell.Part_Chest != null) cell.Part_Chest.Background = grayBrush;
+            if (cell.Part_LeftArm != null) cell.Part_LeftArm.Background = grayBrush;
+            if (cell.Part_RightArm != null) cell.Part_RightArm.Background = grayBrush;
+            if (cell.Part_Legs != null) cell.Part_Legs.Background = grayBrush;
         }
 
         private ArmyType GetCellElement(CardCell cell)
         {
-            if (cell.Part_Head?.Background is ImageBrush headBrush)
+            ImageBrush headBrush = cell.Part_Head != null ? cell.Part_Head.Background as ImageBrush : null;
+            if (headBrush == null)
             {
-                string imagePath = headBrush.ImageSource?.ToString();
-                if (!string.IsNullOrEmpty(imagePath))
-                {
-                    var headCard = CardRepositoryModel.Cards.FirstOrDefault(c => c.CardRoute == imagePath);
-                    if (headCard != null)
-                    {
-                        switch (headCard.Element)
-                        {
-                            case ElementType.Sand:
-                                return ArmyType.Sand;
-                            case ElementType.Water:
-                                return ArmyType.Water;
-                            case ElementType.Wind:
-                                return ArmyType.Wind;
-                        }
-                    }
-                }
+                return ArmyType.None;
             }
 
-            return ArmyType.None;
+            string imagePath = headBrush.ImageSource != null ? headBrush.ImageSource.ToString() : null;
+            if (string.IsNullOrEmpty(imagePath))
+            {
+                return ArmyType.None;
+            }
+
+            Card headCard = CardRepositoryModel.Cards.FirstOrDefault(c => c.CardRoute == imagePath);
+            if (headCard == null)
+            {
+                return ArmyType.None;
+            }
+
+            switch (headCard.Element)
+            {
+                case ElementType.Sand:
+                    return ArmyType.Sand;
+                case ElementType.Water:
+                    return ArmyType.Water;
+                case ElementType.Wind:
+                    return ArmyType.Wind;
+                default:
+                    return ArmyType.None;
+            }
         }
 
         private void OnDiscardPileUpdated()
@@ -1395,10 +1810,24 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             foreach (UIElement child in MyDeckCanvas.Children)
             {
-                if (child is DeckCardSelection cardControl)
+                DeckCardSelection cardControl = child as DeckCardSelection;
+                if (cardControl != null)
                 {
                     cardControl.IsEnabled = false;
-                    cardControl.Opacity = 0.5; 
+                    cardControl.Opacity = 0.5;
+                }
+            }
+        }
+
+        private void EnablePlayerHandDragging()
+        {
+            foreach (UIElement child in MyDeckCanvas.Children)
+            {
+                DeckCardSelection cardControl = child as DeckCardSelection;
+                if (cardControl != null)
+                {
+                    cardControl.IsEnabled = true;
+                    cardControl.Opacity = 1.0;
                 }
             }
         }
@@ -1409,6 +1838,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 errorNotificationTimer.Stop();
             }
+
             Gr_ErrorNotification.Visibility = Visibility.Collapsed;
             Gr_GameEndedOverlay.Visibility = Visibility.Visible;
 
@@ -1419,7 +1849,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             endAnimationTimer.Tick += (sender, args) =>
             {
-                endAnimationTimer.Stop(); 
+                endAnimationTimer.Stop();
                 ProcessPostGameNavigation(gameData);
             };
 
@@ -1428,80 +1858,8 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void ProcessPostGameNavigation(GameEndedDTO gameData)
         {
-            if (gameViewModel != null) gameViewModel.Dispose();
-            if (chatViewModel != null) try { chatViewModel.Dispose(); } catch { }
-
-            Gr_GameEndedOverlay.Visibility = Visibility.Collapsed;
-
-            this.IsNavigating = true;
-
-            if (gameData.Reason == "Aborted")
-            {
-                var mainWindow = new MainWindow();
-                Application.Current.MainWindow = mainWindow;
-                mainWindow.Show();
-                this.Close();
-                MessageBox.Show(Lang.Match_GameAbortedMessage, Lang.Match_GameOverTitle);
-            }
-            else
-            {
-                var statisticsWindow = new GameStatistics(gameData, this.playersInMatch);
-                Application.Current.MainWindow = statisticsWindow;
-                statisticsWindow.Show();
-                this.Close();
-            }
-        }
-
-        private void EnablePlayerHandDragging()
-        {
-            foreach (UIElement child in MyDeckCanvas.Children)
-            {
-                if (child is DeckCardSelection cardControl)
-                {
-                    cardControl.IsEnabled = true;
-                    cardControl.Opacity = 1.0;
-                }
-            }
-        }
-
-        private void OnCriticalServiceError(string title, string message)
-        {
-            bool isFatalError = title.Contains("Conexión") ||
-                                message.Contains("EndpointNotFound") ||
-                                message.Contains("Faulted") ||
-                                message.Contains("Timeout");
-
-            if (isFatalError)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    if (gameViewModel == null) return;
-
-                    MessageBox.Show(
-                        $"{Lang.Match_ConnectionLostMessage}\n\nDetalle: {message}",
-                        Lang.Match_ConnectionLostTitle,
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error);
-
-                    ForceExitToMainWindow();
-                });
-            }
-        }
-
-        /// <summary>
-        /// ////////////////////////////
-        /// </summary>
-        private void ForceExitToMainWindow()
-        {
             try
             {
-                if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
-                {
-                    serviceClient.StopConnectionMonitoring();
-                    serviceClient.ConnectionLost -= OnConnectionLost;
-                    serviceClient.ServiceError -= OnCriticalServiceError;
-                }
-
                 if (gameViewModel != null)
                 {
                     gameViewModel.Dispose();
@@ -1509,33 +1867,41 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
                 if (chatViewModel != null)
                 {
-                    try { chatViewModel.Dispose(); } catch { }
+                    chatViewModel.Dispose();
                 }
-
-                var mainWindow = new MainWindow();
-                Application.Current.MainWindow = mainWindow;
-                mainWindow.Show();
-                this.Close();
-
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Critical error exiting match: {ex.Message}");
-                Application.Current.Shutdown();
+                Debug.WriteLine($"[MATCH] Dispose after game end error: {ex.Message}");
+            }
+
+            Gr_GameEndedOverlay.Visibility = Visibility.Collapsed;
+
+            IsNavigating = true;
+
+            if (gameData != null && gameData.Reason == "Aborted")
+            {
+                Window loginWindow = TryCreateMainWindow() ?? (Window)new MainWindow();
+                Application.Current.MainWindow = loginWindow;
+                loginWindow.Show();
+                Close();
+
+                MessageBox.Show(Lang.Match_GameAbortedMessage, Lang.Match_GameOverTitle);
+                return;
+            }
+
+            try
+            {
+                var statisticsWindow = new GameStatistics(gameData, playersInMatch);
+                Application.Current.MainWindow = statisticsWindow;
+                statisticsWindow.Show();
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] Open statistics error: {ex.Message}");
+                NavigateToMainWindow();
             }
         }
-
-        private void NavigateToMainWindow()
-        {
-            if (gameViewModel != null) gameViewModel.Dispose();
-
-            this.IsNavigating = true;
-
-            var mainWindow = new MainWindow();
-            Application.Current.MainWindow = mainWindow;
-            mainWindow.Show();
-            this.Close();
-        }
-
     }
 }

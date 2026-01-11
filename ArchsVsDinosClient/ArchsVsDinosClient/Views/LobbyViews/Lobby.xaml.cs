@@ -1,6 +1,4 @@
-﻿using ArchsVsDinosClient.DTO;
-using ArchsVsDinosClient.LobbyService;
-using ArchsVsDinosClient.Models;
+﻿using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
@@ -9,32 +7,28 @@ using ArchsVsDinosClient.ViewModels;
 using ArchsVsDinosClient.Views.MatchViews;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ArchsVsDinosClient.Views.LobbyViews
 {
     public partial class Lobby : BaseSessionWindow
     {
         private readonly LobbyViewModel viewModel;
-        private string currentUsername;
-        private bool handledConnectionLost = false;
-        private bool isNavigatingToGame = false;
+        private readonly string currentUsername;
 
-        public Lobby() : this(true) { }
+        private bool handledConnectionLost;
+        private bool isNavigatingToGame;
+        private bool isExitCleanupRunning;
+        private bool hasExitCleanupCompleted;
+
+        public Lobby() : this(true)
+        {
+        }
 
         public Lobby(bool isHost, ILobbyServiceClient client = null)
         {
@@ -54,61 +48,152 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             viewModel.NavigateToGame += OnNavigateToGame;
             viewModel.NavigateToLobbyAsGuest += OnNavigateToLobbyAsGuest;
 
-            this.Loaded += async (s, e) =>
-            {
-                await viewModel.LoadFriendsAsync();
-            };
+            Loaded += async (_, __) => await viewModel.LoadFriendsAsync();
 
             Loaded += async (_, __) =>
             {
-                if (isHost)
+                if (!isHost)
                 {
-                    bool success = await viewModel.InitializeLobbyAsync();
+                    return;
+                }
 
-                    if (!success)
-                    {
-                        Close();
-                    }
+                bool success = await viewModel.InitializeLobbyAsync();
+                if (!success)
+                {
+                    Close();
                 }
             };
 
-            this.ExtraCleanupAction = async () =>
+            Closing += OnLobbyClosing;
+
+            ExtraCleanupAction = RunNavigationCleanupAsync;
+        }
+        private void RequestCloseAfterCleanup()
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (viewModel != null)
+                try
                 {
-                    viewModel.CancelReconnectionAndExit();
-                    if (viewModel.Chat != null)
-                    {
-                        try { await viewModel.Chat.DisconnectAsync(); } catch { }
-                    }
-                    viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;
-                    viewModel.NavigateToGame -= OnNavigateToGame;
-                    viewModel.NavigateToLobbyAsGuest -= OnNavigateToLobbyAsGuest;
-                    viewModel.Cleanup();
+                    Close();
                 }
-            };
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LOBBY] Close after cleanup failed: {ex}");
+                    Application.Current.Shutdown();
+                }
+            }));
+        }
+
+        private async void OnLobbyClosing(object sender, CancelEventArgs e)
+        {
+            if (IsNavigating || hasExitCleanupCompleted)
+            {
+                return;
+            }
+
+            if (isExitCleanupRunning)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            e.Cancel = true;
+            isExitCleanupRunning = true;
+
+            try
+            {
+                await RunExitCleanupAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] Exit cleanup failed: {ex}");
+            }
+            finally
+            {
+                hasExitCleanupCompleted = true;
+                isExitCleanupRunning = false;
+
+                RequestCloseAfterCleanup();
+            }
+        }
+
+
+        private async Task RunExitCleanupAsync()
+        {
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            viewModel.CancelReconnectionAndExit();
+
+            UnsubscribeFromViewModelEvents();
+
+            try
+            {
+                await viewModel.CleanupBeforeClosingAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] CleanupBeforeClosingAsync error: {ex.Message}");
+                viewModel.Cleanup();
+            }
+        }
+
+        private async Task RunNavigationCleanupAsync()
+        {
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            try
+            {
+                viewModel.CancelReconnectionAndExit();
+
+                if (viewModel.Chat != null)
+                {
+                    await viewModel.Chat.DisconnectAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] Navigation cleanup error: {ex.Message}");
+            }
+        }
+
+        private void UnsubscribeFromViewModelEvents()
+        {
+            viewModel.LobbyConnectionLost -= OnLobbyConnectionLost;
+            viewModel.NavigateToGame -= OnNavigateToGame;
+            viewModel.NavigateToLobbyAsGuest -= OnNavigateToLobbyAsGuest;
         }
 
         private void OnNavigateToLobbyAsGuest(string lobbyCode)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 try
                 {
                     Debug.WriteLine($"[LOBBY] Navigating to new lobby as guest: {lobbyCode}");
 
-                    var lobbyServiceClient = new LobbyServiceClient();
-                    Lobby newLobbyWindow = new Lobby(false, lobbyServiceClient);
+                    IsNavigating = true;
 
+                    var lobbyServiceClient = new LobbyServiceClient();
+                    var newLobbyWindow = new Lobby(false, lobbyServiceClient);
+
+                    Application.Current.MainWindow = newLobbyWindow;
                     newLobbyWindow.Show();
-                    this.Close();
+
+                    Close();
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"[LOBBY] Error navigating to new lobby: {ex.Message}");
+
                     MessageBox.Show(
-                        "Error al abrir el nuevo lobby.",
-                        "Error",
+                        Lang.GlobalUnexpectedError,
+                        Lang.GlobalError,
                         MessageBoxButton.OK,
                         MessageBoxImage.Error
                     );
@@ -119,15 +204,29 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         private void OnLobbyConnectionLost(string title, string message)
         {
             if (handledConnectionLost)
+            {
                 return;
+            }
 
             handledConnectionLost = true;
 
-            Dispatcher.Invoke(() =>
+            _ = Dispatcher.InvokeAsync(async () =>
             {
-                MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+                try
+                {
+                    IsNavigating = true;
 
-                NavigateToMainWindow();
+                    await RunExitCleanupAsync();
+
+                    MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    NavigateToMainWindow();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[LOBBY] Error handling connection lost: {ex.Message}");
+                    NavigateToMainWindow();
+                }
             });
         }
 
@@ -135,25 +234,31 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             try
             {
-                MainWindow newMainWindow = new MainWindow();
+                ForceLogoutOnClose = true;
+                IsNavigating = true;
 
-                var oldMain = Application.Current.MainWindow;
-                if (oldMain != null && oldMain != this)
+                Window oldMainWindow = Application.Current.MainWindow;
+
+                var mainWindow = new MainWindow();
+                Application.Current.MainWindow = mainWindow;
+                mainWindow.Show();
+
+                if (oldMainWindow != null &&
+                    oldMainWindow != this &&
+                    oldMainWindow != mainWindow)
                 {
-                    oldMain.Close();
+                    oldMainWindow.Close();
                 }
 
-                Application.Current.MainWindow = newMainWindow;
-                newMainWindow.Show();
-
-                this.Close();
+                Close();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[LOBBY] Error al navegar a MainWindow: {ex.Message}");
+                Debug.WriteLine($"[LOBBY] Error navigating to MainWindow: {ex.Message}");
+
                 MessageBox.Show(
-                    "Error al regresar al menú principal.",
-                    "Error",
+                    Lang.GlobalUnexpectedError,
+                    Lang.GlobalError,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
@@ -167,9 +272,8 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 return;
             }
 
-            Application.Current.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
-
                 if (isNavigatingToGame)
                 {
                     return;
@@ -181,17 +285,21 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     string matchCode = viewModel.MatchCode;
                     string myUsername = UserSession.Instance.CurrentUser.Username;
-                    List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> players = viewModel.GetCurrentPlayers();
+
+                    List<DTO.LobbyPlayerDTO> players = viewModel.GetCurrentPlayers();
                     int myLobbyUserId = viewModel.GetMyLobbyUserId();
 
-                    this.IsNavigating = true;
-                    MainMatch gameWindow = new MainMatch(players, myUsername, matchCode, myLobbyUserId);
+                    IsNavigating = true;
+
+                    var gameWindow = new MainMatch(players, myUsername, matchCode, myLobbyUserId);
                     Application.Current.MainWindow = gameWindow;
                     gameWindow.Show();
-                    this.Close();
+
+                    Close();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine($"[LOBBY] Error navigating to game: {ex.Message}");
                     isNavigatingToGame = false;
                     MessageBox.Show(Lang.Lobby_ErrorStartingGame);
                 }
@@ -210,27 +318,24 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             {
                 Btn_Begin.IsChecked = false;
                 MessageBox.Show(Lang.Lobby_MiniumPlayers);
+                return;
             }
-            else
-            {
-                SoundButton.PlayDestroyingRockSound();
-                viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
-            }
+
+            SoundButton.PlayDestroyingRockSound();
+            viewModel.StartTheGame(viewModel.MatchCode, UserSession.Instance.CurrentUser.Username);
         }
 
-        private void Click_BtnCancelMatch(object sender, RoutedEventArgs e)
+        private async void Click_BtnCancelMatch(object sender, RoutedEventArgs e)
         {
             SoundButton.PlayDestroyingRockSound();
 
             if (UserSession.Instance.CurrentUser == null)
             {
-                this.Close();
+                Close();
                 return;
             }
 
-            string nicknameToSend = UserSession.Instance.GetNickname();
-
-            viewModel?.CancelReconnectionAndExit();
+            viewModel.CancelReconnectionAndExit();
 
             if (viewModel.CurrentClientIsHost())
             {
@@ -240,26 +345,24 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     MessageBoxButton.YesNo
                 );
 
-                if (result == MessageBoxResult.Yes)
+                if (result != MessageBoxResult.Yes)
                 {
-                    viewModel.LeaveOfTheLobby(nicknameToSend);
-                    this.IsNavigating = true;
-                    MainWindow main = new MainWindow();
-                    Application.Current.MainWindow = main; 
-                    main.Show();
-                    this.Close();
+                    return;
                 }
             }
-            else
+
+            IsNavigating = true;
+
+            try
             {
-                viewModel.LeaveOfTheLobby(nicknameToSend);
-                this.IsNavigating = true;
-                this.IsNavigating = true;
-                MainWindow main = new MainWindow();
-                Application.Current.MainWindow = main; 
-                main.Show();
-                this.Close();
+                await RunExitCleanupAsync();
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] CancelMatch cleanup error: {ex.Message}");
+            }
+
+            NavigateToMainWindow();
         }
 
         private async void Click_BtnInviteFriends(object sender, RoutedEventArgs e)
@@ -274,10 +377,11 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     MessageBox.Show(
                         "No tienes amigos agregados aún.",
-                        "Sin amigos",
+                        Lang.GlobalInformation,
                         MessageBoxButton.OK,
                         MessageBoxImage.Information
                     );
+
                     return;
                 }
 
@@ -287,9 +391,10 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             catch (Exception ex)
             {
                 Debug.WriteLine($"[LOBBY] Error showing friends: {ex.Message}");
+
                 MessageBox.Show(
-                    "Error al cargar la lista de amigos.",
-                    "Error",
+                    Lang.GlobalUnexpectedError,
+                    Lang.GlobalError,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error
                 );
@@ -299,14 +404,21 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         private void Click_BtnInviteFriend(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            if (button == null) return;
+            if (button == null)
+            {
+                return;
+            }
 
             string friendUsername = button.Tag as string;
-            if (string.IsNullOrEmpty(friendUsername)) return;
+            if (string.IsNullOrEmpty(friendUsername))
+            {
+                return;
+            }
 
             SoundButton.PlayMovingRockSound();
-            viewModel?.InviteFriendToLobby(friendUsername);
+            viewModel.InviteFriendToLobby(friendUsername);
         }
+
 
         private void Click_BtnCancelInviteFriend(object sender, RoutedEventArgs e)
         {
@@ -332,6 +444,5 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             SoundButton.PlayDestroyingRockSound();
             Gr_InviteByEmail.Visibility = Visibility.Collapsed;
         }
-
     }
 }

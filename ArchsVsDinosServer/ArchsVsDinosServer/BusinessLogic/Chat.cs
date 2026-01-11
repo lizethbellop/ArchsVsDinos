@@ -30,7 +30,9 @@ namespace ArchsVsDinosServer.BusinessLogic
         }
 
         private static readonly ConcurrentDictionary<string, UserConnection> ConnectedUsers = new ConcurrentDictionary<string, UserConnection>();
+        private static readonly ConcurrentDictionary<string, int> StrikesByUser = new ConcurrentDictionary<string, int>();
         private const string DefaultRoom = "Lobby";
+        private const int MaxStrikes = 3;
         private const int MinimumPlayersRequired = 2;
         private const int ContextLobby = 0;
         private const int ContextGame = 1;
@@ -208,6 +210,8 @@ namespace ArchsVsDinosServer.BusinessLogic
         {
             if (ConnectedUsers.TryRemove(username, out var userConnection))
             {
+                ClearStrikes(userConnection);
+
                 BroadcastSystemNotificationToMatch(
                     ChatResultCode.Chat_UserDisconnected,
                     $"{username} has left",
@@ -226,6 +230,29 @@ namespace ArchsVsDinosServer.BusinessLogic
                 }
             }
         }
+
+        private static string StrikeKey(string matchCode, int context, int userId) => $"{matchCode}|{context}|{userId}";
+
+        private int EnsureAndIncrementStrike(UserConnection user)
+        {
+            string key = StrikeKey(user.MatchCode, user.Context, user.UserId);
+
+            return StrikesByUser.AddOrUpdate(
+                key,
+                addValueFactory: _ => 1,
+                updateValueFactory: (_, old) => old + 1
+            );
+        }
+
+        private void ClearStrikes(UserConnection user)
+        {
+            if (user == null) return;
+
+            string key = StrikeKey(user.MatchCode, user.Context, user.UserId);
+            StrikesByUser.TryRemove(key, out _);
+        }
+
+
 
         public void SendMessageToRoom(string message, string username)
         {
@@ -251,26 +278,29 @@ namespace ArchsVsDinosServer.BusinessLogic
 
             if (!result.CanSendMessage)
             {
-                if (result.IsGuest)
+                int strikes = result.CurrentStrikes;
+                if (strikes <= 0)
                 {
-                    NotifyGuestMessageBlocked(username);
+                    strikes = EnsureAndIncrementStrike(user);
                 }
-                else if (result.ShouldBan)
+
+                if (strikes >= MaxStrikes)
                 {
                     var banContext = new UserBanContext
                     {
                         Username = username,
-                        Strikes = result.CurrentStrikes,
+                        Strikes = strikes,
                         Context = user.Context,
                         MatchCode = user.MatchCode,
-                        IsGuest = result.IsGuest,
+                        IsGuest = (user.UserId < 0),
                         UserId = user.UserId
                     };
+
                     HandleUserBan(banContext);
                 }
                 else
                 {
-                    NotifyUserMessageBlocked(username, result.CurrentStrikes);
+                    NotifyUserMessageBlocked(username, strikes);
                 }
 
                 return;
@@ -281,51 +311,34 @@ namespace ArchsVsDinosServer.BusinessLogic
 
         private void HandleUserBan(UserBanContext banContext)
         {
+            ConnectedUsers.TryGetValue(banContext.Username, out var userConn);
+
             if (banContext.IsGuest)
             {
                 loggerHelper.LogWarning($"Guest {banContext.Username} expelled for inappropriate behavior");
 
-                if (ConnectedUsers.TryGetValue(banContext.Username, out var user))
+                if (userConn != null)
                 {
                     SafeCallbackInvoke(banContext.Username, () =>
                     {
-                        user.Callback.ReceiveSystemNotification(
+                        userConn.Callback.ReceiveSystemNotification(
                             ChatResultCode.Chat_UserBanned,
                             "You have been expelled for inappropriate behavior"
                         );
                     });
                 }
-
-                BroadcastSystemNotificationToMatch(
-                    ChatResultCode.Chat_UserBanned,
-                    $"{banContext.Username} has been expelled for inappropriate behavior",
-                    banContext.MatchCode
-                );
-
-                if (banContext.Context == ContextLobby)
-                    lobbyNotifier?.NotifyPlayerExpelled(banContext.MatchCode, banContext.UserId, "Inappropriate language");
-                else
-                    gameNotifier?.NotifyPlayerExpelled(banContext.MatchCode, banContext.UserId, "Inappropriate language");
-
-                ConnectedUsers.TryRemove(banContext.Username, out _);
-                UpdateUserListForMatch(banContext.MatchCode);
-
-                if (banContext.Context == ContextLobby)
-                    CheckMinimumPlayersInLobby(banContext.MatchCode);
-                else
-                    CheckMinimumPlayersInGame(banContext.MatchCode);
-
-                return;
             }
-
-            loggerHelper.LogWarning($"User {banContext.Username} banned with {banContext.Strikes} strikes");
-
-            if (ConnectedUsers.TryGetValue(banContext.Username, out var registeredUser))
+            else
             {
-                SafeCallbackInvoke(banContext.Username, () =>
+                loggerHelper.LogWarning($"User {banContext.Username} banned with {banContext.Strikes} strikes");
+
+                if (userConn != null)
                 {
-                    registeredUser.Callback.UserBannedFromChat(banContext.Username, banContext.Strikes);
-                });
+                    SafeCallbackInvoke(banContext.Username, () =>
+                    {
+                        userConn.Callback.UserBannedFromChat(banContext.Username, banContext.Strikes);
+                    });
+                }
             }
 
             BroadcastSystemNotificationToMatch(
@@ -335,11 +348,17 @@ namespace ArchsVsDinosServer.BusinessLogic
             );
 
             if (banContext.Context == ContextLobby)
-                lobbyNotifier?.NotifyPlayerExpelled(banContext.MatchCode, registeredUser.UserId, "Inappropriate language");
+                lobbyNotifier?.NotifyPlayerExpelled(banContext.MatchCode, banContext.UserId, "Inappropriate language");
             else
-                gameNotifier?.NotifyPlayerExpelled(banContext.MatchCode, registeredUser.UserId, "Inappropriate language");
+                gameNotifier?.NotifyPlayerExpelled(banContext.MatchCode, banContext.UserId, "Inappropriate language");
+
+            if (userConn != null)
+            {
+                ClearStrikes(userConn);
+            }
 
             ConnectedUsers.TryRemove(banContext.Username, out _);
+
             UpdateUserListForMatch(banContext.MatchCode);
 
             if (banContext.Context == ContextLobby)
@@ -372,7 +391,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             {
                 loggerHelper.LogWarning($"[CHAT MONITOR] Low players in lobby {lobbyCode}: {lobbyPlayers}. Waiting for LobbyLogic decision.");
 
-                
+
             }
         }
 
