@@ -18,7 +18,7 @@ namespace ArchsVsDinosClient.Services.Interfaces
         void StartGame(string matchCode);
         void KickPlayer(string lobbyCode, int hostUserId, string targetNickname);
         Task<bool> SendLobbyInviteByEmail(string email, string matchCode, string senderUsername);
-        Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername); // ← NUEVO
+        Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername); 
 
         Task<bool> TryReconnectToLobbyAsync(string matchCode, string nickname);
 

@@ -755,12 +755,11 @@ namespace ArchsVsDinosClient.ViewModels
                 {
                     Debug.WriteLine($"[LOBBY VM] Intentando desconectar del lobby: {myUsername}");
 
-                    
                     _ = Task.Run(async () =>
                     {
                         try
                         {
-                            var leaveTask = lobbyServiceClient.LeaveLobbyAsync();
+                            var leaveTask = Task.Run(() => lobbyServiceClient.LeaveLobby(myUsername));
                             var completedTask = await Task.WhenAny(leaveTask, Task.Delay(2000));
 
                             if (completedTask == leaveTask)
