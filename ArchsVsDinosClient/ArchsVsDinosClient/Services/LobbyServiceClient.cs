@@ -294,6 +294,8 @@ namespace ArchsVsDinosClient.Services
 
         private void StartHeartbeat()
         {
+            Debug.WriteLine($"[LOBBY CLIENT] ⚙️ StartHeartbeat llamado - Usuario: {UserSession.Instance.CurrentUser?.Nickname}");
+
             heartbeatTimer?.Dispose();
             heartbeatFailures = 0;
 
@@ -302,7 +304,7 @@ namespace ArchsVsDinosClient.Services
             heartbeatTimer.AutoReset = true;
             heartbeatTimer.Start();
 
-            Debug.WriteLine("[LOBBY CLIENT] Heartbeat iniciado");
+            Debug.WriteLine($"[LOBBY CLIENT] ✅ Heartbeat iniciado para {UserSession.Instance.CurrentUser?.Nickname}");
         }
 
         private void CheckConnectionWithPing()
