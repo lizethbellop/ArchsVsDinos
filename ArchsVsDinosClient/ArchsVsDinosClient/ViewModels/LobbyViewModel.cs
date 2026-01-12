@@ -36,6 +36,7 @@ namespace ArchsVsDinosClient.ViewModels
         private System.Timers.Timer reconnectionTimer;
         private bool isAttemptingReconnection = false;
         private int reconnectionAttempts = 0;
+        private int lostHandled = 0;
         private const int MAX_RECONNECTION_ATTEMPTS = 5;
         private const int RECONNECTION_INTERVAL_MS = 5000;
         private bool userRequestedExit = false;
@@ -133,35 +134,25 @@ namespace ArchsVsDinosClient.ViewModels
 
         private void OnConnectionTimerExpired()
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Debug.WriteLine("[LOBBY VM] ❌ Perdí MI conexión (ping falló)");
+            if (System.Threading.Interlocked.Exchange(ref lostHandled, 1) == 1)
+                return;
 
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
                 if (lobbyServiceClient is LobbyServiceClient serviceClient)
                 {
                     serviceClient.StopConnectionMonitoring();
-                }
-
-                string myUsername = UserSession.Instance.CurrentUser?.Username;
-                if (!string.IsNullOrEmpty(myUsername))
-                {
-                    try
-                    {
-                        lobbyServiceClient.LeaveLobby(myUsername);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"[LOBBY VM] No se pudo notificar salida: {ex.Message}");
-                    }
+                    serviceClient.ForceAbort();
                 }
 
                 Cleanup();
 
+                UserSession.Instance.CurrentMatchCode = string.Empty;
                 LobbyConnectionLost?.Invoke(
                     "Conexión perdida",
                     "Se perdió tu conexión con el servidor. Regresando al inicio de sesión."
                 );
-            });
+            }));
         }
 
         private void RefreshFriendStatusInSlots()
@@ -481,6 +472,7 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 if (lobbyServiceClient is LobbyServiceClient serviceClient)
                 {
+                    serviceClient.ForceAbort();
                     serviceClient.StopConnectionMonitoring();
                     await serviceClient.LeaveLobbyAsync();
                 }
@@ -753,7 +745,7 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 Debug.WriteLine($"[LOBBY VM] Intentando desconectar del lobby: {myUsername}");
 
-                
+
                 _ = Task.Run(() =>
                 {
                     try
@@ -801,7 +793,7 @@ namespace ArchsVsDinosClient.ViewModels
                     string myUser = UserSession.Instance.CurrentUser?.Username;
                     if (!string.IsNullOrEmpty(myUser))
                     {
-                        
+
                         _ = Task.Run(async () =>
                         {
                             try
@@ -1152,6 +1144,12 @@ namespace ArchsVsDinosClient.ViewModels
 
         private async void OnReconnectionTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+
+            if (lobbyServiceClient is LobbyServiceClient serviceClient)
+            {
+                serviceClient.ForceAbort();
+            }
+
 
             if (userRequestedExit)
             {

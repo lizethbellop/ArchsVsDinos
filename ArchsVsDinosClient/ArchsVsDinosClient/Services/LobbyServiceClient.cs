@@ -18,15 +18,11 @@ namespace ArchsVsDinosClient.Services
     public class LobbyServiceClient : ILobbyServiceClient
     {
         private const int DefaultMaxPlayers = 4;
-        private const int MinimumTimeoutSeconds = 30;
-        private const int MaxConsecutiveTimeouts = 3;
+        private const int MinimumTimeoutSeconds = 10;
+        private const int MaxConsecutiveTimeouts = 2;
+
         private readonly SynchronizationContext uiContext;
         private readonly SemaphoreSlim reconnectSemaphore;
-
-        private const int HeartbeatIntervalMs = 4000;
-        private const int MaxHeartbeatFailures = 2; 
-        private System.Timers.Timer heartbeatTimer;
-        private int heartbeatFailures = 0;
 
         private int consecutiveTimeoutCount;
 
@@ -70,6 +66,7 @@ namespace ArchsVsDinosClient.Services
             }
 
             lobbyManagerClient = new LobbyManagerClient(instanceContext);
+            ConfigureWcfTimeouts(lobbyManagerClient);
 
             connectionGuardian = new WcfConnectionGuardian(
                 onError: (title, message) => RaiseConnectionError(title, message),
@@ -227,6 +224,12 @@ namespace ArchsVsDinosClient.Services
 
         public async Task<bool> ConnectToLobbyAsync(string matchCode, string nickname)
         {
+            if (!InternetConnectivity.HasInternet())
+            {
+                RaiseConnectionError(Lang.GlobalSystemError, Lang.Lobby_ErrorOccured);
+                return false;
+            }
+
             return await connectionGuardian.ExecuteAsync(async () =>
             {
                 await Task.Run(() => lobbyManagerClient.ConnectToLobby(matchCode, nickname));
@@ -237,6 +240,13 @@ namespace ArchsVsDinosClient.Services
         {
             try
             {
+
+                if (!InternetConnectivity.HasInternet())
+                {
+                    Debug.WriteLine("[LOBBY CLIENT] Reconnect skipped (no internet).");
+                    return false;
+                }
+
                 Debug.WriteLine($"[LOBBY CLIENT] Trying to reconnect to lobby {matchCode}...");
 
                 connectionTimer?.Stop();
@@ -251,7 +261,6 @@ namespace ArchsVsDinosClient.Services
                 {
                     connectionTimer?.Start();
                     connectionTimer?.NotifyActivity();
-                    StartHeartbeat();
                     Debug.WriteLine($"[LOBBY CLIENT] Reconnected to lobby {matchCode}");
                     return true;
                 }
@@ -284,88 +293,48 @@ namespace ArchsVsDinosClient.Services
                 Debug.WriteLine($"[LOBBY CLIENT] Reconnect InvalidOperationException: {ex.Message}");
                 return false;
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY CLIENT] Reconnect Exception: {ex.Message}");
+                return false;
+            }
         }
 
-        public void StartConnectionMonitoring(int timeoutSeconds)
-        {
-            Debug.WriteLine("[LOBBY CLIENT] Iniciando monitoreo de conexión con heartbeat");
-            StartHeartbeat();
-        }
-
-        private void StartHeartbeat()
-        {
-            Debug.WriteLine($"[LOBBY CLIENT] ⚙️ StartHeartbeat llamado - Usuario: {UserSession.Instance.CurrentUser?.Nickname}");
-
-            heartbeatTimer?.Dispose();
-            heartbeatFailures = 0;
-
-            heartbeatTimer = new System.Timers.Timer(HeartbeatIntervalMs);
-            heartbeatTimer.Elapsed += (s, e) => CheckConnectionWithPing();
-            heartbeatTimer.AutoReset = true;
-            heartbeatTimer.Start();
-
-            Debug.WriteLine($"[LOBBY CLIENT] ✅ Heartbeat iniciado para {UserSession.Instance.CurrentUser?.Nickname}");
-        }
-
-        private void CheckConnectionWithPing()
+        public void ForceAbort()
         {
             try
             {
-                if (lobbyManagerClient == null)
+                if (lobbyManagerClient != null)
                 {
-                    return;
-                }
-
-                var pingTask = Task.Run(() =>
-                {
-                    try
-                    {
-                        return lobbyManagerClient.Ping();
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                });
-
-                bool pingSucceeded = pingTask.Wait(2000) && pingTask.Result;
-
-                if (pingSucceeded)
-                {
-                    heartbeatFailures = 0;
-                    Debug.WriteLine("[LOBBY CLIENT] ✓ Ping OK");
-                }
-                else
-                {
-                    heartbeatFailures++;
-                    Debug.WriteLine($"[LOBBY CLIENT] ✗ Ping FALLÓ, intentos: {heartbeatFailures}/{MaxHeartbeatFailures}");
-
-                    if (heartbeatFailures >= MaxHeartbeatFailures)
-                    {
-                        Debug.WriteLine($"[LOBBY CLIENT] ❌ Cliente SIN INTERNET: {UserSession.Instance.CurrentUser?.Nickname}");
-                        heartbeatTimer?.Stop();
-                        RaiseConnectionLost();
-                    }
+                    ((ICommunicationObject)lobbyManagerClient).Abort();
                 }
             }
             catch (Exception ex)
             {
-                heartbeatFailures++;
-                Debug.WriteLine($"[LOBBY CLIENT] Heartbeat exception: {ex.Message}, fallos: {heartbeatFailures}/{MaxHeartbeatFailures}");
-
-                if (heartbeatFailures >= MaxHeartbeatFailures)
-                {
-                    Debug.WriteLine($"[LOBBY CLIENT] ❌ Excepción en ping: {UserSession.Instance.CurrentUser?.Nickname}");
-                    heartbeatTimer?.Stop();
-                    RaiseConnectionLost();
-                }
+                Debug.WriteLine($"[LOBBY CLIENT] Abort failed: {ex.Message}");
             }
+        }
+
+
+        public void StartConnectionMonitoring(int timeoutSeconds)
+        {
+            int effectiveTimeoutSeconds = timeoutSeconds < MinimumTimeoutSeconds
+                ? MinimumTimeoutSeconds
+                : timeoutSeconds;
+
+            consecutiveTimeoutCount = 0;
+
+            connectionTimer?.Dispose();
+            connectionTimer = new GameConnectionTimer(effectiveTimeoutSeconds, OnConnectionTimeout);
+
+            lobbyCallbackManager.SetConnectionTimer(connectionTimer);
+
+            connectionTimer.Start();
+            connectionTimer.NotifyActivity();
         }
 
         public void StopConnectionMonitoring()
         {
-            heartbeatTimer?.Stop();    
-            heartbeatTimer?.Dispose();  
             connectionTimer?.Stop();
             Debug.WriteLine("[LOBBY TIMER] Stopped");
         }
@@ -387,6 +356,18 @@ namespace ArchsVsDinosClient.Services
             {
                 consecutiveTimeoutCount++;
 
+                if (!InternetConnectivity.HasInternet())
+                {
+                    Debug.WriteLine("[LOBBY CLIENT] No internet. Timeout count=" + consecutiveTimeoutCount);
+
+                    if (consecutiveTimeoutCount >= MaxConsecutiveTimeouts)
+                    {
+                        RaiseConnectionLost();
+                    }
+
+                    return;
+                }
+
                 string matchCode = UserSession.Instance.CurrentMatchCode ?? string.Empty;
                 string nickname = UserSession.Instance.CurrentUser?.Nickname ?? string.Empty;
 
@@ -407,6 +388,7 @@ namespace ArchsVsDinosClient.Services
                 reconnectSemaphore.Release();
             }
         }
+
 
         private void EnsureClientIsUsable()
         {
@@ -453,6 +435,7 @@ namespace ArchsVsDinosClient.Services
             }
 
             lobbyManagerClient = new LobbyManagerClient(instanceContext);
+            ConfigureWcfTimeouts(lobbyManagerClient);
             connectionGuardian.MonitorClientState(lobbyManagerClient);
 
             if (connectionTimer != null)
@@ -469,7 +452,7 @@ namespace ArchsVsDinosClient.Services
                 return;
             }
 
-            Application.Current?.Dispatcher?.Invoke(() => ConnectionLost?.Invoke());
+            Application.Current?.Dispatcher?.BeginInvoke(new Action(() => ConnectionLost?.Invoke()));
         }
 
         private void RaiseConnectionError(string title, string message)
@@ -480,7 +463,7 @@ namespace ArchsVsDinosClient.Services
                 return;
             }
 
-            Application.Current?.Dispatcher?.Invoke(() => ConnectionError?.Invoke(title, message));
+            Application.Current?.Dispatcher?.BeginInvoke(new Action(() => ConnectionError?.Invoke(title, message)));
         }
 
         public Task LeaveLobbyAsync()
@@ -498,14 +481,49 @@ namespace ArchsVsDinosClient.Services
 
         private async Task LeaveLobbyInternalAsync(string lobbyCode, List<string> identifiers)
         {
+            if (!InternetConnectivity.HasInternet())
+            {
+                Debug.WriteLine("[LOBBY CLIENT] Skip DisconnectFromLobby (no internet).");
+                return;
+            }
+
             EnsureClientIsUsable();
 
             foreach (string id in identifiers)
             {
                 await connectionGuardian.ExecuteAsync(
-                    operation: async () =>
+                    operation: () =>
                     {
-                        await Task.Run(() => lobbyManagerClient.DisconnectFromLobby(lobbyCode, id));
+                        try
+                        {
+                            lobbyManagerClient.DisconnectFromLobby(lobbyCode, id);
+                        }
+                        catch (EndpointNotFoundException ex)
+                        {
+                            Debug.WriteLine($"[LOBBY CLIENT] DisconnectFromLobby EndpointNotFoundException: {ex.Message}");
+                        }
+                        catch (CommunicationException ex)
+                        {
+                            Debug.WriteLine($"[LOBBY CLIENT] DisconnectFromLobby CommunicationException: {ex.Message}");
+                        }
+                        catch (TimeoutException ex)
+                        {
+                            Debug.WriteLine($"[LOBBY CLIENT] DisconnectFromLobby TimeoutException: {ex.Message}");
+                        }
+                        catch (ObjectDisposedException ex)
+                        {
+                            Debug.WriteLine($"[LOBBY CLIENT] DisconnectFromLobby ObjectDisposedException: {ex.Message}");
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Debug.WriteLine($"[LOBBY CLIENT] DisconnectFromLobby InvalidOperationException: {ex.Message}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[LOBBY CLIENT] DisconnectFromLobby Exception: {ex.Message}");
+                        }
+
+                        return Task.CompletedTask;
                     },
                     operationName: "DisconnectFromLobby",
                     suppressErrors: true
@@ -605,6 +623,19 @@ namespace ArchsVsDinosClient.Services
             {
                 await Task.Run(() => lobbyManagerClient.KickPlayer(lobbyCode, hostUserId, targetNickname));
             });
+        }
+        private void ConfigureWcfTimeouts(LobbyManagerClient client)
+        {
+            client.Endpoint.Binding.OpenTimeout = TimeSpan.FromSeconds(3);
+            client.Endpoint.Binding.CloseTimeout = TimeSpan.FromSeconds(2);
+            client.Endpoint.Binding.SendTimeout = TimeSpan.FromSeconds(3);
+            client.Endpoint.Binding.ReceiveTimeout = TimeSpan.FromSeconds(10);
+
+            if (client.InnerChannel is IContextChannel ctx)
+            {
+                ctx.OperationTimeout = TimeSpan.FromSeconds(3);
+            }
+
         }
 
         public async Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername)

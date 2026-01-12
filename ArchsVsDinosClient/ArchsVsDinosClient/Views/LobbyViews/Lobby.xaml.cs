@@ -216,11 +216,12 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 {
                     IsNavigating = true;
 
+
+
                     await RunExitCleanupAsync();
 
                     MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    // ✨ ESTO MANDA A LOGIN (con logout)
                     NavigateToLogin();
                 }
                 catch (Exception ex)

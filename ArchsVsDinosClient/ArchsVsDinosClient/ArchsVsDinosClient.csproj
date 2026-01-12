@@ -173,6 +173,7 @@
     <Compile Include="Utils\GameConnectionTimer.cs" />
     <Compile Include="Utils\GlobalSettings.cs" />
     <Compile Include="Utils\ImageCompressor.cs" />
+    <Compile Include="Utils\InternetConnectivity.cs" />
     <Compile Include="Utils\LoadingDisplayHelper.cs" />
     <Compile Include="Utils\LobbyResultCodeHelper.cs" />
     <Compile Include="Utils\LocalizationManager.cs" />

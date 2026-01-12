@@ -53,12 +53,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     Debug.WriteLine($"[JOINCODE] Connecting to lobby {code} as {nickname}...");
                     await lobbyServiceClient.ConnectToLobbyAsync(code, nickname);
 
-                    if (lobbyServiceClient is LobbyServiceClient serviceClient)
-                    {
-                        serviceClient.StartConnectionMonitoring(timeoutSeconds: 12);
-                        Debug.WriteLine($"[JOINCODE] Heartbeat iniciado para {nickname}");
-                    }
-
                     Debug.WriteLine($"[JOINCODE] Connected successfully");
                     lobbyWindow.Show();
                     IsCancelled = false;

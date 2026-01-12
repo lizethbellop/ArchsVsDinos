@@ -152,6 +152,11 @@ namespace ArchsVsDinosClient.Services
             {
                 Debug.WriteLine($"[CALLBACK] InvalidOperationException in {methodName}: {ex.Message}");
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[CALLBACK] Unexpected exception in {methodName}: {ex}");
+            }
         }
+
     }
 }
