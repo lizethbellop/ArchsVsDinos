@@ -25,6 +25,12 @@ namespace ArchsVsDinosServer.BusinessLogic
         private readonly ILoggerHelper logger;
         private readonly IGameLogic gameLogic;
         private readonly IInvitationSendHelper invitationSendHelper;
+        private readonly object heartbeatLock = new object();
+        private readonly Dictionary<string, System.Threading.Timer> lobbyHeartbeats =
+            new Dictionary<string, System.Threading.Timer>(StringComparer.OrdinalIgnoreCase);
+
+        private const int HEARTBEAT_SECONDS = 5;
+
 
         public LobbyLogic(
         LobbyCoreContext core,
@@ -57,6 +63,8 @@ namespace ArchsVsDinosServer.BusinessLogic
                 lobbyData.AddPlayer(settings.HostUserId, settings.HostUsername, settings.HostNickname);
 
                 core.Session.CreateLobby(lobbyCode, lobbyData);
+                StartLobbyHeartbeat(lobbyCode);
+
                 logger.LogInfo($"Lobby {lobbyCode} created by {settings.HostNickname}");
 
                 return Task.FromResult(new MatchCreationResponse
@@ -95,8 +103,62 @@ namespace ArchsVsDinosServer.BusinessLogic
             }
         }
 
- 
-        public Task<MatchJoinResponse> JoinLobby(JoinLobbyRequest request)  
+        private void StartLobbyHeartbeat(string lobbyCode)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode))
+                return;
+
+            lock (heartbeatLock)
+            {
+                if (lobbyHeartbeats.ContainsKey(lobbyCode))
+                    return;
+
+                var timer = new System.Threading.Timer(_ =>
+                {
+                    try
+                    {
+                        var lobby = core.Session.GetLobby(lobbyCode);
+                        if (lobby == null)
+                        {
+                            StopLobbyHeartbeat(lobbyCode);
+                            return;
+                        }
+
+                        var list = MapPlayersToDTOs(lobby);
+                        core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(list));
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning("Heartbeat error: " + ex.Message);
+                    }
+
+                }, null,
+                TimeSpan.FromSeconds(HEARTBEAT_SECONDS),
+                TimeSpan.FromSeconds(HEARTBEAT_SECONDS));
+
+                lobbyHeartbeats[lobbyCode] = timer;
+            }
+        }
+
+        private void StopLobbyHeartbeat(string lobbyCode)
+        {
+            if (string.IsNullOrWhiteSpace(lobbyCode))
+                return;
+
+            lock (heartbeatLock)
+            {
+                System.Threading.Timer timer;
+                if (lobbyHeartbeats.TryGetValue(lobbyCode, out timer))
+                {
+                    lobbyHeartbeats.Remove(lobbyCode);
+                    try { timer.Dispose(); } catch { }
+                }
+            }
+        }
+
+
+
+        public Task<MatchJoinResponse> JoinLobby(JoinLobbyRequest request)
         {
             if (request == null ||
                 string.IsNullOrWhiteSpace(request.LobbyCode) ||
@@ -425,19 +487,26 @@ namespace ArchsVsDinosServer.BusinessLogic
                 var lobby = core.Session.GetLobby(lobbyCode);
                 if (lobby == null) return;
 
+                bool notifyLeft = false;
+                bool removeLobby = false;
+                bool kickedBySystem = false;
+
+                string systemKickMsg = "The host left and there aren't registered players to be the host.";
+                LobbyPlayerDTO[] updatedList = null;
+
                 lock (lobby.LobbyLock)
                 {
                     var leavingPlayer = lobby.Players.FirstOrDefault(p =>
-                            p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
+                        p.Nickname.Equals(playerNickname, StringComparison.OrdinalIgnoreCase));
 
                     if (leavingPlayer == null) return;
 
                     bool wasHost = (lobby.HostUserId == leavingPlayer.UserId);
 
-                    core.Session.Broadcast(lobbyCode, cb => cb.PlayerLeftLobby(playerNickname));
-
                     lobby.RemovePlayer(playerNickname);
                     core.Session.DisconnectPlayerCallback(lobbyCode, playerNickname);
+
+                    notifyLeft = true;
 
                     if (wasHost && lobby.Players.Count > 0)
                     {
@@ -445,29 +514,50 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                         if (nextRegistered != null)
                         {
-                            lobby.HostUserId = nextRegistered.UserId; 
+                            lobby.HostUserId = nextRegistered.UserId;
                             logger.LogInfo($"Host transfered to: {nextRegistered.Nickname}");
                         }
                         else
                         {
-                            core.Session.Broadcast(lobbyCode, cb =>
-                                cb.PlayerKicked("SYSTEM", "The host left and there aren't registered players to be the host."));
-
-                            System.Threading.Thread.Sleep(300); 
-                            core.Session.RemoveLobby(lobbyCode);
-                            return;
+                            kickedBySystem = true;
+                            removeLobby = true;
                         }
                     }
 
-                    if (lobby.Players.Count > 0)
+                    if (!removeLobby)
                     {
-                        var updatedList = MapPlayersToDTOs(lobby);
-                        core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(updatedList));
+                        if (lobby.Players.Count > 0)
+                        {
+                            updatedList = MapPlayersToDTOs(lobby);
+                        }
+                        else
+                        {
+                            removeLobby = true;
+                        }
                     }
-                    else
-                    {
-                        core.Session.RemoveLobby(lobbyCode);
-                    }
+                }
+
+                if (notifyLeft)
+                {
+                    core.Session.Broadcast(lobbyCode, cb => cb.PlayerLeftLobby(playerNickname));
+                }
+
+                if (kickedBySystem)
+                {
+                    core.Session.Broadcast(lobbyCode, cb => cb.PlayerKicked("SYSTEM", systemKickMsg));
+                    System.Threading.Thread.Sleep(300);
+                }
+
+                if (removeLobby)
+                {
+                    StopLobbyHeartbeat(lobbyCode);
+                    core.Session.RemoveLobby(lobbyCode);
+                    return;
+                }
+
+                if (updatedList != null)
+                {
+                    core.Session.Broadcast(lobbyCode, cb => cb.UpdateListOfPlayers(updatedList));
                 }
             }
             catch (Exception ex)
@@ -475,6 +565,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 logger.LogWarning($"Error in Disconnect player: {ex.Message}");
             }
         }
+
 
         public async Task<bool> SendInvitations(string lobbyCode, string sender, List<string> guests)
         {
@@ -625,7 +716,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                     }
                 });
 
-               System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(100);
 
                 core.Session.DisconnectPlayerCallback(lobbyCode, targetNickname);
                 HandlePlayerExit(lobbyCode, targetNickname);
@@ -669,7 +760,7 @@ namespace ArchsVsDinosServer.BusinessLogic
                 if (targetCallback == null)
                 {
                     logger.LogInfo($"User {targetUsername} is not connected. Invitation sent optimistically.");
-                    return Task.FromResult(true); 
+                    return Task.FromResult(true);
                 }
 
                 return SendInvitationToCallback(targetCallback, lobbyCode, senderNickname, targetUsername);
@@ -754,7 +845,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             catch (ObjectDisposedException ex)
             {
                 logger.LogWarning($"Callback disposed for {targetUsername}: {ex.Message}");
-                return Task.FromResult(true); 
+                return Task.FromResult(true);
             }
             catch (Exception ex)
             {

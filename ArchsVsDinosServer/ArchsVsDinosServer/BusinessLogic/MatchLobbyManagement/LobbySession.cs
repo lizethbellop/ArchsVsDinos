@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Interfaces.Lobby;
 using ArchsVsDinosServer.Model;
+using ArchsVsDinosServer.Utils;
 using ArchsVsDinosServer.Wrappers;
 using Contracts;
 using log4net.Core;
@@ -93,7 +94,7 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
 
         public void CreateLobby(string lobbyCode, ActiveLobbyData lobbyData)
         {
-            lock(syncRoot)
+            lock (syncRoot)
             {
                 if (activeLobbies.ContainsKey(lobbyCode))
                 {
@@ -125,12 +126,18 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
         {
             lock (syncRoot)
             {
-                if (lobbyCallbacks.ContainsKey(lobbyCode))
-                {
-                    lobbyCallbacks[lobbyCode][playerName] = callback;
-                }
+                if (!lobbyCallbacks.ContainsKey(lobbyCode)) return;
+                lobbyCallbacks[lobbyCode][playerName] = callback;
+            }
+
+            var comm = callback as ICommunicationObject;
+            if (comm != null)
+            {
+                comm.Faulted += (s, e) => CleanupDisconnectedPlayers(lobbyCode, new List<string> { playerName });
+                comm.Closed += (s, e) => CleanupDisconnectedPlayers(lobbyCode, new List<string> { playerName });
             }
         }
+
 
         public void RemoveLobby(string lobbyCode)
         {
@@ -145,31 +152,107 @@ namespace ArchsVsDinosServer.BusinessLogic.MatchLobbyManagement
         {
             lock (syncRoot)
             {
-                if(lobbyCallbacks.ContainsKey(lobbyCode))
+                if (lobbyCallbacks.ContainsKey(lobbyCode))
                 {
                     lobbyCallbacks[lobbyCode].Remove(playerName);
                 }
             }
         }
-
-        private void CleanupDisconnectedPlayers(
-            string lobbyCode,
-            List<string> players)
+        private void CleanupDisconnectedPlayers(string lobbyCode, List<string> players)
         {
+            if (string.IsNullOrWhiteSpace(lobbyCode) || players == null || players.Count == 0)
+                return;
+
+            List<Tuple<string, string>> removed = new List<Tuple<string, string>>();
+            bool lobbyBecameEmpty = false;
+
+            HashSet<string> uniqueNicks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var n in players)
+            {
+                if (!string.IsNullOrWhiteSpace(n))
+                    uniqueNicks.Add(n);
+            }
+
             lock (syncRoot)
             {
-                if (!lobbyCallbacks.ContainsKey(lobbyCode))
-                {
+                Dictionary<string, ILobbyManagerCallback> callbacksDict;
+                if (!lobbyCallbacks.TryGetValue(lobbyCode, out callbacksDict))
                     return;
+
+                var lobby = GetLobby(lobbyCode);
+                if (lobby == null)
+                    return;
+
+                foreach (var nick in uniqueNicks)
+                {
+                    callbacksDict.Remove(nick);
+
+                    lock (lobby.LobbyLock)
+                    {
+                        var p = lobby.Players.FirstOrDefault(x =>
+                            x.Nickname != null &&
+                            x.Nickname.Equals(nick, StringComparison.OrdinalIgnoreCase));
+
+                        if (p != null)
+                        {
+                            lobby.Players.Remove(p);
+                            removed.Add(Tuple.Create(p.Nickname, p.Username));
+                        }
+                    }
+
+                    logger.LogInfo(string.Format("Removed inactive player {0} from {1}", nick, lobbyCode));
                 }
 
-                foreach (var player in players)
+                lock (lobby.LobbyLock)
                 {
-                    lobbyCallbacks[lobbyCode].Remove(player);
-                    logger.LogInfo($"Removed inactive player {player} from {lobbyCode}");
+                    if (lobby.Players.Count == 0)
+                    {
+                        activeLobbies.Remove(lobbyCode);
+                        lobbyCallbacks.Remove(lobbyCode);
+                        lobbyBecameEmpty = true;
+                    }
+                }
+            }
+
+            if (lobbyBecameEmpty)
+            {
+                logger.LogInfo(string.Format("Lobby {0} removed (empty)", lobbyCode));
+                return;
+            }
+
+            if (removed.Count > 0)
+            {
+                Broadcast(lobbyCode, cb =>
+                {
+                    foreach (var r in removed)
+                    {
+                        cb.PlayerLeftLobby(r.Item1);
+                    }
+                });
+            }
+
+            HashSet<string> usernames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var r in removed)
+            {
+                if (!string.IsNullOrWhiteSpace(r.Item2))
+                    usernames.Add(r.Item2);
+            }
+
+            foreach (var username in usernames)
+            {
+                try
+                {
+                    SessionManager.Instance.RemoveUser(username);
+                    logger.LogInfo(string.Format("ForceLogout: removed '{0}' from SessionManager due to disconnect", username));
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(string.Format("ForceLogout failed for '{0}': {1}", username, ex.Message));
                 }
             }
         }
+
+
 
         public IEnumerable<ActiveLobbyData> GetAllLobbies()
         {
