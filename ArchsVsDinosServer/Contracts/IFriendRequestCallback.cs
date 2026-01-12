@@ -24,5 +24,8 @@ namespace Contracts
 
         [OperationContract(IsOneWay = true)]
         void OnFriendRequestReceived(string fromUser);
+
+        [OperationContract(IsOneWay = true)]
+        void OnSentRequestsReceived(string[] requests);
     }
 }

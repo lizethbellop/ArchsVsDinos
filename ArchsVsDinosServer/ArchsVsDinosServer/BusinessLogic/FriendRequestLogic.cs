@@ -439,5 +439,79 @@ namespace ArchsVsDinosServer.BusinessLogic
                 .Distinct()
                 .ToList();
         }
+
+        public FriendRequestListResponse GetSentRequests(string username)
+        {
+            try
+            {
+                FriendRequestListResponse response = new FriendRequestListResponse();
+
+                if (IsUsernameEmpty(username))
+                {
+                    response.Success = false;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_EmptyUsername;
+                    response.Requests = new List<string>();
+                    return response;
+                }
+
+                using (var context = contextFactory())
+                {
+                    UserAccount user = GetUserByUsername(context, username);
+
+                    if (user == null)
+                    {
+                        response.Success = false;
+                        response.ResultCode = FriendRequestResultCode.FriendRequest_UserNotFound;
+                        response.Requests = new List<string>();
+                        return response;
+                    }
+
+                    List<string> sentRequests = context.FriendRequest
+                        .Where(fr => fr.idUser == user.idUser && fr.status == "Pending")
+                        .Join(context.UserAccount,
+                            fr => fr.idReceiverUser,
+                            u => u.idUser,
+                            (fr, u) => u.username)
+                        .Where(u => !string.IsNullOrEmpty(u))
+                        .Distinct()
+                        .ToList();
+
+                    response.Success = true;
+                    response.ResultCode = FriendRequestResultCode.FriendRequest_Success;
+                    response.Requests = sentRequests;
+                    return response;
+                }
+            }
+            catch (EntityException ex)
+            {
+                loggerHelper.LogError($"Database error in GetSentRequests for user {username}", ex);
+                return new FriendRequestListResponse
+                {
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError,
+                    Requests = new List<string>()
+                };
+            }
+            catch (SqlException ex)
+            {
+                loggerHelper.LogError($"SQL error in GetSentRequests for user {username}", ex);
+                return new FriendRequestListResponse
+                {
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_DatabaseError,
+                    Requests = new List<string>()
+                };
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Unexpected error in GetSentRequests for user {username}: {ex.Message}", ex);
+                return new FriendRequestListResponse
+                {
+                    Success = false,
+                    ResultCode = FriendRequestResultCode.FriendRequest_UnexpectedError,
+                    Requests = new List<string>()
+                };
+            }
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace ArchsVsDinosClient.Services
         private readonly SynchronizationContext syncContext;
         private readonly object clientLock = new object();
         private bool isDisposed;
+        private HashSet<string> sentRequestsCache = new HashSet<string>();
 
         private string currentUsername;
         private Timer reconnectionTimer;
@@ -34,6 +35,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<string[]> PendingRequestsReceived;
         public event Action<string> FriendRequestReceived;
         public event Action<string, string> ConnectionError;
+        public event Action<string[]> SentRequestsReceived;
         public event Action ServerReconnected;
 
         public FriendRequestServiceClient()
@@ -46,6 +48,7 @@ namespace ArchsVsDinosClient.Services
             callback.FriendRequestRejected += OnFriendRequestRejected;
             callback.PendingRequestsReceived += OnPendingRequestsReceived;
             callback.FriendRequestReceived += OnFriendRequestReceived;
+            callback.SentRequestsReceived += OnSentRequestsReceived;
 
             guardian = new WcfConnectionGuardian(
                 onError: OnConnectionError,
@@ -92,6 +95,14 @@ namespace ArchsVsDinosClient.Services
 
         public async Task SendFriendRequestAsync(string fromUser, string toUser)
         {
+            lock (clientLock)
+            {
+                if (sentRequestsCache.Contains(toUser))
+                {
+                    throw new InvalidOperationException("Ya has enviado una solicitud a este usuario");
+                }
+            }
+
             await guardian.ExecuteWithThrowAsync<bool>(
                 () =>
                 {
@@ -100,6 +111,11 @@ namespace ArchsVsDinosClient.Services
                 },
                 operationName: "enviar solicitud de amistad"
             );
+
+            lock (clientLock)
+            {
+                sentRequestsCache.Add(toUser);
+            }
         }
 
         public async Task AcceptFriendRequestAsync(string fromUser, string toUser)
@@ -146,6 +162,8 @@ namespace ArchsVsDinosClient.Services
                 () =>
                 {
                     client.Subscribe(username);
+                    client.GetPendingRequests(username);
+                    client.GetSentRequests(username);
                     return Task.FromResult(true);
                 },
                 operationName: "suscribirse al servicio"
@@ -265,6 +283,7 @@ namespace ArchsVsDinosClient.Services
                     {
                         client.Subscribe(currentUsername);
                         client.GetPendingRequests(currentUsername);
+                        client.GetSentRequests(currentUsername);
 
                         guardian.RestoreNormalMode();
                         StopReconnectionProcess();
@@ -314,6 +333,40 @@ namespace ArchsVsDinosClient.Services
             }
 
             isDisposed = true;
+        }
+
+        public async Task GetSentRequestsAsync(string username)
+        {
+            await guardian.ExecuteWithThrowAsync<bool>(
+                () =>
+                {
+                    client.GetSentRequests(username);
+                    return Task.FromResult(true);
+                },
+                operationName: "obtener solicitudes enviadas"
+            );
+        }
+
+        public void GetSentRequests(string username)
+        {
+            Task.Run(async () => await GetSentRequestsAsync(username));
+        }
+
+        private void OnSentRequestsReceived(string[] requests)
+        {
+            lock (clientLock)
+            {
+                sentRequestsCache.Clear();
+                if (requests != null)
+                {
+                    foreach (var request in requests)
+                    {
+                        sentRequestsCache.Add(request);
+                    }
+                }
+            }
+
+            SentRequestsReceived?.Invoke(requests);
         }
     }
 

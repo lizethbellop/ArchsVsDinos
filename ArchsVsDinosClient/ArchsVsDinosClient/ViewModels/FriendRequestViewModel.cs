@@ -135,6 +135,10 @@ namespace ArchsVsDinosClient.ViewModels
                 ResetFriendRequestService();
                 messageService.ShowMessage(Lang.GlobalServerTimeout);
             }
+            catch (InvalidOperationException)
+            {
+                messageService.ShowMessage(Lang.FriendRequest_AlreadySent);
+            }
             catch (Exception)
             {
                 ResetFriendRequestService();

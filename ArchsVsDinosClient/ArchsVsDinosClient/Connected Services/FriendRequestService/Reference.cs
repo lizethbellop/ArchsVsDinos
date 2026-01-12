@@ -50,6 +50,12 @@ namespace ArchsVsDinosClient.FriendRequestService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IFriendRequestManager/Unsubscribe", ReplyAction="http://tempuri.org/IFriendRequestManager/UnsubscribeResponse")]
         System.Threading.Tasks.Task UnsubscribeAsync(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IFriendRequestManager/GetSentRequests")]
+        void GetSentRequests(string username);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IFriendRequestManager/GetSentRequests")]
+        System.Threading.Tasks.Task GetSentRequestsAsync(string username);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -69,6 +75,9 @@ namespace ArchsVsDinosClient.FriendRequestService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IFriendRequestManager/OnFriendRequestReceived")]
         void OnFriendRequestReceived(string fromUser);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IFriendRequestManager/OnSentRequestsReceived")]
+        void OnSentRequestsReceived(string[] requests);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -145,6 +154,14 @@ namespace ArchsVsDinosClient.FriendRequestService {
         
         public System.Threading.Tasks.Task UnsubscribeAsync(string username) {
             return base.Channel.UnsubscribeAsync(username);
+        }
+        
+        public void GetSentRequests(string username) {
+            base.Channel.GetSentRequests(username);
+        }
+        
+        public System.Threading.Tasks.Task GetSentRequestsAsync(string username) {
+            return base.Channel.GetSentRequestsAsync(username);
         }
     }
 }

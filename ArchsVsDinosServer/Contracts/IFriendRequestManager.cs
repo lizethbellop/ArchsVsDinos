@@ -27,5 +27,8 @@ namespace Contracts
 
         [OperationContract]
         void Unsubscribe(string username);
+
+        [OperationContract(IsOneWay = true)]
+        void GetSentRequests(string username);
     }
 }

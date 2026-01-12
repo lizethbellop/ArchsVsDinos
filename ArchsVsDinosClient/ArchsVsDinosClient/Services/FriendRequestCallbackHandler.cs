@@ -14,6 +14,7 @@ namespace ArchsVsDinosClient.Services
         public event Action<bool> FriendRequestAccepted;
         public event Action<bool> FriendRequestRejected;
         public event Action<string[]> PendingRequestsReceived;
+        public event Action<string[]> SentRequestsReceived;
         public event Action<string> FriendRequestReceived;
 
         public void OnFriendRequestSent(bool success)
@@ -35,6 +36,12 @@ namespace ArchsVsDinosClient.Services
         {
             string[] requestsArray = requests ?? new string[0];
             PendingRequestsReceived?.Invoke(requestsArray);
+        }
+
+        public void OnSentRequestsReceived(string[] requests)
+        {
+            string[] requestsArray = requests ?? new string[0];
+            SentRequestsReceived?.Invoke(requestsArray);
         }
 
         public void OnFriendRequestReceived(string fromUser)

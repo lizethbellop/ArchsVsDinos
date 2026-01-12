@@ -1173,4 +1173,7 @@
   <data name="GlobalTimeoutTitle" xml:space="preserve">
     <value>Tiempo de espera agotado</value>
   </data>
+  <data name="FriendRequest_AlreadySent" xml:space="preserve">
+    <value>Ya se envió esta solicitud</value>
+  </data>
 </root>

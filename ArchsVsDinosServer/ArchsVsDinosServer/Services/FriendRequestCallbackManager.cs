@@ -188,5 +188,10 @@ namespace ArchsVsDinosServer.Services
                 loggerHelper.LogError($"Error notifying the user {username}", ex);
             }
         }
+
+        public void NotifySentRequestsReceived(string username, List<string> requests)
+        {
+            NotifyUser(username, callback => callback.OnSentRequestsReceived(requests.ToArray()));
+        }
     }
 }

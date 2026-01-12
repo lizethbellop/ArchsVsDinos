@@ -1174,4 +1174,7 @@
   <data name="GlobalTimeoutTitle" xml:space="preserve">
     <value>Timeout expired</value>
   </data>
+  <data name="FriendRequest_AlreadySent" xml:space="preserve">
+    <value>The request has been already sent</value>
+  </data>
 </root>

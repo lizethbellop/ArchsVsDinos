@@ -509,7 +509,18 @@ namespace ArchsVsDinosClient.Properties.Langs {
                 return ResourceManager.GetString("FriendRequest_AcceptedSuccess", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ya se envió esta solicitud.
+        /// </summary>
+        public static string FriendRequest_AlreadySent
+        {
+            get
+            {
+                return ResourceManager.GetString("FriendRequest_AlreadySent", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Busca una cadena traducida similar a Nueva solicitud de amistad de {0}.
         /// </summary>

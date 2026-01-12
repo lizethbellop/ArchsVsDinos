@@ -9,6 +9,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 
 namespace ArchsVsDinosServer.Services
 {
@@ -101,6 +102,28 @@ namespace ArchsVsDinosServer.Services
             {
                 loggerHelper.LogError($"Unexpected error in GetPendingRequests service for user {username}", ex);
                 callbackManager.NotifyPendingRequestsReceived(username, new List<string>());
+            }
+        }
+
+        public void GetSentRequests(string username)
+        {
+            try
+            {
+                var response = friendRequestLogic.GetSentRequests(username);
+
+                if (response.Success)
+                {
+                    callbackManager.NotifySentRequestsReceived(username, response.Requests);
+                }
+                else
+                {
+                    callbackManager.NotifySentRequestsReceived(username, new List<string>());
+                }
+            }
+            catch (Exception ex)
+            {
+                loggerHelper.LogError($"Error in GetSentRequests for {username}", ex);
+                callbackManager.NotifySentRequestsReceived(username, new List<string>());
             }
         }
 
