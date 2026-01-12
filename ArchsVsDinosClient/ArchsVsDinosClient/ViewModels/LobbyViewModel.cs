@@ -913,6 +913,11 @@ namespace ArchsVsDinosClient.ViewModels
                 this.IsHost = false;
             });
 
+            if (lobbyServiceClient is LobbyServiceClient serviceClient)
+            {
+                serviceClient.StartConnectionMonitoring(timeoutSeconds: 12);
+            }
+
             await lobbyServiceClient.ConnectToLobbyAsync(lobbyCode, nickname);
             await Task.Delay(1500);
             await ReconnectChatToNewLobby(lobbyCode);
