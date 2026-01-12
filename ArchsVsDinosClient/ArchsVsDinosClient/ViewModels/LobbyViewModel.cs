@@ -753,12 +753,36 @@ namespace ArchsVsDinosClient.ViewModels
             {
                 try
                 {
-                    Debug.WriteLine($"[LOBBY VM] Intentando desconectar: {myUsername}");
-                    Debug.WriteLine($"[LOBBY VM] ✅ Desconexión completada");
+                    Debug.WriteLine($"[LOBBY VM] Intentando desconectar del lobby: {myUsername}");
+
+                    
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var leaveTask = lobbyServiceClient.LeaveLobbyAsync();
+                            var completedTask = await Task.WhenAny(leaveTask, Task.Delay(2000));
+
+                            if (completedTask == leaveTask)
+                            {
+                                Debug.WriteLine("[LOBBY VM] ✅ Desconectado del lobby correctamente");
+                            }
+                            else
+                            {
+                                Debug.WriteLine("[LOBBY VM] ⏱️ Timeout al desconectar del lobby (sin internet)");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[LOBBY VM] ⚠️ Error async desconectando lobby: {ex.Message}");
+                        }
+                    });
+
+                    Task.Delay(150).Wait();
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[LOBBY VM] ⚠️ Error en desconexión (ignorado): {ex.Message}");
+                    Debug.WriteLine($"[LOBBY VM] ⚠️ Error en desconexión del lobby (ignorado): {ex.Message}");
                 }
             }
         }

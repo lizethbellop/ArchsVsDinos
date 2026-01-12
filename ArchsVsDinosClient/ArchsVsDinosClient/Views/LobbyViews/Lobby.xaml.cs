@@ -220,14 +220,52 @@ namespace ArchsVsDinosClient.Views.LobbyViews
 
                     MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                    NavigateToMainWindow();
+                    // ✨ ESTO MANDA A LOGIN (con logout)
+                    NavigateToLogin();
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"[LOBBY] Error handling connection lost: {ex.Message}");
-                    NavigateToMainWindow();
+                    NavigateToLogin();
                 }
             });
+        }
+
+        private void NavigateToLogin()
+        {
+            try
+            {
+                const bool SHOULD_LOGOUT = true;
+
+                ForceLogoutOnClose = SHOULD_LOGOUT;
+                IsNavigating = true;
+
+                Window oldMainWindow = Application.Current.MainWindow;
+
+                var loginWindow = new Login();
+                Application.Current.MainWindow = loginWindow;
+                loginWindow.Show();
+
+                if (oldMainWindow != null &&
+                    oldMainWindow != this &&
+                    oldMainWindow != loginWindow)
+                {
+                    oldMainWindow.Close();
+                }
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY] Error navigating to Login: {ex.Message}");
+
+                MessageBox.Show(
+                    Lang.GlobalUnexpectedError,
+                    Lang.GlobalError,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
         }
 
         private void NavigateToMainWindow()
