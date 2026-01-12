@@ -31,40 +31,38 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             SoundButton.PlayMovingRockSound();
             string code = EnteredCode;
-
             if (string.IsNullOrEmpty(code))
             {
                 MessageBox.Show(Lang.JoinCode_Invalid);
                 return;
             }
-
             try
             {
                 var userAccount = BuildUserAccount();
                 UserSession.Instance.CurrentMatchCode = code;
-
                 var result = await lobbyServiceClient.JoinLobbyAsync(userAccount, code);
-
                 if (result == JoinMatchResultCode.JoinMatch_Success)
                 {
                     string nickname = UserSession.Instance.GetNickname();
-
                     var lobbyWindow = new Lobby(false, lobbyServiceClient);
                     var lobbyViewModel = (LobbyViewModel)lobbyWindow.DataContext;
-
                     if (userAccount.IdPlayer == 0)
                     {
                         lobbyViewModel.SetWaitingForGuestCallback(true);
                     }
-
                     Debug.WriteLine($"[JOINCODE] Connecting to lobby {code} as {nickname}...");
                     await lobbyServiceClient.ConnectToLobbyAsync(code, nickname);
-                    Debug.WriteLine($"[JOINCODE] Connected successfully");
 
+                    if (lobbyServiceClient is LobbyServiceClient serviceClient)
+                    {
+                        serviceClient.StartConnectionMonitoring(timeoutSeconds: 12);
+                        Debug.WriteLine($"[JOINCODE] Heartbeat iniciado para {nickname}");
+                    }
+
+                    Debug.WriteLine($"[JOINCODE] Connected successfully");
                     lobbyWindow.Show();
                     IsCancelled = false;
                     Application.Current.MainWindow = lobbyWindow;
-
                     foreach (Window window in Application.Current.Windows)
                     {
                         if (window is MainWindow main)
@@ -74,7 +72,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                             break;
                         }
                     }
-
                     Application.Current.MainWindow = lobbyWindow;
                     IsCancelled = false;
                     this.Close();
