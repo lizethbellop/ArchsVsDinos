@@ -54,15 +54,19 @@ namespace ArchsVsDinosServer.Services
             {
                 var session = ServiceContext.GameSessions.GetSession(matchCode);
 
+                // 1. Declaramos el DTO fuera para poder usarlo después del lock
+                GameStartedDTO recoveryDto = null;
+
                 if (session != null && session.IsStarted && !session.IsFinished)
                 {
+                    // 2. Entramos al lock solo para LEER y COPIAR los datos rápido
                     lock (session.SyncRoot)
                     {
                         var player = session.Players.FirstOrDefault(p => p.UserId == userId);
 
                         if (player != null)
                         {
-                            var recoveryDto = new GameStartedDTO
+                            recoveryDto = new GameStartedDTO
                             {
                                 MatchId = session.MatchCode.GetHashCode(),
                                 FirstPlayerUserId = session.CurrentTurn,
@@ -74,18 +78,28 @@ namespace ArchsVsDinosServer.Services
                                 DrawDeckCount = session.DrawDeck.Count,
 
                                 PlayersHands = new List<PlayerHandDTO>
-                                {
-                                    new PlayerHandDTO
-                                    {
-                                        UserId = userId,
-                                        Cards = player.Hand.Select(c => MapCardToDTO(c)).ToList()
-                                    }
-                                },
+                        {
+                            new PlayerHandDTO
+                            {
+                                UserId = userId,
+                                Cards = player.Hand.Select(c => MapCardToDTO(c)).ToList()
+                            }
+                        },
                                 InitialBoard = MapBoardToDTO(session.CentralBoard)
                             };
+                        }
+                    }
 
+                    if (recoveryDto != null)
+                    {
+                        try
+                        {
                             callback.OnGameStarted(recoveryDto);
                             logger.LogInfo($"[RECOVERY] State sent to reconnected user {userId} in {matchCode}");
+                        }
+                        catch (CommunicationException ex)
+                        {
+                            logger.LogWarning($"[RECOVERY] Could not send recovery to user {userId} - Client disconnected again: {ex.Message}");
                         }
                     }
                 }

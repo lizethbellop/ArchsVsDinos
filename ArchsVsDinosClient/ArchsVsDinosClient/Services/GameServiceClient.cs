@@ -315,6 +315,11 @@ namespace ArchsVsDinosClient.Services
             var context = new InstanceContext(callback);
             context.SynchronizationContext = null;
             client = new GameManagerClient(context);
+
+            client.Endpoint.Binding.SendTimeout = TimeSpan.FromSeconds(10);
+            client.Endpoint.Binding.OpenTimeout = TimeSpan.FromSeconds(10);
+            client.Endpoint.Binding.ReceiveTimeout = TimeSpan.FromSeconds(20);
+
             guardian.MonitorClientState(client);
         }
 
