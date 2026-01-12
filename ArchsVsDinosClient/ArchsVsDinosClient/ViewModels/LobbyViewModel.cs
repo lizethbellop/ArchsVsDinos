@@ -598,19 +598,28 @@ namespace ArchsVsDinosClient.ViewModels
         {
             try
             {
+                Debug.WriteLine("[LOBBY VM] Game starting - stopping lobby connection monitoring");
+
+                if (lobbyServiceClient is LobbyServiceClient serviceClient)
+                {
+                    serviceClient.StopConnectionMonitoring();
+                    Debug.WriteLine("[LOBBY VM] ✅ Lobby monitoring stopped successfully");
+                }
+
                 if (Chat != null && Chat.IsConnected)
                 {
                     await Chat.DisconnectAsync();
-                    Debug.WriteLine("[LOBBY VM] Chat disconnected before navigating to match");
+                    Debug.WriteLine("[LOBBY VM] ✅ Chat disconnected before navigating to match");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[LOBBY VM] Error disconnecting chat before match: {ex.Message}");
+                Debug.WriteLine($"[LOBBY VM] ⚠️ Error during game start cleanup: {ex.Message}");
             }
+
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Debug.WriteLine("[LOBBY VM] Game starting - navigating to game");
+                Debug.WriteLine("[LOBBY VM] 🎮 Navigating to game window");
                 NavigateToGame?.Invoke();
             });
         }

@@ -35,11 +35,13 @@ namespace ArchsVsDinosClient.Services
         private int consecutiveTimeoutCount;
         private string currentMatchCode;
         private int currentUserId;
+
+        // Variables de reconexión
         private System.Timers.Timer reconnectionTimer;
         private bool isAttemptingReconnection = false;
         private int reconnectionAttempts = 0;
         private const int MaxReconnectionAttempts = 5;
-        private const int ReconnectionIintervalMs = 5000;
+        private const int ReconnectionIntervalMs = 5000;
         private bool userRequestedExit = false;
 
         public event Action<GameInitializedDTO> GameInitialized;
@@ -158,7 +160,7 @@ namespace ArchsVsDinosClient.Services
 
             ReconnectionStarted?.Invoke();
 
-            reconnectionTimer = new System.Timers.Timer(ReconnectionIintervalMs);
+            reconnectionTimer = new System.Timers.Timer(ReconnectionIntervalMs);
             reconnectionTimer.Elapsed += OnReconnectionTimerElapsed;
             reconnectionTimer.AutoReset = true;
             reconnectionTimer.Start();
@@ -194,6 +196,7 @@ namespace ArchsVsDinosClient.Services
             try
             {
                 if (!InternetConnectivity.HasInternet()) return false;
+
                 connectionTimer?.Stop();
                 EnsureClientIsUsable();
 
@@ -237,8 +240,6 @@ namespace ArchsVsDinosClient.Services
         {
             try { ((ICommunicationObject)client)?.Abort(); } catch { }
         }
-
-        // --- EL ORDEN QUE SOLICITASTE COMIENZA AQUÍ ---
 
         private async Task HandleTimeoutAsync()
         {
@@ -316,9 +317,8 @@ namespace ArchsVsDinosClient.Services
             context.SynchronizationContext = null;
             client = new GameManagerClient(context);
 
-            client.Endpoint.Binding.SendTimeout = TimeSpan.FromSeconds(10);
-            client.Endpoint.Binding.OpenTimeout = TimeSpan.FromSeconds(10);
-            client.Endpoint.Binding.ReceiveTimeout = TimeSpan.FromSeconds(20);
+            // ✅ SIN TIMEOUTS PERSONALIZADOS - Usa los valores por defecto del WCF
+            // Esto permite que la conexión inicial funcione correctamente
 
             guardian.MonitorClientState(client);
         }
@@ -340,8 +340,6 @@ namespace ArchsVsDinosClient.Services
         {
             connectionTimer?.NotifyActivity();
         }
-
-        // --- Helpers y Notificaciones finales ---
 
         private async Task<T> ExecuteAsyncWithResult<T>(Func<Task<T>> action, T defaultErrorValue)
         {
