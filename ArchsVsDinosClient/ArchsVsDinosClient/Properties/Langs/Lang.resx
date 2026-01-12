@@ -1176,4 +1176,31 @@
   <data name="FriendRequest_AlreadySent" xml:space="preserve">
     <value>Ya se envió esta solicitud</value>
   </data>
+    <data name="Match_ConnectionLost" xml:space="preserve">
+      <value>Conexión perdida</value>
+    </data>
+    <data name="Match_ConnectionLostMessage" xml:space="preserve">
+      <value>Se perdió la conexión con el servidor durante la partida.</value>
+    </data>
+    <data name="Match_TryReconnectMessage" xml:space="preserve">
+      <value>Se perdió la conexión con el servidor. ¿Deseas intentar reconectar?</value>
+    </data>
+    <data name="Match_TryingReconnect" xml:space="preserve">
+      <value>Intentando reconectar al servidor...</value>
+    </data>
+    <data name="Match_ReconnectionSuccess" xml:space="preserve">
+      <value>¡Reconexión exitosa! La partida continuará.</value>
+    </data>
+    <data name="Match_ReconnectionFailed" xml:space="preserve">
+      <value>No se pudo reconectar al servidor después de varios intentos.</value>
+    </data>
+    <data name="Match_ConnectionRestored" xml:space="preserve">
+      <value>Conexión restaurada</value>
+    </data>
+    <data name="Match_LeavingGame" xml:space="preserve">
+      <value>Saliendo de la partida</value>
+    </data>
+    <data name="Match_ReturningToMainMenu" xml:space="preserve">
+      <value>Regresando al menú principal...</value>
+    </data>
 </root>

@@ -22,6 +22,10 @@ namespace ArchsVsDinosClient.Services
         private readonly object clientLock = new object();
         private bool isDisposed;
         private HashSet<string> sentRequestsCache = new HashSet<string>();
+        private DateTime lastSentEventTime = DateTime.MinValue;
+        private DateTime lastAcceptedEventTime = DateTime.MinValue;
+        private DateTime lastRejectedEventTime = DateTime.MinValue;
+        private const int EventDebounceMs = 500;
 
         private string currentUsername;
         private Timer reconnectionTimer;
@@ -42,6 +46,13 @@ namespace ArchsVsDinosClient.Services
         {
             syncContext = SynchronizationContext.Current;
             callback = new FriendRequestCallbackHandler();
+
+            callback.FriendRequestSent -= OnFriendRequestSent;
+            callback.FriendRequestAccepted -= OnFriendRequestAccepted;
+            callback.FriendRequestRejected -= OnFriendRequestRejected;
+            callback.PendingRequestsReceived -= OnPendingRequestsReceived;
+            callback.FriendRequestReceived -= OnFriendRequestReceived;
+            callback.SentRequestsReceived -= OnSentRequestsReceived;
 
             callback.FriendRequestSent += OnFriendRequestSent;
             callback.FriendRequestAccepted += OnFriendRequestAccepted;
@@ -128,6 +139,11 @@ namespace ArchsVsDinosClient.Services
                 },
                 operationName: "aceptar solicitud de amistad"
             );
+
+            lock (clientLock)
+            {
+                sentRequestsCache.Remove(fromUser);
+            }
         }
 
         public async Task RejectFriendRequestAsync(string fromUser, string toUser)
@@ -140,6 +156,11 @@ namespace ArchsVsDinosClient.Services
                 },
                 operationName: "rechazar solicitud de amistad"
             );
+
+            lock (clientLock)
+            {
+                sentRequestsCache.Remove(fromUser);
+            }
         }
 
         public async Task GetPendingRequestsAsync(string username)
@@ -299,14 +320,44 @@ namespace ArchsVsDinosClient.Services
             ConnectionError?.Invoke(title, message);
         }
 
-        private void OnFriendRequestSent(bool success) =>
+        private void OnFriendRequestSent(bool success)
+        {
+            var now = DateTime.Now;
+            if ((now - lastSentEventTime).TotalMilliseconds < EventDebounceMs)
+            {
+                System.Diagnostics.Debug.WriteLine("[FRIEND REQUEST] Evento duplicado ignorado (Sent)");
+                return;
+            }
+
+            lastSentEventTime = now;
             FriendRequestSent?.Invoke(success);
+        }
 
-        private void OnFriendRequestAccepted(bool success) =>
+        private void OnFriendRequestAccepted(bool success)
+        {
+            var now = DateTime.Now;
+            if ((now - lastAcceptedEventTime).TotalMilliseconds < EventDebounceMs)
+            {
+                System.Diagnostics.Debug.WriteLine("[FRIEND REQUEST] Evento duplicado ignorado (Accepted)");
+                return;
+            }
+
+            lastAcceptedEventTime = now;
             FriendRequestAccepted?.Invoke(success);
+        }
 
-        private void OnFriendRequestRejected(bool success) =>
+        private void OnFriendRequestRejected(bool success)
+        {
+            var now = DateTime.Now;
+            if ((now - lastRejectedEventTime).TotalMilliseconds < EventDebounceMs)
+            {
+                System.Diagnostics.Debug.WriteLine("[FRIEND REQUEST] Evento duplicado ignorado (Rejected)");
+                return;
+            }
+
+            lastRejectedEventTime = now;
             FriendRequestRejected?.Invoke(success);
+        }
 
         private void OnPendingRequestsReceived(string[] requests) =>
             PendingRequestsReceived?.Invoke(requests);
@@ -319,6 +370,16 @@ namespace ArchsVsDinosClient.Services
             if (isDisposed) return;
 
             StopReconnectionProcess();
+
+            if (callback != null)
+            {
+                callback.FriendRequestSent -= OnFriendRequestSent;
+                callback.FriendRequestAccepted -= OnFriendRequestAccepted;
+                callback.FriendRequestRejected -= OnFriendRequestRejected;
+                callback.PendingRequestsReceived -= OnPendingRequestsReceived;
+                callback.FriendRequestReceived -= OnFriendRequestReceived;
+                callback.SentRequestsReceived -= OnSentRequestsReceived;
+            }
 
             lock (clientLock)
             {
@@ -361,9 +422,14 @@ namespace ArchsVsDinosClient.Services
                 {
                     foreach (var request in requests)
                     {
-                        sentRequestsCache.Add(request);
+                        if (!string.IsNullOrEmpty(request))
+                        {
+                            sentRequestsCache.Add(request);
+                        }
                     }
                 }
+
+                System.Diagnostics.Debug.WriteLine($"[FRIEND REQUEST] Cache actualizado con {sentRequestsCache.Count} solicitudes enviadas");
             }
 
             SentRequestsReceived?.Invoke(requests);

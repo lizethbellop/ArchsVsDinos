@@ -319,7 +319,7 @@ namespace ArchsVsDinosClient.ViewModels
                     catch { }
 
                     Friends.SendFriendRequestAsync(myUsername, targetUsername);
-                    MessageBox.Show(Lang.FriendRequest_SentSuccess);
+                    
                 }
                 catch (CommunicationException)
                 {

@@ -71,13 +71,30 @@ namespace ArchsVsDinosServer.BusinessLogic
                         return response;
                     }
 
-                    bool existingRequest = IsPendingRequestExists(context, sender.idUser, receiver.idUser);
+                    var existingRequest = context.FriendRequest
+                         .FirstOrDefault(fr => fr.idUser == sender.idUser &&
+                         fr.idReceiverUser == receiver.idUser &&
+                         (fr.status == "Pending" || fr.status == "Rejected"));
 
-                    if (existingRequest)
+                    if (existingRequest != null)
                     {
-                        response.Success = false;
-                        response.ResultCode = FriendRequestResultCode.FriendRequest_RequestAlreadySent;
-                        return response;
+                        if (existingRequest.status == "Pending")
+                        {
+                            response.Success = false;
+                            response.ResultCode = FriendRequestResultCode.FriendRequest_RequestAlreadySent;
+                            return response;
+                        }
+
+                        if (existingRequest.status == "Rejected")
+                        {
+                            existingRequest.status = "Pending";
+                            existingRequest.date = DateTime.Now;
+                            context.SaveChanges();
+
+                            response.Success = true;
+                            response.ResultCode = FriendRequestResultCode.FriendRequest_Success;
+                            return response;
+                        }
                     }
 
                     FriendRequest friendRequest = context.FriendRequest.Create();

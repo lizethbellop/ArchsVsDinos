@@ -47,6 +47,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public event Action<ArmyType> ArchArmyCleared;
         public event Action<string, string, GameEndedDTO> GameEnded;
         public event Action<int> PlayerLeftMatch;
+        public event Action<string, string> GameConnectionLost;
 
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
         public string TurnTimeDisplay => TimerManager.TurnTimeDisplay;
@@ -155,11 +156,58 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             gameServiceClient.DinoHeadPlayed += OnDinoHeadPlayed;
             gameServiceClient.BodyPartAttached += OnBodyPartAttached;
             gameServiceClient.ServiceError += OnServiceError;
-            gameServiceClient.ArchProvoked += OnArchProvoked;  
-            gameServiceClient.ServiceError += OnServiceError;
+            gameServiceClient.ArchProvoked += OnArchProvoked;
             gameServiceClient.CardTakenFromDiscard += OnCardTakenFromDiscard;
             gameServiceClient.PlayerExpelled += OnPlayerExpelled;
             gameServiceClient.GameEnded += OnGameEnded;
+            gameServiceClient.ConnectionLost += OnGameConnectionLost;
+
+            if (gameServiceClient is GameServiceClient serviceClient)
+            {
+                serviceClient.ReconnectionStarted += OnReconnectionStarted;
+                serviceClient.ReconnectionCompleted += OnReconnectionCompleted;
+            }
+        }
+
+        private void OnGameConnectionLost()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine("[GAME VM] ConnectionLost event received from service");
+
+                GameConnectionLost?.Invoke(
+                    Lang.Match_ConnectionLost ?? "Conexión perdida",
+                    Lang.Match_ConnectionLostMessage ?? "Se perdió la conexión con el servidor."
+                );
+            });
+        }
+
+        private void OnReconnectionStarted()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine("[GAME VM] Reconnection process started");
+            });
+        }
+
+        private void OnReconnectionCompleted(bool success)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (success)
+                {
+                    Debug.WriteLine("[GAME VM] ✅ Reconnection successful - game continues");
+                }
+                else
+                {
+                    Debug.WriteLine("[GAME VM] ❌ Reconnection failed - will exit game");
+
+                    GameConnectionLost?.Invoke(
+                        Lang.Match_ConnectionLost ?? "Conexión perdida",
+                        Lang.Match_ReconnectionFailed ?? "No se pudo reconectar al servidor."
+                    );
+                }
+            });
         }
 
         public async Task ConnectToGameAsync()
@@ -867,64 +915,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
             });
         }
 
-        private void PopulateDiscardPileFromProvoke(ArchArmyProvokedDTO data)
-        {
-            if (data.BattleResult?.ArchCards != null)
-            {
-                foreach (var archCardDTO in data.BattleResult.ArchCards)
-                {
-                    var card = CardRepositoryModel.GetById(archCardDTO.IdCard);
-                    if (card != null && !BoardManager.DiscardPile.Any(c => c.IdCard == card.IdCard))
-                    {
-                        BoardManager.DiscardPile.Add(card);
-                        System.Diagnostics.Debug.WriteLine($"[DISCARD PILE] Added Arch {card.IdCard} to discard pile");
-                    }
-                }
-            }
-
-            if (data.BattleResult?.PlayerPowers != null)
-            {
-                int myUserId = DetermineMyUserId();
-
-                foreach (var playerPower in data.BattleResult.PlayerPowers)
-                {
-                    int userId = playerPower.Key;
-
-                    if (BoardManager.PlayerDecks.ContainsKey(userId))
-                    {
-                        var playerDinos = BoardManager.PlayerDecks[userId].Values.ToList();
-
-                        foreach (var dino in playerDinos)
-                        {
-                            if (dino.Head != null && GetElementFromCard(dino.Head) == data.ArmyType)
-                            {
-                                if (dino.Head != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.Head.IdCard))
-                                {
-                                    BoardManager.DiscardPile.Add(dino.Head);
-                                }
-                                if (dino.Chest != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.Chest.IdCard))
-                                {
-                                    BoardManager.DiscardPile.Add(dino.Chest);
-                                }
-                                if (dino.LeftArm != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.LeftArm.IdCard))
-                                {
-                                    BoardManager.DiscardPile.Add(dino.LeftArm);
-                                }
-                                if (dino.RightArm != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.RightArm.IdCard))
-                                {
-                                    BoardManager.DiscardPile.Add(dino.RightArm);
-                                }
-                                if (dino.Legs != null && !BoardManager.DiscardPile.Any(card => card.IdCard == dino.Legs.IdCard))
-                                {
-                                    BoardManager.DiscardPile.Add(dino.Legs);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         private ArmyType GetElementFromCard(Card card)
         {
             switch (card.Element)
@@ -1023,6 +1013,14 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 gameServiceClient.ServiceError -= OnServiceError;
                 gameServiceClient.PlayerExpelled -= OnPlayerExpelled;
                 gameServiceClient.GameEnded -= OnGameEnded;
+
+                gameServiceClient.ConnectionLost -= OnGameConnectionLost;
+
+                if (gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.ReconnectionStarted -= OnReconnectionStarted;
+                    serviceClient.ReconnectionCompleted -= OnReconnectionCompleted;
+                }
             }
         }
 

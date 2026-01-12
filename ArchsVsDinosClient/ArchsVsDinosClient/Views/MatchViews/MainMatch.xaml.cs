@@ -55,6 +55,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private bool isProvokeModeActive = false;
         private bool isHandlingDisconnection = false;
+        private bool isAttemptingReconnection = false;
 
         private bool closeCleanupExecuted = false;
         private bool isClosingHandled = false;
@@ -242,6 +243,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             gameViewModel.GameEnded += OnGameEndedReceived;
             gameViewModel.PlayerLeftMatch += OnPlayerLeftMatchReceived;
+            gameViewModel.GameConnectionLost += OnGameConnectionLostFromViewModel;
         }
 
         private void UnhookGameViewModelEvents()
@@ -255,6 +257,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 gameViewModel.GameEnded -= OnGameEndedReceived;
                 gameViewModel.PlayerLeftMatch -= OnPlayerLeftMatchReceived;
+                gameViewModel.GameConnectionLost -= OnGameConnectionLostFromViewModel;
 
                 if (gameViewModel.BoardManager != null && gameViewModel.BoardManager.PlayerHand != null)
                 {
@@ -277,6 +280,11 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private async Task CleanupBeforeCloseAsync()
         {
+            if (isAttemptingReconnection && gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+            {
+                serviceClient.CancelReconnectionAndExit();
+            }
+
             if (closeCleanupExecuted)
             {
                 return;
@@ -419,27 +427,45 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void OnConnectionLost()
         {
-            if (isHandlingDisconnection)
+            if (isHandlingDisconnection || isAttemptingReconnection)
             {
                 return;
             }
 
-            isHandlingDisconnection = true;
+            isAttemptingReconnection = true;
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Debug.WriteLine("[MATCH] Connection timeout - no server response");
+                Debug.WriteLine("[MATCH] Connection timeout - attempting reconnection");
 
-                StopMonitoringSafely();
-
-                MessageBox.Show(
-                    Lang.Match_ConnectionLostMessage ?? "La conexión con el servidor se ha perdido.\n\nLa partida será cerrada.",
-                    Lang.Match_ConnectionLostTitle ?? "Conexión perdida",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
+                var result = MessageBox.Show(
+                    "Se perdió la conexión con el servidor. ¿Deseas intentar reconectar?",
+                    "Conexión perdida",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
                 );
 
-                ForceExitToLoginWindow();
+                if (result == MessageBoxResult.No)
+                {
+                    Debug.WriteLine("[MATCH] User declined reconnection");
+                    isAttemptingReconnection = false;
+                    isHandlingDisconnection = true;
+
+                    StopMonitoringSafely();
+
+                    MessageBox.Show(
+                        "Saliendo de la partida...",
+                        "Conexión perdida",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+
+                    ForceExitToLoginWindow();
+                    return;
+                }
+
+                Debug.WriteLine("[MATCH] Starting reconnection attempts...");
+                StartReconnectionProcess();
             });
         }
 
@@ -468,6 +494,102 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 );
 
                 ForceExitToLoginWindow();
+            });
+        }
+
+
+        private void OnGameConnectionLostFromViewModel(string title, string message)
+        {
+            if (isHandlingDisconnection || isAttemptingReconnection)
+            {
+                return;
+            }
+
+            isHandlingDisconnection = true;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine($"[MATCH] {title}: {message}");
+
+                StopMonitoringSafely();
+
+                MessageBox.Show(
+                    message,
+                    title,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+
+                ForceExitToLoginWindow();
+            });
+        }
+
+        private void StartReconnectionProcess()
+        {
+            if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+            {
+                serviceClient.StopConnectionMonitoring();
+
+                serviceClient.ReconnectionStarted += OnReconnectionStarted;
+                serviceClient.ReconnectionCompleted += OnReconnectionCompleted;
+
+                serviceClient.StartReconnectionAttempts();
+            }
+            else
+            {
+                Debug.WriteLine("[MATCH] Cannot start reconnection - service client not available");
+                isAttemptingReconnection = false;
+                isHandlingDisconnection = true;
+                ForceExitToLoginWindow();
+            }
+        }
+
+        private void OnReconnectionStarted()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.WriteLine("[MATCH] Reconnection started notification");
+            });
+        }
+
+        private void OnReconnectionCompleted(bool success)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                isAttemptingReconnection = false;
+
+                if (success)
+                {
+                    Debug.WriteLine("[MATCH] ✅ Reconnection successful!");
+                    isHandlingDisconnection = false;
+
+                    MessageBox.Show(
+                        "¡Reconexión exitosa! La partida continuará.",
+                        "Conexión restaurada",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
+                else
+                {
+                    Debug.WriteLine("[MATCH] ❌ Reconnection failed after all attempts");
+                    isHandlingDisconnection = true;
+
+                    MessageBox.Show(
+                        "No se pudo reconectar después de varios intentos.",
+                        "Conexión perdida",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+
+                    ForceExitToLoginWindow();
+                }
+
+                if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.ReconnectionStarted -= OnReconnectionStarted;
+                    serviceClient.ReconnectionCompleted -= OnReconnectionCompleted;
+                }
             });
         }
 
