@@ -162,11 +162,31 @@ namespace ArchsVsDinosClient.Services
 
             try
             {
-                await Task.Run(() => client.Unsubscribe(username));
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        client.Unsubscribe(username);
+                    }
+                    catch (CommunicationException ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[FRIEND SERVICE] Sin conexión al desuscribir: {ex.Message}");
+                    }
+                    catch (TimeoutException ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[FRIEND SERVICE] Timeout al desuscribir: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[FRIEND SERVICE] Error al desuscribir: {ex.Message}");
+                    }
+                });
+
                 currentUsername = null;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[FRIEND SERVICE] Error general desuscribiendo: {ex.Message}");
                 currentUsername = null;
             }
         }
