@@ -624,17 +624,17 @@ namespace ArchsVsDinosClient.Services
                 await Task.Run(() => lobbyManagerClient.KickPlayer(lobbyCode, hostUserId, targetNickname));
             });
         }
-        
+
         private void ConfigureWcfTimeouts(LobbyManagerClient client)
         {
-            client.Endpoint.Binding.OpenTimeout = TimeSpan.FromSeconds(30);    // Era 3
-            client.Endpoint.Binding.CloseTimeout = TimeSpan.FromSeconds(10);   // Era 2  
-            client.Endpoint.Binding.SendTimeout = TimeSpan.FromSeconds(30);    // Era 3
-            client.Endpoint.Binding.ReceiveTimeout = TimeSpan.FromMinutes(10); // Era 10 segundos
+            client.Endpoint.Binding.OpenTimeout = TimeSpan.FromSeconds(30);
+            client.Endpoint.Binding.CloseTimeout = TimeSpan.FromSeconds(10);
+            client.Endpoint.Binding.SendTimeout = TimeSpan.FromSeconds(30);
+            client.Endpoint.Binding.ReceiveTimeout = TimeSpan.FromMinutes(10);
 
             if (client.InnerChannel is IContextChannel ctx)
             {
-                ctx.OperationTimeout = TimeSpan.FromSeconds(30); // Era 3
+                ctx.OperationTimeout = TimeSpan.FromSeconds(30);
             }
         }
 

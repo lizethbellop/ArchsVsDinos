@@ -594,34 +594,46 @@ namespace ArchsVsDinosClient.ViewModels
 
         public event Action NavigateToGame;
 
-        private async void OnGameStarted(string matchCode)
+       private async void OnGameStarted(string matchCode)
         {
             try
             {
-                Debug.WriteLine("[LOBBY VM] Game starting - stopping lobby connection monitoring");
+                Debug.WriteLine("[LOBBY VM] 🎮 Game starting - preparing to connect to game service");
 
                 if (lobbyServiceClient is LobbyServiceClient serviceClient)
                 {
                     serviceClient.StopConnectionMonitoring();
-                    Debug.WriteLine("[LOBBY VM] ✅ Lobby monitoring stopped successfully");
+                    Debug.WriteLine("[LOBBY VM] ✅ Lobby monitoring stopped");
                 }
 
                 if (Chat != null && Chat.IsConnected)
                 {
                     await Chat.DisconnectAsync();
-                    Debug.WriteLine("[LOBBY VM] ✅ Chat disconnected before navigating to match");
+                    Debug.WriteLine("[LOBBY VM] ✅ Chat disconnected");
                 }
+
+                Debug.WriteLine("[LOBBY VM] ✅ Ready to navigate to game");
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Debug.WriteLine("[LOBBY VM] 🎮 Navigating to game window NOW");
+                    NavigateToGame?.Invoke();
+                });
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[LOBBY VM] ⚠️ Error during game start cleanup: {ex.Message}");
-            }
+                Debug.WriteLine($"[LOBBY VM] ❌ Error during game start: {ex.Message}");
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Debug.WriteLine("[LOBBY VM] 🎮 Navigating to game window");
-                NavigateToGame?.Invoke();
-            });
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show(
+                        "Error al iniciar el juego. Regresando al menú principal.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                });
+            }
         }
 
         public List<ArchsVsDinosClient.DTO.LobbyPlayerDTO> GetCurrentPlayers()

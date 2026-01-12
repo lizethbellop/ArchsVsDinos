@@ -64,6 +64,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
         private int player3UserId = 0;
         private int player4UserId = 0;
 
+        // En MainMatch.xaml.cs
+        // Reemplaza el constructor COMPLETO con esto:
+
         public MainMatch(List<LobbyPlayerDTO> players, string myUsername, string gameMatchCode, int myLobbyUserId)
         {
             InitializeComponent();
@@ -76,6 +79,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             MusicPlayer.Instance.StopBackgroundMusic();
             MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Match);
 
+            // Inicializar chat
             try
             {
                 chatViewModel = new ChatViewModel(new ChatServiceClient());
@@ -87,6 +91,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 MessageBox.Show(Lang.Match_ErrorChatNotAvailable);
             }
 
+            // Inicializar game service
             try
             {
                 IGameServiceClient gameService = new GameServiceClient();
@@ -112,9 +117,46 @@ namespace ArchsVsDinosClient.Views.MatchViews
             InitializeDragAndDrop();
 
             gameViewModel.PropertyChanged += GameViewModelPropertyChanged;
+
+            Dispatcher.BeginInvoke(new Action(async () =>
+            {
+                await ConnectGameImmediatelyAsync();
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
+
             Loaded += MatchLoaded;
 
             ExtraCleanupAction = CleanupBeforeCloseAsync;
+        }
+
+        private async Task ConnectGameImmediatelyAsync()
+        {
+            try
+            {
+                Debug.WriteLine("[MATCH] 🔌 Connecting to game service immediately...");
+
+                await gameViewModel.ConnectToGameAsync();
+
+                Debug.WriteLine("[MATCH] ✅ Connected - callback registered");
+
+                if (gameViewModel.gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.StartConnectionMonitoring(timeoutSeconds: 30); // ⚠️ Cambiado de 7 a 30
+                    Debug.WriteLine("[MATCH] ✅ Monitoring started (30s timeout)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[MATCH] ❌ ConnectGameImmediately failed: {ex.Message}");
+
+                MessageBox.Show(
+                    "No se pudo conectar al servidor del juego.",
+                    "Error de conexión",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+
+                Close();
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -167,14 +209,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 HookGameViewModelEvents();
 
-                await ConnectGameSafelyAsync();
-
-                if (gameViewModel.gameServiceClient is GameServiceClient serviceClient)
-                {
-                    serviceClient.StartConnectionMonitoring(timeoutSeconds: 7);
-                }
-
-                await Application.Current.Dispatcher.InvokeAsync(() => UpdatePlayerHandVisual(), DispatcherPriority.Loaded);
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                    UpdatePlayerHandVisual(),
+                    DispatcherPriority.Loaded);
             }
         }
 

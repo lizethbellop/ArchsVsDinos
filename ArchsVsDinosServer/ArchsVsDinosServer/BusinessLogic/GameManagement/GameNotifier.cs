@@ -49,18 +49,21 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
 
             if (callback == null)
             {
-                loggerHelper.LogWarning($"No callback found for user {data.MyUserId} in NotifyGameStarted");
+                loggerHelper.LogWarning($"⚠️ CRITICAL: No callback found for user {data.MyUserId} in NotifyGameStarted - Player might have disconnected before game start");
+
+                return;
             }
 
             try
             {
                 callback.OnGameStarted(data);
-                loggerHelper.LogInfo($"Game started notification sent to user {data.MyUserId}");
+                loggerHelper.LogInfo($"✅ Game started notification sent to user {data.MyUserId}");
 
                 ResetFailureCount(data.MyUserId);
             }
             catch (Exception ex)
             {
+                loggerHelper.LogError($"❌ Failed to notify user {data.MyUserId} of game start: {ex.Message}", ex);
                 HandleCallbackFailure(data.MyUserId, callback, ex);
             }
         }
