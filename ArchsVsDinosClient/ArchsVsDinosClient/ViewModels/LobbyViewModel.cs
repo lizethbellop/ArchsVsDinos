@@ -751,38 +751,27 @@ namespace ArchsVsDinosClient.ViewModels
             string myUsername = UserSession.Instance.CurrentUser?.Username;
             if (!string.IsNullOrEmpty(myUsername))
             {
-                try
-                {
-                    Debug.WriteLine($"[LOBBY VM] Intentando desconectar del lobby: {myUsername}");
+                Debug.WriteLine($"[LOBBY VM] Intentando desconectar del lobby: {myUsername}");
 
-                    _ = Task.Run(async () =>
+                
+                _ = Task.Run(() =>
+                {
+                    try
                     {
-                        try
-                        {
-                            var leaveTask = Task.Run(() => lobbyServiceClient.LeaveLobby(myUsername));
-                            var completedTask = await Task.WhenAny(leaveTask, Task.Delay(2000));
+                        lobbyServiceClient.LeaveLobby(myUsername);
+                        Debug.WriteLine("[LOBBY VM] ✅ Desconectado del lobby");
+                    }
+                    catch (CommunicationException)
+                    {
+                        Debug.WriteLine("[LOBBY VM] ⏱️ Sin internet - servidor limpiará la sesión");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[LOBBY VM] ⚠️ Error desconectando: {ex.Message}");
+                    }
+                });
 
-                            if (completedTask == leaveTask)
-                            {
-                                Debug.WriteLine("[LOBBY VM] ✅ Desconectado del lobby correctamente");
-                            }
-                            else
-                            {
-                                Debug.WriteLine("[LOBBY VM] ⏱️ Timeout al desconectar del lobby (sin internet)");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine($"[LOBBY VM] ⚠️ Error async desconectando lobby: {ex.Message}");
-                        }
-                    });
-
-                    Task.Delay(150).Wait();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[LOBBY VM] ⚠️ Error en desconexión del lobby (ignorado): {ex.Message}");
-                }
+                Debug.WriteLine("[LOBBY VM] Desconexión iniciada en background");
             }
         }
 
