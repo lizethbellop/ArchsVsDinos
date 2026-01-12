@@ -22,6 +22,9 @@ namespace ArchsVsDinosClient.Services.Interfaces
 
         Task<bool> TryReconnectToLobbyAsync(string matchCode, string nickname);
 
+        void StartConnectionMonitoring(int timeoutSeconds);
+        void StopConnectionMonitoring();
+
         event Action<LobbyPlayerDTO, string> LobbyCreated;
         event Action<LobbyPlayerDTO> PlayerJoined;
         event Action<LobbyPlayerDTO> PlayerLeft;

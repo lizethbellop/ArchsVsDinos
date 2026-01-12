@@ -696,6 +696,12 @@ namespace ArchsVsDinosClient.LobbyService {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriend", ReplyAction="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriendResponse")]
         System.Threading.Tasks.Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/Ping", ReplyAction="http://tempuri.org/ILobbyManager/PingResponse")]
+        bool Ping();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ILobbyManager/Ping", ReplyAction="http://tempuri.org/ILobbyManager/PingResponse")]
+        System.Threading.Tasks.Task<bool> PingAsync();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -821,6 +827,14 @@ namespace ArchsVsDinosClient.LobbyService {
         
         public System.Threading.Tasks.Task<bool> SendLobbyInviteToFriendAsync(string lobbyCode, string senderNickname, string targetUsername) {
             return base.Channel.SendLobbyInviteToFriendAsync(lobbyCode, senderNickname, targetUsername);
+        }
+        
+        public bool Ping() {
+            return base.Channel.Ping();
+        }
+        
+        public System.Threading.Tasks.Task<bool> PingAsync() {
+            return base.Channel.PingAsync();
         }
     }
 }

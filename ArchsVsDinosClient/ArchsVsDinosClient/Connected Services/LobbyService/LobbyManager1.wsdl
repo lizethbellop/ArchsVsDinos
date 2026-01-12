@@ -72,6 +72,12 @@
   <wsdl:message name="ILobbyManager_SendLobbyInviteToFriend_OutputMessage">
     <wsdl:part name="parameters" element="tns:SendLobbyInviteToFriendResponse" />
   </wsdl:message>
+  <wsdl:message name="ILobbyManager_Ping_InputMessage">
+    <wsdl:part name="parameters" element="tns:Ping" />
+  </wsdl:message>
+  <wsdl:message name="ILobbyManager_Ping_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PingResponse" />
+  </wsdl:message>
   <wsdl:message name="ILobbyManager_PlayerJoinedLobby_OutputCallbackMessage">
     <wsdl:part name="parameters" element="tns:PlayerJoinedLobby" />
   </wsdl:message>
@@ -129,6 +135,10 @@
     <wsdl:operation name="SendLobbyInviteToFriend">
       <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriend" message="tns:ILobbyManager_SendLobbyInviteToFriend_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriendResponse" message="tns:ILobbyManager_SendLobbyInviteToFriend_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILobbyManager/Ping" message="tns:ILobbyManager_Ping_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/PingResponse" message="tns:ILobbyManager_Ping_OutputMessage" />
     </wsdl:operation>
     <wsdl:operation name="PlayerJoinedLobby">
       <wsdl:output wsaw:Action="http://tempuri.org/ILobbyManager/PlayerJoinedLobby" message="tns:ILobbyManager_PlayerJoinedLobby_OutputCallbackMessage" />
@@ -229,6 +239,15 @@
     </wsdl:operation>
     <wsdl:operation name="SendLobbyInviteToFriend">
       <soap12:operation soapAction="http://tempuri.org/ILobbyManager/SendLobbyInviteToFriend" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <soap12:operation soapAction="http://tempuri.org/ILobbyManager/Ping" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

@@ -237,5 +237,10 @@ namespace ArchsVsDinosServer.Services
                 return false;
             }
         }
+
+        public bool Ping()
+        {
+            return true;
+        }
     }
 }

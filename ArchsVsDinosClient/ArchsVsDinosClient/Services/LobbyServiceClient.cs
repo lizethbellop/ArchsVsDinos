@@ -20,9 +20,13 @@ namespace ArchsVsDinosClient.Services
         private const int DefaultMaxPlayers = 4;
         private const int MinimumTimeoutSeconds = 30;
         private const int MaxConsecutiveTimeouts = 3;
-
         private readonly SynchronizationContext uiContext;
         private readonly SemaphoreSlim reconnectSemaphore;
+
+        private const int HeartbeatIntervalMs = 4000;
+        private const int MaxHeartbeatFailures = 2; 
+        private System.Timers.Timer heartbeatTimer;
+        private int heartbeatFailures = 0;
 
         private int consecutiveTimeoutCount;
 
@@ -247,6 +251,7 @@ namespace ArchsVsDinosClient.Services
                 {
                     connectionTimer?.Start();
                     connectionTimer?.NotifyActivity();
+                    StartHeartbeat();
                     Debug.WriteLine($"[LOBBY CLIENT] Reconnected to lobby {matchCode}");
                     return true;
                 }
@@ -283,23 +288,85 @@ namespace ArchsVsDinosClient.Services
 
         public void StartConnectionMonitoring(int timeoutSeconds)
         {
-            int effectiveTimeoutSeconds = timeoutSeconds < MinimumTimeoutSeconds
-                ? MinimumTimeoutSeconds
-                : timeoutSeconds;
+            Debug.WriteLine("[LOBBY CLIENT] Iniciando monitoreo de conexión con heartbeat");
+            StartHeartbeat();
+        }
 
-            consecutiveTimeoutCount = 0;
+        private void StartHeartbeat()
+        {
+            heartbeatTimer?.Dispose();
+            heartbeatFailures = 0;
 
-            connectionTimer?.Dispose();
-            connectionTimer = new GameConnectionTimer(effectiveTimeoutSeconds, OnConnectionTimeout);
+            heartbeatTimer = new System.Timers.Timer(HeartbeatIntervalMs);
+            heartbeatTimer.Elapsed += (s, e) => CheckConnectionWithPing();
+            heartbeatTimer.AutoReset = true;
+            heartbeatTimer.Start();
 
-            lobbyCallbackManager.SetConnectionTimer(connectionTimer);
+            Debug.WriteLine("[LOBBY CLIENT] Heartbeat iniciado");
+        }
 
-            connectionTimer.Start();
-            connectionTimer.NotifyActivity();
+        private void CheckConnectionWithPing()
+        {
+            try
+            {
+                if (lobbyManagerClient == null)
+                {
+                    return;
+                }
+
+                // Intentar ping al servidor con timeout de 2 segundos
+                var pingTask = Task.Run(() =>
+                {
+                    try
+                    {
+                        return lobbyManagerClient.Ping();
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                });
+
+                bool pingSucceeded = pingTask.Wait(2000) && pingTask.Result;
+
+                if (pingSucceeded)
+                {
+                    // Ping exitoso, resetear contador
+                    heartbeatFailures = 0;
+                    Debug.WriteLine("[LOBBY CLIENT] ✓ Ping OK");
+                }
+                else
+                {
+                    // Ping falló
+                    heartbeatFailures++;
+                    Debug.WriteLine($"[LOBBY CLIENT] ✗ Ping FALLÓ, intentos: {heartbeatFailures}/{MaxHeartbeatFailures}");
+
+                    if (heartbeatFailures >= MaxHeartbeatFailures)
+                    {
+                        Debug.WriteLine($"[LOBBY CLIENT] ❌ Cliente SIN INTERNET: {UserSession.Instance.CurrentUser?.Nickname}");
+                        heartbeatTimer?.Stop();
+                        RaiseConnectionLost();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                heartbeatFailures++;
+                Debug.WriteLine($"[LOBBY CLIENT] Heartbeat exception: {ex.Message}, fallos: {heartbeatFailures}/{MaxHeartbeatFailures}");
+
+                if (heartbeatFailures >= MaxHeartbeatFailures)
+                {
+                    Debug.WriteLine($"[LOBBY CLIENT] ❌ Excepción en ping: {UserSession.Instance.CurrentUser?.Nickname}");
+                    heartbeatTimer?.Stop();
+                    RaiseConnectionLost();
+                }
+            }
         }
 
         public void StopConnectionMonitoring()
         {
+            heartbeatTimer?.Stop();    
+            heartbeatTimer?.Dispose();  
             connectionTimer?.Stop();
             Debug.WriteLine("[LOBBY TIMER] Stopped");
         }

@@ -39,6 +39,9 @@ namespace Contracts
 
         [OperationContract]
         Task<bool> SendLobbyInviteToFriend(string lobbyCode, string senderNickname, string targetUsername);
+
+        [OperationContract]
+        bool Ping();
     }
 
 }

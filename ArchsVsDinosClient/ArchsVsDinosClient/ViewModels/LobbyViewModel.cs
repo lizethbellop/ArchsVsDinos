@@ -135,20 +135,32 @@ namespace ArchsVsDinosClient.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Debug.WriteLine("[LOBBY VM] ⚠️ Connection timer expired - no server response");
+                Debug.WriteLine("[LOBBY VM] ❌ Perdí MI conexión (ping falló)");
 
                 if (lobbyServiceClient is LobbyServiceClient serviceClient)
                 {
                     serviceClient.StopConnectionMonitoring();
                 }
 
-                if (isAttemptingReconnection)
+                string myUsername = UserSession.Instance.CurrentUser?.Username;
+                if (!string.IsNullOrEmpty(myUsername))
                 {
-                    Debug.WriteLine("[LOBBY VM] Already attempting reconnection, ignoring timer expiration");
-                    return;
+                    try
+                    {
+                        lobbyServiceClient.LeaveLobby(myUsername);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"[LOBBY VM] No se pudo notificar salida: {ex.Message}");
+                    }
                 }
 
-                StartReconnectionAttempts();
+                Cleanup();
+
+                LobbyConnectionLost?.Invoke(
+                    "Conexión perdida",
+                    "Se perdió tu conexión con el servidor. Regresando al inicio de sesión."
+                );
             });
         }
 
