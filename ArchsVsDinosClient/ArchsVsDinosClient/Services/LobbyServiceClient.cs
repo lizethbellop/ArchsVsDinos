@@ -314,7 +314,6 @@ namespace ArchsVsDinosClient.Services
                     return;
                 }
 
-                // Intentar ping al servidor con timeout de 2 segundos
                 var pingTask = Task.Run(() =>
                 {
                     try
@@ -331,13 +330,11 @@ namespace ArchsVsDinosClient.Services
 
                 if (pingSucceeded)
                 {
-                    // Ping exitoso, resetear contador
                     heartbeatFailures = 0;
                     Debug.WriteLine("[LOBBY CLIENT] ✓ Ping OK");
                 }
                 else
                 {
-                    // Ping falló
                     heartbeatFailures++;
                     Debug.WriteLine($"[LOBBY CLIENT] ✗ Ping FALLÓ, intentos: {heartbeatFailures}/{MaxHeartbeatFailures}");
 
