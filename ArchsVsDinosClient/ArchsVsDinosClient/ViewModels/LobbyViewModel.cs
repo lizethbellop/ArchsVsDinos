@@ -461,17 +461,15 @@ namespace ArchsVsDinosClient.ViewModels
             lobbyServiceClient.StartGame(matchCode);
         }
 
-
         public async Task CleanupBeforeClosingAsync()
         {
+            CancelReconnectionAndExit();
+
             try
             {
-                CancelReconnectionAndExit();
-
                 if (lobbyServiceClient is LobbyServiceClient serviceClient)
                 {
                     serviceClient.StopConnectionMonitoring();
-
                     await serviceClient.LeaveLobbyAsync();
                 }
                 else
@@ -486,13 +484,57 @@ namespace ArchsVsDinosClient.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[LOBBY VM] CleanupBeforeClosingAsync error: {ex.Message}");
+                Debug.WriteLine($"[LOBBY VM] CleanupBeforeClosingAsync error: {ex}");
             }
             finally
             {
-                Cleanup();
+                CleanupLocalStateOnly();
             }
         }
+
+        private void CleanupLocalStateOnly()
+        {
+            try
+            {
+                UserSession.Instance.CurrentMatchCode = string.Empty;
+
+                Application.Current?.Dispatcher?.Invoke(() =>
+                {
+                    foreach (var slot in Slots)
+                    {
+                        slot.Username = "";
+                        slot.Nickname = "";
+                        slot.IsReady = false;
+                        slot.IsLocalPlayer = false;
+                        slot.CanKick = false;
+                        slot.IsFriend = false;
+                        slot.ProfilePicture = null;
+                    }
+                });
+
+                if (lobbyServiceClient != null)
+                {
+                    lobbyServiceClient.ConnectionError -= OnLobbyConnectionError;
+                    lobbyServiceClient.PlayerKickedEvent -= OnPlayerKicked;
+                    lobbyServiceClient.PlayerLeft -= OnPlayerLeft;
+                    lobbyServiceClient.LobbyInvitationReceived -= OnLobbyInvitationReceived;
+                    lobbyServiceClient.PlayerListUpdated -= OnPlayerListUpdated;
+                    lobbyServiceClient.GameStartedEvent -= OnGameStarted;
+                    lobbyServiceClient.ConnectionLost -= OnConnectionTimerExpired;
+                }
+
+                if (Chat != null)
+                {
+                    Chat.ChatDegraded -= OnChatDegraded;
+                    Chat.RequestWindowClose -= OnChatRequestWindowClose;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[LOBBY VM] CleanupLocalStateOnly error: {ex}");
+            }
+        }
+
 
         public void LeaveOfTheLobby(string nickname)
         {
@@ -678,7 +720,6 @@ namespace ArchsVsDinosClient.ViewModels
                     try
                     {
                         Debug.WriteLine($"[LOBBY VM] Intentando desconectar: {myUsername}");
-                        LeaveOfTheLobby(myUsername);
                         Debug.WriteLine($"[LOBBY VM] ✅ Desconexión completada");
                     }
                     catch (Exception ex)
@@ -719,7 +760,7 @@ namespace ArchsVsDinosClient.ViewModels
                     }
                 }
 
-                UserSession.Instance.CurrentMatchCode = null;
+                UserSession.Instance.CurrentMatchCode = string.Empty;
                 Debug.WriteLine("[LOBBY VM] ✅ Sesión limpiada");
             }
             catch (Exception ex)
@@ -830,7 +871,7 @@ namespace ArchsVsDinosClient.ViewModels
             string myNickname = UserSession.Instance.CurrentUser.Nickname;
             lobbyServiceClient.LeaveLobby(myNickname);
 
-            UserSession.Instance.CurrentMatchCode = null;
+            UserSession.Instance.CurrentMatchCode = string.Empty;
 
             await Task.Delay(1000);
         }

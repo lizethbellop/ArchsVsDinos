@@ -234,7 +234,9 @@ namespace ArchsVsDinosClient.Views.LobbyViews
         {
             try
             {
-                ForceLogoutOnClose = true;
+                const bool SHOULD_LOGOUT = false;
+
+                ForceLogoutOnClose = SHOULD_LOGOUT;
                 IsNavigating = true;
 
                 Window oldMainWindow = Application.Current.MainWindow;
@@ -264,6 +266,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                 );
             }
         }
+
 
         private void OnNavigateToGame()
         {
