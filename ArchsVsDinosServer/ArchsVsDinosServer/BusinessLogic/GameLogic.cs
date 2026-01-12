@@ -205,6 +205,12 @@ namespace ArchsVsDinosServer.BusinessLogic
             StartFirstTurn(gameSession);
             gameSession.MarkAsStarted();
 
+            gameSession.PlayerDisconnected += (code, userId) =>
+            {
+                loggerHelper.LogWarning($"[HEARTBEAT] Auto-disconnect detected for player {userId} in {matchCode}");
+                LeaveGame(matchCode, userId);
+            };
+
             loggerHelper.LogInfo($"InitializeMatch: Match {matchCode} initialized successfully.");
 
             NotifyGameStarted(gameSession);
@@ -223,6 +229,31 @@ namespace ArchsVsDinosServer.BusinessLogic
             gameNotifier.NotifyGameInitialized(initDto);
 
             return Task.FromResult(true);
+        }
+
+        public void ConnectPlayerToGame(string matchCode, int userId, IGameManagerCallback callback)
+        {
+            var gameSession = GetActiveSession(matchCode);
+
+            if (gameSession == null)
+            {
+                loggerHelper.LogWarning($"ConnectPlayerToGame: Session {matchCode} not found");
+                return;
+            }
+
+            lock (gameSession.SyncRoot)
+            {
+                var player = gameSession.Players.FirstOrDefault(p => p.UserId == userId);
+                if (player == null)
+                {
+                    loggerHelper.LogWarning($"ConnectPlayerToGame: Player {userId} not found in session");
+                    return;
+                }
+
+                gameSession.RegisterPlayerCallback(userId, callback);
+
+                loggerHelper.LogInfo($"Player {userId} connected to game {matchCode}");
+            }
         }
 
         private void NotifyGameStarted(GameSession session)
@@ -636,6 +667,7 @@ namespace ArchsVsDinosServer.BusinessLogic
             lock (session.SyncRoot)
             {
 
+                session.StopHeartbeat();
                 session.TurnTimeExpired -= HandleTurnTimeExpired;
 
                 GameEndResult result;
@@ -750,8 +782,12 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                     if (session.Players.Count < 2 && !session.IsFinished)
                     {
-                        loggerHelper.LogInfo($"Match {matchCode} aborted: only {session.Players.Count} player(s) left.");
+                        loggerHelper.LogInfo($"[GAME OVER] Match {matchCode} aborted: only {session.Players.Count} player(s) left.");
+
+                        session.StopHeartbeat();
+
                         EndGame(session.MatchCode, GameEndType.Aborted, "InsufficientPlayers");
+                        return;
                     }
                     else if (wasHisTurn)
                     {

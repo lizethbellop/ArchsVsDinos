@@ -1,6 +1,7 @@
 ﻿using ArchsVsDinosServer.BusinessLogic.GameManagement.Board;
 using ArchsVsDinosServer.Interfaces;
 using ArchsVsDinosServer.Model;
+using Contracts;
 using log4net.Repository.Hierarchy;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,11 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
         private readonly List<int> drawDeck = new List<int>();
         private readonly List<int> discardPile = new List<int>();
         private readonly Timer turnTimer;
+        private readonly object heartbeatLock = new object();
+        private readonly Dictionary<int, IGameManagerCallback> playerCallbacks = new Dictionary<int, IGameManagerCallback>();
+        private System.Threading.Timer heartbeatTimer;
+        private const int HEARTBEAT_INTERVAL_SECONDS = 5;
+        public event Action<string, int> PlayerDisconnected;
         public event Action<string, int> TurnTimeExpired;
 
         public string MatchCode { get; private set; }
@@ -57,8 +63,118 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             IsFinished = false;
             RemainingMoves = MaxMoves;
             turnTimer = new Timer(TurnDurationSeconds * 1000);
-            turnTimer.AutoReset = false; 
+            turnTimer.AutoReset = false;
             turnTimer.Elapsed += OnTurnTimerElapsed;
+
+            StartHeartbeat();
+        }
+
+        // ✅ AGREGAR ESTOS MÉTODOS NUEVOS:
+
+        public void RegisterPlayerCallback(int userId, IGameManagerCallback callback)
+        {
+            if (callback == null) return;
+
+            lock (heartbeatLock)
+            {
+                playerCallbacks[userId] = callback;
+
+                if (callback is ICommunicationObject comm)
+                {
+                    comm.Faulted += (s, e) => HandlePlayerDisconnected(userId);
+                    comm.Closed += (s, e) => HandlePlayerDisconnected(userId);
+                }
+            }
+
+            loggerHelper.LogInfo($"[GAME] Callback registered for player {userId} in {MatchCode}");
+        }
+
+        public void UnregisterPlayerCallback(int userId)
+        {
+            lock (heartbeatLock)
+            {
+                playerCallbacks.Remove(userId);
+            }
+            loggerHelper.LogInfo($"[GAME] Callback unregistered for player {userId} in {MatchCode}");
+        }
+
+        private void StartHeartbeat()
+        {
+            lock (heartbeatLock)
+            {
+                if (heartbeatTimer != null) return;
+
+                heartbeatTimer = new System.Threading.Timer(_ =>
+                {
+                    CheckPlayerConnections();
+                }, null,
+                TimeSpan.FromSeconds(HEARTBEAT_INTERVAL_SECONDS),
+                TimeSpan.FromSeconds(HEARTBEAT_INTERVAL_SECONDS));
+
+                loggerHelper.LogInfo($"[GAME] Heartbeat started for {MatchCode}");
+            }
+        }
+
+        public void StopHeartbeat()
+        {
+            lock (heartbeatLock)
+            {
+                if (heartbeatTimer != null)
+                {
+                    heartbeatTimer.Dispose();
+                    heartbeatTimer = null;
+                    loggerHelper.LogInfo($"[GAME] Heartbeat stopped for {MatchCode}");
+                }
+            }
+        }
+
+        private void CheckPlayerConnections()
+        {
+            List<int> disconnectedPlayers = new List<int>();
+
+            lock (heartbeatLock)
+            {
+                foreach (var kvp in playerCallbacks.ToList())
+                {
+                    if (!IsCallbackValid(kvp.Value))
+                    {
+                        disconnectedPlayers.Add(kvp.Key);
+                        playerCallbacks.Remove(kvp.Key);
+                    }
+                }
+            }
+
+            if (disconnectedPlayers.Count > 0)
+            {
+                foreach (int userId in disconnectedPlayers)
+                {
+                    HandlePlayerDisconnected(userId);
+                }
+            }
+        }
+
+        private bool IsCallbackValid(IGameManagerCallback callback)
+        {
+            if (callback == null) return false;
+
+            try
+            {
+                if (callback is ICommunicationObject comm)
+                {
+                    return comm.State == CommunicationState.Opened;
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void HandlePlayerDisconnected(int userId)
+        {
+            loggerHelper.LogWarning($"[GAME] Player {userId} disconnected from {MatchCode}");
+            PlayerDisconnected?.Invoke(MatchCode, userId);
         }
 
         private void OnTurnTimerElapsed(object sender, ElapsedEventArgs e)

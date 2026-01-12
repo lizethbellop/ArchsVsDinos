@@ -37,7 +37,11 @@ namespace ArchsVsDinosServer.Services
             try
             {
                 var callback = OperationContext.Current.GetCallbackChannel<IGameManagerCallback>();
+
                 GameCallbackRegistry.Instance.RegisterCallback(userId, callback);
+
+                gameLogic.ConnectPlayerToGame(matchCode, userId, callback);
+
                 logger.LogInfo($"User {userId} connected to match {matchCode}");
 
                 Task.Run(() => AttemptStateRecovery(matchCode, userId, callback));
@@ -54,12 +58,10 @@ namespace ArchsVsDinosServer.Services
             {
                 var session = ServiceContext.GameSessions.GetSession(matchCode);
 
-                // 1. Declaramos el DTO fuera para poder usarlo después del lock
                 GameStartedDTO recoveryDto = null;
 
                 if (session != null && session.IsStarted && !session.IsFinished)
                 {
-                    // 2. Entramos al lock solo para LEER y COPIAR los datos rápido
                     lock (session.SyncRoot)
                     {
                         var player = session.Players.FirstOrDefault(p => p.UserId == userId);

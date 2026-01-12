@@ -31,5 +31,7 @@ namespace ArchsVsDinosServer.Interfaces.Game
 
         GameEndResult EndGame(string matchCode, GameEndType gameEnd, string reason);
         void LeaveGame(string matchCode, int userId);
+
+        void ConnectPlayerToGame(string matchCode, int userId, IGameManagerCallback callback);
     }
 }

@@ -132,21 +132,23 @@ namespace ArchsVsDinosClient.Views.MatchViews
         {
             try
             {
-                Debug.WriteLine("[MATCH] 🔌 Connecting to game service immediately...");
+                Debug.WriteLine("[MATCH] 🔌 Connecting to game service...");
 
                 await gameViewModel.ConnectToGameAsync();
+
+                await Task.Delay(800);
 
                 Debug.WriteLine("[MATCH] ✅ Connected - callback registered");
 
                 if (gameViewModel.gameServiceClient is GameServiceClient serviceClient)
                 {
-                    serviceClient.StartConnectionMonitoring(timeoutSeconds: 30); // ⚠️ Cambiado de 7 a 30
+                    serviceClient.StartConnectionMonitoring(timeoutSeconds: 30);
                     Debug.WriteLine("[MATCH] ✅ Monitoring started (30s timeout)");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[MATCH] ❌ ConnectGameImmediately failed: {ex.Message}");
+                Debug.WriteLine($"[MATCH] ❌ Connection failed: {ex.Message}");
 
                 MessageBox.Show(
                     "No se pudo conectar al servidor del juego.",
