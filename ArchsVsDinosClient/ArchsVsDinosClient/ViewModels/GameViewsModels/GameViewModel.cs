@@ -1,6 +1,6 @@
 ﻿using ArchsVsDinosClient.DTO;
-using ArchsVsDinosClient.GameService; 
-using ArchsVsDinosClient.Models;     
+using ArchsVsDinosClient.GameService;
+using ArchsVsDinosClient.Models;
 using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.Services;
 using ArchsVsDinosClient.Services.Interfaces;
@@ -272,7 +272,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     {
                         EndTurnAutomatically();
                     }
-                    return null; 
+                    return null;
                 }
                 else
                 {
@@ -369,17 +369,17 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             switch (code)
             {
-                case PlayCardResultCode.PlayCard_NotYourTurn: 
+                case PlayCardResultCode.PlayCard_NotYourTurn:
                     return Lang.Match_NotYourTurn;
-                case PlayCardResultCode.PlayCard_CardNotInHand: 
+                case PlayCardResultCode.PlayCard_CardNotInHand:
                     return Lang.Match_CardNotFound;
-                case PlayCardResultCode.PlayCard_InvalidDinoHead: 
+                case PlayCardResultCode.PlayCard_InvalidDinoHead:
                     return Lang.Match_InvalidCell;
-                case PlayCardResultCode.PlayCard_MustAttachToHead: 
+                case PlayCardResultCode.PlayCard_MustAttachToHead:
                     return Lang.Match_CellNeedDinoHead;
-                case PlayCardResultCode.PlayCard_AlreadyPlayedTwoCards: 
+                case PlayCardResultCode.PlayCard_AlreadyPlayedTwoCards:
                     return Lang.Match_AlreadyUsedRolls;
-                default: 
+                default:
                     return Lang.Match_CardCannotPlacedHere;
             }
         }
@@ -388,13 +388,13 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             switch (code)
             {
-                case DrawCardResultCode.DrawCard_NotYourTurn: 
+                case DrawCardResultCode.DrawCard_NotYourTurn:
                     return Lang.Match_NotYourTurn;
-                case DrawCardResultCode.DrawCard_DrawPileEmpty: 
+                case DrawCardResultCode.DrawCard_DrawPileEmpty:
                     return Lang.Match_DeckEmpty;
-                case DrawCardResultCode.DrawCard_AlreadyDrewThisTurn: 
+                case DrawCardResultCode.DrawCard_AlreadyDrewThisTurn:
                     return Lang.Match_AlreadyUsedRolls;
-                default: 
+                default:
                     return Lang.Match_ErrorDrawingCard;
             }
         }
@@ -520,7 +520,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 }
                 else if (data.Reason == "ArchsVictory")
                 {
-                    message = Lang.Match_DefeatedByArchs; 
+                    message = Lang.Match_DefeatedByArchs;
                 }
                 else
                 {
@@ -560,7 +560,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     if (IsMyTurn)
                     {
                         RemainingMoves--;
-                        Debug.WriteLine($"[CARD DRAWN] Remaining moves: {RemainingMoves}");  // ← AGREGAR ESTE LOG
+                        Debug.WriteLine($"[CARD DRAWN] Remaining moves: {RemainingMoves}");
 
 
                         if (RemainingMoves <= 0)
@@ -718,7 +718,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 {
                     RemainingMoves = 0;
                     string namePlayer = GetUsernameById(data.FirstPlayerUserId);
-                    MessageBox.Show($"{namePlayer } {Lang.Match_InfoBegin2}");
+                    MessageBox.Show($"{namePlayer} {Lang.Match_InfoBegin2}");
                 }
             });
         }
@@ -784,7 +784,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public async Task CleanupBeforeClosingAsync()
         {
             Debug.WriteLine("[GAME VM] Executing cleanup before window closes...");
-            await LeaveGameAsync(); 
+            await LeaveGameAsync();
             this.Dispose();
         }
 
@@ -811,7 +811,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
             if (myPlayer != null && myPlayer.IdPlayer != 0)
             {
-                return myPlayer.IdPlayer; 
+                return myPlayer.IdPlayer;
             }
 
             int playerId = UserSession.Instance.GetPlayerId();
@@ -876,7 +876,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 }
             });
         }
-    
+
         private void OnArchProvoked(ArchArmyProvokedDTO data)
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -1040,7 +1040,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         RemainingMoves--;
                         if (RemainingMoves <= 0)
                         {
-                            EndTurnAutomatically(); 
+                            EndTurnAutomatically();
                         }
                     }
                 }

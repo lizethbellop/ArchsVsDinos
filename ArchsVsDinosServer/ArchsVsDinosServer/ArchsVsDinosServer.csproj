@@ -274,6 +274,7 @@
     <Compile Include="Utils\CodeGenerator.cs" />
     <Compile Include="Utils\EmailService.cs" />
     <Compile Include="Utils\EnvLoader.cs" />
+    <Compile Include="Utils\GameLogicDependencies.cs" />
     <Compile Include="Utils\InvitationSendHelper.cs" />
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbyCodeGeneratorHelper.cs" />
     <Compile Include="BusinessLogic\MatchLobbyManagement\LobbySession.cs" />

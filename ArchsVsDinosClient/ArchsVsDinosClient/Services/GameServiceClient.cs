@@ -14,15 +14,29 @@ namespace ArchsVsDinosClient.Services
 {
     public sealed class GameServiceClient : IGameServiceClient, IDisposable
     {
+        private const string LogPrefix = "[GAME CLIENT]";
+
         private const int MinimumTimeoutSeconds = 30;
-        private const int MaxConsecutiveTimeouts = 3;
+
         private const int ReconnectSemaphoreInitialCount = 1;
         private const int ReconnectSemaphoreMaxCount = 1;
         private const int NoWaitMilliseconds = 0;
 
+        private int isReconnectionResultNotified;
+        private int isReconnectionTickInProgress;
+
+        private const int FlagFalse = 0;
+        private const int FlagTrue = 1;
+
         private const string OperationConnectToGame = "ConnectToGame";
         private const string OperationLeaveGame = "LeaveGame";
         private const string OperationGameAction = "GameAction";
+        private const string OperationReconnectToGame = "ReconnectToGame";
+
+        private const int DefaultReconnectTimeoutSeconds = 30;
+
+        private const int MaxReconnectionAttempts = 5;
+        private const int ReconnectionIntervalMs = 5000;
 
         private readonly SynchronizationContext uiContext;
         private readonly SemaphoreSlim reconnectSemaphore;
@@ -32,17 +46,15 @@ namespace ArchsVsDinosClient.Services
         private GameManagerClient client;
         private GameConnectionTimer connectionTimer;
 
-        private int consecutiveTimeoutCount;
         private string currentMatchCode;
         private int currentUserId;
 
-        // Variables de reconexión
+        private int isConnectionLostNotified;
+
         private System.Timers.Timer reconnectionTimer;
-        private bool isAttemptingReconnection = false;
-        private int reconnectionAttempts = 0;
-        private const int MaxReconnectionAttempts = 5;
-        private const int ReconnectionIntervalMs = 5000;
-        private bool userRequestedExit = false;
+        private bool isAttemptingReconnection;
+        private int reconnectionAttempts;
+        private bool userRequestedExit;
 
         public event Action<GameInitializedDTO> GameInitialized;
         public event Action<GameStartedDTO> GameStarted;
@@ -56,18 +68,24 @@ namespace ArchsVsDinosClient.Services
         public event Action<GameEndedDTO> GameEnded;
         public event Action<PlayerExpelledDTO> PlayerExpelled;
         public event Action<CardTakenFromDiscardDTO> CardTakenFromDiscard;
+
         public event Action<string, string> ServiceError;
         public event Action ConnectionLost;
+
         public event Action ReconnectionStarted;
         public event Action<bool> ReconnectionCompleted;
 
         public GameServiceClient()
         {
             uiContext = SynchronizationContext.Current;
-            reconnectSemaphore = new SemaphoreSlim(ReconnectSemaphoreInitialCount, ReconnectSemaphoreMaxCount);
-            consecutiveTimeoutCount = 0;
+
+            reconnectSemaphore = new SemaphoreSlim(
+                initialCount: ReconnectSemaphoreInitialCount,
+                maxCount: ReconnectSemaphoreMaxCount);
+
             currentMatchCode = string.Empty;
             currentUserId = 0;
+
             callback = new GameCallbackHandler();
 
             callback.OnGameInitializedEvent += dto => GameInitialized?.Invoke(dto);
@@ -85,187 +103,126 @@ namespace ArchsVsDinosClient.Services
 
             guardian = new WcfConnectionGuardian(
                 onError: (title, message) => RaiseServiceError(title, message),
-                logger: new Logger()
-            );
+                logger: new Logger());
 
             CreateProxy();
         }
 
         public void StartConnectionMonitoring(int timeoutSeconds)
         {
-            int effectiveTimeoutSeconds = timeoutSeconds < MinimumTimeoutSeconds ? MinimumTimeoutSeconds : timeoutSeconds;
-            consecutiveTimeoutCount = 0;
+            int effectiveTimeoutSeconds =
+                timeoutSeconds < MinimumTimeoutSeconds ? MinimumTimeoutSeconds : timeoutSeconds;
+
+            Interlocked.Exchange(ref isConnectionLostNotified, FlagFalse);
+
             connectionTimer?.Dispose();
             connectionTimer = new GameConnectionTimer(effectiveTimeoutSeconds, OnConnectionTimeout);
+
             callback.SetConnectionTimer(connectionTimer);
+
             connectionTimer.Start();
             connectionTimer.NotifyActivity();
-            Debug.WriteLine($"[GAME TIMER] Started. TimeoutSeconds={effectiveTimeoutSeconds}");
+
+            Debug.WriteLine(string.Format("{0} [GAME TIMER] Started. TimeoutSeconds={1}", LogPrefix, effectiveTimeoutSeconds));
         }
 
         public void StopConnectionMonitoring()
         {
-            connectionTimer?.Stop();
-            Debug.WriteLine("[GAME TIMER] Stopped");
+            try
+            {
+                connectionTimer?.Stop();
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine(string.Format("{0} [GAME TIMER] Stop ObjectDisposedException: {1}", LogPrefix, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} [GAME TIMER] Stop InvalidOperationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} [GAME TIMER] Stop UnexpectedException: {1}", LogPrefix, ex.Message));
+            }
         }
 
         public async Task ConnectToGameAsync(string matchCode, int userId)
         {
-            currentMatchCode = matchCode ?? string.Empty;
+            currentMatchCode = (matchCode ?? string.Empty).Trim();
             currentUserId = userId;
+
             MarkActivity();
-            await guardian.ExecuteAsync(async () => await client.ConnectToGameAsync(currentMatchCode, currentUserId), OperationConnectToGame);
+
+            await guardian.ExecuteAsync(
+                async () => await client.ConnectToGameAsync(currentMatchCode, currentUserId),
+                operationName: OperationConnectToGame);
+
             MarkActivity();
         }
 
         public async Task LeaveGameAsync(string matchCode, int userId)
         {
             MarkActivity();
-            await guardian.ExecuteAsync(async () => await client.LeaveGameAsync(matchCode, userId), OperationLeaveGame, suppressErrors: true);
+
+            await guardian.ExecuteAsync(
+                async () => await client.LeaveGameAsync(matchCode, userId),
+                operationName: OperationLeaveGame,
+                suppressErrors: true);
+
             MarkActivity();
         }
 
-        // Métodos de acción del juego
         public Task<DrawCardResultCode> DrawCardAsync(string matchCode, int userId) =>
-            ExecuteAsyncWithResult(() => client.DrawCardAsync(matchCode, userId), DrawCardResultCode.DrawCard_UnexpectedError);
+            ExecuteAsyncWithResult(
+                () => client.DrawCardAsync(matchCode, userId),
+                DrawCardResultCode.DrawCard_UnexpectedError);
 
         public Task<PlayCardResultCode> PlayDinoHeadAsync(string matchCode, int userId, int cardId) =>
-            ExecuteAsyncWithResult(() => client.PlayDinoHeadAsync(matchCode, userId, cardId), PlayCardResultCode.PlayCard_UnexpectedError);
+            ExecuteAsyncWithResult(
+                () => client.PlayDinoHeadAsync(matchCode, userId, cardId),
+                PlayCardResultCode.PlayCard_UnexpectedError);
 
         public Task<PlayCardResultCode> AttachBodyPartAsync(string matchCode, int userId, AttachBodyPartDTO attachmentData) =>
-            ExecuteAsyncWithResult(() => client.AttachBodyPartToDinoAsync(matchCode, userId, attachmentData), PlayCardResultCode.PlayCard_UnexpectedError);
+            ExecuteAsyncWithResult(
+                () => client.AttachBodyPartToDinoAsync(matchCode, userId, attachmentData),
+                PlayCardResultCode.PlayCard_UnexpectedError);
 
         public Task<ProvokeResultCode> ProvokeArchArmyAsync(string matchCode, int userId, ArmyType armyType) =>
-            ExecuteAsyncWithResult(() => client.ProvokeArchArmyAsync(matchCode, userId, armyType), ProvokeResultCode.Provoke_UnexpectedError);
+            ExecuteAsyncWithResult(
+                () => client.ProvokeArchArmyAsync(matchCode, userId, armyType),
+                ProvokeResultCode.Provoke_UnexpectedError);
 
         public Task<EndTurnResultCode> EndTurnAsync(string matchCode, int userId) =>
-            ExecuteAsyncWithResult(() => client.EndTurnAsync(matchCode, userId), EndTurnResultCode.EndTurn_UnexpectedError);
+            ExecuteAsyncWithResult(
+                () => client.EndTurnAsync(matchCode, userId),
+                EndTurnResultCode.EndTurn_UnexpectedError);
 
         public Task<DrawCardResultCode> TakeCardFromDiscardPileAsync(string matchCode, int userId, int cardId) =>
-            ExecuteAsyncWithResult(() => client.TakeCardFromDiscardPileAsync(matchCode, userId, cardId), DrawCardResultCode.DrawCard_UnexpectedError);
+            ExecuteAsyncWithResult(
+                () => client.TakeCardFromDiscardPileAsync(matchCode, userId, cardId),
+                DrawCardResultCode.DrawCard_UnexpectedError);
 
         private void OnConnectionTimeout()
         {
             _ = HandleTimeoutAsync();
         }
 
-        public void StartReconnectionAttempts()
-        {
-            if (string.IsNullOrEmpty(currentMatchCode) || isAttemptingReconnection) return;
-
-            Debug.WriteLine("[GAME CLIENT] 🔄 Iniciando reconexión automática...");
-            isAttemptingReconnection = true;
-            reconnectionAttempts = 0;
-            userRequestedExit = false;
-
-            ReconnectionStarted?.Invoke();
-
-            reconnectionTimer = new System.Timers.Timer(ReconnectionIntervalMs);
-            reconnectionTimer.Elapsed += OnReconnectionTimerElapsed;
-            reconnectionTimer.AutoReset = true;
-            reconnectionTimer.Start();
-        }
-
-        private async void OnReconnectionTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            ForceAbort();
-
-            if (userRequestedExit)
-            {
-                StopReconnectionAttempts(success: false);
-                return;
-            }
-
-            reconnectionAttempts++;
-            if (reconnectionAttempts > MaxReconnectionAttempts)
-            {
-                StopReconnectionAttempts(success: false);
-                NotifyReconnectionResult(false);
-                return;
-            }
-
-            if (await TryReconnectToGameAsync())
-            {
-                StopReconnectionAttempts(success: true);
-                NotifyReconnectionResult(true);
-            }
-        }
-
-        public async Task<bool> TryReconnectToGameAsync()
-        {
-            try
-            {
-                if (!InternetConnectivity.HasInternet()) return false;
-
-                connectionTimer?.Stop();
-                EnsureClientIsUsable();
-
-                bool connected = await guardian.ExecuteAsync(async () =>
-                {
-                    await client.ConnectToGameAsync(currentMatchCode, currentUserId);
-                }, operationName: "ReconnectToGame", suppressErrors: true);
-
-                if (connected)
-                {
-                    connectionTimer?.Start();
-                    connectionTimer?.NotifyActivity();
-                    consecutiveTimeoutCount = 0;
-                    return true;
-                }
-                return false;
-            }
-            catch { return false; }
-        }
-
-        private void StopReconnectionAttempts(bool success)
-        {
-            if (reconnectionTimer != null)
-            {
-                reconnectionTimer.Stop();
-                reconnectionTimer.Elapsed -= OnReconnectionTimerElapsed;
-                reconnectionTimer.Dispose();
-                reconnectionTimer = null;
-            }
-            isAttemptingReconnection = false;
-            if (success) StartConnectionMonitoring(30);
-        }
-
-        public void CancelReconnectionAndExit()
-        {
-            userRequestedExit = true;
-            if (isAttemptingReconnection) StopReconnectionAttempts(false);
-        }
-
-        public void ForceAbort()
-        {
-            try { ((ICommunicationObject)client)?.Abort(); } catch { }
-        }
-
         private async Task HandleTimeoutAsync()
         {
             bool entered = await reconnectSemaphore.WaitAsync(NoWaitMilliseconds);
-            if (!entered) return;
+            if (!entered)
+            {
+                return;
+            }
 
             try
             {
-                CommunicationState state = GetClientState();
-                if (state == CommunicationState.Opened)
+                if (userRequestedExit || isAttemptingReconnection)
                 {
-                    consecutiveTimeoutCount = 0;
-                    RestartMonitoringAfterInactivity();
                     return;
                 }
 
-                consecutiveTimeoutCount++;
-                EnsureClientIsUsable();
-
-                if (consecutiveTimeoutCount >= MaxConsecutiveTimeouts)
-                {
-                    RaiseConnectionLost();
-                    return;
-                }
-
-                RestartMonitoringAfterInactivity();
+                NotifyConnectionLostOnce();
             }
             finally
             {
@@ -273,11 +230,136 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        private void RestartMonitoringAfterInactivity()
+
+        public async Task<bool> TryReconnectToGameAsync()
         {
-            connectionTimer?.Start();
-            connectionTimer?.NotifyActivity();
-            Debug.WriteLine("[GAME TIMER] Inactivity handled (monitor restarted).");
+            try
+            {
+                if (!InternetConnectivity.HasInternet())
+                {
+                    return false;
+                }
+
+                StopConnectionMonitoring();
+
+                EnsureClientIsUsable();
+
+                bool connected = await guardian.ExecuteAsync(
+                    async () => await client.ConnectToGameAsync(currentMatchCode, currentUserId),
+                    operationName: OperationReconnectToGame,
+                    suppressErrors: true);
+
+                if (!connected)
+                {
+                    return false;
+                }
+
+                StartConnectionMonitoring(DefaultReconnectTimeoutSeconds);
+                return true;
+            }
+            catch (EndpointNotFoundException ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryReconnect EndpointNotFoundException: {1}", LogPrefix, ex.Message));
+                return false;
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryReconnect CommunicationException: {1}", LogPrefix, ex.Message));
+                return false;
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryReconnect TimeoutException: {1}", LogPrefix, ex.Message));
+                return false;
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryReconnect ObjectDisposedException: {1}", LogPrefix, ex.Message));
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryReconnect InvalidOperationException: {1}", LogPrefix, ex.Message));
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryReconnect UnexpectedException: {1}", LogPrefix, ex.Message));
+                return false;
+            }
+        }
+
+        private void StopReconnectionAttempts(bool success)
+        {
+            if (reconnectionTimer != null)
+            {
+                try
+                {
+                    reconnectionTimer.Stop();
+                    reconnectionTimer.Elapsed -= OnReconnectionTimerElapsed;
+                    reconnectionTimer.Dispose();
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    Debug.WriteLine(string.Format("{0} StopReconnectionAttempts ObjectDisposedException: {1}", LogPrefix, ex.Message));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Debug.WriteLine(string.Format("{0} StopReconnectionAttempts InvalidOperationException: {1}", LogPrefix, ex.Message));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(string.Format("{0} StopReconnectionAttempts UnexpectedException: {1}", LogPrefix, ex.Message));
+                }
+                finally
+                {
+                    reconnectionTimer = null;
+                }
+            }
+
+            isAttemptingReconnection = false;
+
+            if (success)
+            {
+                Interlocked.Exchange(ref isConnectionLostNotified, FlagFalse);
+            }
+        }
+
+        public void CancelReconnectionAndExit()
+        {
+            userRequestedExit = true;
+
+            if (isAttemptingReconnection)
+            {
+                StopReconnectionAttempts(success: false);
+            }
+        }
+
+        public void ForceAbort()
+        {
+            try
+            {
+                if (client is ICommunicationObject comm)
+                {
+                    comm.Abort();
+                }
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine(string.Format("{0} ForceAbort ObjectDisposedException: {1}", LogPrefix, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} ForceAbort InvalidOperationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} ForceAbort CommunicationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} ForceAbort UnexpectedException: {1}", LogPrefix, ex.Message));
+            }
         }
 
         private void EnsureClientIsUsable()
@@ -295,16 +377,11 @@ namespace ArchsVsDinosClient.Services
             }
         }
 
-        private CommunicationState GetClientState()
-        {
-            if (client == null) return CommunicationState.Closed;
-            return ((ICommunicationObject)client).State;
-        }
-
         private void ResetProxy()
         {
             CloseProxy();
             CreateProxy();
+
             if (connectionTimer != null)
             {
                 callback.SetConnectionTimer(connectionTimer);
@@ -313,77 +390,375 @@ namespace ArchsVsDinosClient.Services
 
         private void CreateProxy()
         {
-            var context = new InstanceContext(callback);
-            context.SynchronizationContext = null;
-            client = new GameManagerClient(context);
+            try
+            {
+                var context = new InstanceContext(callback);
+                context.SynchronizationContext = null;
 
-            // ✅ SIN TIMEOUTS PERSONALIZADOS - Usa los valores por defecto del WCF
-            // Esto permite que la conexión inicial funcione correctamente
+                client = new GameManagerClient(context);
 
-            guardian.MonitorClientState(client);
+                HookClientLifecycleEvents(client);
+
+                guardian.MonitorClientState(client);
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} CreateProxy CommunicationException: {1}", LogPrefix, ex.Message));
+                throw;
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine(string.Format("{0} CreateProxy TimeoutException: {1}", LogPrefix, ex.Message));
+                throw;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} CreateProxy InvalidOperationException: {1}", LogPrefix, ex.Message));
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} CreateProxy UnexpectedException: {1}", LogPrefix, ex.Message));
+                throw;
+            }
         }
+
+        private void HookClientLifecycleEvents(GameManagerClient proxy)
+        {
+            if (proxy == null)
+            {
+                return;
+            }
+
+            if (proxy is ICommunicationObject comm)
+            {
+                comm.Faulted += OnClientFaultedOrClosed;
+                comm.Closed += OnClientFaultedOrClosed;
+            }
+        }
+
+        private void UnhookClientLifecycleEvents(GameManagerClient proxy)
+        {
+            if (proxy == null)
+            {
+                return;
+            }
+
+            if (proxy is ICommunicationObject comm)
+            {
+                comm.Faulted -= OnClientFaultedOrClosed;
+                comm.Closed -= OnClientFaultedOrClosed;
+            }
+        }
+
+        private void OnClientFaultedOrClosed(object sender, EventArgs e)
+        {
+            NotifyConnectionLostOnce();
+        }
+
+        public void StartReconnectionAttempts()
+        {
+            System.Threading.Interlocked.Exchange(ref isReconnectionTickInProgress, FlagFalse);
+            System.Threading.Interlocked.Exchange(ref isReconnectionResultNotified, FlagFalse);
+
+            if (string.IsNullOrWhiteSpace(currentMatchCode))
+            {
+                return;
+            }
+
+            if (isAttemptingReconnection)
+            {
+                return;
+            }
+
+            Debug.WriteLine(string.Format("{0} 🔄 Starting reconnection attempts...", LogPrefix));
+
+            isAttemptingReconnection = true;
+            reconnectionAttempts = 0;
+            userRequestedExit = false;
+
+            ReconnectionStarted?.Invoke();
+
+            reconnectionTimer = new System.Timers.Timer(ReconnectionIntervalMs);
+            reconnectionTimer.AutoReset = true;
+            reconnectionTimer.Elapsed += OnReconnectionTimerElapsed;
+            reconnectionTimer.Start();
+        }
+
+        private async void OnReconnectionTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (System.Threading.Interlocked.Exchange(ref isReconnectionTickInProgress, FlagTrue) == FlagTrue)
+            {
+                return;
+            }
+
+            try
+            {
+                ForceAbort();
+
+                if (userRequestedExit)
+                {
+                    StopReconnectionAttempts(success: false);
+                    NotifyReconnectionResult(false);
+                    return;
+                }
+
+                reconnectionAttempts++;
+
+                if (reconnectionAttempts > MaxReconnectionAttempts)
+                {
+                    StopReconnectionAttempts(success: false);
+                    NotifyReconnectionResult(false);
+                    return;
+                }
+
+                bool success = await TryReconnectToGameAsync();
+                if (success)
+                {
+                    StopReconnectionAttempts(success: true);
+                    NotifyReconnectionResult(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} OnReconnectionTimerElapsed UnexpectedException: {1}", LogPrefix, ex.Message));
+            }
+            finally
+            {
+                System.Threading.Interlocked.Exchange(ref isReconnectionTickInProgress, FlagFalse);
+            }
+        }
+
+        private void NotifyReconnectionResult(bool success)
+        {
+            if (System.Threading.Interlocked.Exchange(ref isReconnectionResultNotified, FlagTrue) == FlagTrue)
+            {
+                return;
+            }
+
+            if (uiContext != null)
+            {
+                uiContext.Post(_ => ReconnectionCompleted?.Invoke(success), null);
+                return;
+            }
+
+            Application.Current?.Dispatcher?.Invoke(() => ReconnectionCompleted?.Invoke(success));
+        }
+
 
         private void CloseProxy()
         {
+            UnhookClientLifecycleEvents(client);
+
             if (client is ICommunicationObject comm)
             {
                 try
                 {
-                    if (comm.State == CommunicationState.Faulted) comm.Abort();
-                    else comm.Close();
+                    if (comm.State == CommunicationState.Faulted)
+                    {
+                        comm.Abort();
+                    }
+                    else
+                    {
+                        comm.Close();
+                    }
                 }
-                catch { comm.Abort(); }
+                catch (CommunicationException ex)
+                {
+                    Debug.WriteLine(string.Format("{0} CloseProxy CommunicationException: {1}", LogPrefix, ex.Message));
+                    TryAbort(comm);
+                }
+                catch (TimeoutException ex)
+                {
+                    Debug.WriteLine(string.Format("{0} CloseProxy TimeoutException: {1}", LogPrefix, ex.Message));
+                    TryAbort(comm);
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    Debug.WriteLine(string.Format("{0} CloseProxy ObjectDisposedException: {1}", LogPrefix, ex.Message));
+                    TryAbort(comm);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Debug.WriteLine(string.Format("{0} CloseProxy InvalidOperationException: {1}", LogPrefix, ex.Message));
+                    TryAbort(comm);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(string.Format("{0} CloseProxy UnexpectedException: {1}", LogPrefix, ex.Message));
+                    TryAbort(comm);
+                }
+            }
+        }
+
+        private void TryAbort(ICommunicationObject comm)
+        {
+            if (comm == null)
+            {
+                return;
+            }
+
+            try
+            {
+                comm.Abort();
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryAbort ObjectDisposedException: {1}", LogPrefix, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryAbort InvalidOperationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} TryAbort UnexpectedException: {1}", LogPrefix, ex.Message));
             }
         }
 
         private void MarkActivity()
         {
+            Interlocked.Exchange(ref isConnectionLostNotified, FlagFalse);
             connectionTimer?.NotifyActivity();
         }
 
         private async Task<T> ExecuteAsyncWithResult<T>(Func<Task<T>> action, T defaultErrorValue)
         {
             MarkActivity();
-            T result = await guardian.ExecuteAsync(async () => await action(), defaultValue: defaultErrorValue, operationName: OperationGameAction);
+
+            T result = await guardian.ExecuteAsync(
+                async () => await action(),
+                defaultValue: defaultErrorValue,
+                operationName: OperationGameAction);
+
             MarkActivity();
             return result;
         }
 
-        private void NotifyReconnectionResult(bool success)
+        private void NotifyConnectionLostOnce()
         {
-            if (uiContext != null) uiContext.Post(_ => ReconnectionCompleted?.Invoke(success), null);
-            else Application.Current?.Dispatcher?.Invoke(() => ReconnectionCompleted?.Invoke(success));
+            int previous = Interlocked.Exchange(ref isConnectionLostNotified, FlagTrue);
+            if (previous == FlagTrue)
+            {
+                return;
+            }
+
+            StopConnectionMonitoring();
+            RaiseConnectionLost();
         }
+
+
 
         private void RaiseServiceError(string title, string message)
         {
-            if (uiContext != null) uiContext.Post(_ => ServiceError?.Invoke(title, message), null);
-            else Application.Current?.Dispatcher?.Invoke(() => ServiceError?.Invoke(title, message));
+            if (uiContext != null)
+            {
+                uiContext.Post(_ => ServiceError?.Invoke(title, message), null);
+                return;
+            }
+
+            Application.Current?.Dispatcher?.Invoke(() => ServiceError?.Invoke(title, message));
         }
 
         private void RaiseConnectionLost()
         {
-            if (uiContext != null) uiContext.Post(_ => ConnectionLost?.Invoke(), null);
-            else Application.Current?.Dispatcher?.Invoke(() => ConnectionLost?.Invoke());
+            if (uiContext != null)
+            {
+                uiContext.Post(_ => ConnectionLost?.Invoke(), null);
+                return;
+            }
+
+            Application.Current?.Dispatcher?.Invoke(() => ConnectionLost?.Invoke());
         }
 
         public async Task DisconnectAsync()
         {
             try
             {
+                CancelReconnectionAndExit();
                 StopConnectionMonitoring();
-                if (!string.IsNullOrWhiteSpace(currentMatchCode)) await LeaveGameAsync(currentMatchCode, currentUserId);
+
+                if (!string.IsNullOrWhiteSpace(currentMatchCode))
+                {
+                    await LeaveGameAsync(currentMatchCode, currentUserId);
+                }
             }
-            catch { }
-            finally { Dispose(); }
+            catch (EndpointNotFoundException ex)
+            {
+                Debug.WriteLine(string.Format("{0} DisconnectAsync EndpointNotFoundException: {1}", LogPrefix, ex.Message));
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} DisconnectAsync CommunicationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine(string.Format("{0} DisconnectAsync TimeoutException: {1}", LogPrefix, ex.Message));
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine(string.Format("{0} DisconnectAsync ObjectDisposedException: {1}", LogPrefix, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} DisconnectAsync InvalidOperationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} DisconnectAsync UnexpectedException: {1}", LogPrefix, ex.Message));
+            }
+            finally
+            {
+                Dispose();
+            }
         }
 
         public void Dispose()
         {
-            connectionTimer?.Dispose();
-            connectionTimer = null;
-            CloseProxy();
-            client = null;
+            CancelReconnectionAndExit();
+
+            try
+            {
+                connectionTimer?.Dispose();
+                connectionTimer = null;
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Debug.WriteLine(string.Format("{0} Dispose timer ObjectDisposedException: {1}", LogPrefix, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} Dispose timer InvalidOperationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} Dispose timer UnexpectedException: {1}", LogPrefix, ex.Message));
+            }
+
+            try
+            {
+                CloseProxy();
+            }
+            catch (CommunicationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} Dispose CloseProxy CommunicationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (TimeoutException ex)
+            {
+                Debug.WriteLine(string.Format("{0} Dispose CloseProxy TimeoutException: {1}", LogPrefix, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine(string.Format("{0} Dispose CloseProxy InvalidOperationException: {1}", LogPrefix, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(string.Format("{0} Dispose CloseProxy UnexpectedException: {1}", LogPrefix, ex.Message));
+            }
+            finally
+            {
+                client = null;
+            }
         }
 
         public Task InitializeGameAsync(string matchCode) => Task.CompletedTask;

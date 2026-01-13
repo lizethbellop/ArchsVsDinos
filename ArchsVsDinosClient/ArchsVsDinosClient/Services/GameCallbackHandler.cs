@@ -106,7 +106,8 @@ namespace ArchsVsDinosClient.Services
 
         private void MarkActivity()
         {
-            connectionTimer?.NotifyActivity();
+            GameConnectionTimer timer = connectionTimer;
+            timer?.NotifyActivity();
         }
 
         private void SafeInvoke(Action action, string methodName)

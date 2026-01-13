@@ -192,6 +192,7 @@
     <Compile Include="Utils\SoundButton.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="Utils\UiLogoutCoordinator.cs" />
     <Compile Include="Utils\UpdateResultCodeHelper.cs" />
     <Compile Include="Utils\UserProfileObserver.cs" />
     <Compile Include="Utils\WcfConnectionGuardian.cs" />

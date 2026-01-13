@@ -30,15 +30,31 @@ namespace ArchsVsDinosClient.Views.MatchViews
     public partial class MainMatch : BaseSessionWindow
     {
         private const int ChatContextMatch = 1;
+        private const int GameMonitorTimeoutSeconds = 120;
+
 
         private const int ErrorNotificationSeconds = 3;
         private const double ErrorNotificationOpacity = 0.9;
         private const double ErrorFadeOutSeconds = 0.5;
+        private int isDisconnectionUiShown;
+
+
+
+
 
         private const double DefaultHandCanvasWidth = 800;
         private const double HandCardWidth = 80;
         private const double HandCardOverlap = 50;
         private const double HandMinStartX = 10;
+
+        private const int FlagFalse = 0;
+        private const int FlagTrue = 1;
+
+        private int isExitToLoginStarted;
+
+
+        private int isForceExitInProgress;
+
 
         private readonly int currentUserId;
 
@@ -64,8 +80,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
         private int player3UserId = 0;
         private int player4UserId = 0;
 
-        // En MainMatch.xaml.cs
-        // Reemplaza el constructor COMPLETO con esto:
+
 
         public MainMatch(List<LobbyPlayerDTO> players, string myUsername, string gameMatchCode, int myLobbyUserId)
         {
@@ -128,6 +143,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             ExtraCleanupAction = CleanupBeforeCloseAsync;
         }
 
+
         private async Task ConnectGameImmediatelyAsync()
         {
             try
@@ -142,7 +158,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
                 if (gameViewModel.gameServiceClient is GameServiceClient serviceClient)
                 {
-                    serviceClient.StartConnectionMonitoring(timeoutSeconds: 30);
+                    serviceClient.StartConnectionMonitoring(timeoutSeconds: GameMonitorTimeoutSeconds);
                     Debug.WriteLine("[MATCH] ✅ Monitoring started (30s timeout)");
                 }
             }
@@ -163,7 +179,17 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (IsNavigating || isClosingHandled)
+            bool isExitFlow =
+                IsNavigating ||
+                System.Threading.Interlocked.CompareExchange(ref isExitToLoginStarted, FlagFalse, FlagFalse) == FlagTrue;
+
+            if (isExitFlow)
+            {
+                base.OnClosing(e);
+                return;
+            }
+
+            if (isClosingHandled)
             {
                 base.OnClosing(e);
                 return;
@@ -202,6 +228,8 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
             base.OnClosing(e);
         }
+
+
 
         private async void MatchLoaded(object sender, RoutedEventArgs e)
         {
@@ -464,119 +492,156 @@ namespace ArchsVsDinosClient.Views.MatchViews
             }
         }
 
-        private void OnConnectionLost()
+        private bool IsExitToLoginInProgress()
         {
-            if (isHandlingDisconnection || isAttemptingReconnection)
+            return System.Threading.Interlocked.CompareExchange(ref isExitToLoginStarted, FlagFalse, FlagFalse) == FlagTrue;
+        }
+
+        private bool TryBeginDisconnectionUiFlow()
+        {
+            if (IsNavigating || IsExitToLoginInProgress())
             {
-                return;
+                return false;
             }
 
-            isAttemptingReconnection = true;
+            int previous = System.Threading.Interlocked.Exchange(ref isDisconnectionUiShown, FlagTrue);
+            return previous == FlagFalse;
+        }
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Debug.WriteLine("[MATCH] Connection timeout - attempting reconnection");
+        private void ResetDisconnectionUiFlow()
+        {
+            System.Threading.Interlocked.Exchange(ref isDisconnectionUiShown, FlagFalse);
+        }
 
-                var result = MessageBox.Show(
-                    "Se perdió la conexión con el servidor. ¿Deseas intentar reconectar?",
-                    "Conexión perdida",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question
-                );
-
-                if (result == MessageBoxResult.No)
-                {
-                    Debug.WriteLine("[MATCH] User declined reconnection");
-                    isAttemptingReconnection = false;
-                    isHandlingDisconnection = true;
-
-                    StopMonitoringSafely();
-
-                    MessageBox.Show(
-                        "Saliendo de la partida...",
-                        "Conexión perdida",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
-
-                    ForceExitToLoginWindow();
-                    return;
-                }
-
-                Debug.WriteLine("[MATCH] Starting reconnection attempts...");
-                StartReconnectionProcess();
-            });
+        private void OnConnectionLost()
+        {
+            StartDisconnectionFlow(
+                title: "Conexión perdida",
+                message: "Se perdió la conexión con el servidor.",
+                askReconnect: true);
         }
 
         private void OnCriticalServiceError(string title, string message)
         {
-            bool isFatalError = (title != null && title.Contains("Conexión")) ||
-                                (message != null && (message.Contains("EndpointNotFound") || message.Contains("Faulted") || message.Contains("Timeout")));
+            bool isFatalError =
+                (title != null && title.Contains("Conexión")) ||
+                (message != null && (message.Contains("EndpointNotFound") ||
+                                     message.Contains("Faulted") ||
+                                     message.Contains("Timeout")));
 
             if (!isFatalError)
             {
                 return;
             }
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (gameViewModel == null)
-                {
-                    return;
-                }
-
-                MessageBox.Show(
-                    $"{Lang.Match_ConnectionLostMessage}\n\nDetalle: {message}",
-                    Lang.Match_ConnectionLostTitle,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
-
-                ForceExitToLoginWindow();
-            });
+            StartDisconnectionFlow(
+                title: Lang.Match_ConnectionLostTitle,
+                message: string.Format("{0}\n\nDetalle: {1}", Lang.Match_ConnectionLostMessage, message),
+                askReconnect: false);
         }
-
 
         private void OnGameConnectionLostFromViewModel(string title, string message)
         {
-            if (isHandlingDisconnection || isAttemptingReconnection)
+            StartDisconnectionFlow(title, message, askReconnect: false);
+        }
+
+        private void StartDisconnectionFlow(string title, string message, bool askReconnect)
+        {
+            if (IsNavigating ||
+                System.Threading.Interlocked.CompareExchange(ref isExitToLoginStarted, FlagFalse, FlagFalse) == FlagTrue)
             {
                 return;
             }
 
-            isHandlingDisconnection = true;
-
-            Application.Current.Dispatcher.Invoke(() =>
+            if (System.Threading.Interlocked.Exchange(ref isDisconnectionUiShown, FlagTrue) == FlagTrue)
             {
-                Debug.WriteLine($"[MATCH] {title}: {message}");
+                return;
+            }
 
-                StopMonitoringSafely();
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                try
+                {
+                    StopMonitoringSafely();
 
-                MessageBox.Show(
-                    message,
-                    title,
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
+                    if (askReconnect)
+                    {
+                        var result = MessageBox.Show(
+                            "Se perdió la conexión con el servidor. ¿Deseas intentar reconectar?",
+                            "Conexión perdida",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question);
 
-                ForceExitToLoginWindow();
-            });
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            isAttemptingReconnection = true;
+                            StartReconnectionProcess();
+                            return;
+                        }
+
+                        isAttemptingReconnection = false;
+                        isHandlingDisconnection = true;
+
+                        MessageBox.Show(
+                            "Saliendo de la partida...",
+                            "Conexión perdida",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+
+                        ForceExitToLoginWindow();
+                        return;
+                    }
+
+                    isHandlingDisconnection = true;
+
+                    MessageBox.Show(
+                        message,
+                        title,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    ForceExitToLoginWindow();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[MATCH] StartDisconnectionFlow error: {ex.Message}");
+                    ForceExitToLoginWindow();
+                }
+            }), DispatcherPriority.Send);
         }
 
         private void StartReconnectionProcess()
         {
-            if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+            if (IsNavigating ||
+                System.Threading.Interlocked.CompareExchange(ref isExitToLoginStarted, FlagFalse, FlagFalse) == FlagTrue)
+            {
+                return;
+            }
+
+            if (!(gameViewModel?.gameServiceClient is GameServiceClient serviceClient))
+            {
+                isAttemptingReconnection = false;
+                isHandlingDisconnection = true;
+                ForceExitToLoginWindow();
+                return;
+            }
+
+            try
             {
                 serviceClient.StopConnectionMonitoring();
+
+                // CLAVE: evita duplicados (por eso te salían 2-3 veces)
+                serviceClient.ReconnectionStarted -= OnReconnectionStarted;
+                serviceClient.ReconnectionCompleted -= OnReconnectionCompleted;
 
                 serviceClient.ReconnectionStarted += OnReconnectionStarted;
                 serviceClient.ReconnectionCompleted += OnReconnectionCompleted;
 
                 serviceClient.StartReconnectionAttempts();
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("[MATCH] Cannot start reconnection - service client not available");
+                Debug.WriteLine($"[MATCH] StartReconnectionProcess error: {ex.Message}");
                 isAttemptingReconnection = false;
                 isHandlingDisconnection = true;
                 ForceExitToLoginWindow();
@@ -585,15 +650,12 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void OnReconnectionStarted()
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Debug.WriteLine("[MATCH] Reconnection started notification");
-            });
+            Debug.WriteLine("[MATCH] Reconnection started notification");
         }
 
         private void OnReconnectionCompleted(bool success)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 isAttemptingReconnection = false;
 
@@ -602,12 +664,14 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     Debug.WriteLine("[MATCH] ✅ Reconnection successful!");
                     isHandlingDisconnection = false;
 
+                    // Permite que futuros cortes vuelvan a mostrar UI (pero SOLO una vez)
+                    System.Threading.Interlocked.Exchange(ref isDisconnectionUiShown, FlagFalse);
+
                     MessageBox.Show(
                         "¡Reconexión exitosa! La partida continuará.",
                         "Conexión restaurada",
                         MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                        MessageBoxImage.Information);
                 }
                 else
                 {
@@ -618,8 +682,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
                         "No se pudo reconectar después de varios intentos.",
                         "Conexión perdida",
                         MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                        MessageBoxImage.Error);
 
                     ForceExitToLoginWindow();
                 }
@@ -629,35 +692,136 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     serviceClient.ReconnectionStarted -= OnReconnectionStarted;
                     serviceClient.ReconnectionCompleted -= OnReconnectionCompleted;
                 }
-            });
+            }), DispatcherPriority.Send);
         }
 
         private void ForceExitToLoginWindow()
         {
+            if (System.Threading.Interlocked.Exchange(ref isExitToLoginStarted, FlagTrue) == FlagTrue)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(new Action(async () =>
+            {
+                try
+                {
+                    StopMonitoringSafely();
+
+                    if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
+                    {
+                        serviceClient.CancelReconnectionAndExit();
+                    }
+
+                    UnsubscribeServiceClientSafely();
+                    UnhookGameViewModelEvents();
+
+                    ForceLogoutOnClose = true;
+                    IsNavigating = true;
+
+                    // CLAVE: haz cleanup aquí (si no, te saltas Leave/Dispose y se queda ventana/estado)
+                    Func<Task> cleanup = ExtraCleanupAction;
+                    ExtraCleanupAction = null;
+
+                    if (cleanup != null)
+                    {
+                        await cleanup();
+                    }
+                    else
+                    {
+                        await CleanupBeforeCloseAsync();
+                    }
+
+                    ShowOnlyLoginWindow();
+
+                    // permite cerrar sin re-entradas raras
+                    isClosingHandled = true;
+                    Close();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[MATCH] ForceExitToLoginWindow error: {ex.Message}");
+                    Application.Current.Shutdown();
+                }
+            }), DispatcherPriority.Send);
+        }
+
+        private void ShowOnlyLoginWindow()
+        {
+            Window loginWindow = GetOrCreateLoginWindow();
+
+            Application.Current.MainWindow = loginWindow;
+
+            if (!loginWindow.IsVisible)
+            {
+                loginWindow.Show();
+            }
+
+            loginWindow.Activate();
+
+            List<Window> windowsToClose = Application.Current.Windows
+                .OfType<Window>()
+                .Where(w => w != loginWindow && w != this)
+                .ToList();
+
+            foreach (Window window in windowsToClose)
+            {
+                try
+                {
+                    window.Hide();
+                    window.Close();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[MATCH] Close window error: {ex.Message}");
+                }
+            }
+        }
+
+        private Window GetOrCreateLoginWindow()
+        {
+            Window existing = Application.Current.Windows
+                .OfType<Window>()
+                .FirstOrDefault(w => string.Equals(w.GetType().Name, "Login", StringComparison.Ordinal));
+
+            if (existing != null)
+            {
+                return existing;
+            }
+
+            return TryCreateLoginWindow() ?? new Login();
+        }
+
+
+        private Window TryCreateLoginWindow()
+        {
             try
             {
-                StopMonitoringSafely();
-                UnsubscribeServiceClientSafely();
-                UnhookGameViewModelEvents();
+                Assembly assembly = typeof(MainMatch).Assembly;
 
-                ForceLogoutOnClose = true;
-                IsNavigating = true;
+                Type loginType = assembly.GetTypes()
+                    .FirstOrDefault(t =>
+                        typeof(Window).IsAssignableFrom(t) &&
+                        (string.Equals(t.Name, "Login", StringComparison.Ordinal) ||
+                         t.Name.IndexOf("Login", StringComparison.OrdinalIgnoreCase) >= 0) &&
+                        t.GetConstructor(Type.EmptyTypes) != null);
 
-                Window mainWindow = TryCreateMainWindow();
-                if (mainWindow == null)
+                if (loginType == null)
                 {
-                    Debug.WriteLine("[MATCH] Login window not found by reflection. Falling back to MainWindow.");
-                    mainWindow = new MainWindow();
+                    return null;
                 }
 
-                Application.Current.MainWindow = mainWindow;
-                mainWindow.Show();
-                Close();
+                return Activator.CreateInstance(loginType) as Window;
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                Debug.WriteLine($"[MATCH] TryCreateLoginWindow ReflectionTypeLoadException: {ex.Message}");
+                return null;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[MATCH] ForceExitToLoginWindow error: {ex.Message}");
-                Application.Current.Shutdown();
+                Debug.WriteLine($"[MATCH] TryCreateLoginWindow error: {ex.Message}");
+                return null;
             }
         }
 
