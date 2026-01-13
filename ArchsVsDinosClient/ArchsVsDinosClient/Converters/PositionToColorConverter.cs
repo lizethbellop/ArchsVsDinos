@@ -14,7 +14,7 @@ namespace ArchsVsDinosClient.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is int position && position == 1)
-                return new SolidColorBrush(Color.FromRgb(212, 175, 55)); // Dorado
+                return new SolidColorBrush(Color.FromRgb(212, 175, 55)); 
             return new SolidColorBrush(Colors.Black);
         }
 
