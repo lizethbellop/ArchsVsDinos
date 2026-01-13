@@ -173,9 +173,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                Debug.WriteLine("[GAME VM] ConnectionLost event received from service");
+                Debug.WriteLine("[GAME VM] ❌ Connection lost - exiting game");
 
-                GameConnectionLost?.Invoke(
+                ExitGameAndReturnToMain(
                     Lang.Match_ConnectionLost ?? "Conexión perdida",
                     Lang.Match_ConnectionLostMessage ?? "Se perdió la conexión con el servidor."
                 );
@@ -200,9 +200,9 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                 }
                 else
                 {
-                    Debug.WriteLine("[GAME VM] ❌ Reconnection failed - will exit game");
+                    Debug.WriteLine("[GAME VM] ❌ Reconnection failed - exiting game");
 
-                    GameConnectionLost?.Invoke(
+                    ExitGameAndReturnToMain(
                         Lang.Match_ConnectionLost ?? "Conexión perdida",
                         Lang.Match_ReconnectionFailed ?? "No se pudo reconectar al servidor."
                     );
@@ -426,7 +426,21 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                System.Diagnostics.Debug.WriteLine($"[PLAYER LEFT] User {data.ExpelledUsername} left.");
+                int myUserId = DetermineMyUserId();
+
+                if (data.ExpelledUserId == myUserId)
+                {
+                    Debug.WriteLine("[GAME VM] ❌ I was expelled from the match");
+
+                    ExitGameAndReturnToMain(
+                    Lang.Match_ConnectionLost ?? "Expulsado",
+                    Lang.Match_ConnectionLostMessage ?? "Has sido expulsado de la partida."
+                    );
+
+                    return;
+                }
+
+                Debug.WriteLine($"[PLAYER LEFT] User {data.ExpelledUsername} left.");
 
                 if (data.RecycledCardIds != null && data.RecycledCardIds.Length > 0)
                 {
@@ -443,11 +457,48 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     }
 
                     DiscardPileUpdated?.Invoke();
-                    System.Diagnostics.Debug.WriteLine($"[CLIENT] Added {data.RecycledCardIds.Length} recycled cards to discard pile.");
                 }
 
                 PlayerLeftMatch?.Invoke(data.ExpelledUserId);
             });
+        }
+
+        private void ExitGameAndReturnToMain(string title, string message)
+        {
+            try
+            {
+                MessageBox.Show(message, title);
+
+                if (gameServiceClient is GameServiceClient serviceClient)
+                {
+                    serviceClient.CancelReconnectionAndExit();
+                    serviceClient.StopConnectionMonitoring();
+                }
+
+                TimerManager.StopTimer();
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await LeaveGameAsync();
+                    }
+                    catch { }
+                });
+
+                var gameWindow = Application.Current.Windows
+                    .OfType<Window>()
+                    .FirstOrDefault(w => w.DataContext == this);
+
+                gameWindow?.Close();
+
+                var main = new MainWindow();
+                main.Show();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[EXIT GAME] Error: {ex.Message}");
+            }
         }
 
         private void OnGameEnded(GameEndedDTO data)
