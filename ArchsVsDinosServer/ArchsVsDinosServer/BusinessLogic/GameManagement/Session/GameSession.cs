@@ -69,8 +69,6 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             StartHeartbeat();
         }
 
-        // ✅ AGREGAR ESTOS MÉTODOS NUEVOS:
-
         public void RegisterPlayerCallback(int userId, IGameManagerCallback callback)
         {
             if (callback == null) return;
