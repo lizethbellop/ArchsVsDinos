@@ -441,27 +441,21 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                 Debug.WriteLine($"[PLAYER LEFT] El jugador {data.ExpelledUsername} se fue. Reciclando {data.RecycledCardIds?.Length ?? 0} cartas...");
 
-                // Aquí es donde agregamos TODOS los IDs (Dinos, Partes, Mano)
                 if (data.RecycledCardIds != null && data.RecycledCardIds.Length > 0)
                 {
                     foreach (var cardId in data.RecycledCardIds)
                     {
-                        // Buscamos la carta en el repositorio de imágenes
                         var card = CardRepositoryModel.GetById(cardId);
 
-                        // Si la carta existe y NO está ya en la pila visual
                         if (card != null && !BoardManager.DiscardPile.Any(c => c.IdCard == cardId))
                         {
-                            // Al añadirla aquí, la ventana de descarte la muestra al instante
                             BoardManager.DiscardPile.Add(card);
                             Debug.WriteLine($"[VISUAL RECYCLE] Dino/Parte {cardId} añadida al descarte.");
                         }
                     }
-                    // Avisamos que el descarte cambió
                     DiscardPileUpdated?.Invoke();
                 }
 
-                // Limpiar el rastro del jugador del diccionario de dinosaurios
                 BoardManager.RemovePlayer(data.ExpelledUserId);
 
                 var playerToRemove = allPlayers.FirstOrDefault(p => p.IdPlayer == data.ExpelledUserId);
@@ -470,7 +464,6 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     allPlayers.Remove(playerToRemove);
                 }
 
-                // Avisar a la vista para que colapse el slot del jugador
                 PlayerLeftMatch?.Invoke(data.ExpelledUserId);
             });
         }

@@ -227,8 +227,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
             base.OnClosing(e);
         }
 
-
-
         private async void MatchLoaded(object sender, RoutedEventArgs e)
         {
             await ConnectChatSafelyAsync();
@@ -663,7 +661,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
                     Debug.WriteLine("[MATCH] ✅ Reconnection successful!");
                     isHandlingDisconnection = false;
 
-                    // Permite que futuros cortes vuelvan a mostrar UI (pero SOLO una vez)
                     System.Threading.Interlocked.Exchange(ref isDisconnectionUiShown, FlagFalse);
 
                     MessageBox.Show(
