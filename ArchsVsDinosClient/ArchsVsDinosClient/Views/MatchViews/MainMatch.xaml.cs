@@ -627,7 +627,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
             {
                 serviceClient.StopConnectionMonitoring();
 
-                // CLAVE: evita duplicados (por eso te salían 2-3 veces)
                 serviceClient.ReconnectionStarted -= OnReconnectionStarted;
                 serviceClient.ReconnectionCompleted -= OnReconnectionCompleted;
 
