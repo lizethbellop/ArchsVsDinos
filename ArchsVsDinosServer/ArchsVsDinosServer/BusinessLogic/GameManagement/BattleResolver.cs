@@ -94,19 +94,9 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement
             }
 
             session.AddToDiscard(result.ArchCardIds);
+
             session.CentralBoard.ClearArmy(result.ArmyType);
 
-            foreach (var playerDinosPair in result.PlayerDinos)
-            {
-                var playerId = playerDinosPair.Key;
-                var dinosList = playerDinosPair.Value;
-                var player = session.Players.FirstOrDefault(p => p.UserId == playerId);
-
-                if (player != null)
-                {
-                    DiscardPlayerDinos(session, player, dinosList);
-                }
-            }
         }
 
         private Dictionary<int, List<DinoInstance>> GetAllPlayerDinosOfType(GameSession session, ArmyType element)

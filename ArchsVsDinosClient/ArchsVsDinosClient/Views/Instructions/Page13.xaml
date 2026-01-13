@@ -4,12 +4,13 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ArchsVsDinosClient.Views.Instructions"
+      xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
       mc:Ignorable="d" 
       d:DesignHeight="580" d:DesignWidth="1100"
       Title="Page13">
 
     <Page.Background>
-        <ImageBrush ImageSource="/Resources/Images/Instructions/14.png" Stretch="Fill"/>
+        <ImageBrush ImageSource="/Resources/Images/Instructions/13.png" Stretch="Fill"/>
     </Page.Background>
 
     <Grid>
@@ -20,6 +21,10 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="1">
+            <TextBlock Text="{x:Static language:Lang.Instructions13_1}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="35"
+           HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Width="252" TextWrapping="Wrap"/>
 
         </Grid>
 

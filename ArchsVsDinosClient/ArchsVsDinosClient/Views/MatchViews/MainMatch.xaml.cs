@@ -94,7 +94,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
             MusicPlayer.Instance.StopBackgroundMusic();
             MusicPlayer.Instance.PlayBackgroundMusic(MusicTracks.Match);
 
-            // Inicializar chat
             try
             {
                 chatViewModel = new ChatViewModel(new ChatServiceClient());
@@ -106,7 +105,6 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 MessageBox.Show(Lang.Match_ErrorChatNotAvailable);
             }
 
-            // Inicializar game service
             try
             {
                 IGameServiceClient gameService = new GameServiceClient();
@@ -305,6 +303,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
             gameViewModel.PlayerDinosClearedByElement += OnPlayerDinosClearedByElement;
             gameViewModel.DiscardPileUpdated += OnDiscardPileUpdated;
             gameViewModel.ArchArmyCleared += OnArchArmyCleared;
+            gameViewModel.RequestBattleAnimation += ShowGlobalBattleWindow;
 
             MyDeckCanvas.SizeChanged += (s, args) => UpdatePlayerHandVisual();
 
@@ -702,48 +701,37 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 return;
             }
 
-            Application.Current.Dispatcher.BeginInvoke(new Action(async () =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 try
                 {
+
                     StopMonitoringSafely();
-
-                    if (gameViewModel?.gameServiceClient is GameServiceClient serviceClient)
-                    {
-                        serviceClient.CancelReconnectionAndExit();
-                    }
-
-                    UnsubscribeServiceClientSafely();
                     UnhookGameViewModelEvents();
 
-                    ForceLogoutOnClose = true;
-                    IsNavigating = true;
-
-                    // CLAVE: haz cleanup aquí (si no, te saltas Leave/Dispose y se queda ventana/estado)
-                    Func<Task> cleanup = ExtraCleanupAction;
-                    ExtraCleanupAction = null;
-
-                    if (cleanup != null)
+                    if (gameViewModel != null)
                     {
-                        await cleanup();
-                    }
-                    else
-                    {
-                        await CleanupBeforeCloseAsync();
+                        gameViewModel.Dispose();
                     }
 
-                    ShowOnlyLoginWindow();
+                    Window loginWindow = GetOrCreateLoginWindow();
+                    Application.Current.MainWindow = loginWindow;
 
-                    // permite cerrar sin re-entradas raras
+                    if (!loginWindow.IsVisible)
+                    {
+                        loginWindow.Show();
+                    }
+                    loginWindow.Activate();
+
                     isClosingHandled = true;
-                    Close();
+                    this.Close();
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[MATCH] ForceExitToLoginWindow error: {ex.Message}");
+                    Debug.WriteLine($"[MATCH] Error crítico en ForceExitToLoginWindow: {ex.Message}");
                     Application.Current.Shutdown();
                 }
-            }), DispatcherPriority.Send);
+            });
         }
 
         private void ShowOnlyLoginWindow()
@@ -827,31 +815,7 @@ namespace ArchsVsDinosClient.Views.MatchViews
 
         private void NavigateToMainWindow()
         {
-            try
-            {
-                if (gameViewModel != null)
-                {
-                    gameViewModel.Dispose();
-                }
-
-                IsNavigating = true;
-
-                Window mainWindow = TryCreateMainWindow();
-                if (mainWindow == null)
-                {
-                    Debug.WriteLine("[MATCH] Login window not found by reflection. Falling back to MainWindow.");
-                    mainWindow = new MainWindow();
-                }
-
-                Application.Current.MainWindow = mainWindow;
-                mainWindow.Show();
-                Close();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[MATCH] NavigateToMainWindow error: {ex.Message}");
-                Application.Current.Shutdown();
-            }
+            ForceExitToLoginWindow();
         }
 
         private Window TryCreateMainWindow()
@@ -1691,14 +1655,9 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 return;
             }
 
-            List<Card> discardedCards = gameViewModel.BoardManager.DiscardPile.ToList();
-            if (discardedCards.Count == 0)
-            {
-                MessageBox.Show(Lang.Match_DiscardPileEmpty);
-                return;
-            }
+            var discardWindow = new MatchDiscardPile(gameViewModel.BoardManager.DiscardPile);
+            discardWindow.Owner = this;
 
-            var discardWindow = new MatchDiscardPile(discardedCards);
             bool? result = discardWindow.ShowDialog();
 
             if (result == true && discardWindow.SelectedCardId.HasValue)
@@ -2227,6 +2186,47 @@ namespace ArchsVsDinosClient.Views.MatchViews
                 Debug.WriteLine($"[MATCH] Open statistics error: {ex.Message}");
                 NavigateToMainWindow();
             }
+        }
+
+        private void ShowGlobalBattleWindow(ArmyType element)
+        {
+            Application.Current.Dispatcher.Invoke(async () =>
+            {
+                var playerNames = playersInMatch.ToDictionary(p => p.IdPlayer, p => p.Nickname ?? p.Username);
+                var provokeVM = new MatchProvokeViewModel(gameViewModel.BoardManager, playerNames, gameViewModel.DetermineMyUserId(), element);
+
+                var battleWindow = new MatchProvoke.MatchProvoke(provokeVM);
+                battleWindow.Owner = this;
+                battleWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+                battleWindow.ShowDialog();
+
+                ShowBattleResultMessage(provokeVM);
+
+                await Task.Delay(500);
+
+                Debug.WriteLine("[MATCH] Animación de batalla cerrada, el juego continúa.");
+            });
+        }
+
+        private void ShowBattleResultMessage(MatchProvokeViewModel battleData)
+        {
+            bool dinosWon = battleData.MaxPlayerPower >= battleData.SelectedArmyPower;
+            string message;
+            string title;
+
+            if (dinosWon)
+            {
+                message = $"{Lang.Match_ProvokeVictoryMessagePlayer} {battleData.MaxPowerPlayerName} {Lang.Match_ProvokeVictoryMessagePlayer2} {battleData.MaxPlayerPower} {Lang.Match_ProvokeVictoryMessagePlayer3}";
+                title = Lang.Match_ProvokeVictoryTitle;
+            }
+            else
+            {
+                message = Lang.Match_ProvokeTotalDefeatMessage1;
+                title = Lang.Match_ProvokeTotalDefeatTitle;
+            }
+
+            MessageBox.Show(message, title);
         }
     }
 }

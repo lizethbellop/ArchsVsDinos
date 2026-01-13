@@ -3,6 +3,7 @@ using ArchsVsDinosClient.Properties.Langs;
 using ArchsVsDinosClient.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -35,17 +36,19 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             set => SetValue(ViewModelProperty, value);
         }
 
-        public static readonly DependencyProperty ViewModelProperty =  DependencyProperty.Register("ViewModel", typeof(LobbyViewModel), typeof(PlayerSlot));
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty.Register("ViewModel", typeof(LobbyViewModel), typeof(PlayerSlot));
 
         private void PlayerSlot_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (DataContext is SlotLobby slotData)
+            if (e.OldValue is SlotLobby oldSlot)
             {
-                UpdateSlotVisuals(slotData);
-                slotData.PropertyChanged += (senderSlot, propertyChangedEvent) =>
-                {
-                    UpdateSlotVisuals(slotData);
-                };
+                oldSlot.PropertyChanged -= OnSlotPropertyChanged;
+            }
+
+            if (e.NewValue is SlotLobby newSlot)
+            {
+                UpdateSlotVisuals(newSlot);
+                newSlot.PropertyChanged += OnSlotPropertyChanged;
             }
         }
 
@@ -76,6 +79,14 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             }
         }
 
+        private void OnSlotPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is SlotLobby slot)
+            {
+                UpdateSlotVisuals(slot);
+            }
+        }
+
         private void LoadPlayerAvatar(SlotLobby slotData, System.Windows.Media.ImageBrush imageBrush)
         {
             if (slotData == null || imageBrush == null) return;
@@ -83,11 +94,6 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             this.Dispatcher.Invoke(() => {
                 try
                 {
-                    if (string.IsNullOrEmpty(slotData.ProfilePicture) && imageBrush.ImageSource != null)
-                    {
-                        return;
-                    }
-
                     string selectedPath = string.IsNullOrEmpty(slotData.ProfilePicture)
                         ? "/Resources/Images/Avatars/default_avatar_00.png"
                         : slotData.ProfilePicture;
@@ -95,9 +101,17 @@ namespace ArchsVsDinosClient.Views.LobbyViews
                     string cleanPath = selectedPath.TrimStart('/', '\\');
                     string packUri = $"pack://application:,,,/ArchsVsDinosClient;component/{cleanPath}";
 
+                    if (imageBrush.ImageSource is BitmapImage existingBitmap)
+                    {
+                        if (existingBitmap.UriSource?.ToString() == packUri)
+                        {
+                            return;
+                        }
+                    }
+
                     if (cleanPath.Contains("_05"))
                     {
-                        Debug.WriteLine($"[AVATAR RESISTENTE] Dibujando la 05: {packUri}");
+                        Debug.WriteLine($"[AVATAR RESISTENTE] Dibujando la 05 de forma segura: {packUri}");
                     }
 
                     BitmapImage bitmap = new BitmapImage();
@@ -136,7 +150,7 @@ namespace ArchsVsDinosClient.Views.LobbyViews
             if (clickedButton != null && clickedButton.Tag is string targetNickname && !string.IsNullOrEmpty(targetNickname))
             {
                 MessageBoxResult confirmation = MessageBox.Show(
-                    string.Format(Lang.Lobby_QuestKick + " {0}?", targetNickname), 
+                    string.Format(Lang.Lobby_QuestKick + " {0}?", targetNickname),
                     Lang.GlobalAcceptText,
                     MessageBoxButton.YesNo);
 

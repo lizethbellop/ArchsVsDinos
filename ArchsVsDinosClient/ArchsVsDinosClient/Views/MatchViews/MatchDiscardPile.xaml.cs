@@ -21,18 +21,21 @@ namespace ArchsVsDinosClient.Views.MatchViews
     {
         public int? SelectedCardId { get; private set; }
 
-        public MatchDiscardPile(List<Card> discardedCards)
+        public MatchDiscardPile(System.Collections.IEnumerable discardedCards)
         {
             InitializeComponent();
 
-            if (discardedCards == null || discardedCards.Count == 0)
+            if (discardedCards == null)
             {
                 IC_DiscardedCards.ItemsSource = new List<Card>();
             }
             else
             {
                 IC_DiscardedCards.ItemsSource = discardedCards;
-                Debug.WriteLine($"[DISCARD WINDOW] Opened with {discardedCards?.Count ?? 0} cards.");
+
+                int count = 0;
+                foreach (var item in discardedCards) count++;
+                Debug.WriteLine($"[DISCARD WINDOW] Opened with {count} cards (Live Link).");
             }
         }
 

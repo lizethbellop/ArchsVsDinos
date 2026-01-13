@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ArchsVsDinosClient.Views.Instructions"
+      xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
       mc:Ignorable="d" 
       d:DesignHeight="580" d:DesignWidth="1100"
       Title="Page5">
@@ -20,7 +21,50 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="1">
+            <TextBlock Text="{x:Static language:Lang.InstructionsP5_1}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="35"
+           HorizontalAlignment="Left" Margin="648,49,0,0" VerticalAlignment="Top" Foreground="White" Width="252" TextWrapping="Wrap"/>
 
+            <TextBlock Text="Dinos"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="532,186,0,0" VerticalAlignment="Top" Foreground="White" Width="484" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP5_2}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="215,0,0,0" VerticalAlignment="Top" Foreground="White" Width="167" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP4_2}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="524,409,0,0" VerticalAlignment="Top" Foreground="White" Width="177" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP4_3}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="706,409,0,0" VerticalAlignment="Top" Foreground="White" Width="136" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP4_4}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="864,409,0,0" VerticalAlignment="Top" Foreground="White" Width="137" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP4_2}"
+FontFamily="Tw Cen MT Condensed Extra Bold"
+TextAlignment="Center" FontSize="30"
+HorizontalAlignment="Left" Margin="53,202,0,0" VerticalAlignment="Top" Foreground="White" Width="177" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP4_3}"
+FontFamily="Tw Cen MT Condensed Extra Bold"
+TextAlignment="Center" FontSize="30"
+HorizontalAlignment="Left" Margin="230,202,0,0" VerticalAlignment="Top" Foreground="White" Width="136" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP4_4}"
+FontFamily="Tw Cen MT Condensed Extra Bold"
+TextAlignment="Center" FontSize="30"
+HorizontalAlignment="Left" Margin="383,202,0,0" VerticalAlignment="Top" Foreground="White" Width="137" TextWrapping="Wrap"/>
         </Grid>
 
         <Grid Grid.Row="2">
@@ -68,5 +112,5 @@
 
         </Grid>
     </Grid>
-    
+
 </Page>

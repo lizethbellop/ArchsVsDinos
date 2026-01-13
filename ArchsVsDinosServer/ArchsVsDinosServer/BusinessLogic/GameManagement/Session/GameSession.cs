@@ -98,7 +98,7 @@ namespace ArchsVsDinosServer.BusinessLogic.GameManagement.Session
             loggerHelper.LogInfo($"[GAME] Callback unregistered for player {userId} in {MatchCode}");
         }
 
-        private void StartHeartbeat()
+        public void StartHeartbeat()
         {
             lock (heartbeatLock)
             {

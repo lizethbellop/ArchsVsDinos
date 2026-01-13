@@ -24,7 +24,7 @@ namespace ArchsVsDinosClient.Views.Instructions
 
         private void Click_BtnNext(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new Page2());
+            this.NavigationService.Navigate(new Page3());
         }
 
         private void Click_BtnBack(object sender, RoutedEventArgs e)

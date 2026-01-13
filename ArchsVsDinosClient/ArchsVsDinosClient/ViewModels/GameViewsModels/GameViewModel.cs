@@ -48,6 +48,7 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         public event Action<string, string, GameEndedDTO> GameEnded;
         public event Action<int> PlayerLeftMatch;
         public event Action<string, string> GameConnectionLost;
+        public event Action<ArmyType> RequestBattleAnimation;
 
         public string MatchTimeDisplay => TimerManager.MatchTimeDisplay;
         public string TurnTimeDisplay => TimerManager.TurnTimeDisplay;
@@ -430,35 +431,46 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                 if (data.ExpelledUserId == myUserId)
                 {
-                    Debug.WriteLine("[GAME VM] ❌ I was expelled from the match");
-
+                    Debug.WriteLine("[GAME VM] ❌ He sido expulsado o desconectado");
                     ExitGameAndReturnToMain(
-                    Lang.Match_ConnectionLost ?? "Expulsado",
-                    Lang.Match_ConnectionLostMessage ?? "Has sido expulsado de la partida."
+                        Lang.Match_ConnectionLost ?? "Desconectado",
+                        Lang.Match_ConnectionLostMessage ?? "Se ha perdido la conexión con la partida."
                     );
-
                     return;
                 }
 
-                Debug.WriteLine($"[PLAYER LEFT] User {data.ExpelledUsername} left.");
+                Debug.WriteLine($"[PLAYER LEFT] El jugador {data.ExpelledUsername} se fue. Reciclando {data.RecycledCardIds?.Length ?? 0} cartas...");
 
+                // Aquí es donde agregamos TODOS los IDs (Dinos, Partes, Mano)
                 if (data.RecycledCardIds != null && data.RecycledCardIds.Length > 0)
                 {
                     foreach (var cardId in data.RecycledCardIds)
                     {
-                        if (!BoardManager.DiscardPile.Any(card => card.IdCard == cardId))
+                        // Buscamos la carta en el repositorio de imágenes
+                        var card = CardRepositoryModel.GetById(cardId);
+
+                        // Si la carta existe y NO está ya en la pila visual
+                        if (card != null && !BoardManager.DiscardPile.Any(c => c.IdCard == cardId))
                         {
-                            var card = CardRepositoryModel.GetById(cardId);
-                            if (card != null)
-                            {
-                                BoardManager.DiscardPile.Add(card);
-                            }
+                            // Al añadirla aquí, la ventana de descarte la muestra al instante
+                            BoardManager.DiscardPile.Add(card);
+                            Debug.WriteLine($"[VISUAL RECYCLE] Dino/Parte {cardId} añadida al descarte.");
                         }
                     }
-
+                    // Avisamos que el descarte cambió
                     DiscardPileUpdated?.Invoke();
                 }
 
+                // Limpiar el rastro del jugador del diccionario de dinosaurios
+                BoardManager.RemovePlayer(data.ExpelledUserId);
+
+                var playerToRemove = allPlayers.FirstOrDefault(p => p.IdPlayer == data.ExpelledUserId);
+                if (playerToRemove != null)
+                {
+                    allPlayers.Remove(playerToRemove);
+                }
+
+                // Avisar a la vista para que colapse el slot del jugador
                 PlayerLeftMatch?.Invoke(data.ExpelledUserId);
             });
         }
@@ -879,25 +891,18 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
         private void OnArchProvoked(ArchArmyProvokedDTO data)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                System.Diagnostics.Debug.WriteLine($"[ARCH PROVOKED] Army: {data.ArmyType}, Winner: {data.BattleResult?.WinnerUsername ?? "None"}");
+                System.Diagnostics.Debug.WriteLine($"[ARCH PROVOKED] Army: {data.ArmyType}");
 
-                ActionManager.ClearSlotsByElement(data.ArmyType);
-
-                int myUserId = DetermineMyUserId();
-                if (data.ProvokerUserId == myUserId)
-                {
-                    RemainingMoves = 0;
-                    System.Diagnostics.Debug.WriteLine("[PROVOKE] All my moves consumed locally");
-                }
+                TimerManager.StopTimer();
 
                 if (data.DiscardedPlayerCardIds != null)
                 {
                     foreach (var cardId in data.DiscardedPlayerCardIds)
                     {
                         var card = CardRepositoryModel.GetById(cardId);
-                        if (card != null && !BoardManager.DiscardPile.Any(cardSelected => cardSelected.IdCard == cardId))
+                        if (card != null && !BoardManager.DiscardPile.Any(c => c.IdCard == cardId))
                         {
                             BoardManager.DiscardPile.Add(card);
                         }
@@ -906,26 +911,35 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
 
                 if (data.BattleResult?.ArchCards != null)
                 {
-                    foreach (var cardDto in data.BattleResult.ArchCards)
+                    foreach (var archDto in data.BattleResult.ArchCards)
                     {
-                        var card = CardRepositoryModel.GetById(cardDto.IdCard);
-                        if (card != null && !BoardManager.DiscardPile.Any(cardSelected => cardSelected.IdCard == cardDto.IdCard))
+                        var card = CardRepositoryModel.GetById(archDto.IdCard);
+                        if (card != null && !BoardManager.DiscardPile.Any(c => c.IdCard == archDto.IdCard))
                         {
                             BoardManager.DiscardPile.Add(card);
                         }
                     }
                 }
 
+                DiscardPileUpdated?.Invoke();
+
+                RequestBattleAnimation?.Invoke(data.ArmyType);
+
+                ActionManager.ClearSlotsByElement(data.ArmyType);
                 foreach (var player in allPlayers)
                 {
                     BoardManager.ClearPlayerDinosByElement(player.IdPlayer, data.ArmyType);
                     PlayerDinosClearedByElement?.Invoke(player.IdPlayer, data.ArmyType);
                 }
 
-                if (data.BattleResult != null &&
-                    data.BattleResult.DinosWon &&
-                    data.BattleResult.WinnerUserId.HasValue &&
-                    data.BattleResult.WinnerUserId.Value == myUserId)
+                int myUserId = DetermineMyUserId();
+
+                if (data.ProvokerUserId == myUserId)
+                {
+                    RemainingMoves = 0;
+                }
+
+                if (data.BattleResult?.WinnerUserId == myUserId)
                 {
                     CurrentPoints += data.BattleResult.PointsAwarded;
                 }
@@ -946,39 +960,10 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                         break;
                 }
 
-                string resultMessage;
-                string resultTitle;
-
-                if (data.BattleResult != null && data.BattleResult.DinosWon)
-                {
-                    resultMessage = $"{Lang.Match_ProvokeVictoryMessagePlayer}{data.BattleResult.WinnerUsername} {Lang.Match_ProvokeVictoryMessagePlayer2} {data.BattleResult.PointsAwarded} {Lang.Match_ProvokeVictoryMessagePlayer3}";
-                    resultTitle = Lang.Match_ProvokeVictoryTitle;
-                }
-                else
-                {
-                    resultMessage = $"{Lang.Match_ProvokeTotalDefeatMessage1}";
-                    resultTitle = Lang.Match_ProvokeTotalDefeatTitle;
-                }
-
-                MessageBox.Show(resultMessage, resultTitle);
-                DiscardPileUpdated?.Invoke();
                 ArchArmyCleared?.Invoke(data.ArmyType);
-            });
-        }
 
-        private ArmyType GetElementFromCard(Card card)
-        {
-            switch (card.Element)
-            {
-                case ElementType.Sand:
-                    return ArmyType.Sand;
-                case ElementType.Water:
-                    return ArmyType.Water;
-                case ElementType.Wind:
-                    return ArmyType.Wind;
-                default:
-                    return ArmyType.None;
-            }
+                System.Diagnostics.Debug.WriteLine($"[ARCH PROVOKED] Animation finished. UI Cleaned for element: {data.ArmyType}");
+            }));
         }
 
         private void OnCardTakenFromDiscard(CardTakenFromDiscardDTO data)

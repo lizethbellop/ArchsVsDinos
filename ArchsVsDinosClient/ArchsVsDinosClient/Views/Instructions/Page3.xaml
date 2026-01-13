@@ -4,12 +4,13 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ArchsVsDinosClient.Views.Instructions"
+      xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
       mc:Ignorable="d" 
       d:DesignHeight="580" d:DesignWidth="1100"
       Title="Page3">
 
     <Page.Background>
-        <ImageBrush ImageSource="/Resources/Images/Instructions/6.png" Stretch="Fill"/>
+        <ImageBrush ImageSource="/Resources/Images/Instructions/3.png" Stretch="Fill"/>
     </Page.Background>
 
     <Grid>
@@ -21,9 +22,9 @@
 
         <Grid Grid.Row="1">
             <!-- Cards -->
-            <Button Click="Click_BtnCards" Height="100" Width="280" 
+            <Button Content="{x:Static language:Lang.InstructionsP3_1}" Click="Click_BtnCards" Height="100" Width="280" 
                     Foreground="White" FontWeight="Bold" FontFamily="Tw Cen MT Condensed Extra Bold" 
-                    FontSize="20"  BorderBrush="{x:Null}" Margin="410,113,410,256" >
+                    FontSize="30"  BorderBrush="{x:Null}" Margin="410,113,410,256" >
                 <Button.Background>
                     <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
                 </Button.Background>
@@ -46,8 +47,8 @@
             </Button>
 
             <!-- Game -->
-        <Button  Height="100" Width="280" Foreground="White" FontWeight="Bold" FontFamily="Tw Cen MT Condensed Extra Bold" 
-             FontSize="20"  BorderBrush="{x:Null}" Margin="410,247,410,122">
+            <Button Content="{x:Static language:Lang.InstructionsP3_2}" Click="Click_BtnGame" Height="100" Width="280" Foreground="White" FontWeight="Bold" FontFamily="Tw Cen MT Condensed Extra Bold" 
+             FontSize="30"  BorderBrush="{x:Null}" Margin="410,247,410,122">
                 <Button.Background>
                     <ImageBrush ImageSource="/Resources/Images/rockIron.png"/>
                 </Button.Background>

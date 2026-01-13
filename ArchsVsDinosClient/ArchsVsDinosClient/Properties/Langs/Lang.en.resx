@@ -1204,5 +1204,190 @@
 	<data name="Match_ReturningToMainMenu" xml:space="preserve">
   <value>Returning to the main menu...</value>
 </data>
-
+	<data name="InstructionsP1_1" xml:space="preserve">
+    <value>The evil army of archaeologists has returned to the past and is damaging your reality!</value>
+  </data>
+	<data name="InstructionsP2_1" xml:space="preserve">
+    <value>In</value>
+  </data>
+	<data name="InstructionsP2_2" xml:space="preserve">
+    <value>You must eliminate all archaeologists with all possible combinations of dinosaurs.</value>
+  </data>
+	<data name="InstructionsP2_3" xml:space="preserve">
+    <value>THE WINNER IS THE ONE WHO ELIMINATES THE MOST ARCHAEOLOGISTS.</value>
+  </data>
+	<data name="InstructionsP3_1" xml:space="preserve">
+    <value>CARDS</value>
+  </data>
+	<data name="InstructionsP3_2" xml:space="preserve">
+    <value>GAME</value>
+  </data>
+	<data name="InstructionsP4_1" xml:space="preserve">
+    <value>There are three types of military forces.</value>
+  </data>
+	<data name="InstructionsP4_2" xml:space="preserve">
+    <value>Water</value>
+  </data>
+	<data name="InstructionsP4_3" xml:space="preserve">
+    <value>Sand</value>
+  </data>
+	<data name="InstructionsP4_4" xml:space="preserve">
+    <value>Wind</value>
+  </data>
+	<data name="InstructionsP5_1" xml:space="preserve">
+    <value>CARDS PER ARMY</value>
+  </data>
+	<data name="InstructionsP5_2" xml:space="preserve">
+    <value>Archs</value>
+  </data>
+	<data name="InstructionsP6_1" xml:space="preserve">
+    <value>PARTS OF BODY</value>
+  </data>
+	<data name="InstructionsP7_1" xml:space="preserve">
+    <value>DECKS</value>
+  </data>
+	<data name="InstructionsP7_2" xml:space="preserve">
+    <value>Pay attention to the lines.</value>
+  </data>
+	<data name="InstructionsP7_3" xml:space="preserve">
+    <value>Deck without limbs</value>
+  </data>
+	<data name="InstructionsP7_4" xml:space="preserve">
+    <value>Deck without arms</value>
+  </data>
+	<data name="InstructionsP7_5" xml:space="preserve">
+    <value>Complete decks</value>
+  </data>
+	<data name="InstructionsP8_1" xml:space="preserve">
+    <value>EXTREMITIES</value>
+  </data>
+	<data name="InstructionsP8_2" xml:space="preserve">
+    <value>Left arms</value>
+  </data>
+	<data name="InstructionsP8_3" xml:space="preserve">
+    <value>Legs</value>
+  </data>
+	<data name="InstructionsP8_4" xml:space="preserve">
+    <value>Right arms</value>
+  </data>
+	<data name="IntructionsP9_1" xml:space="preserve">
+    <value>Possible combinations</value>
+  </data>
+	<data name="IntructionsP9_2" xml:space="preserve">
+    <value>Deck without limbs</value>
+  </data>
+	<data name="IntructionsP9_3" xml:space="preserve">
+    <value>Deck without arms</value>
+  </data>
+	<data name="IntructionsP9_4" xml:space="preserve">
+    <value>Complete decks</value>
+  </data>
+	<data name="IntructionsP9_5" xml:space="preserve">
+    <value>ALL COMBINATIONS REQUIRE INITIAL DINO HEAD</value>
+  </data>
+	<data name="InstructionsP10_1" xml:space="preserve">
+    <value>START OF GAME</value>
+  </data>
+	<data name="InstructionsP11_1" xml:space="preserve">
+    <value>DASHBOARD</value>
+  </data>
+	<data name="InstructionsP11_2" xml:space="preserve">
+    <value>Discard pile</value>
+  </data>
+	<data name="InstructionsP11_3" xml:space="preserve">
+    <value>Archs</value>
+  </data>
+	<data name="InstructionsP11_4" xml:space="preserve">
+    <value>Draw deck</value>
+  </data>
+	<data name="Instructions12_1" xml:space="preserve">
+    <value>START</value>
+  </data>
+	<data name="Instructions12_3" xml:space="preserve">
+    <value>If you draw an arch, place it in the corresponding element pile and draw another one to complete the 5.</value>
+  </data>
+	<data name="Instructions12_4" xml:space="preserve">
+    <value>Each turn lasts 30 seconds.</value>
+  </data>
+	<data name="Instructions12_5" xml:space="preserve">
+    <value>Games last 20 minutes.</value>
+  </data>
+	<data name="Instructions12_2" xml:space="preserve">
+    <value>Each player starts with 5 initial cards.</value>
+  </data>
+	<data name="Instructions12_6" xml:space="preserve">
+    <value>You can make 3 moves per turn</value>
+  </data>
+	<data name="Instructions14_1" xml:space="preserve">
+    <value>-3 jugadas</value>
+  </data>
+	<data name="Instructions14_2" xml:space="preserve">
+    <value>Take card draw pile</value>
+  </data>
+	<data name="Instructions14_3" xml:space="preserve">
+    <value>Take a card from the discard pile</value>
+  </data>
+	<data name="Instructions14_4" xml:space="preserve">
+    <value>Skip turn</value>
+  </data>
+	<data name="Instructions14_5" xml:space="preserve">
+    <value>Provoke</value>
+  </data>
+	<data name="Instructions14_6" xml:space="preserve">
+    <value>Attach cards</value>
+  </data>
+	<data name="Instructions14_7" xml:space="preserve">
+    <value>-1 play</value>
+  </data>
+	<data name="Instructions14_8" xml:space="preserve">
+    <value>-3 plays</value>
+  </data>
+	<data name="Instructions15_1" xml:space="preserve">
+    <value>PROVOKE</value>
+  </data>
+	<data name="Instructions15_2" xml:space="preserve">
+    <value>An army is selected to provoke (water, sand, and wind).</value>
+  </data>
+	<data name="Instructions15_3" xml:space="preserve">
+    <value>The points from each player's combinations are added up.</value>
+  </data>
+	<data name="Instructions15_4" xml:space="preserve">
+    <value>END OF PROVOCATION</value>
+  </data>
+	<data name="Instructions15_5" xml:space="preserve">
+    <value>The player with the most points compared to the others and the chosen army, wins one point per defeated arch.</value>
+  </data>
+	<data name="Instructions15_6" xml:space="preserve">
+    <value>If the archies win, no one gets any points.</value>
+  </data>
+	<data name="Instructions15_7" xml:space="preserve">
+    <value>In the end, all cards from the decks formed are discarded.</value>
+  </data>
+	<data name="Instructions16_1" xml:space="preserve">
+    <value>STEALING FROM THE DISCARD PILE</value>
+  </data>
+	<data name="Instructions16_2" xml:space="preserve">
+    <value>You can choose any card (arch, dino, or body part).</value>
+  </data>
+	<data name="Instructions17_1" xml:space="preserve">
+    <value>END OF GAME</value>
+  </data>
+	<data name="Instructions18_1" xml:space="preserve">
+    <value>WINNER</value>
+  </data>
+	<data name="Instructions18_2" xml:space="preserve">
+    <value>The player with the most archers defeated wins (highest number of points earned).</value>
+  </data>
+	<data name="Instructions19_1" xml:space="preserve">
+    <value>EXTRA</value>
+  </data>
+	<data name="Instructions20_1" xml:space="preserve">
+    <value>VIEW OTHER PLAYER'S DECK</value>
+  </data>
+	<data name="Instructions20_2" xml:space="preserve">
+    <value>You can spy on the decks formed by other players.</value>
+  </data>
+	<data name="Instructions13_1" xml:space="preserve">
+    <value>GAME DEVELOPMENT</value>
+  </data>
 </root>

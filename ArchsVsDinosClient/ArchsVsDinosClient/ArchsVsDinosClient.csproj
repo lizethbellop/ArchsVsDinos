@@ -430,88 +430,88 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Instructions\Instructions.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page1.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page10.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page11.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page12.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page13.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page14.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page15.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page16.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page17.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page18.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page19.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page2.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page20.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page3.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page4.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page5.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page6.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page7.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page8.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Instructions\Page9.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\LobbyViews\JoinCode.xaml">
       <SubType>Designer</SubType>
@@ -786,7 +786,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Connected Services\GameService\GameManager.wsdl" />
-    <None Include="Connected Services\GameService\GameManager1.wsdl" />
     <None Include="Connected Services\GameService\item.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -808,34 +807,7 @@
     <None Include="Connected Services\GameService\item6.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\GameService\item61.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item62.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item63.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item64.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item65.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item66.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item67.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Connected Services\GameService\item7.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item71.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\GameService\item8.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\LobbyService\ArchsVsDinosClient.LobbyService.MatchCreationResponse.datasource">
@@ -1099,17 +1071,10 @@
     <Resource Include="Resources\Images\seeDeckHorizontalBackground.png" />
     <Resource Include="Resources\Images\teethDino.png" />
     <Resource Include="Resources\Images\bondDinoUser.png" />
-    <None Include="Connected Services\GameService\configuration91.svcinfo" />
-    <None Include="Connected Services\GameService\configuration.svcinfo" />
-    <None Include="Connected Services\GameService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Connected Services\AuthenticationService\item.disco" />
     <None Include="Connected Services\ChatManager\item.disco" />
     <None Include="Connected Services\FriendRequestService\item.disco" />
     <None Include="Connected Services\FriendService\item.disco" />
-    <None Include="Connected Services\GameService\item.disco" />
     <None Include="Connected Services\LobbyService\item.disco" />
     <None Include="Connected Services\ProfileManagerService\item.disco" />
     <None Include="Connected Services\RegisterService\item.disco" />
@@ -1117,7 +1082,6 @@
     <None Include="Connected Services\ChatManager\item1.disco" />
     <None Include="Connected Services\FriendRequestService\item1.disco" />
     <None Include="Connected Services\FriendService\item1.disco" />
-    <None Include="Connected Services\GameService\item1.disco" />
     <None Include="Connected Services\LobbyService\item1.disco" />
     <None Include="Connected Services\ProfileManagerService\item1.disco" />
     <None Include="Connected Services\RegisterService\item1.disco" />
@@ -1129,6 +1093,13 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Resource Include="logoFotoPerfiles.ico" />
+    <None Include="Connected Services\GameService\item.disco" />
+    <None Include="Connected Services\GameService\configuration91.svcinfo" />
+    <None Include="Connected Services\GameService\configuration.svcinfo" />
+    <None Include="Connected Services\GameService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Resources\Images\Avatars\default_avatar_00.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1251,6 +1222,8 @@
     <Resource Include="Resources\Images\tierraA.gif" />
     <Resource Include="Resources\Images\tierraD.gif" />
     <Resource Include="Resources\Images\marA.gif" />
+    <Resource Include="Resources\Images\flechaS.png" />
+    <Resource Include="Resources\Images\flechaA.png" />
     <Resource Include="Resources\Images\Instructions\1.png" />
     <Resource Include="Resources\Images\Instructions\10.png" />
     <Resource Include="Resources\Images\Instructions\11.png" />
@@ -1264,7 +1237,6 @@
     <Resource Include="Resources\Images\Instructions\19.png" />
     <Resource Include="Resources\Images\Instructions\2.png" />
     <Resource Include="Resources\Images\Instructions\20.png" />
-    <Resource Include="Resources\Images\Instructions\21.png" />
     <Resource Include="Resources\Images\Instructions\3.png" />
     <Resource Include="Resources\Images\Instructions\4.png" />
     <Resource Include="Resources\Images\Instructions\5.png" />
@@ -1272,8 +1244,6 @@
     <Resource Include="Resources\Images\Instructions\7.png" />
     <Resource Include="Resources\Images\Instructions\8.png" />
     <Resource Include="Resources\Images\Instructions\9.png" />
-    <Resource Include="Resources\Images\flechaS.png" />
-    <Resource Include="Resources\Images\flechaA.png" />
     <Content Include="Resources\Music\MusicAttack.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

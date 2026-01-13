@@ -189,5 +189,22 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
                     return ArmyType.None;
             }
         }
+
+        public void RemovePlayer(int userId)
+        {
+            if (PlayerDecks.ContainsKey(userId))
+            {
+                PlayerDecks.Remove(userId);
+
+                System.Diagnostics.Debug.WriteLine($"[BOARD MANAGER] Lógica de dinosaurios del usuario {userId} eliminada.");
+
+                OnPropertyChanged(nameof(PlayerDecks));
+            }
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

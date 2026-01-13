@@ -27,5 +27,10 @@ namespace ArchsVsDinosClient.Views.Instructions
             this.NavigationService.Navigate(new Page4());
         }
 
+        private void Click_BtnGame(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new Page10());
+        }
+
     }
 }

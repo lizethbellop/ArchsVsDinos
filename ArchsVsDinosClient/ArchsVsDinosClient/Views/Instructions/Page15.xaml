@@ -4,12 +4,13 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ArchsVsDinosClient.Views.Instructions"
+      xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
       mc:Ignorable="d" 
       d:DesignHeight="580" d:DesignWidth="1100"
       Title="Page15">
 
     <Page.Background>
-        <ImageBrush ImageSource="/Resources/Images/Instructions/16.png" Stretch="Fill"/>
+        <ImageBrush ImageSource="/Resources/Images/Instructions/15.png" Stretch="Fill"/>
     </Page.Background>
 
     <Grid>
@@ -20,7 +21,40 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="1">
+            <TextBlock Text="{x:Static language:Lang.Instructions15_1}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="35"
+           HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Foreground="White" Width="252" TextWrapping="Wrap"/>
 
+            <TextBlock Text="{x:Static language:Lang.Instructions15_2}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="20"
+           HorizontalAlignment="Center" Margin="0,75,0,0" VerticalAlignment="Top" Foreground="White" Width="620" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.Instructions15_3}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="20"
+           HorizontalAlignment="Center" Margin="0,122,0,0" VerticalAlignment="Top" Foreground="White" Width="656" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.Instructions15_4}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="222,258,0,0" VerticalAlignment="Top" Foreground="White" Width="172" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.Instructions15_5}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Left" FontSize="20"
+           HorizontalAlignment="Left" Margin="506,210,0,0" VerticalAlignment="Top" Foreground="White" Width="482" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.Instructions15_6}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Left" FontSize="20"
+           HorizontalAlignment="Left" Margin="506,280,0,0" VerticalAlignment="Top" Foreground="White" Width="399" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.Instructions15_7}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Left" FontSize="20"
+           HorizontalAlignment="Left" Margin="506,326,0,0" VerticalAlignment="Top" Foreground="White" Width="446" TextWrapping="Wrap"/>
         </Grid>
 
         <Grid Grid.Row="2">

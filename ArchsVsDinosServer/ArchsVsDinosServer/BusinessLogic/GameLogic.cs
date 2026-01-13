@@ -368,39 +368,44 @@ namespace ArchsVsDinosServer.BusinessLogic
                 return newDino;
             }
         }
-        
+
         public Task<bool> Provoke(string matchCode, int userId, ArmyType targetArmy)
         {
             var gameSession = GetActiveSession(matchCode);
-            var playerSession = GetPlayer(gameSession, userId);
 
-            if (!rulesValidator.CanProvoke(gameSession, userId))
-            {
-                throw new InvalidOperationException("Cannot provoke, insufficient moves.");
-            }
-                
             lock (gameSession.SyncRoot)
             {
+                gameSession.StopHeartbeat();
+
+                if (!rulesValidator.CanProvoke(gameSession, userId))
+                    throw new InvalidOperationException("Cannot provoke, insufficient moves.");
+
                 gameSession.ConsumeMoves(gameSession.RemainingMoves);
 
                 var battleResolver = new BattleResolver(new ServiceDependencies());
                 var battleResult = battleResolver.ResolveBattle(gameSession, targetArmy);
 
-                var discardedArchIds = gameSession.CentralBoard.ClearArmy(targetArmy);
-                gameSession.AddToDiscard(discardedArchIds);
-
                 var discardedPlayerCardIds = new List<int>();
+                if (battleResult.PlayerDinos != null)
+                {
+                    foreach (var entry in battleResult.PlayerDinos)
+                    {
+                        foreach (var dino in entry.Value)
+                        {
+                            var cards = dino.GetAllCards().Select(c => c.IdCard).ToList();
+                            discardedPlayerCardIds.AddRange(cards);
+                            gameSession.AddToDiscard(cards);
+                        }
+                    }
+                }
+
                 foreach (var player in gameSession.Players)
                 {
-                    var dinosToRemove = player.Dinos.Where(dino => dino.Element == targetArmy).ToList();
-                    foreach (var dino in dinosToRemove)
-                    {
-                        var cards = dino.GetAllCards().Select(card => card.IdCard).ToList();
-                        discardedPlayerCardIds.AddRange(cards);
-                        gameSession.AddToDiscard(cards);
-                    }
                     player.RemoveDinosByElement(targetArmy);
                 }
+
+                var discardedArchIds = gameSession.CentralBoard.ClearArmy(targetArmy);
+                gameSession.AddToDiscard(discardedArchIds);
 
                 var battleResultDto = CreateBattleResultDTO(matchCode, battleResult);
                 var provokedDto = new ArchArmyProvokedDTO
@@ -414,25 +419,16 @@ namespace ArchsVsDinosServer.BusinessLogic
 
                 gameNotifier.NotifyArchArmyProvoked(provokedDto);
 
-                loggerHelper.LogInfo($"Player {userId} provoked {targetArmy}. Dinos removed: {discardedPlayerCardIds.Count} cards added to discard.");
-
-                var nextPlayer = gameSession.Players.OrderBy(player => player.TurnOrder)
-                                                    .SkipWhile(player => player.UserId != userId)
-                                                    .Skip(1)
-                                                    .DefaultIfEmpty(gameSession.Players.OrderBy(player => player.TurnOrder).First())
-                                                    .First();
+                var nextPlayer = gameSession.Players.OrderBy(p => p.TurnOrder)
+                                    .SkipWhile(p => p.UserId != userId).Skip(1)
+                                    .DefaultIfEmpty(gameSession.Players.OrderBy(p => p.TurnOrder).First()).First();
 
                 gameSession.EndTurn(nextPlayer.UserId);
                 gameSession.ResetTurnTimer();
 
-                gameNotifier.NotifyTurnChanged(new TurnChangedDTO
-                {
-                    MatchCode = matchCode,
-                    CurrentPlayerUserId = nextPlayer.UserId,
-                    TurnNumber = gameSession.TurnNumber,
-                    RemainingTime = TimeSpan.Zero,
-                    PlayerScores = gameSession.Players.ToDictionary(p => p.UserId, p => p.Points),
-                    TurnEndTime = gameSession.TurnEndTime
+                Task.Run(async () => {
+                    await Task.Delay(3000);
+                    gameSession.StartHeartbeat();
                 });
 
                 return Task.FromResult(true);

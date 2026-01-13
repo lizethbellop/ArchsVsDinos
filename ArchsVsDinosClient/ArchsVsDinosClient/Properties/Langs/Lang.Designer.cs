@@ -4018,5 +4018,687 @@ namespace ArchsVsDinosClient.Properties.Langs {
             }
         }
 
+        /// <summary>
+        ///   Busca una cadena traducida similar a COMIENZO.
+        /// </summary>
+        public static string Instructions12_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions12_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cada jugador comienza con 5 cartas iniciales..
+        /// </summary>
+        public static string Instructions12_2
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions12_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Si le toca un arch, se pone en su pila correspondiente de elemento y se vuelve a tomar.
+        /// </summary>
+        public static string Instructions12_3
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions12_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cada turno dura 30 segundos.
+        /// </summary>
+        public static string Instructions12_4
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions12_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Las partidas duran 20 minutos.
+        /// </summary>
+        public static string Instructions12_5
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions12_5", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se pueden hacer 3 jugadas por turno.
+        /// </summary>
+        public static string Instructions12_6
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions12_6", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a MOVIMIENTOS.
+        /// </summary>
+        public static string Instructions14_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tomar carta pila de robo.
+        /// </summary>
+        public static string Instructions14_2
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tomar carta pila de descarte.
+        /// </summary>
+        public static string Instructions14_3
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Saltar turno.
+        /// </summary>
+        public static string Instructions14_4
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Provocar.
+        /// </summary>
+        public static string Instructions14_5
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_5", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Unir cartas.
+        /// </summary>
+        public static string Instructions14_6
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_6", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a -1 jugada.
+        /// </summary>
+        public static string Instructions14_7
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_7", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a -3 jugadas.
+        /// </summary>
+        public static string Instructions14_8
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions14_8", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a PROVOCAR.
+        /// </summary>
+        public static string Instructions15_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions15_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se selecciona un ejército a provocar (mar, tierra y viento).
+        /// </summary>
+        public static string Instructions15_2
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions15_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se suman los puntos de las combinaciones creadas de cada jugador..
+        /// </summary>
+        public static string Instructions15_3
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions15_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a FINAL DE PROVOCAR.
+        /// </summary>
+        public static string Instructions15_4
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions15_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a El jugador con más puntos que los demás y que el ejército elegido, gana un punto por arch derrotado.
+        /// </summary>
+        public static string Instructions15_5
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions15_5", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Si los arch ganan, nadie gana puntos.
+        /// </summary>
+        public static string Instructions15_6
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions15_6", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Al final, se descartan todas las cartas de los mazos formados.
+        /// </summary>
+        public static string Instructions15_7
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions15_7", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a ROBAR DE PILA DE DESCARTE.
+        /// </summary>
+        public static string Instructions16_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions16_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se puede elegir cualquier carta (arch, dino o parte del cuerpo).
+        /// </summary>
+        public static string Instructions16_2
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions16_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a FINAL DEL JUEGO.
+        /// </summary>
+        public static string Instructions17_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions17_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a GANADOR.
+        /// </summary>
+        public static string Instructions18_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions18_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a El jugador con más archs derrotados gana (mayor cantidad de puntos ganados).
+        /// </summary>
+        public static string Instructions18_2
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions18_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a EXTRA.
+        /// </summary>
+        public static string Instructions19_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions19_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a VER MAZO DEL OTRO JUGADOR.
+        /// </summary>
+        public static string Instructions20_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions20_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Puedes espiar los mazos formados por los otros jugadores.
+        /// </summary>
+        public static string Instructions20_2
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions20_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡El malvado ejército de arqueólogos ha regresado al pasado y está dañando tu realidad!.
+        /// </summary>
+        public static string InstructionsP1_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP1_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a INICIO DE JUEGO.
+        /// </summary>
+        public static string InstructionsP10_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP10_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a TABLERO.
+        /// </summary>
+        public static string InstructionsP11_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP11_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Pila descarte.
+        /// </summary>
+        public static string InstructionsP11_2
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP11_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Archs.
+        /// </summary>
+        public static string InstructionsP11_3
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP11_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Pila de robo.
+        /// </summary>
+        public static string InstructionsP11_4
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP11_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a En.
+        /// </summary>
+        public static string InstructionsP2_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP2_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Debes eliminar a todos los arqueólogos con todas las combinaciones de dinosaurios.
+        /// </summary>
+        public static string InstructionsP2_2
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP2_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a EL GANADOR ES EL QUE ELIMINE LA MAYOR CANTIDAD DE ARQUEÓLOGOS.
+        /// </summary>
+        public static string InstructionsP2_3
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP2_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a DESARROLLO DE JUEGO.
+        /// </summary>
+        public static string Instructions13_1
+        {
+            get
+            {
+                return ResourceManager.GetString("Instructions13_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a CARTAS.
+        /// </summary>
+        public static string InstructionsP3_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP3_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a JUEGO.
+        /// </summary>
+        public static string InstructionsP3_2
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP3_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Existen 3 tipos de ejército.
+        /// </summary>
+        public static string InstructionsP4_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP4_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Agua.
+        /// </summary>
+        public static string InstructionsP4_2
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP4_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tierra.
+        /// </summary>
+        public static string InstructionsP4_3
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP4_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Viento.
+        /// </summary>
+        public static string InstructionsP4_4
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP4_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a CARTAS POR EJÉRCITO.
+        /// </summary>
+        public static string InstructionsP5_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP5_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Archs.
+        /// </summary>
+        public static string InstructionsP5_2
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP5_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a PARTES DEL CUERPO.
+        /// </summary>
+        public static string InstructionsP6_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP6_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a TORSOS.
+        /// </summary>
+        public static string InstructionsP7_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP7_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Presta atención a las líneas.
+        /// </summary>
+        public static string InstructionsP7_2
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP7_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Torso sin extremidades.
+        /// </summary>
+        public static string InstructionsP7_3
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP7_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Torso sin brazos.
+        /// </summary>
+        public static string InstructionsP7_4
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP7_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Torsos completos.
+        /// </summary>
+        public static string InstructionsP7_5
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP7_5", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a EXTREMIDADES.
+        /// </summary>
+        public static string InstructionsP8_1
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP8_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Brazos izquierdos.
+        /// </summary>
+        public static string InstructionsP8_2
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP8_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Piernas.
+        /// </summary>
+        public static string InstructionsP8_3
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP8_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Brazos derechos.
+        /// </summary>
+        public static string InstructionsP8_4
+        {
+            get
+            {
+                return ResourceManager.GetString("InstructionsP8_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Combinaciones posibles.
+        /// </summary>
+        public static string IntructionsP9_1
+        {
+            get
+            {
+                return ResourceManager.GetString("IntructionsP9_1", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Torso sin extremidades.
+        /// </summary>
+        public static string IntructionsP9_2
+        {
+            get
+            {
+                return ResourceManager.GetString("IntructionsP9_2", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Torso sin brazos.
+        /// </summary>
+        public static string IntructionsP9_3
+        {
+            get
+            {
+                return ResourceManager.GetString("IntructionsP9_3", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Torsos completos.
+        /// </summary>
+        public static string IntructionsP9_4
+        {
+            get
+            {
+                return ResourceManager.GetString("IntructionsP9_4", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a TODAS LAS COMBINACIONES REQUIEREN CABEZA DE DINO INICIAL.
+        /// </summary>
+        public static string IntructionsP9_5
+        {
+            get
+            {
+                return ResourceManager.GetString("IntructionsP9_5", resourceCulture);
+            }
+        }
+
     }
 }

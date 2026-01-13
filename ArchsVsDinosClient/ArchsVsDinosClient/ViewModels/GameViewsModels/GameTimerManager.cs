@@ -128,6 +128,12 @@ namespace ArchsVsDinosClient.ViewModels.GameViewsModels
         {
             targetTurnEndTime = serverTurnEndTimeUtc;
             TurnTimeColor = new SolidColorBrush(Colors.White);
+
+            if (visualTimer != null && !visualTimer.IsEnabled)
+            {
+                visualTimer.Start();
+            }
+
             OnVisualTimerTick(null, null);
         }
 

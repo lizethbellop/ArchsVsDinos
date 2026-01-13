@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ArchsVsDinosClient.Views.Instructions"
+      xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
       mc:Ignorable="d" 
       d:DesignHeight="580" d:DesignWidth="1100"
       Title="Page20">
@@ -20,7 +21,15 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="1">
+            <TextBlock Text="{x:Static language:Lang.Instructions20_1}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="35"
+           HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Foreground="White" Width="448" TextWrapping="Wrap"/>
 
+            <TextBlock Text="{x:Static language:Lang.Instructions20_2}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="25"
+           HorizontalAlignment="Center" Margin="0,83,0,0" VerticalAlignment="Top" Foreground="White" Width="620" TextWrapping="Wrap"/>
         </Grid>
 
         <Grid Grid.Row="2">

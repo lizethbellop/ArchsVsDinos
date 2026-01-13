@@ -1203,4 +1203,190 @@
     <data name="Match_ReturningToMainMenu" xml:space="preserve">
       <value>Regresando al menú principal...</value>
     </data>
+	<data name="InstructionsP1_1" xml:space="preserve">
+    <value>¡El malvado ejército de arqueólogos ha regresado al pasado y está dañando tu realidad!</value>
+  </data>
+	<data name="InstructionsP2_1" xml:space="preserve">
+    <value>En</value>
+  </data>
+	<data name="InstructionsP2_2" xml:space="preserve">
+    <value>Debes eliminar a todos los arqueólogos con todas las combinaciones de dinosaurios</value>
+  </data>
+	<data name="InstructionsP2_3" xml:space="preserve">
+    <value>EL GANADOR ES EL QUE ELIMINE LA MAYOR CANTIDAD DE ARQUEÓLOGOS</value>
+  </data>
+	<data name="InstructionsP3_1" xml:space="preserve">
+    <value>CARTAS</value>
+  </data>
+	<data name="InstructionsP3_2" xml:space="preserve">
+    <value>JUEGO</value>
+  </data>
+	<data name="InstructionsP4_1" xml:space="preserve">
+    <value>Existen 3 tipos de ejército</value>
+  </data>
+	<data name="InstructionsP4_2" xml:space="preserve">
+    <value>Agua</value>
+  </data>
+	<data name="InstructionsP4_3" xml:space="preserve">
+    <value>Tierra</value>
+  </data>
+	<data name="InstructionsP4_4" xml:space="preserve">
+    <value>Viento</value>
+  </data>
+	<data name="InstructionsP5_1" xml:space="preserve">
+    <value>CARTAS POR EJÉRCITO</value>
+  </data>
+	<data name="InstructionsP5_2" xml:space="preserve">
+    <value>Archs</value>
+  </data>
+	<data name="InstructionsP6_1" xml:space="preserve">
+    <value>PARTES DEL CUERPO</value>
+  </data>
+	<data name="InstructionsP7_1" xml:space="preserve">
+    <value>TORSOS</value>
+  </data>
+	<data name="InstructionsP7_2" xml:space="preserve">
+    <value>Presta atención a las líneas</value>
+  </data>
+	<data name="InstructionsP7_3" xml:space="preserve">
+    <value>Torso sin extremidades</value>
+  </data>
+	<data name="InstructionsP7_4" xml:space="preserve">
+    <value>Torso sin brazos</value>
+  </data>
+	<data name="InstructionsP7_5" xml:space="preserve">
+    <value>Torsos completos</value>
+  </data>
+	<data name="InstructionsP8_1" xml:space="preserve">
+    <value>EXTREMIDADES</value>
+  </data>
+	<data name="InstructionsP8_2" xml:space="preserve">
+    <value>Brazos izquierdos</value>
+  </data>
+	<data name="InstructionsP8_3" xml:space="preserve">
+    <value>Piernas</value>
+  </data>
+	<data name="InstructionsP8_4" xml:space="preserve">
+    <value>Brazos derechos</value>
+  </data>
+	<data name="IntructionsP9_1" xml:space="preserve">
+    <value>Combinaciones posibles</value>
+  </data>
+	<data name="IntructionsP9_2" xml:space="preserve">
+    <value>Torso sin extremidades</value>
+  </data>
+	<data name="IntructionsP9_3" xml:space="preserve">
+    <value>Torso sin brazos</value>
+  </data>
+	<data name="IntructionsP9_4" xml:space="preserve">
+    <value>Torsos completos</value>
+  </data>
+	<data name="IntructionsP9_5" xml:space="preserve">
+    <value>TODAS LAS COMBINACIONES REQUIEREN CABEZA DE DINO INICIAL</value>
+  </data>
+	<data name="InstructionsP10_1" xml:space="preserve">
+    <value>INICIO DE JUEGO</value>
+  </data>
+	<data name="InstructionsP11_1" xml:space="preserve">
+    <value>TABLERO</value>
+  </data>
+	<data name="InstructionsP11_2" xml:space="preserve">
+    <value>Pila descarte</value>
+  </data>
+	<data name="InstructionsP11_3" xml:space="preserve">
+    <value>Archs</value>
+  </data>
+	<data name="InstructionsP11_4" xml:space="preserve">
+    <value>Pila de robo</value>
+  </data>
+	<data name="Instructions12_1" xml:space="preserve">
+    <value>COMIENZO</value>
+  </data>
+	<data name="Instructions12_3" xml:space="preserve">
+    <value>Si le toca un arch, se pone en su pila correspondiente de elemento y se vuelve a tomar</value>
+  </data>
+	<data name="Instructions12_4" xml:space="preserve">
+    <value>Cada turno dura 30 segundos</value>
+  </data>
+	<data name="Instructions12_5" xml:space="preserve">
+    <value>Las partidas duran 20 minutos</value>
+  </data>
+	<data name="Instructions12_2" xml:space="preserve">
+    <value>Cada jugador comienza con 5 cartas iniciales.</value>
+  </data>
+	<data name="Instructions12_6" xml:space="preserve">
+    <value>Se pueden hacer 3 jugadas por turno</value>
+  </data>
+	<data name="Instructions14_1" xml:space="preserve">
+    <value>MOVIMIENTOS</value>
+  </data>
+	<data name="Instructions14_2" xml:space="preserve">
+    <value>Tomar carta pila de robo</value>
+  </data>
+	<data name="Instructions14_3" xml:space="preserve">
+    <value>Tomar carta pila de descarte</value>
+  </data>
+	<data name="Instructions14_4" xml:space="preserve">
+    <value>Saltar turno</value>
+  </data>
+	<data name="Instructions14_5" xml:space="preserve">
+    <value>Provocar</value>
+  </data>
+	<data name="Instructions14_6" xml:space="preserve">
+    <value>Unir cartas</value>
+  </data>
+	<data name="Instructions14_7" xml:space="preserve">
+    <value>-1 jugada</value>
+  </data>
+	<data name="Instructions14_8" xml:space="preserve">
+    <value>-3 jugadas</value>
+  </data>
+	<data name="Instructions15_1" xml:space="preserve">
+    <value>PROVOCAR</value>
+  </data>
+	<data name="Instructions15_2" xml:space="preserve">
+    <value>Se selecciona un ejército a provocar (mar, tierra y viento)</value>
+  </data>
+	<data name="Instructions15_3" xml:space="preserve">
+    <value>Se suman los puntos de las combinaciones creadas de cada jugador.</value>
+  </data>
+	<data name="Instructions15_4" xml:space="preserve">
+    <value>FINAL DE PROVOCAR</value>
+  </data>
+	<data name="Instructions15_5" xml:space="preserve">
+    <value>El jugador con más puntos que los demás y que el ejército elegido, gana un punto por arch derrotado</value>
+  </data>
+	<data name="Instructions15_6" xml:space="preserve">
+    <value>Si los arch ganan, nadie gana puntos</value>
+  </data>
+	<data name="Instructions15_7" xml:space="preserve">
+    <value>Al final, se descartan todas las cartas de los mazos formados</value>
+  </data>
+	<data name="Instructions16_1" xml:space="preserve">
+    <value>ROBAR DE PILA DE DESCARTE</value>
+  </data>
+	<data name="Instructions16_2" xml:space="preserve">
+    <value>Se puede elegir cualquier carta (arch, dino o parte del cuerpo)</value>
+  </data>
+	<data name="Instructions17_1" xml:space="preserve">
+    <value>FINAL DEL JUEGO</value>
+  </data>
+	<data name="Instructions18_1" xml:space="preserve">
+    <value>GANADOR</value>
+  </data>
+	<data name="Instructions18_2" xml:space="preserve">
+    <value>El jugador con más archs derrotados gana (mayor cantidad de puntos ganados)</value>
+  </data>
+	<data name="Instructions19_1" xml:space="preserve">
+    <value>EXTRA</value>
+  </data>
+	<data name="Instructions20_1" xml:space="preserve">
+    <value>VER MAZO DEL OTRO JUGADOR</value>
+  </data>
+	<data name="Instructions20_2" xml:space="preserve">
+    <value>Puedes espiar los mazos formados por los otros jugadores</value>
+  </data>
+	<data name="Instructions13_1" xml:space="preserve">
+    <value>DESARROLLO DE JUEGO</value>
+  </data>
 </root>

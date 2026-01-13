@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:ArchsVsDinosClient.Views.Instructions"
+      xmlns:language="clr-namespace:ArchsVsDinosClient.Properties.Langs"
       mc:Ignorable="d" 
       d:DesignHeight="580" d:DesignWidth="1100"
       Title="Page7">
@@ -20,7 +21,30 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="1">
+            <TextBlock Text="{x:Static language:Lang.InstructionsP7_1}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="35"
+           HorizontalAlignment="Center" Margin="0,5,0,0" VerticalAlignment="Top" Foreground="White" Width="252" TextWrapping="Wrap"/>
 
+            <TextBlock Text="{x:Static language:Lang.InstructionsP7_2}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Left" FontSize="26"
+           HorizontalAlignment="Left" Margin="74,13,0,0" VerticalAlignment="Top" Foreground="White" Width="345" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP7_3}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="179,404,0,0" VerticalAlignment="Top" Foreground="White" Width="174" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP7_4}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Center" Margin="0,378,0,0" VerticalAlignment="Top" Foreground="White" Width="116" TextWrapping="Wrap"/>
+
+            <TextBlock Text="{x:Static language:Lang.InstructionsP7_5}"
+           FontFamily="Tw Cen MT Condensed Extra Bold"
+           TextAlignment="Center" FontSize="30"
+           HorizontalAlignment="Left" Margin="754,375,0,0" VerticalAlignment="Top" Foreground="White" Width="177" TextWrapping="Wrap"/>
         </Grid>
 
         <Grid Grid.Row="2">
